@@ -19,6 +19,7 @@
     "@vueuse/core": "^11.2.0",
     "axios": "^1.7.7",
     "dayjs": "^1.11.13",
+    "echarts": "^5.5.1",
     "lodash": "^4.17.21",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-tailwindcss": "^0.6.9",

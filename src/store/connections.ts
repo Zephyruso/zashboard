@@ -10,9 +10,14 @@ export const closedConnections = ref<Connection[]>([])
 
 export const downloadTotal = ref(0)
 export const uploadTotal = ref(0)
+export const downloadHistory = ref<number[]>([])
+export const uploadHistory = ref<number[]>([])
+
 export const downloadSpeedTotal = ref(0)
 export const uploadSpeedTotal = ref(0)
+
 export const memory = ref(0)
+export const memoryHistory = ref<number[]>([])
 
 export const quickFilterRegex = useStorage<string>('config/quick-filter-regex', 'dns|direct')
 export const quickFilterEnabled = useStorage<boolean>('config/quick-filter-enabled', false)
@@ -120,6 +125,9 @@ export const initConnections = () => {
   cancel?.()
   activeConnections.value = []
   closedConnections.value = []
+  downloadHistory.value = []
+  uploadHistory.value = []
+  memoryHistory.value = []
   downloadTotal.value = 0
   uploadTotal.value = 0
   downloadSpeedTotal.value = 0
@@ -146,6 +154,14 @@ export const initConnections = () => {
     uploadTotal.value = parsedData.uploadTotal
 
     memory.value = parsedData.memory
+
+    downloadHistory.value.push(downloadSpeedTotal.value)
+    uploadHistory.value.push(uploadSpeedTotal.value)
+    memoryHistory.value.push(parsedData.memory)
+
+    downloadHistory.value = downloadHistory.value.slice(-60)
+    uploadHistory.value = uploadHistory.value.slice(-60)
+    memoryHistory.value = memoryHistory.value.slice(-60)
 
     if (isPaused.value) {
       return

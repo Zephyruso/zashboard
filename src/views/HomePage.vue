@@ -12,6 +12,7 @@
         aria-label="close sidebar"
         class="drawer-overlay"
       ></label>
+
       <div class="flex h-full flex-col bg-base-200 text-base-content">
         <ul class="menu w-80 flex-1 p-4">
           <li
@@ -30,6 +31,10 @@
             </a>
           </li>
         </ul>
+        <div class="flex h-48 flex-col gap-1">
+          <MemoryChart />
+          <SpeedChart />
+        </div>
         <div class="card m-2 bg-base-100 shadow-lg">
           <component
             v-if="sidebarComp"
@@ -75,6 +80,8 @@
 </template>
 
 <script setup lang="ts">
+import MemoryChart from '@/components/charts/MemoryChart.vue'
+import SpeedChart from '@/components/charts/SpeedChart.vue'
 import CommonSidebar from '@/components/sidebar/CommonCtrl.vue'
 import ConnectionCtrl from '@/components/sidebar/ConnectionCtrl.vue'
 import LogsCtrl from '@/components/sidebar/LogsCtrl.vue'
