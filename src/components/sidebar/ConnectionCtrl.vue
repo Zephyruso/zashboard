@@ -1,16 +1,5 @@
 <template>
   <div class="flex flex-col gap-2 p-2 text-sm">
-    <div
-      class="flex items-center gap-2"
-      v-if="isLargeScreen"
-    >
-      {{ $t('compactCard') }}:
-      <input
-        type="checkbox"
-        class="toggle"
-        v-model="compactConnectionCard"
-      />
-    </div>
     <div class="flex items-center gap-2">
       {{ showActiveConnections ? $t('activeConnections') : $t('closedConnections') }}:
       <input
@@ -74,8 +63,6 @@
 
 <script setup lang="ts">
 import { disconnectByIdAPI } from '@/api'
-import { isLargeScreen } from '@/helper'
-import { compactConnectionCard } from '@/store/config'
 import {
   connectionFilter,
   connectionSortType,

@@ -15,6 +15,7 @@
   "dependencies": {
     "@eslint/plugin-kit": "^0.2.3",
     "@heroicons/vue": "^2.1.5",
+    "@tanstack/vue-table": "^8.20.5",
     "@vueuse/core": "^11.2.0",
     "axios": "^1.7.7",
     "dayjs": "^1.11.13",
@@ -25,6 +26,7 @@
     "theme-change": "^2.5.0",
     "uuid": "^11.0.3",
     "vue": "^3.5.12",
+    "vue-draggable-plus": "^0.6.0",
     "vue-i18n": "^10.0.4",
     "vue-json-pretty": "^2.4.0",
     "vue-router": "^4.4.5"

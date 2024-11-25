@@ -21,8 +21,13 @@
             <a
               :class="r === route.name ? 'active' : ''"
               :href="`#${r}`"
-              >{{ $t(r) }}</a
             >
+              <component
+                :is="routeIconMap[r]"
+                class="h-5 w-5"
+              />
+              {{ $t(r) }}
+            </a>
           </li>
         </ul>
         <div class="card m-2 bg-base-100 shadow-lg">
@@ -40,7 +45,7 @@
     >
       <RouterView class="flex-1"></RouterView>
 
-      <div class="flex w-full items-center justify-center gap-1 bg-base-200 p-1 md:hidden">
+      <div class="flex h-12 w-full items-center justify-center gap-1 bg-base-200 p-1 md:hidden">
         <ul class="menu menu-horizontal menu-sm">
           <li
             v-for="r in routes"
@@ -49,8 +54,12 @@
             <a
               :class="r === route.name ? 'active' : ''"
               :href="`#${r}`"
-              >{{ $t(r) }}</a
             >
+              <component
+                :is="routeIconMap[r]"
+                class="h-5 w-5"
+              />
+            </a>
           </li>
         </ul>
         <label for="sidebar">
@@ -77,7 +86,14 @@ import { initLogs } from '@/store/logs'
 import { fetchProxies } from '@/store/proxies'
 import { fetchRules } from '@/store/rules'
 import { activeUuid } from '@/store/setup'
-import { Bars3Icon } from '@heroicons/vue/24/outline'
+import {
+  ArrowsRightLeftIcon,
+  Bars3Icon,
+  Cog6ToothIcon,
+  DocumentTextIcon,
+  GlobeAltIcon,
+  WrenchScrewdriverIcon,
+} from '@heroicons/vue/24/outline'
 import { computed, watch } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 
@@ -85,6 +101,14 @@ const sidebarCompMap = {
   [ROUTE_NAME.connections]: ConnectionCtrl,
   [ROUTE_NAME.logs]: LogsCtrl,
   [ROUTE_NAME.proxies]: ProxiesCtrl,
+}
+
+const routeIconMap = {
+  [ROUTE_NAME.proxies]: GlobeAltIcon,
+  [ROUTE_NAME.connections]: ArrowsRightLeftIcon,
+  [ROUTE_NAME.rules]: WrenchScrewdriverIcon,
+  [ROUTE_NAME.logs]: DocumentTextIcon,
+  [ROUTE_NAME.settings]: Cog6ToothIcon,
 }
 
 const sidebarComp = computed(() => {

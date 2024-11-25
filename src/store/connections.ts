@@ -1,6 +1,7 @@
 import { fetchConnectionsAPI } from '@/api'
 import type { Connection, ConnectionRawMessage } from '@/types'
 import { useStorage } from '@vueuse/core'
+import dayjs from 'dayjs'
 import { differenceWith } from 'lodash'
 import { computed, ref, watch } from 'vue'
 
@@ -19,8 +20,10 @@ export const showActiveConnections = ref(true)
 
 export enum SORT_TYPE {
   HOST = 'host',
-  RULE = 'rule',
   CHAINS = 'chains',
+  RULE = 'rule',
+  TYPE = 'type',
+  CONNECT_TIME = 'connectTime',
   DOWNLOAD = 'download',
   DOWNLOAD_SPEED = 'downloadSpeed',
   UPLOAD = 'upload',
@@ -54,6 +57,14 @@ const sortFunctionMap: Record<SORT_TYPE, (a: Connection, b: Connection) => numbe
   },
   [SORT_TYPE.SOURCE_IP]: (a: Connection, b: Connection) => {
     return a.metadata.sourceIP.localeCompare(b.metadata.sourceIP)
+  },
+  [SORT_TYPE.TYPE]: (a: Connection, b: Connection) => {
+    return (a.metadata.type + a.metadata.network).localeCompare(
+      b.metadata.type + b.metadata.network,
+    )
+  },
+  [SORT_TYPE.CONNECT_TIME]: (a: Connection, b: Connection) => {
+    return dayjs(b.start).valueOf() - dayjs(a.start).valueOf()
   },
 }
 

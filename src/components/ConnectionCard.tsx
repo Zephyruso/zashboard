@@ -24,7 +24,7 @@ export default defineComponent<{
     return () => {
       const flex1 = <span class="flex-1"></span>
       const host = (
-        <span class="w-80 grow break-all text-sm tracking-tight text-primary sm:text-base">
+        <span class="w-80 grow break-all text-sm tracking-tight text-primary/80 sm:text-base">
           {props.conn.metadata.host || props.conn.metadata.destinationIP}
           <span class="hidden sm:inline">:{props.conn.metadata.destinationPort}</span>
         </span>

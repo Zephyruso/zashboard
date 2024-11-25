@@ -9,6 +9,7 @@ export enum ROUTE_NAME {
   connections = 'connections',
   logs = 'logs',
   rules = 'rules',
+  settings = 'settings',
 }
 
 const router = createRouter({
@@ -33,6 +34,11 @@ const router = createRouter({
       path: '/rules',
       name: ROUTE_NAME.rules,
       component: RulesPage,
+    },
+    {
+      path: '/settings',
+      name: ROUTE_NAME.settings,
+      component: () => import('@/views/SettingsPage.vue'),
     },
     {
       path: '/:catchAll(.*)',
