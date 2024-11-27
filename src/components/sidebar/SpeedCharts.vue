@@ -1,7 +1,7 @@
 <template>
   <div
     ref="chart"
-    class="card h-28 w-80 bg-base-100 p-0 shadow-lg"
+    class="card h-28 bg-base-100 p-0 shadow-lg"
   ></div>
   <span
     class="hidden text-base-content"

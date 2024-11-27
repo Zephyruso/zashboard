@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col gap-2 p-2"
+    :class="twMerge('flex flex-col gap-2 p-2', vertical && 'flex-row')"
     v-if="configs"
   >
     <template v-if="proxyProviederList.length">
@@ -71,8 +71,11 @@ import {
 import { fetchProxies, proxyProviederList } from '@/store/proxies'
 import { twMerge } from 'tailwind-merge'
 import { computed, ref } from 'vue'
-const isUpgrading = ref(false)
+defineProps<{
+  vertical?: boolean
+}>()
 
+const isUpgrading = ref(false)
 const handlerClickUpgradeAllProviders = async () => {
   if (isUpgrading.value) return
   isUpgrading.value = true

@@ -1,5 +1,9 @@
 <template>
   <div class="h-full overflow-y-auto overflow-x-hidden p-2">
+    <ProxiesCtrl
+      :vertical="true"
+      v-if="isSiderbarCollapsed"
+    />
     <template v-if="isLargeScreen && twoColumns && renderGroups.length > 1">
       <div class="grid grid-cols-2 gap-1">
         <div
@@ -33,6 +37,8 @@
 <script setup lang="ts">
 import ProxyGroup from '@/components/proxies/ProxyGroup.vue'
 import ProxyProvider from '@/components/proxies/ProxyProvider.vue'
+import { isSiderbarCollapsed } from '@/components/sidebar/config'
+import ProxiesCtrl from '@/components/sidebar/ProxiesCtrl.vue'
 import { isLargeScreen } from '@/helper'
 import { proxiesTabShow, PROXY_TAB_TYPE, showGlobalProxy, twoColumns } from '@/store/config'
 import { GLOBAL, proxyGroups, proxyProviederList } from '@/store/proxies'

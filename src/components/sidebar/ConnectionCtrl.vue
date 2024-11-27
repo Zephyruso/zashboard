@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2 p-2 text-sm">
+  <div :class="twMerge('flex flex-col gap-2 p-2 text-sm', horizontal && 'flex-row')">
     <div class="tabs-boxed tabs tabs-sm">
       <a
         role="tab"
@@ -45,7 +45,10 @@
         v-model="quickFilterEnabled"
       />
     </div>
-    <div class="join">
+    <div
+      class="join"
+      :class="horizontal && 'flex-1'"
+    >
       <input
         type="text"
         class="input input-sm join-item input-bordered flex-1"
@@ -86,7 +89,9 @@ import {
 } from '@/store/connections'
 import { PauseIcon, PlayIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { twMerge } from 'tailwind-merge'
-
+defineProps<{
+  horizontal?: boolean
+}>()
 const handlerClickCloseAll = () => {
   renderConnections.value.forEach((conn) => {
     disconnectByIdAPI(conn.id)

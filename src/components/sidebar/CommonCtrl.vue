@@ -39,10 +39,19 @@
       </div>
     </div>
     <div class="flex flex-1 items-end justify-end p-2">
-      <LanguageIcon
-        class="h-6 w-6 cursor-pointer"
+      <button
+        class="btn btn-circle btn-ghost btn-xs hidden md:flex"
+        v-if="!isSiderbarCollapsed"
+        @click="isSiderbarCollapsed = true"
+      >
+        <ArrowLeftCircleIcon class="h-5 w-5" />
+      </button>
+      <button
+        class="btn btn-circle btn-ghost btn-xs"
         @click="swapLanguage"
-      ></LanguageIcon>
+      >
+        <LanguageIcon class="h-5 w-5"></LanguageIcon>
+      </button>
     </div>
   </div>
 </template>
@@ -61,8 +70,9 @@ import {
   uploadTotal,
 } from '@/store/connections'
 import { activeUuid, backendList } from '@/store/setup'
-import { LanguageIcon, PlusIcon } from '@heroicons/vue/24/outline'
+import { ArrowLeftCircleIcon, LanguageIcon, PlusIcon } from '@heroicons/vue/24/outline'
 import { computed } from 'vue'
+import { isSiderbarCollapsed } from './config'
 
 const opts = computed(() => {
   return backendList.value.map((b) => {
