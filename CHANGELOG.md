@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.10.0](https://github.com/Zephyruso/zashboard/compare/v1.9.1...v1.10.0) (2024-12-02)
+
+
+### Features
+
+* config for proxy preview type ([ffec0c5](https://github.com/Zephyruso/zashboard/commit/ffec0c5d8f8f8a645d3ca6cd9afdea6b2520953b))
+* remove backend ([f26ba61](https://github.com/Zephyruso/zashboard/commit/f26ba61758364e62fa1b6370db00f334eda74c2c))
+
+
+### Bug Fixes
+
+* chain filter ([bc8655c](https://github.com/Zephyruso/zashboard/commit/bc8655ce0c1d68c9de52feb5b0312243a70a464c))
+* default regex ([b2e71e6](https://github.com/Zephyruso/zashboard/commit/b2e71e69c442aa22bab3e7c420d6a0db80cf869a))
+* proxy group title ([53471c9](https://github.com/Zephyruso/zashboard/commit/53471c99e490ebfb30437e7ffc45db03006e8589))
+* rule card style ([240296e](https://github.com/Zephyruso/zashboard/commit/240296e69d2de40ff4a61179d79afad1e06199e1))
+* rule card style ([35cbea0](https://github.com/Zephyruso/zashboard/commit/35cbea089649c59d1bf58e3bd6b2a5f9818885cd))
+
 ## [1.9.1](https://github.com/Zephyruso/zashboard/compare/v1.9.0...v1.9.1) (2024-12-02)
 
 
