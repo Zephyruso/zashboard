@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.1](https://github.com/Zephyruso/zashboard/compare/v1.11.0...v1.11.1) (2024-12-03)
+
+
+### Bug Fixes
+
+* process ([7ec9087](https://github.com/Zephyruso/zashboard/commit/7ec90877685c944498ab15e83f55f787c0235341))
+* settings style ([88f12c7](https://github.com/Zephyruso/zashboard/commit/88f12c7f3f9556adc4274d318594ce630fdcb906))
+
 ## [1.11.0](https://github.com/Zephyruso/zashboard/compare/v1.10.0...v1.11.0) (2024-12-03)
 
 
