@@ -29,7 +29,7 @@ export const fetchProxies = async () => {
 
   proxyMap.value = proxyData.proxies
   proxyGroupList.value = Object.values(proxyData.proxies)
-    .filter((proxy) => proxy.all?.length && proxy.name !== GLOBAL && !proxy?.hide)
+    .filter((proxy) => proxy.all?.length && proxy.name !== GLOBAL && !proxy?.hidden)
     .sort((prev, next) => sortIndex.indexOf(prev.name) - sortIndex.indexOf(next.name))
     .map((proxy) => proxy.name)
 

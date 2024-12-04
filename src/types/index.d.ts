@@ -29,7 +29,7 @@ export type Proxy = {
   udp: boolean
   now: string
   icon: string
-  hide?: boolean
+  hidden?: boolean
   all?: string[]
 }
 
