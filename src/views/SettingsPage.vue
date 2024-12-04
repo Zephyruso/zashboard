@@ -148,7 +148,10 @@
             v-model="automaticDisconnection"
           />
         </div>
-        <div class="flex items-center gap-2">
+        <div
+          v-if="isSingBox"
+          class="flex items-center gap-2"
+        >
           {{ $t('showGlobalProxy') }}:
           <input
             class="toggle"

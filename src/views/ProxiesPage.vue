@@ -31,10 +31,12 @@
 </template>
 
 <script setup lang="ts">
+import { isSingBox } from '@/api'
 import ProxyGroup from '@/components/proxies/ProxyGroup.vue'
 import ProxyProvider from '@/components/proxies/ProxyProvider.vue'
 import { PROXY_TAB_TYPE } from '@/config'
 import { isLargeScreen } from '@/helper'
+import { configs } from '@/store/config'
 import { GLOBAL, proxyGroupList, proxyProviederList } from '@/store/proxies'
 import { proxiesTabShow, showGlobalProxy, twoColumns } from '@/store/settings'
 import { computed } from 'vue'
@@ -46,8 +48,9 @@ const renderGroups = computed(() => {
   if (proxiesTabShow.value === PROXY_TAB_TYPE.PROVIDER) {
     return proxyProviederList.value.map((group) => group.name)
   }
-  if (showGlobalProxy.value && proxyGroupList.value.length) {
-    return [...proxyGroupList.value, GLOBAL]
+  if (proxyGroupList.value.length) {
+    if (!isSingBox.value && configs.value?.mode.toLocaleUpperCase() === GLOBAL) return [GLOBAL]
+    else if (isSingBox.value && showGlobalProxy.value) return [...proxyGroupList.value, GLOBAL]
   }
   return proxyGroupList.value
 })
