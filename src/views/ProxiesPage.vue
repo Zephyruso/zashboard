@@ -48,9 +48,13 @@ const renderGroups = computed(() => {
   if (proxiesTabShow.value === PROXY_TAB_TYPE.PROVIDER) {
     return proxyProviederList.value.map((group) => group.name)
   }
-  if (proxyGroupList.value.length) {
-    if (!isSingBox.value && configs.value?.mode.toLocaleUpperCase() === GLOBAL) return [GLOBAL]
-    else if (isSingBox.value && showGlobalProxy.value) return [...proxyGroupList.value, GLOBAL]
+
+  if (isSingBox.value && (showGlobalProxy.value || !proxyGroupList.value.length)) {
+    return [...proxyGroupList.value, GLOBAL]
+  }
+
+  if (!isSingBox.value && configs.value?.mode.toLocaleUpperCase() === GLOBAL) {
+    return [GLOBAL]
   }
   return proxyGroupList.value
 })
