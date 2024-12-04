@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.1](https://github.com/Zephyruso/zashboard/compare/v1.13.0...v1.13.1) (2024-12-04)
+
+
+### Bug Fixes
+
+* md ([a190a8c](https://github.com/Zephyruso/zashboard/commit/a190a8cbcc733b23d7ee942eadf025720e0e9503))
+
 ## [1.13.0](https://github.com/Zephyruso/zashboard/compare/v1.12.0...v1.13.0) (2024-12-04)
 
 
