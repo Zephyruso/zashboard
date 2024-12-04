@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.12.0](https://github.com/Zephyruso/zashboard/compare/v1.11.0...v1.12.0) (2024-12-04)
+
+
+### Features
+
+* docker ([667069f](https://github.com/Zephyruso/zashboard/commit/667069fa4e73f01d188ad401a31591c6c2d9e9eb))
+* ghcr ([11e0b60](https://github.com/Zephyruso/zashboard/commit/11e0b60d71ca649beeab6987acab20d8ecd24bf3))
+* hide `GLOBAL` proxy group  when `mode` is not `GLOBAL` in `mihomo` ,otherwise it will be shown ([#38](https://github.com/Zephyruso/zashboard/issues/38)) ([2390b28](https://github.com/Zephyruso/zashboard/commit/2390b28b6680383a69d4e13d2fa6db43f3f002a6))
+
+
+### Bug Fixes
+
+* hide proxy group whose `hidden` is true in `mihomo` ([#40](https://github.com/Zephyruso/zashboard/issues/40)) ([76fbda9](https://github.com/Zephyruso/zashboard/commit/76fbda94ed78f9a7f2585e55b44a9d5c997fa31f))
+* process ([7ec9087](https://github.com/Zephyruso/zashboard/commit/7ec90877685c944498ab15e83f55f787c0235341))
+* proxy grid style ([d57007c](https://github.com/Zephyruso/zashboard/commit/d57007c5995dbad9fdb950542bbe019355dcade6))
+* settings style ([88f12c7](https://github.com/Zephyruso/zashboard/commit/88f12c7f3f9556adc4274d318594ce630fdcb906))
+
 ## [1.11.0](https://github.com/Zephyruso/zashboard/compare/v1.10.0...v1.11.0) (2024-12-03)
 
 
