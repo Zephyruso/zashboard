@@ -9,7 +9,9 @@
           />
           {{ proxyGroup.name }}
 
-          <span class="text-xs">:: {{ proxyGroup.type }}</span>
+          <span class="text-xs"
+            >:: {{ $t(proxyGroup.type.toLocaleLowerCase(), proxyGroup.type) }}</span
+          >
         </div>
         <div
           class="flex hidden items-center gap-2 text-xs sm:flex sm:text-sm"

@@ -55,7 +55,7 @@
       <option
         v-for="mode in modeList"
         :key="mode"
-        :label="mode"
+        :label="$t(mode.toLocaleLowerCase(), mode)"
         :value="mode"
       />
     </select>

@@ -19,7 +19,7 @@
     </div>
     <div class="flex items-center gap-2 text-xs">
       <div class="flex-1">
-        <span>{{ typeFormatter(node.type) }}</span>
+        <span>{{ $t(typeFormatter(node.type)) }}</span>
         <span v-if="node.udp"> | udp</span>
       </div>
       <LatencyTag
