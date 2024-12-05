@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.14.0](https://github.com/Zephyruso/zashboard/compare/v1.13.1...v1.14.0) (2024-12-05)
+
+
+### Features
+
+* charts animation ([e7e555d](https://github.com/Zephyruso/zashboard/commit/e7e555db258f34487ff35eaf6fb467c1f3b42bab))
+* hide unavailable proxy ([cd5c03d](https://github.com/Zephyruso/zashboard/commit/cd5c03d198e4304ced77952b16e25efb208ed095))
+
+
+### Bug Fixes
+
+* node card style ([2152529](https://github.com/Zephyruso/zashboard/commit/2152529d4361919ffa65b8ef19dfa058475ef799))
+
 ## [1.13.1](https://github.com/Zephyruso/zashboard/compare/v1.13.0...v1.13.1) (2024-12-04)
 
 
