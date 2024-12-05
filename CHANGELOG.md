@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.1](https://github.com/Zephyruso/zashboard/compare/v1.15.0...v1.15.1) (2024-12-05)
+
+
+### Bug Fixes
+
+* proxy group style ([80ebdfc](https://github.com/Zephyruso/zashboard/commit/80ebdfcee3b9ef525192dd6287a0bf4e6f9aed5b))
+
 ## [1.15.0](https://github.com/Zephyruso/zashboard/compare/v1.14.0...v1.15.0) (2024-12-05)
 
 
