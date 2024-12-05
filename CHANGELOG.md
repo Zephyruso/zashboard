@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.15.0](https://github.com/Zephyruso/zashboard/compare/v1.14.0...v1.15.0) (2024-12-05)
+
+
+### Features
+
+* node card style for mobile in dual columns ([3a6aa67](https://github.com/Zephyruso/zashboard/commit/3a6aa67b71526ca76a5d0dc96a6b09e949e6cf95))
+
+
+### Bug Fixes
+
+* proxies ctrl style ([eaed72f](https://github.com/Zephyruso/zashboard/commit/eaed72fc0f62f3464277a5964ed6d76c71143e5d))
+* ui layout for mobile ([df9f48c](https://github.com/Zephyruso/zashboard/commit/df9f48c3ad38f02e3297c720196dad0779d18e12))
+
 ## [1.14.0](https://github.com/Zephyruso/zashboard/compare/v1.13.1...v1.14.0) (2024-12-05)
 
 
