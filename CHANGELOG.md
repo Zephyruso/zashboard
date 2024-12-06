@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.2](https://github.com/Zephyruso/zashboard/compare/v1.16.1...v1.16.2) (2024-12-06)
+
+
+### Bug Fixes
+
+* build ([bf3f284](https://github.com/Zephyruso/zashboard/commit/bf3f284cc94f9a8b20def69109b3fefe2bec6460))
+
 ## [1.16.1](https://github.com/Zephyruso/zashboard/compare/v1.16.0...v1.16.1) (2024-12-06)
 
 
