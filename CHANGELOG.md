@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.18.0](https://github.com/Zephyruso/zashboard/compare/v1.17.0...v1.18.0) (2024-12-06)
+
+
+### Features
+
+* check update for ui ([#57](https://github.com/Zephyruso/zashboard/issues/57)) ([ba16c7e](https://github.com/Zephyruso/zashboard/commit/ba16c7e5cb3a001a898f0a837a0a1487fa69c78e))
+
+
+### Bug Fixes
+
+* font load ([977f743](https://github.com/Zephyruso/zashboard/commit/977f743e2207121e8d023048c9b20d14b192f81f))
+* ttf -&gt; woff2 ([6f2a6f6](https://github.com/Zephyruso/zashboard/commit/6f2a6f6ffb178591d99a116fa99c321ed47a8a7e))
+* update tip ([ca49591](https://github.com/Zephyruso/zashboard/commit/ca4959167bec442abdd7b26464d97c062d90971b))
+
 ## [1.17.0](https://github.com/Zephyruso/zashboard/compare/v1.16.0...v1.17.0) (2024-12-06)
 
 
