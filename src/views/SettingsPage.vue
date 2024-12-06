@@ -2,11 +2,20 @@
   <div class="grid grid-cols-1 gap-2 overflow-y-auto p-2">
     <div class="card card-compact bg-base-100 shadow-lg">
       <div class="card-title px-4 pt-4 text-primary">
-        <a
-          href="https://github.com/Zephyruso/zashboard"
-          target="_blank"
-          >zashboard v{{ zashboardVersion }}</a
-        >
+        <div class="indicator">
+          <span
+            v-if="isUIUpdateAvailable"
+            class="indicator-item flex"
+          >
+            <span class="badge badge-xs absolute animate-ping bg-secondary"></span>
+            <span class="badge badge-xs bg-secondary"></span>
+          </span>
+          <a
+            href="https://github.com/Zephyruso/zashboard"
+            target="_blank"
+            >zashboard v{{ zashboardVersion }}</a
+          >
+        </div>
       </div>
       <div class="card-body gap-4">
         <div class="flex items-center gap-2">
@@ -228,6 +237,7 @@
 
 <script setup lang="ts">
 import {
+  fetchIsUIUpdateAvailable,
   flushFakeIPAPI,
   isSingBox,
   reloadConfigsAPI,
@@ -256,7 +266,7 @@ import {
   useConnectionCard,
 } from '@/store/settings'
 import { twMerge } from 'tailwind-merge'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const isCoreUpgrading = ref(false)
 const handlerClickUpgradeCore = async () => {
@@ -270,6 +280,7 @@ const handlerClickUpgradeCore = async () => {
   }
 }
 
+const isUIUpdateAvailable = ref(false)
 const isUIUpgrading = ref(false)
 const handlerClickUpgradeUI = async () => {
   if (isUIUpgrading.value) return
@@ -281,6 +292,10 @@ const handlerClickUpgradeUI = async () => {
     isUIUpgrading.value = false
   }
 }
+
+onMounted(async () => {
+  isUIUpdateAvailable.value = await fetchIsUIUpdateAvailable()
+})
 
 const isConfigReloading = ref(false)
 const handlerClickReloadConfigs = async () => {

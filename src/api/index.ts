@@ -4,6 +4,12 @@ import { useWebSocket } from '@vueuse/core'
 import axios from 'axios'
 import { computed, ref, watch } from 'vue'
 
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    withToken?: boolean
+  }
+}
+
 axios.interceptors.request.use((config) => {
   config.baseURL =
     activeBackend.value?.protocol +
@@ -11,7 +17,8 @@ axios.interceptors.request.use((config) => {
     activeBackend.value?.host +
     ':' +
     activeBackend.value?.port
-  config.headers['Authorization'] = 'Bearer ' + activeBackend.value?.password
+  if (config.withToken !== false)
+    config.headers['Authorization'] = 'Bearer ' + activeBackend.value?.password
   return config
 })
 
@@ -155,4 +162,16 @@ export const fetchMemoryAPI = <T>() => {
 
 export const fetchTrafficAPI = <T>() => {
   return createWebSocket<T>('traffic')
+}
+
+export const fetchIsUIUpdateAvailable = async () => {
+  const {
+    data: { tag_name },
+  } = await axios.get<undefined, { data: { tag_name: string } }>(
+    'https://api.github.com/repos/Zephyruso/zashboard/releases/latest',
+    {
+      withToken: false,
+    },
+  )
+  return tag_name !== `v${zashboardVersion.value}`
 }
