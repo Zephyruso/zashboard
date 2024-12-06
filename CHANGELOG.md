@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.19.0](https://github.com/Zephyruso/zashboard/compare/v1.18.0...v1.19.0) (2024-12-06)
+
+
+### Features
+
+* config for preview threshold ([af7a1e9](https://github.com/Zephyruso/zashboard/commit/af7a1e9e7a6c3381c7eb4fa245840a8ab0b5086f))
+
+
+### Bug Fixes
+
+* font fira sans ([dc69219](https://github.com/Zephyruso/zashboard/commit/dc69219463e39909c955e3efbe42b143f3442de8))
+* fuck twemoji ([ace9d13](https://github.com/Zephyruso/zashboard/commit/ace9d13e44245c4459469be8deb36770b78a0f13))
+* latency status ([c1db2ad](https://github.com/Zephyruso/zashboard/commit/c1db2ad01fd2daecf5a86bc1c4fba04c3b3d71ef))
+* node card udp ([1f5e457](https://github.com/Zephyruso/zashboard/commit/1f5e45773581c6562f878c6aa979112d2b2c3d0e))
+* tip for quick filter ([461d2ce](https://github.com/Zephyruso/zashboard/commit/461d2ce489ab8d068ab6eb122512374da36b82c4))
+
 ## [1.18.0](https://github.com/Zephyruso/zashboard/compare/v1.17.0...v1.18.0) (2024-12-06)
 
 
