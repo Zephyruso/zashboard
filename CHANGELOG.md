@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.17.0](https://github.com/Zephyruso/zashboard/compare/v1.16.0...v1.17.0) (2024-12-06)
+
+
+### Features
+
+* release build zip ([e60cd00](https://github.com/Zephyruso/zashboard/commit/e60cd00e8fdf8aba1201f025ffd6b19acd0536c5))
+
+
+### Bug Fixes
+
+* i18n for mode ([500dbf8](https://github.com/Zephyruso/zashboard/commit/500dbf8ff816520bf1aec3a1e58bf5ec2d4fba8e))
+
 ## [1.16.0](https://github.com/Zephyruso/zashboard/compare/v1.15.1...v1.16.0) (2024-12-06)
 
 
