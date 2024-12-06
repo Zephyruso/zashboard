@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.1](https://github.com/Zephyruso/zashboard/compare/v1.16.0...v1.16.1) (2024-12-06)
+
+
+### Bug Fixes
+
+* i18n for mode ([500dbf8](https://github.com/Zephyruso/zashboard/commit/500dbf8ff816520bf1aec3a1e58bf5ec2d4fba8e))
+
 ## [1.16.0](https://github.com/Zephyruso/zashboard/compare/v1.15.1...v1.16.0) (2024-12-06)
 
 
