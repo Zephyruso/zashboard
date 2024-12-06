@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.16.0](https://github.com/Zephyruso/zashboard/compare/v1.15.1...v1.16.0) (2024-12-06)
+
+
+### Features
+
+* font ([2ae072a](https://github.com/Zephyruso/zashboard/commit/2ae072a0f285731f1a789e3edc7e430e586bfc40))
+* tip for https ([0eae3b3](https://github.com/Zephyruso/zashboard/commit/0eae3b308a25316943a690d5f6c586585b5a1bd4))
+
 ## [1.15.1](https://github.com/Zephyruso/zashboard/compare/v1.15.0...v1.15.1) (2024-12-05)
 
 
