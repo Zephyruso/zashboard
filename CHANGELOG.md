@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.1](https://github.com/Zephyruso/zashboard/compare/v1.20.0...v1.20.1) (2024-12-07)
+
+
+### Bug Fixes
+
+* count for conns ([466c090](https://github.com/Zephyruso/zashboard/commit/466c090b02212a7135775bfa27df457fd58c495c))
+
 ## [1.20.0](https://github.com/Zephyruso/zashboard/compare/v1.19.0...v1.20.0) (2024-12-07)
 
 
