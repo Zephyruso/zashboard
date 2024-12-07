@@ -10,8 +10,8 @@
     :data-tip="node.name"
   >
     <ProxyIcon
-      v-if="proxyGroup.icon"
-      :icon="proxyGroup.icon"
+      v-if="node.icon"
+      :icon="node.icon"
     />
     <div
       :class="
@@ -55,7 +55,6 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import LatencyTag from './LatencyTag.vue'
 import ProxyIcon from './ProxyIcon.vue'
 
-const proxyGroup = computed(() => proxyMap.value[props.name])
 const props = defineProps<{
   name: string
   active?: boolean
