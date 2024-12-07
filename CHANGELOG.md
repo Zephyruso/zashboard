@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.20.0](https://github.com/Zephyruso/zashboard/compare/v1.19.0...v1.20.0) (2024-12-07)
+
+
+### Features
+
+* connections count ([2a5440e](https://github.com/Zephyruso/zashboard/commit/2a5440e259520708077342dc2a40b32a9a33ea92))
+* select of fonts ([6a38eb4](https://github.com/Zephyruso/zashboard/commit/6a38eb4b5b2e216b762bb542407595068fc38861))
+* try MiSans ([#60](https://github.com/Zephyruso/zashboard/issues/60)) ([4c7a001](https://github.com/Zephyruso/zashboard/commit/4c7a001cfb300c8f6641a803a8bd205b2c56edc8))
+
+
+### Bug Fixes
+
+* make side collapsed default ([16d1c51](https://github.com/Zephyruso/zashboard/commit/16d1c51d45b4d89bb1785558b945685d97074010))
+* tree shake & misans from npm ([6bebec6](https://github.com/Zephyruso/zashboard/commit/6bebec6725b3f69c89c7c73275d38fcab83d5ec7))
+
 ## [1.19.0](https://github.com/Zephyruso/zashboard/compare/v1.18.0...v1.19.0) (2024-12-06)
 
 
