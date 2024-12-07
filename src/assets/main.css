@@ -7,11 +7,6 @@
   src: url('./NotoColorEmoji-flagsonly.ttf') format('truetype');
 }
 
-@font-face {
-  font-family: 'Fira Sans';
-  src: url('./FiraSans-Regular.ttf') format('truetype');
-}
-
 :root {
-  font-family: 'Fira Sans', 'NotoEmoji', 'system-ui';
+  font-family: 'MiSans', 'NotoEmoji', 'system-ui';
 }
