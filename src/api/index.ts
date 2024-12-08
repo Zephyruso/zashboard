@@ -1,4 +1,4 @@
-import { activeBackend } from '@/store/setup'
+import { activeBackend, activeUuid } from '@/store/setup'
 import type { Config, Proxy, ProxyProvider, Rule, RuleProvider } from '@/types'
 import axios from 'axios'
 import ReconnectingWebSocket from 'reconnectingwebsocket'
@@ -14,6 +14,13 @@ axios.interceptors.request.use((config) => {
 
   config.headers['Authorization'] = 'Bearer ' + activeBackend.value?.password
   return config
+})
+
+axios.interceptors.response.use(null, (error) => {
+  if (error.status === 401) {
+    // todo: need prompt alert that the connection 401
+    activeUuid.value = null
+  } else return error
 })
 
 export const version = ref()
