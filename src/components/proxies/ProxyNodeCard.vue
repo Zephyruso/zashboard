@@ -12,6 +12,7 @@
     <ProxyIcon
       v-if="node.icon"
       :icon="node.icon"
+      in-node-card
     />
     <div
       :class="
