@@ -92,4 +92,5 @@ export default {
   mediumLatencyDesc: 'Red threshold',
   fonts: 'Fonts',
   statistics: 'Statistics',
+  unauthorizedTip: 'Unauthorized, please login again.',
 }

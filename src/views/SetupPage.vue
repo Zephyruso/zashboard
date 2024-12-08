@@ -2,14 +2,14 @@
   <div class="flex h-full w-full items-center justify-center">
     <div
       class="toast toast-start toast-top max-w-64 whitespace-normal text-sm"
-      v-if="protocolTips"
+      v-if="tipShowModel"
     >
       <div class="breaks-all alert alert-warning w-72 whitespace-normal">
         <a
           href="https://github.com/Zephyruso/zashboard/blob/main/README.md"
           target="_blank"
         >
-          {{ $t('protocolTips') }}
+          {{ $t(tipContent) }}
         </a>
       </div>
     </div>
@@ -92,10 +92,11 @@
 
 <script setup lang="ts">
 import LanguageSelect from '@/components/settings/LanguageSelect.vue'
+import { useSetup } from '@/composables/setup'
 import router from '@/router'
 import { activeUuid, addBackend, backendList, removeBackend } from '@/store/setup'
 import { MinusCircleIcon } from '@heroicons/vue/24/outline'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 
 const form = reactive({
   protocol: 'http',
@@ -104,7 +105,7 @@ const form = reactive({
   password: '',
 })
 
-const protocolTips = ref(false)
+const { tipContent, tipShowModel, showTip } = useSetup()
 
 const handleSubmit = async (
   form: {
@@ -123,10 +124,7 @@ const handleSubmit = async (
   }
 
   if (window.location.protocol === 'https:' && protocol === 'http' && !quiet) {
-    protocolTips.value = true
-    setTimeout(() => {
-      protocolTips.value = false
-    }, 10000)
+    showTip('protocolTips')
   }
 
   const data = await fetch(`${protocol}://${host}:${port}/version`, {

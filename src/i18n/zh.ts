@@ -91,4 +91,5 @@ export default {
   mediumLatencyDesc: '红色的阈值',
   fonts: '字体',
   statistics: '统计',
+  unauthorizedTip: '未授权，请重新登录',
 }
