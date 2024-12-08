@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.22.0](https://github.com/Zephyruso/zashboard/compare/v1.21.0...v1.22.0) (2024-12-08)
+
+
+### Features
+
+* allow setting protocol in params-based setup ([#70](https://github.com/Zephyruso/zashboard/issues/70)) ([1c26b96](https://github.com/Zephyruso/zashboard/commit/1c26b960579f502834ae045697ed970e79adb0f2))
+* jump to settings page when request status's code is `401` ([#69](https://github.com/Zephyruso/zashboard/issues/69)) ([dd0a044](https://github.com/Zephyruso/zashboard/commit/dd0a04441f6010d225337779f0616603a96545d8))
+
+
+### Bug Fixes
+
+* icon can not be seen clearly due to [#66](https://github.com/Zephyruso/zashboard/issues/66) ([#67](https://github.com/Zephyruso/zashboard/issues/67)) ([f8c8810](https://github.com/Zephyruso/zashboard/commit/f8c8810eb5f74c6cc88ff96fce4d165f530604ab))
+* unify shadow & rounded ([3f560ac](https://github.com/Zephyruso/zashboard/commit/3f560ac3b3969f025defdb5bee022125d4b5e69d))
+
 ## [1.21.0](https://github.com/Zephyruso/zashboard/compare/v1.20.1...v1.21.0) (2024-12-08)
 
 
