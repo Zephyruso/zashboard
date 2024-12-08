@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.21.0](https://github.com/Zephyruso/zashboard/compare/v1.20.1...v1.21.0) (2024-12-08)
+
+
+### Features
+
+* add ProxyIcon component to ProxyNodeCard ([#66](https://github.com/Zephyruso/zashboard/issues/66)) ([a797085](https://github.com/Zephyruso/zashboard/commit/a7970852d54b6d35763646423313b52ab6192c17))
+* charts in settings & fix websocket reactive ([2a28021](https://github.com/Zephyruso/zashboard/commit/2a28021d949cfb6c34d864fb68e14500937de15d))
+
+
+### Bug Fixes
+
+* chart style ([9e299b7](https://github.com/Zephyruso/zashboard/commit/9e299b745fb5c5b1dde7833198b0dc42167efbb1))
+* make fira sans great again ([9d8d71c](https://github.com/Zephyruso/zashboard/commit/9d8d71ceaa2d6fdebbb75e786b04ada8a905dc6a))
+* set theme color when theme chagne for pwa ([6add135](https://github.com/Zephyruso/zashboard/commit/6add1356f3e1a9c3567976bad80879b62918456b))
+* system ui ([94e2433](https://github.com/Zephyruso/zashboard/commit/94e243324da3a4810d81542656a8cf033d749fce))
+
 ## [1.20.1](https://github.com/Zephyruso/zashboard/compare/v1.20.0...v1.20.1) (2024-12-07)
 
 
