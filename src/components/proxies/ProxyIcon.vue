@@ -1,7 +1,8 @@
 <template>
   <div
     v-if="isDom"
-    class="h-5 w-5 fill-primary"
+    class="h-5 w-5"
+    :class="fill || 'fill-primary'"
     v-html="pureDom"
   />
   <img
@@ -17,6 +18,7 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   icon: string
+  fill?: string
 }>()
 
 const DOM_STARTS_WITH = 'data:image/svg+xml,'

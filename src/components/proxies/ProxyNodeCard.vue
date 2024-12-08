@@ -12,6 +12,7 @@
     <ProxyIcon
       v-if="node.icon"
       :icon="node.icon"
+      :fill="active ? 'fill-primary-content' : 'fill-base-content'"
     />
     <div
       :class="
