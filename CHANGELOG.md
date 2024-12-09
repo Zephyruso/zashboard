@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.22.2](https://github.com/Zephyruso/zashboard/compare/v1.22.1...v1.22.2) (2024-12-09)
+
+
+### Bug Fixes
+
+* is proxy group ([bf6665e](https://github.com/Zephyruso/zashboard/commit/bf6665eb5e9e2b4f6b426456bd10583608924702))
+* proxy ctrl style ([827e626](https://github.com/Zephyruso/zashboard/commit/827e626aa4f10fd5ba40a1e32f7c8f2d7b77d337))
+* proxy node grid ([2d77b57](https://github.com/Zephyruso/zashboard/commit/2d77b57ddb506119d2d8208f511c7487b17db9a0))
+* small shadow ([88c8849](https://github.com/Zephyruso/zashboard/commit/88c88493176900a57119888814877f5a683d5e8f))
+
 ## [1.22.1](https://github.com/Zephyruso/zashboard/compare/v1.22.0...v1.22.1) (2024-12-09)
 
 
