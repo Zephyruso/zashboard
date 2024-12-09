@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.22.1](https://github.com/Zephyruso/zashboard/compare/v1.22.0...v1.22.1) (2024-12-09)
+
+
+### Bug Fixes
+
+* chart style ([3fcfdc0](https://github.com/Zephyruso/zashboard/commit/3fcfdc07af6dcf7d824ff16818769afadd026770))
+* latency color ([8db460a](https://github.com/Zephyruso/zashboard/commit/8db460aeebc9cfd97f7085049b3835b17273deed))
+* preview color & restart core ([a9f55d9](https://github.com/Zephyruso/zashboard/commit/a9f55d99e76cd6fe7be1be767e550f9531a2e8ad))
+* provider style ([36fb61e](https://github.com/Zephyruso/zashboard/commit/36fb61e7cd9dfd9e8060877dcbc99946bb46f64a))
+
 ## [1.22.0](https://github.com/Zephyruso/zashboard/compare/v1.21.0...v1.22.0) (2024-12-09)
 
 
