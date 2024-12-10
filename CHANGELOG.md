@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.23.0](https://github.com/Zephyruso/zashboard/compare/v1.22.2...v1.23.0) (2024-12-10)
+
+
+### Features
+
+* auto update ([1ffc2fb](https://github.com/Zephyruso/zashboard/commit/1ffc2fb93177df314d4112f9b217c06015d724f8))
+* countup style for latency ([8ed0b92](https://github.com/Zephyruso/zashboard/commit/8ed0b92a281e979c1a1bca172d797d80d89f758d))
+
+
+### Bug Fixes
+
+* auto update -&gt; auto upgrade ([6afe9b6](https://github.com/Zephyruso/zashboard/commit/6afe9b640fd7a44ee9fa284da6d49c512ce016a7))
+* charts font ([574ef6b](https://github.com/Zephyruso/zashboard/commit/574ef6bb8b9e38ce185f81d852d966cfce6f32de))
+* proxy card style ([5803d86](https://github.com/Zephyruso/zashboard/commit/5803d8696280b1051c4b957a6a8b7ee91aabe216))
+* proxy node style ([72bef99](https://github.com/Zephyruso/zashboard/commit/72bef9980263adbf63687b89e5f87dba3a047ca2))
+* rulePayload filter ([1ff658b](https://github.com/Zephyruso/zashboard/commit/1ff658bf1a4d4a94c718ebe26c993392d4d3822c))
+* sourceip filter opts ([9d7d984](https://github.com/Zephyruso/zashboard/commit/9d7d984fafdc0041280c7c76e1390e4dc7ce4fc8))
+
 ## [1.22.2](https://github.com/Zephyruso/zashboard/compare/v1.22.1...v1.22.2) (2024-12-09)
 
 
