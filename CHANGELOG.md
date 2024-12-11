@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.25.0](https://github.com/Zephyruso/zashboard/compare/v1.24.0...v1.25.0) (2024-12-11)
+
+
+### Features
+
+* connections chart ([eb779f6](https://github.com/Zephyruso/zashboard/commit/eb779f648cf6528e14ae9ef24fad2479f0a2b282))
+* ip label in logs ([26b721e](https://github.com/Zephyruso/zashboard/commit/26b721e05fbc246317fcc9a5e9df6e27bb001e9b))
+
+
+### Bug Fixes
+
+* handle empty secondaryPath in SetupPage ([#78](https://github.com/Zephyruso/zashboard/issues/78)) ([0446297](https://github.com/Zephyruso/zashboard/commit/04462972404ed93fb6026f8e8b8096cbf649d819))
+* login ([80bc57a](https://github.com/Zephyruso/zashboard/commit/80bc57a452968073c8fce41251cff2d461bfced2))
+
 ## [1.24.0](https://github.com/Zephyruso/zashboard/compare/v1.23.0...v1.24.0) (2024-12-11)
 
 
