@@ -194,7 +194,7 @@ if (query.has('hostname')) {
       : query.get('https')
         ? 'https'
         : window.location.protocol.replace(':', ''),
-    secondaryPath: query.get('secondaryPath') as string,
+    secondaryPath: (query.get('secondaryPath') as string) || '',
     host: query.get('hostname') as string,
     port: Number(query.get('port')),
     password: query.get('secret') as string,
