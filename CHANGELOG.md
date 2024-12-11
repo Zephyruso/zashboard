@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.25.0](https://github.com/Zephyruso/zashboard/compare/v1.24.0...v1.25.0) (2024-12-11)
+
+
+### Features
+
+* connections chart ([eb779f6](https://github.com/Zephyruso/zashboard/commit/eb779f648cf6528e14ae9ef24fad2479f0a2b282))
+
 ## [1.24.0](https://github.com/Zephyruso/zashboard/compare/v1.23.0...v1.24.0) (2024-12-11)
 
 

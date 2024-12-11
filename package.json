@@ -1,6 +1,6 @@
 {
   "name": "zashboard",
-  "version": "1.24.0",
+  "version": "1.25.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
