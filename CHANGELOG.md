@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.24.0](https://github.com/Zephyruso/zashboard/compare/v1.23.0...v1.24.0) (2024-12-11)
+
+
+### Features
+
+* pauseable chart ([eb92569](https://github.com/Zephyruso/zashboard/commit/eb925694d13886a55ef78746341360b9b7dff95d))
+* secondary path ([1867177](https://github.com/Zephyruso/zashboard/commit/18671772058a18130a86783ae27ca332c13457ad))
+
+
+### Bug Fixes
+
+* style ([9760297](https://github.com/Zephyruso/zashboard/commit/9760297b012c3ae01bc4e2ce5eca753714b1627f))
+* tooltip for charts ([4f44be4](https://github.com/Zephyruso/zashboard/commit/4f44be424302065935c84da04ed7b67937fda573))
+
 ## [1.23.0](https://github.com/Zephyruso/zashboard/compare/v1.22.2...v1.23.0) (2024-12-10)
 
 
