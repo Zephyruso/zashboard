@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.26.0](https://github.com/Zephyruso/zashboard/compare/v1.25.0...v1.26.0) (2024-12-12)
+
+
+### Features
+
+* log retention limit ([267df17](https://github.com/Zephyruso/zashboard/commit/267df17abd4bbf92131b9243dcfcadf9f75a860b))
+* swap for navbar ([030f6e9](https://github.com/Zephyruso/zashboard/commit/030f6e9e97cc953caa22d1283ac52cf63851483b))
+* virtual scroller for connections ([8239b83](https://github.com/Zephyruso/zashboard/commit/8239b83d0b470fc171612a1f09c62ccd22b4ec28))
+* virtual scroller for logs ([22ed83e](https://github.com/Zephyruso/zashboard/commit/22ed83eadc90cafea8b221bd1e42c70827b6765c))
+
+
+### Bug Fixes
+
+* **autoUpgrade:** upgradeCoreAPI-&gt;upgradeUIAPI ([#79](https://github.com/Zephyruso/zashboard/issues/79)) ([eb6fb92](https://github.com/Zephyruso/zashboard/commit/eb6fb921bdedd12de9f11a2d3fdeaeae61efc02d))
+* reduce dom usage ([dabeee7](https://github.com/Zephyruso/zashboard/commit/dabeee7d95d31bcfc52c4cf167a974ff2fcc9463))
+
 ## [1.25.0](https://github.com/Zephyruso/zashboard/compare/v1.24.0...v1.25.0) (2024-12-11)
 
 
