@@ -1,4 +1,4 @@
-import { fetchIsUIUpdateAvailable, upgradeCoreAPI } from '@/api'
+import { fetchIsUIUpdateAvailable, upgradeUIAPI } from '@/api'
 import { autoUpgrade } from '@/store/settings'
 import { ref } from 'vue'
 
@@ -8,7 +8,7 @@ export const useSettings = () => {
   const checkUIUpdate = async () => {
     isUIUpdateAvailable.value = await fetchIsUIUpdateAvailable()
     if (isUIUpdateAvailable.value && autoUpgrade.value) {
-      upgradeCoreAPI()
+      upgradeUIAPI()
     }
   }
 
