@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.26.2](https://github.com/Zephyruso/zashboard/compare/v1.26.1...v1.26.2) (2024-12-12)
+
+
+### Bug Fixes
+
+* height for pwa ([e848e94](https://github.com/Zephyruso/zashboard/commit/e848e947fc41698361b42eedf27263ef067341d7))
+* padding ([8443931](https://github.com/Zephyruso/zashboard/commit/8443931c15be60308c6aa2924c90e44ff3b0f096))
+* reduce dom ([9799232](https://github.com/Zephyruso/zashboard/commit/9799232745e586d4dc02c5d83cc6bf1bd0f8dec8))
+* reduce dom for proxy group ([86cf36c](https://github.com/Zephyruso/zashboard/commit/86cf36c0b72de30fa3dd58ad79d75280bb361b0c))
+* sidebar collapse btn & input clear btn ([b19128d](https://github.com/Zephyruso/zashboard/commit/b19128d8f34151c036d95b791196d19ee3685dc0))
+* virtual scroller for rule ([0a35b87](https://github.com/Zephyruso/zashboard/commit/0a35b8713415c49b2de3b3e783112998080d82aa))
+
 ## [1.26.1](https://github.com/Zephyruso/zashboard/compare/v1.26.0...v1.26.1) (2024-12-12)
 
 
