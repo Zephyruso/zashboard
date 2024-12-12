@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.26.1](https://github.com/Zephyruso/zashboard/compare/v1.26.0...v1.26.1) (2024-12-12)
+
+
+### Bug Fixes
+
+* scroll for logs & style ([17170bd](https://github.com/Zephyruso/zashboard/commit/17170bd325d71a54eebd97fdc276f969cc159a01))
+* virtual scroller for connections card ([7549eb3](https://github.com/Zephyruso/zashboard/commit/7549eb34171bbb04be965df3cf08ba2be841462b))
+
 ## [1.26.0](https://github.com/Zephyruso/zashboard/compare/v1.25.0...v1.26.0) (2024-12-12)
 
 
