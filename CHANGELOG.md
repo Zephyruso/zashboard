@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.27.1](https://github.com/Zephyruso/zashboard/compare/v1.27.0...v1.27.1) (2024-12-13)
+
+
+### Bug Fixes
+
+* fuck you safari ([3a73475](https://github.com/Zephyruso/zashboard/commit/3a7347594a6160c807c2631d4bb02b85944fadf1))
+* log performonce ([f189598](https://github.com/Zephyruso/zashboard/commit/f18959802471a418df1c66f3c26ad9a956271451))
+* performance ([e35e1db](https://github.com/Zephyruso/zashboard/commit/e35e1dbf2bfbcfef2ea3a363594be9ad837ed0a4))
+
 ## [1.27.0](https://github.com/Zephyruso/zashboard/compare/v1.26.2...v1.27.0) (2024-12-13)
 
 
