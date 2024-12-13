@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.27.0](https://github.com/Zephyruso/zashboard/compare/v1.26.2...v1.27.0) (2024-12-13)
+
+
+### Features
+
+* DNS query & latency rolling effect cfg ([f7896c5](https://github.com/Zephyruso/zashboard/commit/f7896c57df6e74948c24e08c5c5fca6cc715d1be))
+
+
+### Bug Fixes
+
+* latency countup performance ([86ea651](https://github.com/Zephyruso/zashboard/commit/86ea65191f628bd04000fbe8f13118e3026e1651))
+
 ## [1.26.2](https://github.com/Zephyruso/zashboard/compare/v1.26.1...v1.26.2) (2024-12-12)
 
 
