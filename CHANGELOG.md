@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.27.2](https://github.com/Zephyruso/zashboard/compare/v1.27.1...v1.27.2) (2024-12-14)
+
+
+### Bug Fixes
+
+* cdn fonts ([c8fb7b1](https://github.com/Zephyruso/zashboard/commit/c8fb7b17a49740ba2c0797fcdb2091ead98985a7))
+* cfg for rolling effect ([4ff2987](https://github.com/Zephyruso/zashboard/commit/4ff2987d5bd9bdd02f9eb337d35e132c354f156f))
+* style ([b788a8e](https://github.com/Zephyruso/zashboard/commit/b788a8e709e2292f1613ab147c7f2cc7fd64b032))
+* tippy -&gt; tooltip ([9d5f882](https://github.com/Zephyruso/zashboard/commit/9d5f882cc1479bb38b816ce7612f8d288fba1d37))
+* tooltip ([f900fe3](https://github.com/Zephyruso/zashboard/commit/f900fe378bc31edc6ce2b801dd3600d7c6667654))
+
 ## [1.27.1](https://github.com/Zephyruso/zashboard/compare/v1.27.0...v1.27.1) (2024-12-13)
 
 
