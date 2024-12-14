@@ -6,9 +6,11 @@ const isUIUpdateAvailable = ref(false)
 
 export const useSettings = () => {
   const checkUIUpdate = async () => {
-    isUIUpdateAvailable.value = await fetchIsUIUpdateAvailable()
-    if (isUIUpdateAvailable.value && autoUpgrade.value) {
-      upgradeUIAPI()
+    if (autoUpgrade.value) {
+      isUIUpdateAvailable.value = await fetchIsUIUpdateAvailable()
+      if (isUIUpdateAvailable.value) {
+        upgradeUIAPI()
+      }
     }
   }
 
