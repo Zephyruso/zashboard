@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.28.0](https://github.com/Zephyruso/zashboard/compare/v1.27.2...v1.28.0) (2024-12-16)
+
+
+### Features
+
+* add `/setup` route for SetupPage ([#88](https://github.com/Zephyruso/zashboard/issues/88)) ([684ee20](https://github.com/Zephyruso/zashboard/commit/684ee2062b2ba1dff8b18af1f5fc2234b024c23c))
+* CNAME ([f4d87c3](https://github.com/Zephyruso/zashboard/commit/f4d87c3e4b93292f0c2de1262ab63d1edda65852))
+* font & charts & proxy group style ([ec438ed](https://github.com/Zephyruso/zashboard/commit/ec438edb112ee074aaab3c53f89bf335754a745b))
+
+
+### Bug Fixes
+
+* lazy new countup ([96de66b](https://github.com/Zephyruso/zashboard/commit/96de66b2fedc668a41a89d6ecf850a920d22bb4f))
+* router ([a9a0202](https://github.com/Zephyruso/zashboard/commit/a9a0202b1fa054e199b4ca7273a3bff942460a53))
+* start time sort ([7cf335a](https://github.com/Zephyruso/zashboard/commit/7cf335a8f979e6eb22c753b226911fcd569272ad))
+
 ## [1.27.2](https://github.com/Zephyruso/zashboard/compare/v1.27.1...v1.27.2) (2024-12-14)
 
 
