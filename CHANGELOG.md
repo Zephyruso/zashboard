@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.28.3](https://github.com/Zephyruso/zashboard/compare/v1.28.2...v1.28.3) (2024-12-16)
+
+
+### Bug Fixes
+
+* proxies ctrl style ([f437696](https://github.com/Zephyruso/zashboard/commit/f4376960b330c372ac286c1be19c2ece23dc537b))
+* proxy group style ([cd0291d](https://github.com/Zephyruso/zashboard/commit/cd0291d7d9148322ac3f2b3a145a07ea1bab0771))
+
 ## [1.28.2](https://github.com/Zephyruso/zashboard/compare/v1.28.1...v1.28.2) (2024-12-16)
 
 
