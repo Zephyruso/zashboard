@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.28.1](https://github.com/Zephyruso/zashboard/compare/v1.28.0...v1.28.1) (2024-12-16)
+
+
+### Bug Fixes
+
+* proxy group style & regex ip label ([ddb8dfe](https://github.com/Zephyruso/zashboard/commit/ddb8dfe9c55f9c6176898518bdf561ddd54f8779))
+
 ## [1.28.0](https://github.com/Zephyruso/zashboard/compare/v1.27.2...v1.28.0) (2024-12-16)
 
 
