@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.28.2](https://github.com/Zephyruso/zashboard/compare/v1.28.1...v1.28.2) (2024-12-16)
+
+
+### Bug Fixes
+
+* performance ([710a4cb](https://github.com/Zephyruso/zashboard/commit/710a4cb0f24a8a110a3a818f25f717a0f84bfa15))
+
 ## [1.28.1](https://github.com/Zephyruso/zashboard/compare/v1.28.0...v1.28.1) (2024-12-16)
 
 
