@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.29.0](https://github.com/Zephyruso/zashboard/compare/v1.28.3...v1.29.0) (2024-12-17)
+
+
+### Features
+
+* core update check & fix ([8694a3a](https://github.com/Zephyruso/zashboard/commit/8694a3ae85cf6a7ad81fd30bbc1f37ccdd96c7b1))
+
+
+### Bug Fixes
+
+* render block by cdn ([a00a071](https://github.com/Zephyruso/zashboard/commit/a00a07152f2d05ca1019c96bb92d767524d7ffe9))
+
 ## [1.28.3](https://github.com/Zephyruso/zashboard/compare/v1.28.2...v1.28.3) (2024-12-16)
 
 
