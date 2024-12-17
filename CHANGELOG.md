@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.1](https://github.com/Zephyruso/zashboard/compare/v1.29.0...v1.29.1) (2024-12-17)
+
+
+### Bug Fixes
+
+* performance ([964a733](https://github.com/Zephyruso/zashboard/commit/964a7330aa6aa8f9c01c8b228afc23315e4d59f0))
+
 ## [1.29.0](https://github.com/Zephyruso/zashboard/compare/v1.28.3...v1.29.0) (2024-12-17)
 
 
