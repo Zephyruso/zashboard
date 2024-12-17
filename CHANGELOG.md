@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.29.3](https://github.com/Zephyruso/zashboard/compare/v1.29.2...v1.29.3) (2024-12-17)
+
+
+### Bug Fixes
+
+* core version check ([947df26](https://github.com/Zephyruso/zashboard/commit/947df26c9c009637283a75b500a794e686ba379d))
+* dns query & collpase style ([4b00b29](https://github.com/Zephyruso/zashboard/commit/4b00b29f23d909771463dd83c7f9bf4d58186572))
+
 ## [1.29.2](https://github.com/Zephyruso/zashboard/compare/v1.29.1...v1.29.2) (2024-12-17)
 
 
