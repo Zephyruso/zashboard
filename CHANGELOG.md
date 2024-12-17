@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.29.2](https://github.com/Zephyruso/zashboard/compare/v1.29.1...v1.29.2) (2024-12-17)
+
+
+### Bug Fixes
+
+* card style for mobile in two columns ([cef601b](https://github.com/Zephyruso/zashboard/commit/cef601b212b226ddaa31b288302bf679531e552b))
+* latency tag & collapse style' ([e041f7b](https://github.com/Zephyruso/zashboard/commit/e041f7b66aa933a671f3b019419b89893a7a6840))
+
 ## [1.29.1](https://github.com/Zephyruso/zashboard/compare/v1.29.0...v1.29.1) (2024-12-17)
 
 
