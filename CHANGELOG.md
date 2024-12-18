@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.29.4](https://github.com/Zephyruso/zashboard/compare/v1.29.3...v1.29.4) (2024-12-18)
+
+
+### Bug Fixes
+
+* backend settings layout ([a0febbb](https://github.com/Zephyruso/zashboard/commit/a0febbb181e9f81f0a92410766e4e7815ce600ce))
+* transition for preview ([6dfa379](https://github.com/Zephyruso/zashboard/commit/6dfa3796f27b24f42519b88aef36e89b6fc7ab0e))
+
 ## [1.29.3](https://github.com/Zephyruso/zashboard/compare/v1.29.2...v1.29.3) (2024-12-17)
 
 
