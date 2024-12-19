@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.30.0](https://github.com/Zephyruso/zashboard/compare/v1.29.4...v1.30.0) (2024-12-19)
+
+
+### Features
+
+* backend version in settings ([04dea21](https://github.com/Zephyruso/zashboard/commit/04dea213af06e5cd52a786c57e4404a5b5b7b80a))
+* import configs in setup page & rule style ([1e816e4](https://github.com/Zephyruso/zashboard/commit/1e816e45879f749c7467e8408e87a1f62a9cdaad))
+* index for rules provider ([a54d48f](https://github.com/Zephyruso/zashboard/commit/a54d48f01bec8b89058a5c60972cf80983acf5b8))
+* new rule card style ([6313cc8](https://github.com/Zephyruso/zashboard/commit/6313cc82751ae46e148d27452f3782ad785963ce))
+
+
+### Bug Fixes
+
+* backend version check & provider collapse title ([151872a](https://github.com/Zephyruso/zashboard/commit/151872a28b4d741f3c623a7cb09a0b3dc64fd13d))
+* options label for old safari ([8631a8c](https://github.com/Zephyruso/zashboard/commit/8631a8cd65e1828150a82c36479157c6d675fbf5))
+* tooltip & font style ([fa36b55](https://github.com/Zephyruso/zashboard/commit/fa36b55b619433edfd4b3b647da643210002631c))
+
 ## [1.29.4](https://github.com/Zephyruso/zashboard/compare/v1.29.3...v1.29.4) (2024-12-18)
 
 
