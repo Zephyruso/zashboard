@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.30.1](https://github.com/Zephyruso/zashboard/compare/v1.30.0...v1.30.1) (2024-12-19)
+
+
+### Bug Fixes
+
+* unpkg -&gt; jsdelivr ([146eb83](https://github.com/Zephyruso/zashboard/commit/146eb8397b606bbd3d17002727b01849bb0e82e2))
+
 ## [1.30.0](https://github.com/Zephyruso/zashboard/compare/v1.29.4...v1.30.0) (2024-12-19)
 
 
