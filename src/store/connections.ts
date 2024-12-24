@@ -68,7 +68,7 @@ export const initConnections = () => {
   }
 }
 
-export const quickFilterRegex = useStorage<string>('config/quick-filter-regex', 'direct')
+export const quickFilterRegex = useStorage<string>('config/quick-filter-regex', 'direct|dns-out')
 export const quickFilterEnabled = useStorage<boolean>('config/quick-filter-enabled', false)
 export const connectionTabShow = ref(CONNECTION_TAB_TYPE.ACTIVE)
 
