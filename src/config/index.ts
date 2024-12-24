@@ -11,6 +11,7 @@ export const NOT_CONNECTED = 0
 export enum LANG {
   EN_US = 'en-US',
   ZH_CN = 'zh-CN',
+  RU_RU = 'ru-RU',
 }
 
 export enum FONTS {
