@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.31.0](https://github.com/Zephyruso/zashboard/compare/v1.30.0...v1.31.0) (2024-12-24)
+
+
+### Features
+
+* auto switch backend ([b153fd0](https://github.com/Zephyruso/zashboard/commit/b153fd021a1b1b376b76bd11e4cac740aa4fe0bc))
+* dual mode for cdn fonts ([ba0fdc7](https://github.com/Zephyruso/zashboard/commit/ba0fdc7ba8b72cef28502cc072422f12ffc1d3a4))
+* ipv6 test ([a654645](https://github.com/Zephyruso/zashboard/commit/a654645321ec89a131c9571d26ab3bea153bcfaa))
+* tip for auto switch ([573f11f](https://github.com/Zephyruso/zashboard/commit/573f11f6c186c90a0566d537c731dc8cb9a409ff))
+
+
+### Bug Fixes
+
+* //version ([50a269d](https://github.com/Zephyruso/zashboard/commit/50a269ddeaa2802f8c976428738a4e6f14e41931))
+* backend available timeout ([756f99f](https://github.com/Zephyruso/zashboard/commit/756f99f62ab896b1e7d3bf4b0bd5e53a0ed7de4f))
+* rule card & ctrls style ([529fe0e](https://github.com/Zephyruso/zashboard/commit/529fe0e478c699cd328d96f49e574d73412978bf))
+
 ## [1.30.0](https://github.com/Zephyruso/zashboard/compare/v1.29.4...v1.30.0) (2024-12-19)
 
 
