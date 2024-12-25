@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.32.0](https://github.com/Zephyruso/zashboard/compare/v1.31.0...v1.32.0) (2024-12-25)
+
+
+### Features
+
+* add ru lang ([#108](https://github.com/Zephyruso/zashboard/issues/108)) ([e28c9b1](https://github.com/Zephyruso/zashboard/commit/e28c9b19805c0ca27d4bfbe9d4c54690b2f69d89))
+* two line proxy card ([f942cd3](https://github.com/Zephyruso/zashboard/commit/f942cd36108913ca2c67a34cc56bba7bd5ce5e18))
+
+
+### Bug Fixes
+
+* ru.ts ([#109](https://github.com/Zephyruso/zashboard/issues/109)) ([f4d4e68](https://github.com/Zephyruso/zashboard/commit/f4d4e68b963de7229f3a9150501e59178a50ead3))
+* style ([3479ab6](https://github.com/Zephyruso/zashboard/commit/3479ab65b565011f593074938c650c3ab163e994))
+* update quick-filter-regex ([#110](https://github.com/Zephyruso/zashboard/issues/110)) ([8efb37a](https://github.com/Zephyruso/zashboard/commit/8efb37a6da61b5b158d062ddb31a04c29d718efb))
+* xs element -&gt; sm element ([d0a160d](https://github.com/Zephyruso/zashboard/commit/d0a160d90d5053aad5be1e38f4ab2cf8282472b8))
+
 ## [1.31.0](https://github.com/Zephyruso/zashboard/compare/v1.30.0...v1.31.0) (2024-12-24)
 
 
