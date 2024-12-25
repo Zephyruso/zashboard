@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.32.1](https://github.com/Zephyruso/zashboard/compare/v1.32.0...v1.32.1) (2024-12-25)
+
+
+### Bug Fixes
+
+* style ([50f9324](https://github.com/Zephyruso/zashboard/commit/50f932464f3d50e53cf1969a6f1918114efa0e88))
+
 ## [1.32.0](https://github.com/Zephyruso/zashboard/compare/v1.31.0...v1.32.0) (2024-12-25)
 
 
