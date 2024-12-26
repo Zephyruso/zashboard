@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.33.0](https://github.com/Zephyruso/zashboard/compare/v1.32.1...v1.33.0) (2024-12-26)
+
+
+### Features
+
+* ports setting for mihomo ([eedcf06](https://github.com/Zephyruso/zashboard/commit/eedcf06383b3ce84097e3a270c4a5ef4967bf8aa))
+
+
+### Bug Fixes
+
+* api for reloadcfg & icon style ([eb17dae](https://github.com/Zephyruso/zashboard/commit/eb17daeca6b6af4b82aa2b50beaf5d6ad81a3063))
+* bigger latency tag ([452243f](https://github.com/Zephyruso/zashboard/commit/452243f4bd6772fa1d4f9c75ff3277598ee70378))
+* connections ctrl style ([f28d404](https://github.com/Zephyruso/zashboard/commit/f28d404d7ea57661f498b0cffdbaad251664919a))
+* missing translate for russian ([7a03b7b](https://github.com/Zephyruso/zashboard/commit/7a03b7b62c4f46ea663f4ffc4f04b39eb80dc294))
+* settings style ([16e893a](https://github.com/Zephyruso/zashboard/commit/16e893a6c67c0a81636bbd8c3285716251544683))
+
 ## [1.32.1](https://github.com/Zephyruso/zashboard/compare/v1.32.0...v1.32.1) (2024-12-25)
 
 
