@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.33.1](https://github.com/Zephyruso/zashboard/compare/v1.33.0...v1.33.1) (2024-12-26)
+
+
+### Bug Fixes
+
+* rule provider style ([50dcc16](https://github.com/Zephyruso/zashboard/commit/50dcc16c3059c3e5c9a1ea39ecdd61d4941e3bc1))
+* settings style ([ba9483d](https://github.com/Zephyruso/zashboard/commit/ba9483d4d144ac51176169f96a5c2e3a21fafcf0))
+* sort by latency for proxy group ([641d324](https://github.com/Zephyruso/zashboard/commit/641d324f88d9a02317c5ae0466b5c205712aab7d))
+
 ## [1.33.0](https://github.com/Zephyruso/zashboard/compare/v1.32.1...v1.33.0) (2024-12-26)
 
 
