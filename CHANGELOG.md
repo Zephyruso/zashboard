@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.35.0](https://github.com/Zephyruso/zashboard/compare/v1.34.0...v1.35.0) (2024-12-27)
+
+
+### Features
+
+* settings for proxy card size ([0e19b2d](https://github.com/Zephyruso/zashboard/commit/0e19b2dd04b3f6fd10aee4833d1f2b5798eac10e))
+
+
+### Bug Fixes
+
+* remove reload cfgs for sing-box ([4bad656](https://github.com/Zephyruso/zashboard/commit/4bad656eb0e35fa254bcebf6638eab88ea65c2be))
+
 ## [1.34.0](https://github.com/Zephyruso/zashboard/compare/v1.33.1...v1.34.0) (2024-12-27)
 
 
