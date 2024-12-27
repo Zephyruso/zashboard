@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.34.0](https://github.com/Zephyruso/zashboard/compare/v1.33.1...v1.34.0) (2024-12-27)
+
+
+### Features
+
+* settings for table size ([61ffe06](https://github.com/Zephyruso/zashboard/commit/61ffe0648392060ae4572935c019085fced7b0b6))
+
+
+### Bug Fixes
+
+* bigger proxy card ([af238be](https://github.com/Zephyruso/zashboard/commit/af238becf57553a09c66e505be8c94d1b29dbbc0))
+* chart style ([d036723](https://github.com/Zephyruso/zashboard/commit/d036723c692f77b2eadcd927c239c885684d9d99))
+* metacubex logo ([73c56f9](https://github.com/Zephyruso/zashboard/commit/73c56f9b49fa7d85dc2377ef919f31489ac0f35f))
+
 ## [1.33.1](https://github.com/Zephyruso/zashboard/compare/v1.33.0...v1.33.1) (2024-12-26)
 
 
