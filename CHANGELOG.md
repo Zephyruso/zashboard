@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.36.0](https://github.com/Zephyruso/zashboard/compare/v1.35.0...v1.36.0) (2024-12-29)
+
+
+### Features
+
+* connection status ([f9a05b0](https://github.com/Zephyruso/zashboard/commit/f9a05b0ded6d022ce6a26fd6f89d098e719b4187))
+* ipcheck ([7c62958](https://github.com/Zephyruso/zashboard/commit/7c629584a96989adde91cdb209b2f4139f2a85ef))
+
 ## [1.35.0](https://github.com/Zephyruso/zashboard/compare/v1.34.0...v1.35.0) (2024-12-27)
 
 
