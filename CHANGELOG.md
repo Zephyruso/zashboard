@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.38.0](https://github.com/Zephyruso/zashboard/compare/v1.37.0...v1.38.0) (2024-12-30)
+
+
+### Features
+
+* customizable connection card ([b7a67bd](https://github.com/Zephyruso/zashboard/commit/b7a67bdd8a43979a4ccbe4eac51d5bdd2c99b82c))
+* latency of cloudflare ([0da167d](https://github.com/Zephyruso/zashboard/commit/0da167def4a0c2967b67d9bb004d381ab6ad1e46))
+* overview page ([f1eaf27](https://github.com/Zephyruso/zashboard/commit/f1eaf2778975c0bf9bddde91f22a96327d363b09))
+
+
+### Bug Fixes
+
+* connections card style ([a11823e](https://github.com/Zephyruso/zashboard/commit/a11823ec50926e25e9d602bc4dc3afd0de93632c))
+* rules icon ([03ef6e0](https://github.com/Zephyruso/zashboard/commit/03ef6e0b535b02b0751ac16903bf3cf3a969be9d))
+* subscription info is null & overview page ([1f17bba](https://github.com/Zephyruso/zashboard/commit/1f17bba66a289974aaacba443f003df478ba7156))
+
 ## [1.37.0](https://github.com/Zephyruso/zashboard/compare/v1.36.0...v1.37.0) (2024-12-30)
 
 
