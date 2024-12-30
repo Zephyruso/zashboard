@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.37.0](https://github.com/Zephyruso/zashboard/compare/v1.36.0...v1.37.0) (2024-12-30)
+
+
+### Features
+
+* carousel ([b8689c6](https://github.com/Zephyruso/zashboard/commit/b8689c648cab18da6aab68e66139f208bcfc4ae1))
+* netease -&gt; openai ([3521796](https://github.com/Zephyruso/zashboard/commit/352179690a3e19ea8e32ba26b8d5c5d168e96fad))
+* overview ([eba9dff](https://github.com/Zephyruso/zashboard/commit/eba9dff740e1c75aff5e467c14b962bb8d88e166))
+* sticky thead ([0f91378](https://github.com/Zephyruso/zashboard/commit/0f91378f177d9fbb7736f64bb0898b54e9c3809f))
+
 ## [1.36.0](https://github.com/Zephyruso/zashboard/compare/v1.35.0...v1.36.0) (2024-12-29)
 
 
