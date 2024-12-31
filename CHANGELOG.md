@@ -1,5 +1,13 @@
 # Changelog
 
+# Changelog
+
+## [1.39.1](https://github.com/Zephyruso/zashboard/compare/v1.39.0...v1.39.1) (2024-12-31)
+
+### Bug Fixes
+
+* close conn for card ([bcc7e82](https://github.com/Zephyruso/zashboard/commit/bcc7e82b1709eda1a30ed1f6ac13baf53d280dee))
+
 ## [1.39.0](https://github.com/Zephyruso/zashboard/compare/v1.38.0...v1.39.0) (2024-12-31)
 
 
