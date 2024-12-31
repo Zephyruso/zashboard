@@ -2,6 +2,22 @@
 
 # Changelog
 
+## [1.42.0](https://github.com/Zephyruso/zashboard/compare/v1.41.0...v1.42.0) (2024-12-31)
+
+
+### Features
+
+* options for transparent ([3c4b986](https://github.com/Zephyruso/zashboard/commit/3c4b986ffbf207a94b0c1e787fb177e47c1dcb9a))
+* search for rules ([8f7c67e](https://github.com/Zephyruso/zashboard/commit/8f7c67e3b1fa09c2bdcf1ac4dbdfb7d58568d129))
+
+
+### Bug Fixes
+
+* connections card & overview style ([690edfc](https://github.com/Zephyruso/zashboard/commit/690edfc677a23fd4f81377ac7de906cb8dafdca1))
+* desitination ([21a5990](https://github.com/Zephyruso/zashboard/commit/21a5990738f9987c3c7fa62b6f37408d0a90cc21))
+* rule size ([917ecc2](https://github.com/Zephyruso/zashboard/commit/917ecc203b26987779fc94541cdf006e240859ae))
+* style ([c969408](https://github.com/Zephyruso/zashboard/commit/c969408173e9fea57eab884f67bbb08580b4b344))
+
 ## [1.41.0](https://github.com/Zephyruso/zashboard/compare/v1.40.0...v1.41.0) (2024-12-31)
 
 
