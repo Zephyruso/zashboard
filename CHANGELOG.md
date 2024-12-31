@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.39.2](https://github.com/Zephyruso/zashboard/compare/v1.39.1...v1.39.2) (2024-12-31)
+
+
+### Bug Fixes
+
+* remove default img ([668c00a](https://github.com/Zephyruso/zashboard/commit/668c00ad0d38df2c37a0f858b5a7e54abdf194d7))
+
 ## [1.39.1](https://github.com/Zephyruso/zashboard/compare/v1.39.0...v1.39.1) (2024-12-31)
 
 ### Bug Fixes
