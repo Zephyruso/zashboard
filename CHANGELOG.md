@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.40.0](https://github.com/Zephyruso/zashboard/compare/v1.39.2...v1.40.0) (2024-12-31)
+
+
+### Features
+
+* option for split overview page ([5076f4e](https://github.com/Zephyruso/zashboard/commit/5076f4e7b0478f94f374ad52098cab98e7dcee8d))
+* sort direction for card ([17e3c43](https://github.com/Zephyruso/zashboard/commit/17e3c43de8b14558f152f0eda0caebd34dcb2da9))
+
+
+### Bug Fixes
+
+* default pages ([fffa435](https://github.com/Zephyruso/zashboard/commit/fffa435ee8475864964701256b8ac55d436543c7))
+* inner sourceip filter ([215031d](https://github.com/Zephyruso/zashboard/commit/215031d4688a8689e4bb4ad495e774e62101cb6f))
+
 ## [1.39.2](https://github.com/Zephyruso/zashboard/compare/v1.39.1...v1.39.2) (2024-12-31)
 
 
