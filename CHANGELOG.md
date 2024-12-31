@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.41.0](https://github.com/Zephyruso/zashboard/compare/v1.40.0...v1.41.0) (2024-12-31)
+
+
+### Features
+
+* option for hidden groups ([4da005e](https://github.com/Zephyruso/zashboard/commit/4da005ed8f85dc3453c41ffffa6dec6c7b28d2fc))
+
+
+### Bug Fixes
+
+* charts style ([5ca830e](https://github.com/Zephyruso/zashboard/commit/5ca830ed0d0c7cb67bf0b360048728927e602600))
+* connections ctrl style ([9f5cd96](https://github.com/Zephyruso/zashboard/commit/9f5cd965558ffb11ccfe8afa606d38b3c5253b9c))
+* overview style ([7c33b18](https://github.com/Zephyruso/zashboard/commit/7c33b18f6ff3a8fdacdec1e2d7e25ae96d55041d))
+
 ## [1.40.0](https://github.com/Zephyruso/zashboard/compare/v1.39.2...v1.40.0) (2024-12-31)
 
 
