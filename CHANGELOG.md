@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.39.0](https://github.com/Zephyruso/zashboard/compare/v1.38.0...v1.39.0) (2024-12-31)
+
+
+### Features
+
+* bing bg ([ce276a3](https://github.com/Zephyruso/zashboard/commit/ce276a31d474d792cfe146e9b5318f476d2c2b22))
+
+
+### Bug Fixes
+
+* default theme -&gt; auto switch theme ([0e19ac6](https://github.com/Zephyruso/zashboard/commit/0e19ac6a18f28ea407c3f594e0a87175d4785fe8))
+* settings for overview & sourceip is null ([539de88](https://github.com/Zephyruso/zashboard/commit/539de88fad71a33c5ed62971d0057ed51e687aed))
+* style ([56289dc](https://github.com/Zephyruso/zashboard/commit/56289dc3b1962557e6158d1d967bef9287a86edc))
+
 ## [1.38.0](https://github.com/Zephyruso/zashboard/compare/v1.37.0...v1.38.0) (2024-12-30)
 
 
