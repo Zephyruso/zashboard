@@ -59,7 +59,7 @@ const ru: LANG_MESSAGE = {
   updated: 'Обновлено',
   upgradeUI: 'Обновить панель',
   updateAllProviders: 'Обновить все провайдеры',
-  reloadConfigs: 'Пере конфигурации',
+  reloadConfigs: 'Перезагрузить конфигурации',
   mode: 'Режим',
   proxySortType: 'Тип сортировки прокси',
   defaultsort: 'По конфигурациям',
