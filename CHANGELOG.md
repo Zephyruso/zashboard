@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.43.0](https://github.com/Zephyruso/zashboard/compare/v1.42.0...v1.43.0) (2025-01-02)
+
+
+### Features
+
+* range input for transparent ([5cd7ed9](https://github.com/Zephyruso/zashboard/commit/5cd7ed9bbdb504d52ccea9c934a0e68af5cbe88f))
+* size for icon ([0b7c54e](https://github.com/Zephyruso/zashboard/commit/0b7c54ed603d94cb076b919410b940568caafa34))
+
+
+### Bug Fixes
+
+* close all btn ([fa4f31c](https://github.com/Zephyruso/zashboard/commit/fa4f31ce6cf6fb4b230a085c04ac1d75d39595ab))
+* style for transparent ([8f9ba4b](https://github.com/Zephyruso/zashboard/commit/8f9ba4b58c71f6cba204cff15df3aaabd838d360))
+
 ## [1.42.0](https://github.com/Zephyruso/zashboard/compare/v1.41.0...v1.42.0) (2024-12-31)
 
 
