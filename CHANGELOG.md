@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.44.0](https://github.com/Zephyruso/zashboard/compare/v1.43.0...v1.44.0) (2025-01-03)
+
+
+### Features
+
+* upload image for bg ([966d5e9](https://github.com/Zephyruso/zashboard/commit/966d5e9c869a0e044ad31489b08ebf5334761c5f))
+
+
+### Bug Fixes
+
+* ru.ts ([#143](https://github.com/Zephyruso/zashboard/issues/143)) ([cae45f4](https://github.com/Zephyruso/zashboard/commit/cae45f46ac87dec5308b08d3e49417c75d1a599f))
+
 ## [1.43.0](https://github.com/Zephyruso/zashboard/compare/v1.42.0...v1.43.0) (2025-01-02)
 
 
