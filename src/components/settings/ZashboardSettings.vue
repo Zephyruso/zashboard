@@ -111,9 +111,15 @@
           >
             {{ $t('upgradeUI') }}
           </button>
-          <div class="sm:hidden"></div>
+          <!-- <div class="sm:hidden"></div> -->
         </template>
 
+        <button
+          class="btn btn-sm"
+          @click="clearIconCache"
+        >
+          {{ $t('clearIconCache') }}
+        </button>
         <button
           class="btn btn-sm"
           @click="exportSettings"
@@ -182,6 +188,30 @@ const handlerClickUpgradeUI = async () => {
     window.location.reload()
   } catch {
     isUIUpgrading.value = false
+  }
+}
+
+const clearIconCache = async () => {
+  const databases = await indexedDB.databases()
+  const dbExists = databases.some((db) => db.name === 'iconCache')
+  if (!dbExists) {
+    console.log('Icon cache does not exist, nothing to clear.')
+    return
+  }
+  const request = indexedDB.open('iconCache', 1)
+  request.onsuccess = () => {
+    const db = request.result
+    if (db.objectStoreNames.contains('icons')) {
+      const transaction = db.transaction('icons', 'readwrite')
+      const store = transaction.objectStore('icons')
+      store.clear()
+      console.log('Icon cache cleared successfully.')
+    } else {
+      console.log('Icon cache does not exist, nothing to clear.')
+    }
+  }
+  request.onerror = () => {
+    console.log('Failed to open icon cache database.')
   }
 }
 
