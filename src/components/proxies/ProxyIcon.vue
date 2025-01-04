@@ -79,22 +79,15 @@ const saveIconToDB = async (key: string, data: string) => {
 }
 
 const fetchAndCacheIcon = async (key: string, iconUrl: string) => {
-  try {
-    const response = await fetch(iconUrl)
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    const blob = await response.blob()
-    const reader = new FileReader()
-    reader.onload = async () => {
-      const dataUrl = reader.result as string
-      await saveIconToDB(key, dataUrl)
-      cachedIcon.value = dataUrl
-    }
-    reader.readAsDataURL(blob)
-  } catch (error) {
-    console.error('Failed to fetch and cache icon:', error)
+  const response = await fetch(iconUrl)
+  const blob = await response.blob()
+  const reader = new FileReader()
+  reader.onload = async () => {
+    const dataUrl = reader.result as string
+    await saveIconToDB(key, dataUrl)
+    cachedIcon.value = dataUrl
   }
+  reader.readAsDataURL(blob)
 }
 
 const loadIcon = async () => {
@@ -107,7 +100,8 @@ const loadIcon = async () => {
       await fetchAndCacheIcon(key, key)
     }
   } catch (error) {
-    console.error('Failed to load icon:', error)
+    console.error('Fallback to original icon:', error)
+    cachedIcon.value = props.icon
   }
 }
 
