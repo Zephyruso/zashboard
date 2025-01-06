@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.46.2](https://github.com/Zephyruso/zashboard/compare/v1.46.1...v1.46.2) (2025-01-06)
+
+
+### Bug Fixes
+
+* proxy group & rule style ([72e17ad](https://github.com/Zephyruso/zashboard/commit/72e17ade6819ac21010d42811fa126898f8b8d8d))
+
 ## [1.46.1](https://github.com/Zephyruso/zashboard/compare/v1.46.0...v1.46.1) (2025-01-06)
 
 
