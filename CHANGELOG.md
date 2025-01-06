@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.46.1](https://github.com/Zephyruso/zashboard/compare/v1.46.0...v1.46.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* rule style ([8a64aeb](https://github.com/Zephyruso/zashboard/commit/8a64aebdb4f0feb8b7a851f19f6ebd811b835bf8))
+
 ## [1.46.0](https://github.com/Zephyruso/zashboard/compare/v1.45.1...v1.46.0) (2025-01-06)
 
 
