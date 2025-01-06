@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.45.0](https://github.com/Zephyruso/zashboard/compare/v1.44.0...v1.45.0) (2025-01-06)
+
+
+### Features
+
+* select proxy by click dot ([296e959](https://github.com/Zephyruso/zashboard/commit/296e959ceda68b803701840de10390e13c88c28e))
+
+
+### Bug Fixes
+
+* connections card type ([a1627fa](https://github.com/Zephyruso/zashboard/commit/a1627fab815d4b0854d1546b52f2e23d916194d5))
+* ctrl style ([2d22041](https://github.com/Zephyruso/zashboard/commit/2d22041ebd4013b70547dec0d78f7569dcfb7670))
+* rules ctrl style ([9522770](https://github.com/Zephyruso/zashboard/commit/9522770a260b7369fabd8ddacb63f5dfb07cc05b))
+
 ## [1.44.0](https://github.com/Zephyruso/zashboard/compare/v1.43.0...v1.44.0) (2025-01-03)
 
 
