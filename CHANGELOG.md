@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.46.0](https://github.com/Zephyruso/zashboard/compare/v1.45.1...v1.46.0) (2025-01-06)
+
+
+### Features
+
+* allow lan & auto upgrade core ([1a9c86c](https://github.com/Zephyruso/zashboard/commit/1a9c86cd424b798292ab06980b5276dc44706d25))
+
+
+### Bug Fixes
+
+* pwa style ([3faea83](https://github.com/Zephyruso/zashboard/commit/3faea836cb26f3903b4b3dd501adf98d9376f267))
+* style for icon ([05eab9d](https://github.com/Zephyruso/zashboard/commit/05eab9df61391df085847820d99dc5916399761b))
+
 ## [1.45.1](https://github.com/Zephyruso/zashboard/compare/v1.45.0...v1.45.1) (2025-01-06)
 
 
