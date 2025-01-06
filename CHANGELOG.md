@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.45.1](https://github.com/Zephyruso/zashboard/compare/v1.45.0...v1.45.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* rule & proxy group style ([a052679](https://github.com/Zephyruso/zashboard/commit/a052679e72f7cb5e0f5526531857fc379a271c66))
+* tooltip style ([f90ba9a](https://github.com/Zephyruso/zashboard/commit/f90ba9a853249597c1fa0f022101ae25e7a129ce))
+
 ## [1.45.0](https://github.com/Zephyruso/zashboard/compare/v1.44.0...v1.45.0) (2025-01-06)
 
 
