@@ -13,48 +13,90 @@ export const isMiddleScreen = computed(() => {
 
 const BACKGROUND_IMAGE = 'background-image'
 export const LOCAL_IMAGE = 'local-image'
-export const saveBase64ToIndexedDB = (value: string) => {
-  const request = window.indexedDB.open('base64', 1)
-  request.onupgradeneeded = () => {
-    const db = request.result
-    db.createObjectStore('base64', { keyPath: 'key' })
-  }
-  request.onsuccess = () => {
-    const db = request.result
-    const tx = db.transaction('base64', 'readwrite')
-    const store = tx.objectStore('base64')
-    store.put({ key: BACKGROUND_IMAGE, value })
-    tx.oncomplete = () => {
-      db.close()
-    }
-  }
-}
 
-export const getBase64FromIndexedDB: () => Promise<string> = () => {
-  return new Promise((resolve) => {
-    const request = window.indexedDB.open('base64', 1)
-    request.onsuccess = () => {
-      const db = request.result
-      const tx = db.transaction('base64', 'readonly')
-      const store = tx.objectStore('base64')
-      const getRequest = store.get(BACKGROUND_IMAGE)
-      getRequest.onsuccess = () => {
-        db.close()
-        resolve(getRequest.result?.value || '')
+const useIndexedDB = (dbKey: string) => {
+  const cacheMap = new Map<string, string>()
+  const openDatabase = () =>
+    new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open(dbKey, 1)
+      request.onupgradeneeded = () => {
+        const db = request.result
+        if (!db.objectStoreNames.contains(dbKey)) {
+          db.createObjectStore(dbKey, { keyPath: 'key' })
+        }
       }
-    }
-  })
-}
+      request.onsuccess = () => {
+        const db = request.result
+        const store = db.transaction(dbKey, 'readonly').objectStore(dbKey)
+        const cursorRequest = store.openCursor()
 
-export const deleteBase64FromIndexedDB = () => {
-  const request = window.indexedDB.open('base64', 1)
-  request.onsuccess = () => {
-    const db = request.result
-    const tx = db.transaction('base64', 'readwrite')
-    const store = tx.objectStore('base64')
-    store.delete(BACKGROUND_IMAGE)
-    tx.oncomplete = () => {
-      db.close()
-    }
+        cursorRequest.onsuccess = (event) => {
+          const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result
+
+          if (cursor) {
+            cacheMap.set(cursor.key as string, cursor.value.value)
+            cursor.continue()
+          } else {
+            resolve(request.result)
+          }
+        }
+        cursorRequest.onerror = () => reject(cursorRequest.error)
+      }
+      request.onerror = () => reject(request.error)
+    })
+
+  const dbPromise = openDatabase()
+
+  const executeTransaction = async <T>(
+    mode: IDBTransactionMode,
+    operation: (store: IDBObjectStore) => IDBRequest<T>,
+  ) => {
+    const db = await dbPromise
+    return new Promise<T>((resolve, reject) => {
+      const transaction = db.transaction(dbKey, mode)
+      const store = transaction.objectStore(dbKey)
+      const request = operation(store)
+
+      request.onsuccess = () => resolve(request.result)
+      request.onerror = () => reject(request.error)
+    })
+  }
+
+  const put = async (key: string, value: string) => {
+    cacheMap.set(key, value)
+    return executeTransaction('readwrite', (store) =>
+      store.put({
+        key,
+        value,
+      }),
+    )
+  }
+
+  const get = async (key: string) => {
+    await dbPromise
+    return cacheMap.get(key)
+  }
+
+  const clear = async () => {
+    cacheMap.clear()
+    return executeTransaction('readwrite', (store) => store.clear())
+  }
+
+  return {
+    put,
+    get,
+    clear,
   }
 }
+
+const backgroundDB = useIndexedDB('base64')
+
+export const saveBase64ToIndexedDB = (val: string) => backgroundDB.put(BACKGROUND_IMAGE, val)
+export const getBase64FromIndexedDB = () => backgroundDB.get(BACKGROUND_IMAGE)
+export const deleteBase64FromIndexedDB = () => backgroundDB.clear()
+
+const iconDB = useIndexedDB('iconCache')
+
+export const saveIconToIndexedDB = iconDB.put
+export const getIconFromIndexedDB = (key: string) => iconDB.get(key)
+export const deleteIconFromIndexedDB = () => iconDB.clear()

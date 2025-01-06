@@ -143,7 +143,12 @@ import LanguageSelect from '@/components/settings/LanguageSelect.vue'
 import { useSettings } from '@/composables/settings'
 import { FONTS } from '@/config'
 import { exportSettings, importSettings } from '@/helper'
-import { deleteBase64FromIndexedDB, LOCAL_IMAGE, saveBase64ToIndexedDB } from '@/helper/utils'
+import {
+  deleteBase64FromIndexedDB,
+  deleteIconFromIndexedDB,
+  LOCAL_IMAGE,
+  saveBase64ToIndexedDB,
+} from '@/helper/utils'
 import {
   autoUpgrade,
   customBackgroundURL,
@@ -192,27 +197,7 @@ const handlerClickUpgradeUI = async () => {
 }
 
 const clearIconCache = async () => {
-  const databases = await indexedDB.databases()
-  const dbExists = databases.some((db) => db.name === 'iconCache')
-  if (!dbExists) {
-    console.log('Icon cache does not exist, nothing to clear.')
-    return
-  }
-  const request = indexedDB.open('iconCache', 1)
-  request.onsuccess = () => {
-    const db = request.result
-    if (db.objectStoreNames.contains('icons')) {
-      const transaction = db.transaction('icons', 'readwrite')
-      const store = transaction.objectStore('icons')
-      store.clear()
-      console.log('Icon cache cleared successfully.')
-    } else {
-      console.log('Icon cache does not exist, nothing to clear.')
-    }
-  }
-  request.onerror = () => {
-    console.log('Failed to open icon cache database.')
-  }
+  deleteIconFromIndexedDB()
 }
 
 const themes = [

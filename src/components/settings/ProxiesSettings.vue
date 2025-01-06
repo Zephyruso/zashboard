@@ -170,7 +170,6 @@ import {
 import { computed } from 'vue'
 
 const hasIcon = computed(() => {
-  console.log(proxyMap.value)
   return Object.values(proxyMap.value).some((proxy) => !!proxy.icon)
 })
 </script>

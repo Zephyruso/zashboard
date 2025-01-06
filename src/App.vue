@@ -37,7 +37,7 @@ const date = dayjs().format('YYYY-MM-DD')
 
 const backgroundInDB = ref('')
 const getBackgroundInDB = async () => {
-  backgroundInDB.value = await getBase64FromIndexedDB()
+  backgroundInDB.value = (await getBase64FromIndexedDB()) || ''
 }
 
 watch(
