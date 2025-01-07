@@ -2,6 +2,23 @@
 
 # Changelog
 
+## [1.47.0](https://github.com/Zephyruso/zashboard/compare/v1.46.2...v1.47.0) (2025-01-07)
+
+
+### Features
+
+* add icon caching and clear cache functionality ([#146](https://github.com/Zephyruso/zashboard/issues/146)) ([1226600](https://github.com/Zephyruso/zashboard/commit/122660054151c0eb58dff9ed17f4e3aac4e354fd))
+* dns query detail ([1bdcd15](https://github.com/Zephyruso/zashboard/commit/1bdcd153d9c903e00f569a28b587d23b9a02301e))
+* proxy chain direction ([ab5a621](https://github.com/Zephyruso/zashboard/commit/ab5a62186792e838358604f13b260a0a34a0a972))
+
+
+### Bug Fixes
+
+* dots tooltip style ([6e32a16](https://github.com/Zephyruso/zashboard/commit/6e32a1693db62e5917cfd6b339ff82d5a2056eb0))
+* opacity style ([321df18](https://github.com/Zephyruso/zashboard/commit/321df188df3129be88246560bac7404653dd8ed9))
+* replace -&gt; ([845d015](https://github.com/Zephyruso/zashboard/commit/845d015a7d5f51fcff3b1c12eb9e41985a2f11f3))
+* style for rule ([201dcf5](https://github.com/Zephyruso/zashboard/commit/201dcf5ec1f5b1edc36b42f572ca9585f9cd3771))
+
 ## [1.46.2](https://github.com/Zephyruso/zashboard/compare/v1.46.1...v1.46.2) (2025-01-06)
 
 
