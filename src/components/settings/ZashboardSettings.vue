@@ -111,15 +111,14 @@
           >
             {{ $t('upgradeUI') }}
           </button>
-          <!-- <div class="sm:hidden"></div> -->
+          <button
+            class="btn btn-sm"
+            @click="clearIconCache"
+          >
+            {{ $t('clearIconCache') }}
+          </button>
         </template>
 
-        <button
-          class="btn btn-sm"
-          @click="clearIconCache"
-        >
-          {{ $t('clearIconCache') }}
-        </button>
         <button
           class="btn btn-sm"
           @click="exportSettings"
@@ -144,8 +143,8 @@ import { useSettings } from '@/composables/settings'
 import { FONTS } from '@/config'
 import { exportSettings, importSettings } from '@/helper'
 import {
+  clearIconFromIndexedDB,
   deleteBase64FromIndexedDB,
-  deleteIconFromIndexedDB,
   LOCAL_IMAGE,
   saveBase64ToIndexedDB,
 } from '@/helper/utils'
@@ -197,7 +196,7 @@ const handlerClickUpgradeUI = async () => {
 }
 
 const clearIconCache = async () => {
-  deleteIconFromIndexedDB()
+  clearIconFromIndexedDB()
 }
 
 const themes = [

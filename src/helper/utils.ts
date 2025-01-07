@@ -82,9 +82,27 @@ const useIndexedDB = (dbKey: string) => {
     return executeTransaction('readwrite', (store) => store.clear())
   }
 
+  const isExists = async (key: string) => {
+    await dbPromise
+    return cacheMap.has(key)
+  }
+
+  const del = async (key: string) => {
+    cacheMap.delete(key)
+    return executeTransaction('readwrite', (store) => store.delete(key))
+  }
+
+  const getAllKeys = async () => {
+    await dbPromise
+    return Array.from(cacheMap.keys())
+  }
+
   return {
     put,
     get,
+    del,
+    getAllKeys,
+    isExists,
     clear,
   }
 }
@@ -99,4 +117,6 @@ const iconDB = useIndexedDB('iconCache')
 
 export const saveIconToIndexedDB = iconDB.put
 export const getIconFromIndexedDB = (key: string) => iconDB.get(key)
-export const deleteIconFromIndexedDB = () => iconDB.clear()
+export const clearIconFromIndexedDB = () => iconDB.clear()
+export const getAllIconKeys = () => iconDB.getAllKeys()
+export const deleteIconFromIndexedDB = (key: string) => iconDB.del(key)

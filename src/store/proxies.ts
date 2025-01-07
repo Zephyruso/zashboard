@@ -7,10 +7,11 @@ import {
   selectProxyAPI,
 } from '@/api'
 import { IPV6_TEST_URL, NOT_CONNECTED } from '@/config'
+import { deleteIconFromIndexedDB, getAllIconKeys } from '@/helper/utils'
 import type { Proxy, ProxyProvider } from '@/types'
 import { useStorage } from '@vueuse/core'
-import { last } from 'lodash'
-import { ref } from 'vue'
+import { compact, difference, last } from 'lodash'
+import { computed, ref, watch } from 'vue'
 import { activeConnections } from './connections'
 import { automaticDisconnection, IPv6test, speedtestTimeout, speedtestUrl } from './settings'
 
@@ -134,3 +135,15 @@ const getNowProxyNodeName = (name: string) => {
 
   return node.name
 }
+
+const allIcons = computed(() => {
+  return compact(Object.values(proxyMap.value).map((proxy) => proxy.icon))
+})
+
+watch(allIcons, async (values) => {
+  const allCachedIcons = await getAllIconKeys()
+
+  difference(allCachedIcons, values).forEach((icon) => {
+    deleteIconFromIndexedDB(icon)
+  })
+})
