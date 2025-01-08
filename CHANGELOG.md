@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.48.0](https://github.com/Zephyruso/zashboard/compare/v1.47.0...v1.48.0) (2025-01-08)
+
+
+### Features
+
+* nav for mobile & network quic ([a38ac31](https://github.com/Zephyruso/zashboard/commit/a38ac310c92250bd1e5143f22d3af4301d9b7f36))
+
+
+### Bug Fixes
+
+* transparent & network type ([dec2173](https://github.com/Zephyruso/zashboard/commit/dec21733eb18510c0e68adf623a28aec75241848))
+
 ## [1.47.0](https://github.com/Zephyruso/zashboard/compare/v1.46.2...v1.47.0) (2025-01-07)
 
 
