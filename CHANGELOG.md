@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.49.0](https://github.com/Zephyruso/zashboard/compare/v1.48.1...v1.49.0) (2025-01-10)
+
+
+### Features
+
+* sniff host ([6a4b091](https://github.com/Zephyruso/zashboard/commit/6a4b09144a12aca14e2a5aaaf5e48a8436bb5e1a))
+
+
+### Bug Fixes
+
+* ws performance ([5a99bdd](https://github.com/Zephyruso/zashboard/commit/5a99bddddf385918dbeec43eeaf965f34d365b16))
+
 ## [1.48.1](https://github.com/Zephyruso/zashboard/compare/v1.48.0...v1.48.1) (2025-01-10)
 
 
