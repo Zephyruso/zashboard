@@ -6,6 +6,7 @@ import { autoUpgradeCore } from '@/store/settings'
 import { activeBackend, activeUuid, removeBackend } from '@/store/setup'
 import type { Backend, Config, DNSQuery, Proxy, ProxyProvider, Rule, RuleProvider } from '@/types'
 import axios from 'axios'
+import { debounce } from 'lodash'
 import ReconnectingWebSocket from 'reconnectingwebsocket'
 import { computed, nextTick, ref, watch } from 'vue'
 
@@ -174,9 +175,11 @@ const createWebSocket = <T>(url: string, searchParams?: Record<string, string>) 
     websocket.close()
   }
 
-  websocket.onmessage = ({ data: message }) => {
+  const messageHanlder = ({ data: message }: { data: string }) => {
     data.value = JSON.parse(message)
   }
+
+  websocket.onmessage = url === 'logs' ? messageHanlder : debounce(messageHanlder, 100)
 
   return {
     data,
