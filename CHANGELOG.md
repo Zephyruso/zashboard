@@ -2,6 +2,15 @@
 
 # Changelog
 
+## [1.48.1](https://github.com/Zephyruso/zashboard/compare/v1.48.0...v1.48.1) (2025-01-10)
+
+
+### Bug Fixes
+
+* group test timeout ([b52f83f](https://github.com/Zephyruso/zashboard/commit/b52f83fe7264057c6bdad803822a822f309a1a0f))
+* tip font ([c48c315](https://github.com/Zephyruso/zashboard/commit/c48c3158d6f4e9a680ab2727d8fbe2ec3824514d))
+* virtual scroller estimate size ([034fe13](https://github.com/Zephyruso/zashboard/commit/034fe132d10752c6fc4181b30c312b7441ee8432))
+
 ## [1.48.0](https://github.com/Zephyruso/zashboard/compare/v1.47.0...v1.48.0) (2025-01-08)
 
 
