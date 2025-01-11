@@ -46,17 +46,16 @@ import {
   getOpenAILatencyAPI,
   getYouTubeLatencyAPI,
 } from '@/api'
-import {
-  baiduLatency,
-  cloudflareLatency,
-  githubLatency,
-  openAILatency,
-  youtubeLatency,
-} from '@/composables/overview'
 import { getColorForLatency } from '@/helper'
 import { autoConnectionCheck } from '@/store/settings'
 import { BoltIcon } from '@heroicons/vue/24/outline'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+
+const baiduLatency = ref('')
+const openAILatency = ref('')
+const githubLatency = ref('')
+const youtubeLatency = ref('')
+const cloudflareLatency = ref('')
 
 const getLatency = async () => {
   getBaiduLatencyAPI().then((res) => {

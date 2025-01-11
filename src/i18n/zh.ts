@@ -128,6 +128,7 @@ const zh: LANG_MESSAGE = {
   proxyChainDirection: '代理链方向',
   reverse: '反向',
   sniffHost: '嗅探主机',
+  ipScreenshotTip: '截图时请确保隐藏IP',
 }
 
 export default zh

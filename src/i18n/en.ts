@@ -127,6 +127,7 @@ const en = {
   proxyChainDirection: 'Proxy Chain Direction',
   reverse: 'Reverse',
   sniffHost: 'Sniff Host',
+  ipScreenshotTip: 'Please make sure to hide the IP when taking screenshots.',
 }
 
 export type LANG_MESSAGE = typeof en

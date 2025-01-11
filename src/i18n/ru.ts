@@ -129,7 +129,8 @@ const ru: LANG_MESSAGE = {
   allowLan: 'Разрешить локальную сеть',
   proxyChainDirection: 'Направление цепочки прокси',
   reverse: 'Обратное',
-  sniffHost: 'Sniff Host',
+  sniffHost: 'Захватывать хост',
+  ipScreenshotTip: 'Пожалуйста, убедитесь, что реальный IP скрыт при создании скриншотов.',
 }
 
 export default ru

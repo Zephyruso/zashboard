@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getIPForGlobalAPI, queryDNSAPI, type GlobalIPType } from '@/api'
+import { getIPFromIpsbAPI, queryDNSAPI, type GlobalIPType } from '@/api'
 import type { DNSQuery } from '@/types'
 import { reactive, ref } from 'vue'
 import TextInput from '../common/TextInput.vue'
@@ -61,7 +61,7 @@ const query = async () => {
   resultList.value = data.Answer
 
   if (resultList.value?.length) {
-    details.value = await getIPForGlobalAPI(resultList.value[0].data)
+    details.value = await getIPFromIpsbAPI(resultList.value[0].data)
   } else {
     details.value = null
   }
