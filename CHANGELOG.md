@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.49.0](https://github.com/Zephyruso/zashboard/compare/v1.48.1...v1.49.0) (2025-01-11)
+
+
+### Features
+
+* ipip.net ([4816cd8](https://github.com/Zephyruso/zashboard/commit/4816cd8a0f28a1fbc9671e02433cc32ba6137f0a))
+* sniff host ([6a4b091](https://github.com/Zephyruso/zashboard/commit/6a4b09144a12aca14e2a5aaaf5e48a8436bb5e1a))
+
+
+### Bug Fixes
+
+* ws performance ([ac5ad2e](https://github.com/Zephyruso/zashboard/commit/ac5ad2e26eb7b9ff2f5b367a6b3a44c0ac33a62b))
+
 ## [1.48.1](https://github.com/Zephyruso/zashboard/compare/v1.48.0...v1.48.1) (2025-01-10)
 
 
