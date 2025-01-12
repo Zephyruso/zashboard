@@ -2,6 +2,16 @@
 
 # Changelog
 
+## [1.49.1](https://github.com/Zephyruso/zashboard/compare/v1.49.0...v1.49.1) (2025-01-12)
+
+
+### Bug Fixes
+
+* latency test failed ([8d1e31b](https://github.com/Zephyruso/zashboard/commit/8d1e31b54ba537561b7a09ccdcf1b3b23b8f0033))
+* parse of ipip.net ([711fef9](https://github.com/Zephyruso/zashboard/commit/711fef9b279563ad2b92fee863a4dd398dca046d))
+* select blink in firefox ([040b792](https://github.com/Zephyruso/zashboard/commit/040b7925880c09e3aa2c4b521572e3d62264543c))
+* tooltip style ([034b18d](https://github.com/Zephyruso/zashboard/commit/034b18db6d3da7bf50bed030f46b8726db6b20c0))
+
 ## [1.49.0](https://github.com/Zephyruso/zashboard/compare/v1.48.1...v1.49.0) (2025-01-11)
 
 
