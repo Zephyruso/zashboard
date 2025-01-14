@@ -2,6 +2,23 @@
 
 # Changelog
 
+## [1.50.0](https://github.com/Zephyruso/zashboard/compare/v1.49.1...v1.50.0) (2025-01-14)
+
+
+### Features
+
+* display details modal for table & card click ([e9b3210](https://github.com/Zephyruso/zashboard/commit/e9b3210e61235cf18582e4e81b6a29ba30a33b53))
+* latency test when right click ([f801e41](https://github.com/Zephyruso/zashboard/commit/f801e4111768ca4503925f1fe08df03bf5bdc421))
+
+
+### Bug Fixes
+
+* btm-nav & ipcheck style ([238ca13](https://github.com/Zephyruso/zashboard/commit/238ca1396b542343e5b72c05371b71176ab0ca27))
+* display sniffhost for host ([c7096cc](https://github.com/Zephyruso/zashboard/commit/c7096ccccd8bc0e022dc31aec92b8f3eff9be10b))
+* ip filter ([0df5b68](https://github.com/Zephyruso/zashboard/commit/0df5b68fb0120f51fb685109f4a7f9be3a0def0f))
+* latency test timeout ([b80f07e](https://github.com/Zephyruso/zashboard/commit/b80f07e753b4b6bd94f74df03a5f9868d8c27c2b))
+* style for unavailable proxy ([2091ccf](https://github.com/Zephyruso/zashboard/commit/2091ccf815b1b203ea4edb080ac4b6f10eecff87))
+
 ## [1.49.1](https://github.com/Zephyruso/zashboard/compare/v1.49.0...v1.49.1) (2025-01-12)
 
 
