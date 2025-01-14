@@ -291,8 +291,19 @@ export const getIPFromIpipnetAPI = async () => {
   return (await response.json()) as {
     data: {
       ip: string
-      location: string[]
+      country: string[]
     }
+  }
+}
+
+export const getIPFromIntermbRuAPI = async () => {
+  const response = await fetch('https://ip.intermb.ru/json')
+
+  return (await response.json()) as {
+    ip: string
+    country: string
+    region_name: string
+    asn_org: string
   }
 }
 
