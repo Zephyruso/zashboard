@@ -56,8 +56,8 @@
 </template>
 
 <script setup lang="ts">
-import { getIPFromIpipnetAPI, getIPFromIpsbAPI } from '@/api'
-import { ipipnetIP, ipsbIP } from '@/composables/overview'
+import { getIPFromIpipnetAPI, getIPFromIpsbAPI, getIPFromIntermbRuAPI } from '@/api'
+import { ipipnetIP, ipsbIP, IntermbRuIP } from '@/composables/overview'
 import { useTooltip } from '@/helper/tooltip'
 import { autoIPCheck } from '@/store/settings'
 import { BoltIcon, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
@@ -84,10 +84,16 @@ const getIPs = () => {
       ip: res.data.ip,
     }
   })
+  getIPFromIntermbRuAPI().then((res) => {
+    IntermbRuIP.value = {
+      location: `${res.country} ${res.region_name} ${res.asn_org}`,
+      ip: res.ip,
+    }
+  })
 }
 
 onMounted(() => {
-  if (autoIPCheck.value && [ipsbIP, ipipnetIP].some((item) => item.value.ip === '')) {
+  if (autoIPCheck.value && [ipsbIP, ipipnetIP, IntermbRuIP].some((item) => item.value.ip === '')) {
     getIPs()
   }
 })
