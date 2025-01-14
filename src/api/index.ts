@@ -291,7 +291,7 @@ export const getIPFromIpipnetAPI = async () => {
   return (await response.json()) as {
     data: {
       ip: string
-      country: string[]
+      location: string[]
     }
   }
 }
