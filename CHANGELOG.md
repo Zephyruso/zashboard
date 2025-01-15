@@ -2,6 +2,26 @@
 
 # Changelog
 
+## [1.51.0](https://github.com/Zephyruso/zashboard/compare/v1.50.0...v1.51.0) (2025-01-15)
+
+
+### Features
+
+* one by one latency test for large group ([6a5aebc](https://github.com/Zephyruso/zashboard/commit/6a5aebce6a67df6afe3c56dc002402d5f58ec687))
+* override speedtesturl with config ([5662cfe](https://github.com/Zephyruso/zashboard/commit/5662cfedd5deaeec962f53a7f3738798127af12b))
+* setting for display statistics in collapsed sidebar ([ddbc273](https://github.com/Zephyruso/zashboard/commit/ddbc273b75830175a2114aab4cbcb49d334fd4c2))
+
+
+### Bug Fixes
+
+* dayjs locale ([b806e9d](https://github.com/Zephyruso/zashboard/commit/b806e9dfe8361c7a90b0bf3fb0c9006c7705ebca))
+* details modals & proxies ctrl style ([0ca01e5](https://github.com/Zephyruso/zashboard/commit/0ca01e52bd903842c54c25ea189c8419ef014224))
+* grouped row click ([089861c](https://github.com/Zephyruso/zashboard/commit/089861cee8753ee50ac5cd205c4d05d28af809ee))
+* latency test for proxy node card ([1f94549](https://github.com/Zephyruso/zashboard/commit/1f94549d3c9e640a3c3d1bd88ff640b9925fc6e9))
+* missing destinationPort in connection card ([a7c461a](https://github.com/Zephyruso/zashboard/commit/a7c461ad260f56b1ab9dc6b4e993071d2d3b8502))
+* number of proxies node ([785d56c](https://github.com/Zephyruso/zashboard/commit/785d56cc67b63d8737b0d65273b30e33c5fbb9e7))
+* tip for sidebar collapsed ([5f90287](https://github.com/Zephyruso/zashboard/commit/5f90287178fc2ae70bc05d98d05114ecc3009668))
+
 ## [1.50.0](https://github.com/Zephyruso/zashboard/compare/v1.49.1...v1.50.0) (2025-01-14)
 
 
