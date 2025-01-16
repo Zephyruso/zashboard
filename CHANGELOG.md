@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.52.1](https://github.com/Zephyruso/zashboard/compare/v1.52.0...v1.52.1) (2025-01-16)
+
+
+### Bug Fixes
+
+* details modal & icon style ([ab67366](https://github.com/Zephyruso/zashboard/commit/ab673667cb5f091808635eb7afbbd92a14aacba1))
+
 ## [1.52.0](https://github.com/Zephyruso/zashboard/compare/v1.51.0...v1.52.0) (2025-01-16)
 
 
