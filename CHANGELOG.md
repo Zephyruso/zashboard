@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.52.0](https://github.com/Zephyruso/zashboard/compare/v1.51.0...v1.52.0) (2025-01-16)
+
+
+### Features
+
+* connection history in overview page ([8c0bfb0](https://github.com/Zephyruso/zashboard/commit/8c0bfb033b2436c298326296de8cbe1843e443c2))
+* display icon in connections ([d6dba90](https://github.com/Zephyruso/zashboard/commit/d6dba903e8e9e07bec226b017803658f1f93758d))
+
+
+### Bug Fixes
+
+* ctrls and other style ([55d4a46](https://github.com/Zephyruso/zashboard/commit/55d4a46aa0c17b49e3627db8cd950c4878e759bd))
+* details modal style ([d9f786b](https://github.com/Zephyruso/zashboard/commit/d9f786b95068663dc607238542c54d4647972855))
+* ip check style ([d2f84c5](https://github.com/Zephyruso/zashboard/commit/d2f84c594b55090991ba3fc48252edf4049afe3d))
+
 ## [1.51.0](https://github.com/Zephyruso/zashboard/compare/v1.50.0...v1.51.0) (2025-01-15)
 
 
