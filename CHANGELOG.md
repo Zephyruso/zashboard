@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.53.0](https://github.com/Zephyruso/zashboard/compare/v1.52.1...v1.53.0) (2025-01-17)
+
+
+### Features
+
+* resizeable table columns ([c781105](https://github.com/Zephyruso/zashboard/commit/c781105118cd33cecaed5fda0a4ad015a5439956))
+* sortable backend list ([f556aa4](https://github.com/Zephyruso/zashboard/commit/f556aa47a4e35a0fc84f12030bc72515440d5c01))
+
+
+### Bug Fixes
+
+* connections ctrl style ([4743daf](https://github.com/Zephyruso/zashboard/commit/4743daf06a0952afa4b77237ab0d7b3c82dccda5))
+* connections settings style ([03e002a](https://github.com/Zephyruso/zashboard/commit/03e002a4e9efe2e94c826caaf3f7ea52803e8446))
+* proxy name shrink ([300c92c](https://github.com/Zephyruso/zashboard/commit/300c92cb0758df1377468c8d3850a5683a5fa3a8))
+
 ## [1.52.1](https://github.com/Zephyruso/zashboard/compare/v1.52.0...v1.52.1) (2025-01-16)
 
 
