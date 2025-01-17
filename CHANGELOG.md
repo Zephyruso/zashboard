@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.53.1](https://github.com/Zephyruso/zashboard/compare/v1.53.0...v1.53.1) (2025-01-17)
+
+
+### Bug Fixes
+
+* break all for proxy name ([26281c1](https://github.com/Zephyruso/zashboard/commit/26281c1542f953bdeea611c667370fd932364ce8))
+
 ## [1.53.0](https://github.com/Zephyruso/zashboard/compare/v1.52.1...v1.53.0) (2025-01-17)
 
 
