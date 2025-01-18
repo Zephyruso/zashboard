@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.54.0](https://github.com/Zephyruso/zashboard/compare/v1.53.1...v1.54.0) (2025-01-18)
+
+
+### Features
+
+* latency test animation ([207a139](https://github.com/Zephyruso/zashboard/commit/207a139154af485ba2cb1d5c656ac484da8504f1))
+* swipe page animation ([dd7fe3d](https://github.com/Zephyruso/zashboard/commit/dd7fe3d7c50fed87338c1bbfb0bf691208fdef86))
+* swipe to switch pages in mobile ([dbf7306](https://github.com/Zephyruso/zashboard/commit/dbf7306a788fcb3d98876dd9253dd57af77044d1))
+
+
+### Bug Fixes
+
+* scroll to top for details modal ([da8f837](https://github.com/Zephyruso/zashboard/commit/da8f83730417155e0d9949d873fa390a6fba4b66))
+* unable to switch backend ([9fe51e5](https://github.com/Zephyruso/zashboard/commit/9fe51e58705a4aa0e644186203fc59b8a517a479))
+
 ## [1.53.1](https://github.com/Zephyruso/zashboard/compare/v1.53.0...v1.53.1) (2025-01-17)
 
 
