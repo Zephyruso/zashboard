@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.55.1](https://github.com/Zephyruso/zashboard/compare/v1.55.0...v1.55.1) (2025-01-19)
+
+
+### Bug Fixes
+
+* proxies ctrl style ([90cafdf](https://github.com/Zephyruso/zashboard/commit/90cafdfd2812bd62d92d33b075dc133aaa1bbc03))
+* rule provider & notification style ([c8bb270](https://github.com/Zephyruso/zashboard/commit/c8bb2703b1d102e8a4b33adc277d53b9df2f31ef))
+
 ## [1.55.0](https://github.com/Zephyruso/zashboard/compare/v1.54.0...v1.55.0) (2025-01-19)
 
 
