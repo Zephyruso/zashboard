@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.56.0](https://github.com/Zephyruso/zashboard/compare/v1.55.1...v1.56.0) (2025-01-19)
+
+
+### Features
+
+* proxies ctrl dialog ([5ef2f50](https://github.com/Zephyruso/zashboard/commit/5ef2f50f621005e019d3bdb1668dd2c6cc8c2142))
+
 ## [1.55.1](https://github.com/Zephyruso/zashboard/compare/v1.55.0...v1.55.1) (2025-01-19)
 
 
