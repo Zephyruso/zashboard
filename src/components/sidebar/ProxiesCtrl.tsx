@@ -5,10 +5,11 @@ import { isMiddleScreen } from '@/helper/utils'
 import { configs, updateConfigs } from '@/store/config'
 import { allProxiesLatencyTest, fetchProxies, proxyProviederList } from '@/store/proxies'
 import { hideUnavailableProxies, proxySortType } from '@/store/settings'
-import { BoltIcon } from '@heroicons/vue/24/outline'
+import { BoltIcon, WrenchScrewdriverIcon } from '@heroicons/vue/24/outline'
 import { twMerge } from 'tailwind-merge'
 import { computed, defineComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import Dialog from '../common/DialogWrapper.vue'
 
 export default defineComponent({
   name: 'ProxiesCtrl',
@@ -23,6 +24,7 @@ export default defineComponent({
     const { proxiesTabShow } = useProxies()
     const isUpgrading = ref(false)
     const isAllLatencyTesting = ref(false)
+    const settingsModel = ref(false)
     const handlerClickUpdateAllProviders = async () => {
       if (isUpgrading.value) return
       isUpgrading.value = true
@@ -168,6 +170,29 @@ export default defineComponent({
 
       if (props.horizontal) {
         if (isMiddleScreen.value) {
+          const settingsModal = (
+            <>
+              <button
+                class={twMerge('btn btn-circle btn-sm')}
+                onClick={() => (settingsModel.value = true)}
+              >
+                <WrenchScrewdriverIcon class="h-4 w-4" />
+              </button>
+              <Dialog
+                modelValue={settingsModel.value}
+                onUpdate:modelValue={(v) => (settingsModel.value = v)}
+              >
+                <div class="flex flex-col gap-4 p-2">
+                  <div class="flex items-center gap-2 text-sm">
+                    {t('sortBy')}
+                    {sort}
+                  </div>
+                  <div class="flex items-center gap-2 text-sm">{filter}</div>
+                </div>
+              </Dialog>
+            </>
+          )
+
           return (
             <div class="flex flex-col gap-2 p-2">
               {hasProviders.value && (
@@ -178,11 +203,8 @@ export default defineComponent({
               )}
               <div class="flex w-full gap-2">
                 {modeSelect}
+                {settingsModal}
                 {latencyTestAll}
-              </div>
-              <div class="flex w-full gap-2">
-                {sort}
-                {filter}
               </div>
             </div>
           )

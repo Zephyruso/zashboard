@@ -5,6 +5,9 @@
       class="overflow-x-hidden p-2"
     />
     <ConnectionTable v-else />
+    <Dialog v-model:model-value="connectionDetailModalShow">
+      <VueJsonPretty :data="infoConn" />
+    </Dialog>
     <dialog
       ref="modalRef"
       class="modal"
@@ -30,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+import Dialog from '@/components/common/DialogWrapper.vue'
 import ConnectionCardList from '@/components/connections/ConnectionCardList.vue'
 import ConnectionTable from '@/components/connections/ConnectionTable.vue'
 import { useConnections } from '@/composables/connections'
@@ -38,7 +42,7 @@ import { XMarkIcon } from '@heroicons/vue/24/outline'
 import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
 
-const { infoConn, modalRef } = useConnections()
+const { infoConn, connectionDetailModalShow } = useConnections()
 </script>
 
 <style>

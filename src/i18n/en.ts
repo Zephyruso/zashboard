@@ -60,7 +60,7 @@ const en = {
   reloadConfigs: 'Reload Configs',
   mode: 'Mode',
   proxySortType: 'Proxy Sort Type',
-  defaultsort: 'By Configs',
+  defaultsort: 'Configs Order',
   nameasc: 'Name Asc',
   namedesc: 'Name Desc',
   latencydesc: 'Latency Desc',
