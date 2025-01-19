@@ -2,6 +2,23 @@
 
 # Changelog
 
+## [1.55.0](https://github.com/Zephyruso/zashboard/compare/v1.54.0...v1.55.0) (2025-01-19)
+
+
+### Features
+
+* latency test for all proxies ([43b04b3](https://github.com/Zephyruso/zashboard/commit/43b04b3944b7a220a1a7616ec79fe5a8ad70ba43))
+* tip for large group latency test ([be7db20](https://github.com/Zephyruso/zashboard/commit/be7db20a9efe35ccbcdfe86e48e0b06ada0f6f05))
+
+
+### Bug Fixes
+
+* catch cors icon ([c15bedb](https://github.com/Zephyruso/zashboard/commit/c15bedba41b1ae2467b69ff1ea3670f96fed5c41))
+* icon shrink for macos ([3a0646f](https://github.com/Zephyruso/zashboard/commit/3a0646f662e450c4812e1b1aa62b230617a439ba))
+* loading with rollup && latency test ([a0aa905](https://github.com/Zephyruso/zashboard/commit/a0aa905b2e16cc0967e9890b90ce76ce8c9c54b5))
+* ru.ts for Total Connections Overview ([#195](https://github.com/Zephyruso/zashboard/issues/195)) ([f9f2bcf](https://github.com/Zephyruso/zashboard/commit/f9f2bcf6332cf24b70cef10d429ae1a9bddd9231))
+* swipe threshold ([9933c6e](https://github.com/Zephyruso/zashboard/commit/9933c6e3f40aa4a7482d3fe866a0cb3874735855))
+
 ## [1.54.0](https://github.com/Zephyruso/zashboard/compare/v1.53.1...v1.54.0) (2025-01-18)
 
 
