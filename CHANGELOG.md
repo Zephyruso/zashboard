@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.56.1](https://github.com/Zephyruso/zashboard/compare/v1.56.0...v1.56.1) (2025-01-20)
+
+
+### Bug Fixes
+
+* get latency from now ([4268255](https://github.com/Zephyruso/zashboard/commit/4268255f2cfa1f0b64804397804d07cac5d301e4))
+
 ## [1.56.0](https://github.com/Zephyruso/zashboard/compare/v1.55.2...v1.56.0) (2025-01-20)
 
 
