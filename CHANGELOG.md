@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.56.0](https://github.com/Zephyruso/zashboard/compare/v1.55.2...v1.56.0) (2025-01-20)
+
+
+### Features
+
+* independent latency test ([635a168](https://github.com/Zephyruso/zashboard/commit/635a168c04eb2f906c1199015faf1e2b858e9702))
+
+
+### Bug Fixes
+
+* ip check privacy ([2d66a61](https://github.com/Zephyruso/zashboard/commit/2d66a61e58b2182e6120919686946fabb02b8c7b))
+
 ## [1.55.2](https://github.com/Zephyruso/zashboard/compare/v1.55.1...v1.55.2) (2025-01-20)
 
 
