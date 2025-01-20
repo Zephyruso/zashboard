@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.55.2](https://github.com/Zephyruso/zashboard/compare/v1.55.1...v1.55.2) (2025-01-20)
+
+
+### Bug Fixes
+
+* disable swipe when dnd ([b8c3eb9](https://github.com/Zephyruso/zashboard/commit/b8c3eb979e4acb5d577b70532abf92af4dd68205))
+* proxies ctrl style in mobile ([56c69ce](https://github.com/Zephyruso/zashboard/commit/56c69ce2b1a5690cb9a7b0ce0bed84db7b0755f5))
+
 ## [1.55.1](https://github.com/Zephyruso/zashboard/compare/v1.55.0...v1.55.1) (2025-01-19)
 
 
