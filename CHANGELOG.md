@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.56.2](https://github.com/Zephyruso/zashboard/compare/v1.56.1...v1.56.2) (2025-01-21)
+
+
+### Bug Fixes
+
+* rules not display & selector latency test ([6f35379](https://github.com/Zephyruso/zashboard/commit/6f35379c011d0b375cc8f823abcce4f3b6f24b36))
+
 ## [1.56.1](https://github.com/Zephyruso/zashboard/compare/v1.56.0...v1.56.1) (2025-01-20)
 
 
