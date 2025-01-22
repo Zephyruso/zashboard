@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.57.0](https://github.com/Zephyruso/zashboard/compare/v1.56.2...v1.57.0) (2025-01-22)
+
+
+### Features
+
+* toggle collapse for all ([652f1da](https://github.com/Zephyruso/zashboard/commit/652f1da0bdb654f4b312ea59a92259e9b5d04d4c))
+
+
+### Bug Fixes
+
+* connection card style ([16c1d88](https://github.com/Zephyruso/zashboard/commit/16c1d882cec3b4eb8ccec89caf9e03dfa87239ef))
+* disable swipe when selection and dialog ([7e4b4d1](https://github.com/Zephyruso/zashboard/commit/7e4b4d142e9ecc533917d3a795686a45368cb7c9))
+
 ## [1.56.2](https://github.com/Zephyruso/zashboard/compare/v1.56.1...v1.56.2) (2025-01-21)
 
 
