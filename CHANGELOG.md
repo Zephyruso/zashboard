@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.58.0](https://github.com/Zephyruso/zashboard/compare/v1.57.0...v1.58.0) (2025-01-23)
+
+
+### Features
+
+* search for proxies ([f28cc86](https://github.com/Zephyruso/zashboard/commit/f28cc86fa45f48fef339dacbd05ab58755089199))
+* unify style for ctrl component ([740a9f7](https://github.com/Zephyruso/zashboard/commit/740a9f7cc8dbe3fdc7f77d93677593139bd8ff37))
+
+
+### Bug Fixes
+
+* import settings failed ([6757609](https://github.com/Zephyruso/zashboard/commit/6757609295831e06ed91fb178220e5202c817ea2))
+
 ## [1.57.0](https://github.com/Zephyruso/zashboard/compare/v1.56.2...v1.57.0) (2025-01-22)
 
 
