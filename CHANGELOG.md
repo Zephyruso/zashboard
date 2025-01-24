@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.59.0](https://github.com/Zephyruso/zashboard/compare/v1.58.0...v1.59.0) (2025-01-24)
+
+
+### Features
+
+* swipe for tabs ([5ebcf75](https://github.com/Zephyruso/zashboard/commit/5ebcf759ee0403874a84db5502977843487477a5))
+
+
+### Bug Fixes
+
+* ctrls style ([36653fc](https://github.com/Zephyruso/zashboard/commit/36653fc91a17068010754bd3317311e809e6d567))
+* import settings for ios ([a376f3f](https://github.com/Zephyruso/zashboard/commit/a376f3f6672060c8018e5e7ee57b3ca7f0538374))
+* rename quick filter -&gt; hide connections ([477fdef](https://github.com/Zephyruso/zashboard/commit/477fdef1f4142a046cdfa67f8b274cd0e1c5a2b6))
+* truncate connection card ([feda74b](https://github.com/Zephyruso/zashboard/commit/feda74bb58348b3d78deb4485fdffc478d9bfd2d))
+
 ## [1.58.0](https://github.com/Zephyruso/zashboard/compare/v1.57.0...v1.58.0) (2025-01-23)
 
 
