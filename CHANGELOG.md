@@ -2,6 +2,23 @@
 
 # Changelog
 
+## [1.60.0](https://github.com/Zephyruso/zashboard/compare/v1.59.0...v1.60.0) (2025-01-25)
+
+
+### Features
+
+* label for backend ([7655df3](https://github.com/Zephyruso/zashboard/commit/7655df34f82d722139b8e96e54b7ca602210fe86))
+* make group hidden by manual ([e903d7b](https://github.com/Zephyruso/zashboard/commit/e903d7b838e6d20da14566bf8a54f6f5a74c1ebe))
+* setting for swipe in tabs ([e003184](https://github.com/Zephyruso/zashboard/commit/e003184ea9095679226183f9ab181eb4cd7d8fd0))
+
+
+### Bug Fixes
+
+* icon incorrect ([19db7c8](https://github.com/Zephyruso/zashboard/commit/19db7c85eab1cb9c4f8b5aff6db2f3e75a781648))
+* move proxies settings to modal ([2bdc79c](https://github.com/Zephyruso/zashboard/commit/2bdc79ce105bcdeb0e8b848a6ef239d68f1cad5e))
+* style ([e7a97c1](https://github.com/Zephyruso/zashboard/commit/e7a97c15e688a1fd9de3d4b998116974e2cb9421))
+* style for loadbalance ([51d34f7](https://github.com/Zephyruso/zashboard/commit/51d34f7e6db8d9e9bb946bacbcc84a7f43d1b59c))
+
 ## [1.59.0](https://github.com/Zephyruso/zashboard/compare/v1.58.0...v1.59.0) (2025-01-24)
 
 
