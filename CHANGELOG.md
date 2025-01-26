@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.60.1](https://github.com/Zephyruso/zashboard/compare/v1.60.0...v1.60.1) (2025-01-26)
+
+
+### Bug Fixes
+
+* connections count ([2f36311](https://github.com/Zephyruso/zashboard/commit/2f36311e216b47ee844860b753dbd2c1e2f0724c))
+* rule card & input style ([5498644](https://github.com/Zephyruso/zashboard/commit/549864497bc43ea9ef60a4508a6536b48397db22))
+
 ## [1.60.0](https://github.com/Zephyruso/zashboard/compare/v1.59.0...v1.60.0) (2025-01-25)
 
 
