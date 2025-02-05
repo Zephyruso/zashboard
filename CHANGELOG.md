@@ -2,6 +2,16 @@
 
 # Changelog
 
+## [1.60.2](https://github.com/Zephyruso/zashboard/compare/v1.60.1...v1.60.2) (2025-02-05)
+
+
+### Bug Fixes
+
+* autocomplete for setup ([18417b5](https://github.com/Zephyruso/zashboard/commit/18417b5e844ba3bac40f8c592f62371927c16826))
+* hide connections ([8065ebd](https://github.com/Zephyruso/zashboard/commit/8065ebdbd5d4da1b23e2caa8d215c6ea57a0ede7))
+* regex search for logs ([3d1d1b9](https://github.com/Zephyruso/zashboard/commit/3d1d1b98a4119b1c5e600e04ab5e9dcd1a899363))
+* rule card style for sing-box 1.11.0 ([669cf5a](https://github.com/Zephyruso/zashboard/commit/669cf5abf270e69ff59ef66aa237812d0aa3c819))
+
 ## [1.60.1](https://github.com/Zephyruso/zashboard/compare/v1.60.0...v1.60.1) (2025-01-26)
 
 
