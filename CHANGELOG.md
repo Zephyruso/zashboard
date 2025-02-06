@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.60.3](https://github.com/Zephyruso/zashboard/compare/v1.60.2...v1.60.3) (2025-02-06)
+
+
+### Bug Fixes
+
+* hide proxy group btn position ([bce1642](https://github.com/Zephyruso/zashboard/commit/bce1642cbe4ff5a093ee9ffa192a4ec245e1761f))
+
 ## [1.60.2](https://github.com/Zephyruso/zashboard/compare/v1.60.1...v1.60.2) (2025-02-05)
 
 
