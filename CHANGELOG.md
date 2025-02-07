@@ -2,6 +2,15 @@
 
 # Changelog
 
+## [1.61.1](https://github.com/Zephyruso/zashboard/compare/v1.61.0...v1.61.1) (2025-02-07)
+
+
+### Bug Fixes
+
+* filter log by time ([0af9828](https://github.com/Zephyruso/zashboard/commit/0af9828c8110340f13dfdd29871adbf8cd90717d))
+* tip position & timeout ([fe8730b](https://github.com/Zephyruso/zashboard/commit/fe8730bb51f780285f2c0c18381e1925ad32410a))
+* two columns style for md screen ([3561fdf](https://github.com/Zephyruso/zashboard/commit/3561fdfb74a2a3ac43ab0fc99d2ed9695d7249aa))
+
 ## [1.61.0](https://github.com/Zephyruso/zashboard/compare/v1.60.3...v1.61.0) (2025-02-07)
 
 
