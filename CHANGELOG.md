@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.61.0](https://github.com/Zephyruso/zashboard/compare/v1.60.3...v1.61.0) (2025-02-07)
+
+
+### Features
+
+* display ip asn info in connection details ([bcb96ec](https://github.com/Zephyruso/zashboard/commit/bcb96ecc42d90b89c1b1d4847b4c8dc1315b5b25))
+* update geo button ([144aecc](https://github.com/Zephyruso/zashboard/commit/144aecc922318b9c312dd55cfd1614b551b10889))
+
+
+### Bug Fixes
+
+* hide group btn style ([b10804b](https://github.com/Zephyruso/zashboard/commit/b10804b74f3716ee450e2bb180d4bc22908dd234))
+
 ## [1.60.3](https://github.com/Zephyruso/zashboard/compare/v1.60.2...v1.60.3) (2025-02-06)
 
 
