@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.62.1](https://github.com/Zephyruso/zashboard/compare/v1.62.0...v1.62.1) (2025-02-08)
+
+
+### Bug Fixes
+
+* card customize style ([3cb1e84](https://github.com/Zephyruso/zashboard/commit/3cb1e84bced195d370e049a64e3aed3a188ff4bf))
+
 ## [1.62.0](https://github.com/Zephyruso/zashboard/compare/v1.61.2...v1.62.0) (2025-02-08)
 
 
