@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.62.0](https://github.com/Zephyruso/zashboard/compare/v1.61.2...v1.62.0) (2025-02-08)
+
+
+### Features
+
+* move card/table customization to connections popup ([e372da1](https://github.com/Zephyruso/zashboard/commit/e372da1ed60cd2c2e85fa93b0ccc54cd4da2312d))
+* preset for connection card style ([539e23c](https://github.com/Zephyruso/zashboard/commit/539e23c968d5384f7fb7d8027fb91ae6580875b8))
+
+
+### Bug Fixes
+
+* default testurl with https ([a1eb0a4](https://github.com/Zephyruso/zashboard/commit/a1eb0a41f2a63ee2ca469467609033b91bd5eeb8))
+* toast & settings style ([f33a077](https://github.com/Zephyruso/zashboard/commit/f33a077e7386779ec438f59b55a2b0956b7e7635))
+
 ## [1.61.2](https://github.com/Zephyruso/zashboard/compare/v1.61.1...v1.61.2) (2025-02-08)
 
 
