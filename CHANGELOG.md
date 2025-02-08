@@ -2,6 +2,15 @@
 
 # Changelog
 
+## [1.61.2](https://github.com/Zephyruso/zashboard/compare/v1.61.1...v1.61.2) (2025-02-08)
+
+
+### Bug Fixes
+
+* connection details style ([acbcfb2](https://github.com/Zephyruso/zashboard/commit/acbcfb2e2c22460c00147d73be610b539e988670))
+* missing proxies ctrl in some cases ([375a0d4](https://github.com/Zephyruso/zashboard/commit/375a0d4e8b86c87ecb25481cbf8dbeae9cae68ee))
+* show hidden group -&gt; manage hidden group ([4e8fb42](https://github.com/Zephyruso/zashboard/commit/4e8fb42977a1513ef4cb28b0cb09bafb7e04c6c6))
+
 ## [1.61.1](https://github.com/Zephyruso/zashboard/compare/v1.61.0...v1.61.1) (2025-02-07)
 
 
