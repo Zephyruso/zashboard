@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.63.0](https://github.com/Zephyruso/zashboard/compare/v1.62.1...v1.63.0) (2025-02-10)
+
+
+### Features
+
+* autocomplete for source ip label ([83640ca](https://github.com/Zephyruso/zashboard/commit/83640ca5e0a334a86202cc379042fb9c72ac6254))
+* switch for core upgrade check ([5ceaa73](https://github.com/Zephyruso/zashboard/commit/5ceaa737bc51d052d71a883ed4db56124d3e76a3))
+
+
+### Bug Fixes
+
+* card/table customize style ([8d3a382](https://github.com/Zephyruso/zashboard/commit/8d3a382d6a10f9d21b08f8c176cba1145d905527))
+* grid style ([677abad](https://github.com/Zephyruso/zashboard/commit/677abad58014930d6cadbc68316dd6a861158018))
+* remove deprecated details button ([b06492a](https://github.com/Zephyruso/zashboard/commit/b06492af4b6ec28d403ccc001b0436140b420ec9))
+
 ## [1.62.1](https://github.com/Zephyruso/zashboard/compare/v1.62.0...v1.62.1) (2025-02-08)
 
 
