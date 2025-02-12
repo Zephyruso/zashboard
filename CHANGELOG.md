@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.63.1](https://github.com/Zephyruso/zashboard/compare/v1.63.0...v1.63.1) (2025-02-12)
+
+
+### Bug Fixes
+
+* source ip input & backend version style ([441871c](https://github.com/Zephyruso/zashboard/commit/441871cef532d52787273270e489cd3cf7d3d210))
+* timeout for notification ([2ecbb6b](https://github.com/Zephyruso/zashboard/commit/2ecbb6bd40780266608c4cdc33ba1756ab44aeb8))
+
 ## [1.63.0](https://github.com/Zephyruso/zashboard/compare/v1.62.1...v1.63.0) (2025-02-10)
 
 
