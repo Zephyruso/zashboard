@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.64.1](https://github.com/Zephyruso/zashboard/compare/v1.64.0...v1.64.1) (2025-02-13)
+
+
+### Bug Fixes
+
+* long host style for table ([a1442e5](https://github.com/Zephyruso/zashboard/commit/a1442e518ed451a570312b8aff4adb3a0998424a))
+
 ## [1.64.0](https://github.com/Zephyruso/zashboard/compare/v1.63.1...v1.64.0) (2025-02-13)
 
 
