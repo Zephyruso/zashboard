@@ -103,7 +103,7 @@
                         CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed,
                       ].includes(cell.column.id as CONNECTIONS_TABLE_ACCESSOR_KEY) && 'min-w-20',
                       CONNECTIONS_TABLE_ACCESSOR_KEY.Host ===
-                        (cell.column.id as CONNECTIONS_TABLE_ACCESSOR_KEY) && 'max-w-96 truncate',
+                        (cell.column.id as CONNECTIONS_TABLE_ACCESSOR_KEY) && 'max-w-80 truncate',
                       CONNECTIONS_TABLE_ACCESSOR_KEY.Chains ===
                         (cell.column.id as CONNECTIONS_TABLE_ACCESSOR_KEY) &&
                         'max-w-[36rem] truncate',
