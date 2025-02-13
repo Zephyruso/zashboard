@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.64.0](https://github.com/Zephyruso/zashboard/compare/v1.63.1...v1.64.0) (2025-02-13)
+
+
+### Features
+
+* draggable & editable source ip label ([36d19a9](https://github.com/Zephyruso/zashboard/commit/36d19a9aff9f9df6a53039fce3d408fb3a5420db))
+
+
+### Bug Fixes
+
+* disable swipe when input focused ([6426052](https://github.com/Zephyruso/zashboard/commit/6426052a9be131a0c032fd8a699160e168002539))
+* placeholder for sourceip & icon ([bbbf52f](https://github.com/Zephyruso/zashboard/commit/bbbf52fe295632dc18b612207f6176ff2c03f6af))
+
 ## [1.63.1](https://github.com/Zephyruso/zashboard/compare/v1.63.0...v1.63.1) (2025-02-12)
 
 
