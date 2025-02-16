@@ -61,6 +61,8 @@ const handlerHistoryTip = (e: Event) => {
 
   showTip(e, historyList, {
     delay: [1000, 0],
+    trigger: 'mouseenter',
+    touch: ['hold', 500],
   })
 }
 

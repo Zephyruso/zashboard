@@ -1,17 +1,25 @@
 <template>
-  <DialogWrapper v-model="connectionDetailModalShow">
-    <VueJsonPretty :data="infoConn" />
-    <div
-      class="mt-2 min-h-10 text-sm"
-      v-if="destinationIP && !isPrivateIP"
-    >
-      <template v-if="details">
-        {{ $t('connectionIP') }} {{ details?.ip }} ( AS{{ details?.asn }} )
-        <div class="flex gap-3">
-          {{ details?.country }}
-          {{ details?.asn_organization }}
-        </div>
-      </template>
+  <DialogWrapper
+    v-model="connectionDetailModalShow"
+    :no-padding="true"
+  >
+    <div class="flex h-full max-h-[69vh] flex-col overflow-hidden py-4 md:max-h-[89vh]">
+      <VueJsonPretty
+        :data="infoConn"
+        class="overflow-y-auto px-4 scrollbar-thin"
+      />
+      <div
+        class="h-12 px-4 pt-2 text-sm"
+        v-if="destinationIP && !isPrivateIP"
+      >
+        <template v-if="details">
+          {{ $t('connectionIP') }} {{ details?.ip }} ( AS{{ details?.asn }} )
+          <div class="flex gap-3">
+            {{ details?.country }}
+            {{ details?.asn_organization }}
+          </div>
+        </template>
+      </div>
     </div>
   </DialogWrapper>
 </template>
