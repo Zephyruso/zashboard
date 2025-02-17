@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.65.0](https://github.com/Zephyruso/zashboard/compare/v1.64.0...v1.65.0) (2025-02-17)
+
+
+### Features
+
+* hover tip for latency history ([4814e90](https://github.com/Zephyruso/zashboard/commit/4814e905c8c05280513cc7bf9f815d62731ab670))
+* url params disable upgrade core ([cfca43c](https://github.com/Zephyruso/zashboard/commit/cfca43c3fd58a183fc58f595560cc317273735a7))
+
+
+### Bug Fixes
+
+* connections details modal ([de18946](https://github.com/Zephyruso/zashboard/commit/de189463ac2359e7260ad3fc5d90dde90b6e6b42))
+* ip details when destinationIP is null ([3d1e4cd](https://github.com/Zephyruso/zashboard/commit/3d1e4cdbdbbe6256265553d675156ab2d5f7a678))
+* rule provider style ([f0dda31](https://github.com/Zephyruso/zashboard/commit/f0dda319db40382c82527814803996fdc6343938))
+
 ## [1.64.0](https://github.com/Zephyruso/zashboard/compare/v1.63.1...v1.64.0) (2025-02-13)
 
 
