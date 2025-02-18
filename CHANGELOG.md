@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.65.1](https://github.com/Zephyruso/zashboard/compare/v1.65.0...v1.65.1) (2025-02-18)
+
+
+### Bug Fixes
+
+* scrollbar & proxy chains style ([16bdbc4](https://github.com/Zephyruso/zashboard/commit/16bdbc438214bc00be65f57ce3dfd881a3e238b9))
+
 ## [1.65.0](https://github.com/Zephyruso/zashboard/compare/v1.64.0...v1.65.0) (2025-02-17)
 
 
