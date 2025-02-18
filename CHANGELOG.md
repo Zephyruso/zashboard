@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.66.0](https://github.com/Zephyruso/zashboard/compare/v1.65.1...v1.66.0) (2025-02-18)
+
+
+### Features
+
+* log search history ([091afd4](https://github.com/Zephyruso/zashboard/commit/091afd4ea81782d490458ccaf56880bd1d7a0812))
+
+
+### Bug Fixes
+
+* global for sing-box ([624bc7b](https://github.com/Zephyruso/zashboard/commit/624bc7bb7127a9dc064d8d6fcaec2867311fd998))
+* icon load ([dda297a](https://github.com/Zephyruso/zashboard/commit/dda297a0cbf7ec37b22e8bc79dcfbfd23bfe7c48))
+
 ## [1.65.1](https://github.com/Zephyruso/zashboard/compare/v1.65.0...v1.65.1) (2025-02-18)
 
 
