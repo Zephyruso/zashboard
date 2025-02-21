@@ -2,6 +2,22 @@
 
 # Changelog
 
+## [1.67.0](https://github.com/Zephyruso/zashboard/compare/v1.66.0...v1.67.0) (2025-02-21)
+
+
+### Features
+
+* available proxy count ([163f261](https://github.com/Zephyruso/zashboard/commit/163f261d71d0704d2c44e601530b02af560698b5))
+* customizable min card width ([2958beb](https://github.com/Zephyruso/zashboard/commit/2958beb7c3b5b6e20ddb4d9af00312978a9d0283))
+* hover tip for proxygroup now node ([fb3b58e](https://github.com/Zephyruso/zashboard/commit/fb3b58eaa80e2f201323ae9d4149cf99be33cb29))
+* options for display global in non global mode ([9f2ca36](https://github.com/Zephyruso/zashboard/commit/9f2ca36569ced463957c9e8f5493af5aae475501))
+
+
+### Bug Fixes
+
+* options for proxies count ([e0e51af](https://github.com/Zephyruso/zashboard/commit/e0e51af831a62933a2137b7e7230c78d91e2d4f1))
+* proxy provider style ([9eb400b](https://github.com/Zephyruso/zashboard/commit/9eb400b19cfdf905c879616af8e78d2863823dfb))
+
 ## [1.66.0](https://github.com/Zephyruso/zashboard/compare/v1.65.1...v1.66.0) (2025-02-19)
 
 
