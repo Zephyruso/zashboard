@@ -121,11 +121,7 @@ const availableProxies = computed(() => {
 
 const proxiesCount = computed(() => {
   const all = proxyGroup.value.all?.length ?? 0
-
-  if (availableProxies.value < all) {
-    return `${availableProxies.value}/${all}`
-  }
-  return all
+  return `${availableProxies.value}/${all}`
 })
 
 const isLatencyTesting = ref(false)

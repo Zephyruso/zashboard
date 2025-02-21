@@ -98,11 +98,7 @@ const availableProxies = computed(() => {
 })
 const proxiesCount = computed(() => {
   const all = proxyProvider.value.proxies?.length ?? 0
-
-  if (availableProxies.value < all) {
-    return `${availableProxies.value}/${all}`
-  }
-  return all
+  return `${availableProxies.value}/${all}`
 })
 
 const subscriptionInfo = computed(() => {
