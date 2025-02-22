@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.67.1](https://github.com/Zephyruso/zashboard/compare/v1.67.0...v1.67.1) (2025-02-22)
+
+
+### Bug Fixes
+
+* disable proxy select for loadbalance ([e37f83e](https://github.com/Zephyruso/zashboard/commit/e37f83e1e12fd6a5ce984a55bb2076c585579306))
+* switch for display GLOBAL by mode ([60fc0c3](https://github.com/Zephyruso/zashboard/commit/60fc0c33adb13d7fd0e1c18d6a320fd7d5a8a08b))
+
 ## [1.67.0](https://github.com/Zephyruso/zashboard/compare/v1.66.0...v1.67.0) (2025-02-21)
 
 
