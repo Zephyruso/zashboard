@@ -37,6 +37,9 @@ export default {
         '.scrollbar-thin': {
           'scrollbar-width': 'thin',
         },
+        '.scrollbar-hidden': {
+          'scrollbar-width': 'none',
+        },
       })
     }),
     daisyui,

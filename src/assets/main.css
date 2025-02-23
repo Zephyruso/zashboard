@@ -47,14 +47,6 @@
   }
 }
 
-.scrollbar-hidden::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hidden {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
 .tippy-box {
   @apply z-[9999] bg-neutral text-neutral-content shadow-md;
 }
