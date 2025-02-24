@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.68.2](https://github.com/Zephyruso/zashboard/compare/v1.68.1...v1.68.2) (2025-02-24)
+
+
+### Bug Fixes
+
+* animation and performance for two-column ([1e38efc](https://github.com/Zephyruso/zashboard/commit/1e38efc5ebe7af0672aea8e3a205d2aa34794673))
+
 ## [1.68.1](https://github.com/Zephyruso/zashboard/compare/v1.68.0...v1.68.1) (2025-02-24)
 
 
