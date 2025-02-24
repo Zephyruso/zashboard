@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.68.1](https://github.com/Zephyruso/zashboard/compare/v1.68.0...v1.68.1) (2025-02-24)
+
+
+### Bug Fixes
+
+* proxy provider style with two-columns ([1e2d07e](https://github.com/Zephyruso/zashboard/commit/1e2d07ea943f2764e8d0f6c2a324cdb6cd7b9402))
+
 ## [1.68.0](https://github.com/Zephyruso/zashboard/compare/v1.67.1...v1.68.0) (2025-02-24)
 
 
