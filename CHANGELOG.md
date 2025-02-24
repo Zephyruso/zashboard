@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.68.0](https://github.com/Zephyruso/zashboard/compare/v1.67.1...v1.68.0) (2025-02-24)
+
+
+### Features
+
+* two-columns groups for mobile inspired by Clash Dash and Surge ([9e9fc5f](https://github.com/Zephyruso/zashboard/commit/9e9fc5f5d954d9b70055b99c23f03fde134263f5))
+
+
+### Bug Fixes
+
+* backend available detect ([0d8db22](https://github.com/Zephyruso/zashboard/commit/0d8db2271bef2aa1da0a4c0a5481c1ac31c5c3ec))
+
 ## [1.67.1](https://github.com/Zephyruso/zashboard/compare/v1.67.0...v1.67.1) (2025-02-22)
 
 
