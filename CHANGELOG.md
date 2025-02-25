@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.68.3](https://github.com/Zephyruso/zashboard/compare/v1.68.2...v1.68.3) (2025-02-25)
+
+
+### Bug Fixes
+
+* manage hidden groups and other minor style ([cde403e](https://github.com/Zephyruso/zashboard/commit/cde403ec9e8ce6466bedb7b18c5d354f36111edc))
+* proxy group grid style ([460d426](https://github.com/Zephyruso/zashboard/commit/460d426208f9873f48026ee1fed16447ea0822e5))
+
 ## [1.68.2](https://github.com/Zephyruso/zashboard/compare/v1.68.1...v1.68.2) (2025-02-24)
 
 
