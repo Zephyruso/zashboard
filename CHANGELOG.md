@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.69.0](https://github.com/Zephyruso/zashboard/compare/v1.68.3...v1.69.0) (2025-02-26)
+
+
+### Features
+
+* switch for display now node & latency number in rule ([5a24958](https://github.com/Zephyruso/zashboard/commit/5a24958d18258136abe8af33e7870ae23ba1a9af))
+
+
+### Bug Fixes
+
+* provider style and count ([8a2eb32](https://github.com/Zephyruso/zashboard/commit/8a2eb32ff73648d7a6537f5875344dcd7fc681e9))
+* proxies preview auto ([9c1f00b](https://github.com/Zephyruso/zashboard/commit/9c1f00b9163ee44ba87bb054c7410da857d31237))
+
 ## [1.68.3](https://github.com/Zephyruso/zashboard/compare/v1.68.2...v1.68.3) (2025-02-25)
 
 
