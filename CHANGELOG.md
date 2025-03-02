@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.69.1](https://github.com/Zephyruso/zashboard/compare/v1.69.0...v1.69.1) (2025-03-02)
+
+
+### Bug Fixes
+
+* hide toggle collapse btn ([3f3bc03](https://github.com/Zephyruso/zashboard/commit/3f3bc03394925005abbc9e3f9101c172f00ee7aa))
+* promise race for automatic backend switch ([be8fecb](https://github.com/Zephyruso/zashboard/commit/be8fecbc50643dd71919233914ae1b867d348379))
+
 ## [1.69.0](https://github.com/Zephyruso/zashboard/compare/v1.68.3...v1.69.0) (2025-02-26)
 
 
