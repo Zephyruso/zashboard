@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.70.0](https://github.com/Zephyruso/zashboard/compare/v1.69.0...v1.70.0) (2025-03-03)
+
+
+### Features
+
+* daisyui v5 & tailwindcss v4 ([9df2083](https://github.com/Zephyruso/zashboard/commit/9df2083da99dc5baf008edc36f49d68c9c89171e))
+* transfer type for connection table ([28f59c3](https://github.com/Zephyruso/zashboard/commit/28f59c3c8006054c9d40b29b96ee29f5e8b2ff12))
+
+
+### Bug Fixes
+
+* hide toggle collapse btn ([3f3bc03](https://github.com/Zephyruso/zashboard/commit/3f3bc03394925005abbc9e3f9101c172f00ee7aa))
+* promise race for automatic backend switch ([be8fecb](https://github.com/Zephyruso/zashboard/commit/be8fecbc50643dd71919233914ae1b867d348379))
+
 ## [1.69.0](https://github.com/Zephyruso/zashboard/compare/v1.68.3...v1.69.0) (2025-02-26)
 
 
