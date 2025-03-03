@@ -3,6 +3,11 @@
   themes: all;
 }
 
+@plugin "daisyui/theme" {
+  name: 'dark';
+  --color-base-content: oklch(0.84 0.0216 268.436);
+}
+
 @config '../../tailwind.config.ts';
 
 @utility card {
