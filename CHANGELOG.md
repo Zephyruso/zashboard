@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.70.2](https://github.com/Zephyruso/zashboard/compare/v1.70.1...v1.70.2) (2025-03-04)
+
+
+### Bug Fixes
+
+* bring old default theme back ([ecd0a5b](https://github.com/Zephyruso/zashboard/commit/ecd0a5b30af7ac3240c86b742fa7a970f553988a))
+
 ## [1.70.1](https://github.com/Zephyruso/zashboard/compare/v1.70.0...v1.70.1) (2025-03-04)
 
 
