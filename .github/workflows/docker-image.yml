@@ -29,7 +29,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
-        file: docker/Dockerfile  # 如果 Dockerfile 在项目根目录，保持此行；如果在其他地方，可以修改路径
+        file: Dockerfile  # 如果 Dockerfile 在项目根目录，保持此行；如果在其他地方，可以修改路径
         platforms: linux/amd64,linux/arm64
         push: true  # 推送到 Docker Hub
         tags: ${{ secrets.DOCKER_USERNAME }}/zashboard:latest  # 镜像名称和标签
