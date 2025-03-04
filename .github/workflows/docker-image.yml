@@ -1,0 +1,35 @@
+name: Docker Build 和 Push
+
+on:
+  push:
+    branches:
+      - main  # 触发的分支，如果你用的是 master，改成 master
+  pull_request:
+    branches:
+      - main  # 在创建 PR 时也触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build 和 push Docker image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: docker/Dockerfile  # 如果 Dockerfile 在项目根目录，保持此行；如果在其他地方，可以修改路径
+        platforms: linux/amd64,linux/arm64
+        push: true  # 推送到 Docker Hub
+        tags: ${{ secrets.DOCKER_USERNAME }}/zashboard:latest  # 镜像名称和标签
