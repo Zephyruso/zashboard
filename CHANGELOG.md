@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.70.1](https://github.com/Zephyruso/zashboard/compare/v1.70.0...v1.70.1) (2025-03-04)
+
+
+### Bug Fixes
+
+* bring old v4 light and dark theme back to v5 ([d73484a](https://github.com/Zephyruso/zashboard/commit/d73484a84d2e429857e4eb899fe479c78e1a4f4c))
+
 ## [1.70.0](https://github.com/Zephyruso/zashboard/compare/v1.69.0...v1.70.0) (2025-03-03)
 
 
