@@ -2,6 +2,15 @@
 
 # Changelog
 
+## [1.71.0](https://github.com/Zephyruso/zashboard/compare/v1.70.2...v1.71.0) (2025-03-05)
+
+
+### Features
+
+* daisyuiv5-theme ([eec8209](https://github.com/Zephyruso/zashboard/commit/eec8209f23f6dab9ab1247d66286870bb9604052))
+* link to backend github ([ae6a3e0](https://github.com/Zephyruso/zashboard/commit/ae6a3e05e97acabc6f61f751775ce85ceee6a594))
+* setting for auto theme ([1aabb78](https://github.com/Zephyruso/zashboard/commit/1aabb784e07ce050f77c4cd3a970e716455b525f))
+
 ## [1.70.2](https://github.com/Zephyruso/zashboard/compare/v1.70.1...v1.70.2) (2025-03-04)
 
 
