@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.72.0](https://github.com/Zephyruso/zashboard/compare/v1.71.0...v1.72.0) (2025-03-06)
+
+
+### Features
+
+* policy fixed now tip ([f1fab79](https://github.com/Zephyruso/zashboard/commit/f1fab79c191a727bb1e134ffa6795827299cefd3))
+
+
+### Bug Fixes
+
+* remove CNAME in dist ([5e1c4d3](https://github.com/Zephyruso/zashboard/commit/5e1c4d31884c56327f38fb91925d69d025e4be3c))
+* sort desc first for speeds ([f3030bc](https://github.com/Zephyruso/zashboard/commit/f3030bcc567a12324cfdcfdc6b08b3c32d9603de))
+* url https params ([c53165a](https://github.com/Zephyruso/zashboard/commit/c53165a3f1bf1695457a2970912da6513b5b6903))
+
 ## [1.71.0](https://github.com/Zephyruso/zashboard/compare/v1.70.2...v1.71.0) (2025-03-05)
 
 
