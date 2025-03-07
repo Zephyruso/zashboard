@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.72.1](https://github.com/Zephyruso/zashboard/compare/v1.72.0...v1.72.1) (2025-03-07)
+
+
+### Bug Fixes
+
+* connection & proxies ctrl style for iPad ([9c02345](https://github.com/Zephyruso/zashboard/commit/9c023451662e1922de4d7f0128a338c694cabda8))
+* separate destination and proxy node IP column ([51a502e](https://github.com/Zephyruso/zashboard/commit/51a502e942d63be1fab9fbb0b81c94714f97237c))
+
 ## [1.72.0](https://github.com/Zephyruso/zashboard/compare/v1.71.0...v1.72.0) (2025-03-06)
 
 
