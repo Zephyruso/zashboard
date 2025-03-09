@@ -48,7 +48,7 @@ export default defineComponent<{
         [CONNECTIONS_TABLE_ACCESSOR_KEY.Destination]: (
           <span class="w-80 grow truncate break-all">{getDestinationFromConnection(conn)}</span>
         ),
-        [CONNECTIONS_TABLE_ACCESSOR_KEY.ProxyNodeAddress]: (
+        [CONNECTIONS_TABLE_ACCESSOR_KEY.RemoteAddress]: (
           <span class="w-80 grow truncate break-all">{conn.metadata.remoteDestination || '-'}</span>
         ),
         [CONNECTIONS_TABLE_ACCESSOR_KEY.SourceIP]: (

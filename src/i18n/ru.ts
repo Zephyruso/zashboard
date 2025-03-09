@@ -33,7 +33,7 @@ const ru: LANG_MESSAGE = {
   process: 'Процесс',
   connectTime: 'Время',
   sourcePort: 'Исходный порт',
-  destination: 'Назначение',
+  destination: 'Финальное назначение',
   destinationType: 'Тип назначения',
   inboundUser: 'Входящий пользователь',
   dl: 'Загр',
@@ -156,8 +156,8 @@ const ru: LANG_MESSAGE = {
   optional: 'Необязательно',
   swipeInTabs: 'Провести для переключения вкладок',
   connectionIP: 'IP-источник соединения',
-  simpleCardPreset: 'Простой карточки',
-  detailedCardPreset: 'Подробный карточки',
+  simpleCardPreset: 'Простой',
+  detailedCardPreset: 'Подробный',
   refresh: 'Обновить',
   reset: 'Сбросить',
   minProxyCardWidth: 'Минимальная ширина карточки прокси',
@@ -170,7 +170,7 @@ const ru: LANG_MESSAGE = {
   displayLatencyNumber: 'Отображать задержку',
   tipForFixed:
     'Текущая стратегическая группа закреплена за текущим узлом. Нажмите «Тест скорости», чтобы восстановить поведение urltest/fallback.',
-  proxyNodeAddress: 'Адрес узла прокси',
+  proxyNodeAddress: 'удалённый адрес',
 }
 
 export default ru

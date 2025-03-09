@@ -40,7 +40,7 @@ export enum CONNECTIONS_TABLE_ACCESSOR_KEY {
   SniffHost = 'sniffHost',
   Destination = 'destination',
   DestinationType = 'destinationType',
-  ProxyNodeAddress = 'proxyNodeAddress',
+  RemoteAddress = 'proxyNodeAddress',
 }
 
 export enum TABLE_WIDTH_MODE {

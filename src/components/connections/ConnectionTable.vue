@@ -224,7 +224,7 @@ const isManualTable = computed(() => tableWidthMode.value === TABLE_WIDTH_MODE.M
 const { t } = useI18n()
 const columns: ColumnDef<Connection>[] = [
   {
-    header: () => t('close'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.Close),
     enableSorting: false,
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.Close,
     cell: ({ row }) => {
@@ -248,17 +248,17 @@ const columns: ColumnDef<Connection>[] = [
     },
   },
   {
-    header: () => t('type'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.Type),
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.Type,
     accessorFn: (original) => getNetworkTypeFromConnection(original),
   },
   {
-    header: () => t('process'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.Process),
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.Process,
     accessorFn: (original) => getProcessFromConnection(original),
   },
   {
-    header: () => t('host'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.Host),
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.Host,
     accessorFn: (original) =>
       `${
@@ -266,18 +266,18 @@ const columns: ColumnDef<Connection>[] = [
       }:${original.metadata.destinationPort}`,
   },
   {
-    header: () => t('sniffHost'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.SniffHost),
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.SniffHost,
     accessorFn: (original) => original.metadata.sniffHost || '-',
   },
   {
-    header: () => t('rule'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.Rule),
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.Rule,
     accessorFn: (original) =>
       !original.rulePayload ? original.rule : `${original.rule}: ${original.rulePayload}`,
   },
   {
-    header: () => t('chains'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.Chains),
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.Chains,
     accessorFn: (original) => original.chains.join(','),
     cell: ({ row }) => {
@@ -306,7 +306,7 @@ const columns: ColumnDef<Connection>[] = [
     },
   },
   {
-    header: () => t('connectTime'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.ConnectTime),
     enableGrouping: false,
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.ConnectTime,
     accessorFn: (original) => fromNow(original.start),
@@ -314,7 +314,7 @@ const columns: ColumnDef<Connection>[] = [
       dayjs(next.original.start).valueOf() - dayjs(prev.original.start).valueOf(),
   },
   {
-    header: () => t('dlSpeed'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed),
     enableGrouping: false,
     sortDescFirst: true,
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed,
@@ -322,7 +322,7 @@ const columns: ColumnDef<Connection>[] = [
     sortingFn: (prev, next) => prev.original.downloadSpeed - next.original.downloadSpeed,
   },
   {
-    header: () => t('ulSpeed'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed),
     enableGrouping: false,
     sortDescFirst: true,
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed,
@@ -330,7 +330,7 @@ const columns: ColumnDef<Connection>[] = [
     sortingFn: (prev, next) => prev.original.uploadSpeed - next.original.uploadSpeed,
   },
   {
-    header: () => t('dl'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.Download),
     enableGrouping: false,
     sortDescFirst: true,
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.Download,
@@ -338,7 +338,7 @@ const columns: ColumnDef<Connection>[] = [
     sortingFn: (prev, next) => prev.original.download - next.original.download,
   },
   {
-    header: () => t('ul'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.Upload),
     enableGrouping: false,
     sortDescFirst: true,
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.Upload,
@@ -346,30 +346,30 @@ const columns: ColumnDef<Connection>[] = [
     sortingFn: (prev, next) => prev.original.upload - next.original.upload,
   },
   {
-    header: () => t('sourceIP'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.SourceIP),
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.SourceIP,
     accessorFn: (original) => {
       return getIPLabelFromMap(original.metadata.sourceIP)
     },
   },
   {
-    header: () => t('sourcePort'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.SourcePort),
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.SourcePort,
     accessorFn: (original) => original.metadata.sourcePort,
   },
   {
-    header: () => t('destination'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.Destination),
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.Destination,
     accessorFn: getDestinationFromConnection,
   },
   {
-    header: () => t('destinationType'),
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.DestinationType),
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.DestinationType,
     accessorFn: getDestinationTypeFromConnection,
   },
   {
-    header: () => t('proxyNodeAddress'),
-    id: CONNECTIONS_TABLE_ACCESSOR_KEY.ProxyNodeAddress,
+    header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.RemoteAddress),
+    id: CONNECTIONS_TABLE_ACCESSOR_KEY.RemoteAddress,
     accessorFn: (original) => original.metadata.remoteDestination || '-',
   },
 ]
