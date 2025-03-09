@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.72.2](https://github.com/Zephyruso/zashboard/compare/v1.72.1...v1.72.2) (2025-03-09)
+
+
+### Bug Fixes
+
+* disable update btn for inline provider ([d5e0c48](https://github.com/Zephyruso/zashboard/commit/d5e0c4885548a2b6548a7ca95d9cc6e77a4ce75f))
+* i18n for remote destination ([cd4be63](https://github.com/Zephyruso/zashboard/commit/cd4be6345046d2705c1222ac33f2e74d67510f95))
+
 ## [1.72.1](https://github.com/Zephyruso/zashboard/compare/v1.72.0...v1.72.1) (2025-03-07)
 
 
