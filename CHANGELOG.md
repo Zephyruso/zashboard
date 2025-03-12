@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.72.3](https://github.com/Zephyruso/zashboard/compare/v1.72.2...v1.72.3) (2025-03-12)
+
+
+### Bug Fixes
+
+* prevent selecting a selected node ([b7fd831](https://github.com/Zephyruso/zashboard/commit/b7fd8316420574da51b591bfac55a5afc085f1aa))
+
 ## [1.72.2](https://github.com/Zephyruso/zashboard/compare/v1.72.1...v1.72.2) (2025-03-10)
 
 
