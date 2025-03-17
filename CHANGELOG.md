@@ -2,6 +2,15 @@
 
 # Changelog
 
+## [1.73.1](https://github.com/Zephyruso/zashboard/compare/v1.73.0...v1.73.1) (2025-03-17)
+
+
+### Bug Fixes
+
+* make daisyui v5 theme as default ([e0bc078](https://github.com/Zephyruso/zashboard/commit/e0bc07881ce62258534e40874513455864c6a987))
+* proxy chains sort ([3415c3f](https://github.com/Zephyruso/zashboard/commit/3415c3f89b29df6f2bdefca7e66e5aba8be482db))
+* style for connection details ([17d3504](https://github.com/Zephyruso/zashboard/commit/17d3504eac86856d24cb8e7b3312c1d299d42f96))
+
 ## [1.73.0](https://github.com/Zephyruso/zashboard/compare/v1.72.3...v1.73.0) (2025-03-14)
 
 
