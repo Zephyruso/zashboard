@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.74.0](https://github.com/Zephyruso/zashboard/compare/v1.73.1...v1.74.0) (2025-03-18)
+
+
+### Features
+
+* add custom theme ([4679ddd](https://github.com/Zephyruso/zashboard/commit/4679dddb900271386e430e7bc691bbf06fb44180))
+
+
+### Bug Fixes
+
+* highlight text for dark theme ([902af5c](https://github.com/Zephyruso/zashboard/commit/902af5cff064d9f3b29329383be43b48f1d6d089))
+
 ## [1.73.1](https://github.com/Zephyruso/zashboard/compare/v1.73.0...v1.73.1) (2025-03-17)
 
 
