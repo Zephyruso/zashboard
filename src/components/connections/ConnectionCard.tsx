@@ -5,6 +5,7 @@ import {
   fromNow,
   getDestinationFromConnection,
   getDestinationTypeFromConnection,
+  getHostFromConnection,
   getIPLabelFromMap,
   getNetworkTypeFromConnection,
   getProcessFromConnection,
@@ -40,10 +41,7 @@ export default defineComponent<{
       const metadata = conn.metadata
       const componentMap: Record<CONNECTIONS_TABLE_ACCESSOR_KEY, JSX.Element> = {
         [CONNECTIONS_TABLE_ACCESSOR_KEY.Host]: (
-          <span class="text-main w-80 grow truncate">
-            {metadata.host || metadata.sniffHost || metadata.destinationIP}:
-            {metadata.destinationPort}
-          </span>
+          <span class="text-main w-80 grow truncate">{getHostFromConnection(conn)}</span>
         ),
         [CONNECTIONS_TABLE_ACCESSOR_KEY.Destination]: (
           <span class="w-80 grow truncate break-all">{getDestinationFromConnection(conn)}</span>

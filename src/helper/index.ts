@@ -161,6 +161,12 @@ export const getIPLabelFromMap = (ip: string) => {
   return cacheResult(ip, ip)
 }
 
+export const getHostFromConnection = (connection: Connection) => {
+  return `${connection.metadata.host || connection.metadata.sniffHost || connection.metadata.destinationIP}:${
+    connection.metadata.destinationPort
+  }`
+}
+
 export const getProcessFromConnection = (connection: Connection) => {
   return (
     connection.metadata.process ||
