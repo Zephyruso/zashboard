@@ -21,8 +21,14 @@
             <div>( AS{{ details?.asn }} )</div>
           </div>
           <div class="flex flex-wrap">
-            <div class="mr-3 flex items-center gap-1">
+            <div
+              class="mr-3 flex items-center gap-1"
+              v-if="details?.country"
+            >
               <MapPinIcon class="h-4 w-4 shrink-0" />
+              <template v-if="details?.city && details?.city !== details?.country">
+                {{ details?.city }},
+              </template>
               {{ details?.country }}
             </div>
             <div class="flex items-center gap-1">
