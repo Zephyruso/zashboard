@@ -59,7 +59,7 @@
       </div>
     </div>
     <div class="divider">Effect</div>
-    <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
+    <div class="grid grid-cols-1 gap-2 pb-12 md:grid-cols-3">
       <div>
         depth
         <input
@@ -85,7 +85,28 @@
         />
       </div>
     </div>
-    <div class="flex justify-end gap-2 pt-2">
+    <div
+      class="bg-base-100 border-base-200 absolute right-0 bottom-0 left-0 flex gap-2 border-t p-2 pt-2"
+    >
+      <select
+        class="select select-sm w-26"
+        v-model="applyFrom"
+      >
+        <option
+          v-for="opt in ALL_THEME"
+          :key="opt"
+          :value="opt"
+        >
+          {{ opt }}
+        </option>
+      </select>
+      <button
+        class="btn btn-sm"
+        @click="resetCustomTheme"
+      >
+        {{ $t('reset') }}
+      </button>
+      <div class="flex-1"></div>
       <a
         class="btn btn-sm"
         href="https://daisyui.com/theme-generator/"
@@ -104,11 +125,11 @@
 </template>
 
 <script setup lang="ts">
-import { DEFAULT_THEME, type THEME } from '@/constant'
+import { ALL_THEME, DEFAULT_THEME, type THEME } from '@/constant'
 import { applyCustomThemes } from '@/helper'
 import { customThemes, darkTheme, defaultTheme } from '@/store/settings'
 import { v4 as uuid } from 'uuid'
-import { computed, reactive } from 'vue'
+import { computed, nextTick, reactive, ref } from 'vue'
 import DialogWrapper from '../common/DialogWrapper.vue'
 import TextInput from '../common/TextInput.vue'
 
@@ -116,7 +137,8 @@ const model = defineModel<boolean>('value', {
   default: false,
 })
 
-const customTheme = reactive(customThemes.value[0] || DEFAULT_THEME)
+const applyFrom = ref(ALL_THEME[0])
+const customTheme = reactive<THEME>({ ...(customThemes.value[0] || DEFAULT_THEME) })
 const colors = computed(() => {
   return Object.keys(customTheme).filter((key) => key.startsWith('--color-'))
 })
@@ -148,7 +170,7 @@ const dark = computed({
   },
 })
 
-const handlerCustomThemeSave = () => {
+const handlerCustomThemeSave = async () => {
   customThemes.value = [
     {
       ...customTheme,
@@ -156,8 +178,32 @@ const handlerCustomThemeSave = () => {
     } as THEME,
   ]
 
+  defaultTheme.value = ''
+  darkTheme.value = ''
+
+  await nextTick()
+
   defaultTheme.value = customTheme.name
   darkTheme.value = customTheme.name
   applyCustomThemes()
+}
+
+const resetCustomTheme = () => {
+  const themeElement = document.createElement('div')
+
+  themeElement.dataset.theme = applyFrom.value
+  themeElement.style.display = 'none'
+  document.body.appendChild(themeElement)
+  const styles = getComputedStyle(themeElement)
+
+  Object.keys(DEFAULT_THEME).forEach((key) => {
+    const value = styles.getPropertyValue(key).trim()
+
+    if (value) {
+      customTheme[key] = value
+    }
+  })
+  themeElement.remove()
+  handlerCustomThemeSave()
 }
 </script>

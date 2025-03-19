@@ -184,7 +184,7 @@
 import { isSingBox, upgradeUIAPI, zashboardVersion } from '@/api'
 import LanguageSelect from '@/components/settings/LanguageSelect.vue'
 import { useSettings } from '@/composables/settings'
-import { FONTS } from '@/constant'
+import { ALL_THEME, FONTS } from '@/constant'
 import { exportSettings } from '@/helper'
 import {
   deleteBase64FromIndexedDB,
@@ -249,51 +249,11 @@ const handlerClickUpgradeUI = async () => {
 }
 
 const themes = computed(() => {
-  const all = [
-    'light',
-    'dark',
-    'light-legacy',
-    'dark-legacy',
-    'cupcake',
-    'bumblebee',
-    'emerald',
-    'corporate',
-    'synthwave',
-    'retro',
-    'cyberpunk',
-    'valentine',
-    'halloween',
-    'garden',
-    'forest',
-    'aqua',
-    'lofi',
-    'pastel',
-    'fantasy',
-    'wireframe',
-    'black',
-    'luxury',
-    'dracula',
-    'cmyk',
-    'autumn',
-    'business',
-    'acid',
-    'lemonade',
-    'night',
-    'coffee',
-    'winter',
-    'dim',
-    'nord',
-    'sunset',
-    'caramellatte',
-    'abyss',
-    'silk',
-  ]
-
   if (customThemes.value.length) {
-    return [...all, ...customThemes.value.map((theme) => theme.name)]
+    return [...ALL_THEME, ...customThemes.value.map((theme) => theme.name)]
   }
 
-  return all
+  return ALL_THEME
 })
 
 const refreshPages = async () => {
