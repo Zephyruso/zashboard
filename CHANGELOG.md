@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.75.0](https://github.com/Zephyruso/zashboard/compare/v1.74.0...v1.75.0) (2025-03-19)
+
+
+### Features
+
+* city location for connection details ([3428e3a](https://github.com/Zephyruso/zashboard/commit/3428e3a056d412474ce3fac66c7b7e766dbc4e05))
+* using the existing theme to reset custom theme ([54382f2](https://github.com/Zephyruso/zashboard/commit/54382f2328b1ce3eb06714c2b6a6000a0877839d))
+
+
+### Bug Fixes
+
+* long host style in connection table ([6c850ff](https://github.com/Zephyruso/zashboard/commit/6c850ff83840a268bf6f64ae3e217f811effa93c))
+
 ## [1.74.0](https://github.com/Zephyruso/zashboard/compare/v1.73.1...v1.74.0) (2025-03-18)
 
 
