@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.75.1](https://github.com/Zephyruso/zashboard/compare/v1.75.0...v1.75.1) (2025-03-21)
+
+
+### Bug Fixes
+
+* long rule for sing-box in table ([164f98f](https://github.com/Zephyruso/zashboard/commit/164f98ff6a54fec9a8e10563f72f496094bd26ce))
+* setup page style ([5305893](https://github.com/Zephyruso/zashboard/commit/5305893312e0a35f4c8d859df9146be97039a465))
+
 ## [1.75.0](https://github.com/Zephyruso/zashboard/compare/v1.74.0...v1.75.0) (2025-03-19)
 
 
