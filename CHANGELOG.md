@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.75.2](https://github.com/Zephyruso/zashboard/compare/v1.75.1...v1.75.2) (2025-03-22)
+
+
+### Bug Fixes
+
+* compatible with legacy version of clash meta ([bbf015c](https://github.com/Zephyruso/zashboard/commit/bbf015c127cc5af2bb042a446a9bdb4a6af9d9af))
+* region for details ([eaf8cf1](https://github.com/Zephyruso/zashboard/commit/eaf8cf1127bafaa6dfa83d9d90f60ae972489e3c))
+
 ## [1.75.1](https://github.com/Zephyruso/zashboard/compare/v1.75.0...v1.75.1) (2025-03-21)
 
 
