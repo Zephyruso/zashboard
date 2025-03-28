@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.77.0](https://github.com/Zephyruso/zashboard/compare/v1.76.0...v1.77.0) (2025-03-28)
+
+
+### Features
+
+* new chart style in sidebar ([dadead4](https://github.com/Zephyruso/zashboard/commit/dadead4a9d9cf97eda324b8a0860633ca2bed9a1))
+
+
+### Bug Fixes
+
+* catch icon settings empty ([1e95227](https://github.com/Zephyruso/zashboard/commit/1e95227f34c3b076db09c310a3d7b6e210d5b071))
+
 ## [1.76.0](https://github.com/Zephyruso/zashboard/compare/v1.75.2...v1.76.0) (2025-03-26)
 
 
