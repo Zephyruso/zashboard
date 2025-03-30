@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.76.1](https://github.com/Zephyruso/zashboard/compare/v1.76.0...v1.76.1) (2025-03-30)
+
+
+### Bug Fixes
+
+* catch icon settings empty ([1e95227](https://github.com/Zephyruso/zashboard/commit/1e95227f34c3b076db09c310a3d7b6e210d5b071))
+* chart style in sidebar ([88e4b17](https://github.com/Zephyruso/zashboard/commit/88e4b176cd28d636a542d2dda820396638ee00c5))
+
 ## [1.76.0](https://github.com/Zephyruso/zashboard/compare/v1.75.2...v1.76.0) (2025-03-26)
 
 
