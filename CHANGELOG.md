@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.76.2](https://github.com/Zephyruso/zashboard/compare/v1.76.1...v1.76.2) (2025-04-02)
+
+
+### Bug Fixes
+
+* hidden group icon status ([89d459a](https://github.com/Zephyruso/zashboard/commit/89d459ab56c718de2d0cc3440bf71c13493abaaf))
+* make disable pull to refresh optional ([56e2273](https://github.com/Zephyruso/zashboard/commit/56e2273da856510f95b95aba19b208798366183e))
+
 ## [1.76.1](https://github.com/Zephyruso/zashboard/compare/v1.76.0...v1.76.1) (2025-03-30)
 
 
