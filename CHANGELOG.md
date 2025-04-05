@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.76.3](https://github.com/Zephyruso/zashboard/compare/v1.76.2...v1.76.3) (2025-04-05)
+
+
+### Bug Fixes
+
+* merge same sourceip label options ([d8d5388](https://github.com/Zephyruso/zashboard/commit/d8d53880d03c3b77d68fa741c7b890bee8a948b8))
+
 ## [1.76.2](https://github.com/Zephyruso/zashboard/compare/v1.76.1...v1.76.2) (2025-04-02)
 
 
