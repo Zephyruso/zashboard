@@ -457,7 +457,7 @@ const rowVirtualizerOptions = computed(() => {
     count: rows.value.length,
     getScrollElement: () => parentRef.value,
     estimateSize: () => 36,
-    overscan: 48,
+    overscan: 24,
   }
 })
 

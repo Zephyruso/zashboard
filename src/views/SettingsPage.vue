@@ -30,6 +30,7 @@
 
     <BackendSettings />
     <ProxiesSettings />
+
     <ConnectionsSettings />
 
     <!-- overview -->
