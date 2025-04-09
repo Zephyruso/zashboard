@@ -21,15 +21,28 @@
             <IPCheck />
             <ConnectionStatus />
           </template>
-          <SpeedCharts />
-          <MemoryCharts />
-          <ConnectionsCharts />
+          <SpeedCharts v-if="chartsRender > 0" />
+          <div
+            v-else
+            class="h-28"
+          ></div>
+          <MemoryCharts v-if="chartsRender > 1" />
+          <div
+            v-else
+            class="h-28"
+          ></div>
+          <ConnectionsCharts v-if="chartsRender > 2" />
+          <div
+            v-else
+            class="h-28"
+          ></div>
         </div>
       </div>
     </template>
 
     <BackendSettings />
     <ProxiesSettings />
+
     <ConnectionsSettings />
 
     <!-- overview -->
@@ -105,4 +118,19 @@ import {
   showStatisticsWhenSidebarCollapsed,
   splitOverviewPage,
 } from '@/store/settings'
+import { onMounted, ref } from 'vue'
+
+const chartsRender = ref(0)
+
+onMounted(() => {
+  requestAnimationFrame(() => {
+    chartsRender.value++
+    requestAnimationFrame(() => {
+      chartsRender.value++
+      requestAnimationFrame(() => {
+        chartsRender.value++
+      })
+    })
+  })
+})
 </script>
