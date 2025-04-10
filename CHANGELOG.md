@@ -2,6 +2,15 @@
 
 # Changelog
 
+## [1.76.3](https://github.com/Zephyruso/zashboard/compare/v1.76.2...v1.76.3) (2025-04-10)
+
+
+### Bug Fixes
+
+* merge same sourceip label options ([43a8576](https://github.com/Zephyruso/zashboard/commit/43a8576eddab71f5c7590a166b9a84dc738bea1a))
+* performance for page switch ([1a1b937](https://github.com/Zephyruso/zashboard/commit/1a1b937bc85e030efe11c65c545eb3857101e028))
+* swipe animation performance ([9837522](https://github.com/Zephyruso/zashboard/commit/98375229e1db1efb8d8047e2f592ca56950fee53))
+
 ## [1.76.2](https://github.com/Zephyruso/zashboard/compare/v1.76.1...v1.76.2) (2025-04-02)
 
 
