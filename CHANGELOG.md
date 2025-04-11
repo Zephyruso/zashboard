@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.78.0](https://github.com/Zephyruso/zashboard/compare/v1.77.0...v1.78.0) (2025-04-11)
+
+
+### Features
+
+* reF1nd sing-box ([16c4f47](https://github.com/Zephyruso/zashboard/commit/16c4f47ba6a19d7196c4774d96c4de4917adedce))
+
+
+### Bug Fixes
+
+* add thresholds on relativeTime ([#332](https://github.com/Zephyruso/zashboard/issues/332)) ([d1cb8a8](https://github.com/Zephyruso/zashboard/commit/d1cb8a882d5c828745c1b02fd8503c89371aca1c))
+
 ## [1.77.0](https://github.com/Zephyruso/zashboard/compare/v1.76.3...v1.77.0) (2025-04-11)
 
 
