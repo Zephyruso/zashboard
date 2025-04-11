@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.77.0](https://github.com/Zephyruso/zashboard/compare/v1.76.3...v1.77.0) (2025-04-11)
+
+
+### Features
+
+* bouncein animation for mobile ([a1e9d38](https://github.com/Zephyruso/zashboard/commit/a1e9d38b3f98d28ee0a100635e5c4e79aa0c660f))
+
+
+### Bug Fixes
+
+* chart performance ([ca7b861](https://github.com/Zephyruso/zashboard/commit/ca7b861fea8e03fc8d9ba94863d561fb1dd52c8c))
+
 ## [1.76.3](https://github.com/Zephyruso/zashboard/compare/v1.76.2...v1.76.3) (2025-04-10)
 
 
