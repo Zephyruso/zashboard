@@ -47,17 +47,33 @@ dayjs.updateLocale('en', {
     future: 'in %s',
     past: '%s ago',
     s: 'seconds',
-    m: 'a minute',
+    ss: '%d seconds',
+    m: '1 minute',
     mm: '%d minutes',
-    h: 'an hour',
+    h: '1 hour',
     hh: '%d hours',
-    d: 'a day',
+    d: '1 day',
     dd: '%d days',
-    M: 'a month',
+    M: '1 month',
     MM: '%d months',
-    y: 'a year',
+    y: '1 year',
     yy: '%d years',
   },
+  
+  thresholds: [
+    { l: 's', r: 5, d: 'second' },
+    { l: 'ss', r: 59, d: 'second' },
+    { l: 'm', r: 1, d: 'minute' },
+    { l: 'mm', r: 59, d: 'minute' },
+    { l: 'h', r: 1, d: 'hour' },
+    { l: 'hh', r: 23, d: 'hour' },
+    { l: 'd', r: 1, d: 'day' },
+    { l: 'dd', r: 29, d: 'day' },
+    { l: 'M', r: 1, d: 'month' },
+    { l: 'MM', r: 11, d: 'month' },
+    { l: 'y', r: 1, d: 'year' },
+    { l: 'yy', d: 'year' }
+  ]
 })
 app.use(router)
 app.use(i18n)
