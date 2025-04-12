@@ -31,8 +31,20 @@ export const prettyBytesHelper = (bytes: number, opts?: Options) => {
   })
 }
 
+/*
 export const fromNow = (timestamp: string) => {
   return dayjs(timestamp).locale(language.value).fromNow()
+}
+*/
+
+export const fromNow = (timestamp: string) => {
+  const localeMap: Record<string, string> = {
+    'en-US': 'en',
+    'zh-CN': 'zh-cn',
+    'ru-RU': 'ru'
+  };
+  const dayjsLocale = localeMap[language.value] || 'en';
+  return dayjs(timestamp).locale(dayjsLocale).fromNow();
 }
 
 export const isProxyGroup = (name: string) => {

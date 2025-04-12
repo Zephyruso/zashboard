@@ -40,7 +40,26 @@ if (import.meta.env.MODE === 'cdn-fonts') {
 
 const app = createApp(App)
 
-dayjs.extend(relativeTime)
+function customRounding(value) {
+  return Math.floor(value);
+}
+
+const thresholds = [
+  { l: 's', r: 1 },
+  { l: 'ss', r: 59, d: 'second' },
+  { l: 'm', r: 1 },
+  { l: 'mm', r: 59, d: 'minute' },
+  { l: 'h', r: 1  },
+  { l: 'hh', r: 23, d: 'hour' },
+  { l: 'd', r: 1 },
+  { l: 'dd', r: 29, d: 'day' },
+  { l: 'M', r: 1 },
+  { l: 'MM', r: 11, d: 'month' },
+  { l: 'y', r: 1 },
+  { l: 'yy', d: 'year' }
+];
+
+dayjs.extend(relativeTime, { rounding: customRounding, thresholds })
 dayjs.extend(updateLocale)
 dayjs.updateLocale('en', {
   relativeTime: {
@@ -58,22 +77,45 @@ dayjs.updateLocale('en', {
     MM: '%d months',
     y: '1 year',
     yy: '%d years',
-  },
-  
-  thresholds: [
-    { l: 's', r: 5, d: 'second' },
-    { l: 'ss', r: 59, d: 'second' },
-    { l: 'm', r: 1, d: 'minute' },
-    { l: 'mm', r: 59, d: 'minute' },
-    { l: 'h', r: 1, d: 'hour' },
-    { l: 'hh', r: 23, d: 'hour' },
-    { l: 'd', r: 1, d: 'day' },
-    { l: 'dd', r: 29, d: 'day' },
-    { l: 'M', r: 1, d: 'month' },
-    { l: 'MM', r: 11, d: 'month' },
-    { l: 'y', r: 1, d: 'year' },
-    { l: 'yy', d: 'year' }
-  ]
+  }
+})
+
+dayjs.updateLocale('zh-cn', {
+  relativeTime: {
+    future: '%s 内',
+    past: '%s 前',
+    s: '几秒',
+    ss: '%d 秒',
+    m: '1 分钟',
+    mm: '%d 分钟',
+    h: '1 小时',
+    hh: '%d 小时',
+    d: '1 天',
+    dd: '%d 天',
+    M: '1 个月',
+    MM: '%d 个月',
+    y: '1 年',
+    yy: '%d 年'
+  }
+})
+
+dayjs.updateLocale('ru', {
+  relativeTime: {
+    future: 'через %s',
+    past: '%s назад',
+    s: 'несколько секунд',
+    ss: '%d секунд',
+    m: 'минуту',
+    mm: '%d минут',
+    h: 'час',
+    hh: '%d часов',
+    d: 'день',
+    dd: '%d дней',
+    M: 'месяц',
+    MM: '%d месяцев',
+    y: 'год',
+    yy: '%d лет'
+  }
 })
 app.use(router)
 app.use(i18n)
