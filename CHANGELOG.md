@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.79.0](https://github.com/Zephyruso/zashboard/compare/v1.78.0...v1.79.0) (2025-04-15)
+
+
+### Features
+
+* blurry effect ([8398a43](https://github.com/Zephyruso/zashboard/commit/8398a435bfffb8aaaaac22423fb33dc6e76378ad))
+* display all features setting for sing-box fork ([f309a89](https://github.com/Zephyruso/zashboard/commit/f309a89d193556f01663782b2ca8772390b8a6bf))
+* switch for scroll animation ([1d9062b](https://github.com/Zephyruso/zashboard/commit/1d9062b60274e09a4afd350eddbdbe9155f4c477))
+
+
+### Bug Fixes
+
+* bounce animation flicker ([7ceafb9](https://github.com/Zephyruso/zashboard/commit/7ceafb91cf0ae1f433c22abfc9d25f465bbacb8a))
+* translate for mode ([2660118](https://github.com/Zephyruso/zashboard/commit/2660118f9103b802d6ec4051238974146eb8d040))
+
 ## [1.78.0](https://github.com/Zephyruso/zashboard/compare/v1.77.0...v1.78.0) (2025-04-13)
 
 
