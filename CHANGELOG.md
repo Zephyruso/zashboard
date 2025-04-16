@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.80.0](https://github.com/Zephyruso/zashboard/compare/v1.79.0...v1.80.0) (2025-04-16)
+
+
+### Features
+
+* blur intensity ([cc73668](https://github.com/Zephyruso/zashboard/commit/cc73668889d18f177065406b9633329c76edba1f))
+* import settings from url ([a67a337](https://github.com/Zephyruso/zashboard/commit/a67a33718b51217e86eeef4b819af573a7a973f6))
+
+
+### Bug Fixes
+
+* proxy group invisible ([461aa0b](https://github.com/Zephyruso/zashboard/commit/461aa0b1ea81b640ce7a174df31531ced4636999))
+
 ## [1.79.0](https://github.com/Zephyruso/zashboard/compare/v1.78.0...v1.79.0) (2025-04-15)
 
 
