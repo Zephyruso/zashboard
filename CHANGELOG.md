@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.80.1](https://github.com/Zephyruso/zashboard/compare/v1.80.0...v1.80.1) (2025-04-17)
+
+
+### Bug Fixes
+
+* 0 in memory ws ([870dc0f](https://github.com/Zephyruso/zashboard/commit/870dc0f127b4a8047f8e31a0ad33dbfb6b2c0666))
+* style for transparent ([6e54ac3](https://github.com/Zephyruso/zashboard/commit/6e54ac322b6d8feb304ff370a003056c7e99ed39))
+
 ## [1.80.0](https://github.com/Zephyruso/zashboard/compare/v1.79.0...v1.80.0) (2025-04-16)
 
 
