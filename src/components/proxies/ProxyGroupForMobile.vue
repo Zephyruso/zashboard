@@ -1,7 +1,7 @@
 <template>
   <div
     class="relative h-20 cursor-pointer"
-    ref="cardRef"
+    ref="cardWrapperRef"
     @click="handlerGroupClick"
   >
     <div
@@ -19,6 +19,7 @@
       :style="activeMode && [cardPosition, cardSize]"
       @contextmenu.prevent.stop="handlerLatencyTest"
       @transitionend="handlerTransitionEnd"
+      ref="cardRef"
     >
       <div class="flex h-20 shrink-0 flex-col gap-1 p-2">
         <ProxyIcon
@@ -119,6 +120,8 @@ const isLatencyTesting = ref(false)
 const activeMode = ref(false)
 const modalMode = ref(activeMode.value)
 const diplayAllContent = ref(activeMode.value)
+
+const cardWrapperRef = ref()
 const cardRef = ref()
 
 const initWidth = ref(0)
@@ -147,7 +150,7 @@ const handlerTransitionEnd = () => {
 
 const handlerGroupClick = async () => {
   const { innerHeight, innerWidth } = window
-  const { x, y, width, height } = cardRef.value.getBoundingClientRect()
+  const { x, y, width, height } = cardWrapperRef.value.getBoundingClientRect()
   const leftRightKey = x < innerWidth / 3 ? 'left' : 'right'
   const topBottomKey = y < innerHeight / 2 ? 'top' : 'bottom'
   const topBottomValue = topBottomKey === 'top' ? y : innerHeight - y - height
@@ -217,5 +220,5 @@ const tipForFixed = (e: Event) => {
   })
 }
 
-useBounceOnVisible()
+useBounceOnVisible(cardRef)
 </script>

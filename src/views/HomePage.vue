@@ -47,7 +47,7 @@
             >
               <component
                 :is="ROUTE_ICON_MAP[r]"
-                class="size-[1.2em]"
+                class="size-5 shrink-0"
               />
               <span class="dock-label">
                 {{ $t(r) }}

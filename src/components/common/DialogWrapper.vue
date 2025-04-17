@@ -10,7 +10,10 @@
     >
       <button class="!outline-none">close</button>
     </form>
-    <div class="modal-box relative max-h-[90dvh] overflow-hidden p-0 max-md:max-h-[70dvh]">
+    <div
+      class="modal-box relative max-h-[90dvh] overflow-hidden p-0 max-md:max-h-[70dvh]"
+      :class="blurIntensity < 5 && 'backdrop-blur-sm!'"
+    >
       <form method="dialog">
         <button class="btn btn-circle btn-ghost btn-xs absolute top-1 right-1 z-10">
           <XMarkIcon class="h-4 w-4" />
@@ -27,6 +30,7 @@
 </template>
 
 <script setup lang="ts">
+import { blurIntensity } from '@/store/settings'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { ref, watch } from 'vue'
 
