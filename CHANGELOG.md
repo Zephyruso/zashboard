@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.80.2](https://github.com/Zephyruso/zashboard/compare/v1.80.1...v1.80.2) (2025-04-18)
+
+
+### Bug Fixes
+
+* input select style ([f20ed11](https://github.com/Zephyruso/zashboard/commit/f20ed1186c2ce63f670bc0e42cff7d78751b063e))
+* modal opacity style ([5c56ddc](https://github.com/Zephyruso/zashboard/commit/5c56ddc7f9184871deacdfa29814ca8bb94b04cc))
+
 ## [1.80.1](https://github.com/Zephyruso/zashboard/compare/v1.80.0...v1.80.1) (2025-04-17)
 
 
