@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.82.0](https://github.com/Zephyruso/zashboard/compare/v1.81.0...v1.82.0) (2025-04-27)
+
+
+### Features
+
+* display icon in connection details ([182b51f](https://github.com/Zephyruso/zashboard/commit/182b51f1266ae945d058795d1a8a5aa52336aba7))
+
+
+### Bug Fixes
+
+* case insensitive search for connections ([771119a](https://github.com/Zephyruso/zashboard/commit/771119a9fde71b97dccd7f096a75592201b1169e))
+* discard outdated latency result ([97cce60](https://github.com/Zephyruso/zashboard/commit/97cce608067b038db05f7c418b9410b29f160d99))
+* xudp tag display ([c281d7c](https://github.com/Zephyruso/zashboard/commit/c281d7c6736c01f90b31a56bd3cf0ced66bc8452))
+
 ## [1.81.0](https://github.com/Zephyruso/zashboard/compare/v1.80.2...v1.81.0) (2025-04-23)
 
 
