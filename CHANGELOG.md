@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.82.1](https://github.com/Zephyruso/zashboard/compare/v1.82.0...v1.82.1) (2025-04-28)
+
+
+### Bug Fixes
+
+* style ([4238c3d](https://github.com/Zephyruso/zashboard/commit/4238c3d2ae19a44f373487a6eedfe3479106d7de))
+
 ## [1.82.0](https://github.com/Zephyruso/zashboard/compare/v1.81.0...v1.82.0) (2025-04-27)
 
 
