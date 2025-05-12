@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.83.0](https://github.com/Zephyruso/zashboard/compare/v1.82.0...v1.83.0) (2025-05-12)
+
+
+### Features
+
+* make logs history deletable ([efe4bdb](https://github.com/Zephyruso/zashboard/commit/efe4bdb47b8ce98543fe0845f8987e324d9147f2))
+* smart group api ([55510ae](https://github.com/Zephyruso/zashboard/commit/55510ae801a458cd933dae63b332c0826d78845d))
+
+
+### Bug Fixes
+
+* block error tip for latency test ([a84c608](https://github.com/Zephyruso/zashboard/commit/a84c60846d221632cb3a206f7d2e5796894415cc))
+* sourceip options sort ([7907be0](https://github.com/Zephyruso/zashboard/commit/7907be04d52433227d0ae5bde32c0a71ec44ec23))
+* style ([193acc2](https://github.com/Zephyruso/zashboard/commit/193acc23cfdb60722b4b16e1544f6c458d111518))
+
 ## [1.82.0](https://github.com/Zephyruso/zashboard/compare/v1.81.0...v1.82.0) (2025-04-27)
 
 
