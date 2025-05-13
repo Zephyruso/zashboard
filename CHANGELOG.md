@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.84.0](https://github.com/Zephyruso/zashboard/compare/v1.83.0...v1.84.0) (2025-05-13)
+
+
+### Features
+
+* latency test result tip ([02e4628](https://github.com/Zephyruso/zashboard/commit/02e462841835d7efddf4a58483401c328e4c1079))
+* options for geoip api ([ef693c8](https://github.com/Zephyruso/zashboard/commit/ef693c821686b9d56194787bf9fd0d36b4f0b443))
+
+
+### Bug Fixes
+
+* cache github version check result ([b9f9864](https://github.com/Zephyruso/zashboard/commit/b9f9864594e9306874a060c026259eef155f09d6))
+* display now node for smart ([856a4a6](https://github.com/Zephyruso/zashboard/commit/856a4a6cc8f7b410a25741453b5c99c274088964))
+
 ## [1.83.0](https://github.com/Zephyruso/zashboard/compare/v1.82.0...v1.83.0) (2025-05-12)
 
 
