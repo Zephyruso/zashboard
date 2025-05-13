@@ -51,7 +51,7 @@
             </div>
             <div class="flex items-center gap-1">
               <ServerIcon class="h-4 w-4 shrink-0" />
-              {{ details?.organization }}
+              {{ details?.asnName }}
             </div>
           </div>
         </template>
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { getIPFromIpsbAPI, type GlobalIPType } from '@/api'
+import { getIPInfo, type IPInfo } from '@/api/geoip'
 import DialogWrapper from '@/components/common/DialogWrapper.vue'
 import { useConnections } from '@/composables/connections'
 import { proxyMap } from '@/store/proxies'
@@ -72,7 +72,7 @@ import 'vue-json-pretty/lib/styles.css'
 import ProxyIcon from '../proxies/ProxyIcon.vue'
 
 const { infoConn, connectionDetailModalShow } = useConnections()
-const details = ref<GlobalIPType | null>(null)
+const details = ref<IPInfo | null>(null)
 
 const localIPv4Reg = /^(127\.|10\.|192\.18\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/
 const localIPv6Reg = /^(fc00::|fd[0-9a-f]{2}:|fe80::)/
@@ -103,7 +103,7 @@ watch(
     }
 
     details.value = null
-    getIPFromIpsbAPI(infoConn.value?.metadata.destinationIP).then((res) => {
+    getIPInfo(infoConn.value?.metadata.destinationIP).then((res) => {
       details.value = res
     })
   },

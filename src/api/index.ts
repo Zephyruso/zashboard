@@ -327,42 +327,6 @@ export const fetchBackendUpdateAvailableAPI = async () => {
   return false
 }
 
-export type GlobalIPType = {
-  organization: string
-  longitude: number
-  city: string
-  region: string
-  timezone: string
-  isp: string
-  offset: number
-  asn: number
-  asn_organization: string
-  country: string
-  ip: string
-  latitude: number
-  postal_code: string
-  continent_code: string
-  country_code: string
-  region_code: string
-}
-
-export const getIPFromIpsbAPI = async (ip = '') => {
-  const response = await fetch('https://api.ip.sb/geoip' + (ip ? `/${ip}` : ''))
-
-  return (await response.json()) as GlobalIPType
-}
-
-export const getIPFromIpipnetAPI = async () => {
-  const response = await fetch('https://myip.ipip.net/json')
-
-  return (await response.json()) as {
-    data: {
-      ip: string
-      location: string[]
-    }
-  }
-}
-
 export const getLatencyFromUrlAPI = (url: string) => {
   return new Promise<number>((resolve) => {
     const startTime = performance.now()

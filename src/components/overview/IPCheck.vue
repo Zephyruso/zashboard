@@ -15,7 +15,7 @@
     </div>
     <div
       class="tooltip tooltip-bottom text-left text-sm"
-      data-tip="api.ip.sb"
+      :data-tip="IPInfoAPI"
     >
       {{ $t('globalIP') }} :
       {{ showPrivacy ? ipsbIP.ipWithPrivacy[0] : ipsbIP.ip[0] }}
@@ -52,10 +52,10 @@
 </template>
 
 <script setup lang="ts">
-import { getIPFromIpipnetAPI, getIPFromIpsbAPI } from '@/api'
+import { getIPFromIpipnetAPI, getIPInfo } from '@/api/geoip'
 import { ipipnetIP, ipsbIP } from '@/composables/overview'
 import { useTooltip } from '@/helper/tooltip'
-import { autoIPCheck } from '@/store/settings'
+import { autoIPCheck, IPInfoAPI } from '@/store/settings'
 import { BoltIcon, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -68,10 +68,10 @@ const handlerShowPrivacyTip = (e: Event) => {
 }
 
 const getIPs = () => {
-  getIPFromIpsbAPI().then((res) => {
+  getIPInfo().then((res) => {
     ipsbIP.value = {
-      ipWithPrivacy: [`${res.country} ${res.asn_organization}`, res.ip],
-      ip: [`${res.country} ${res.asn_organization}`, '***.***.***.***'],
+      ipWithPrivacy: [`${res.country} ${res.asnName}`, res.ip],
+      ip: [`${res.country} ${res.asnName}`, '***.***.***.***'],
     }
   })
   getIPFromIpipnetAPI().then((res) => {

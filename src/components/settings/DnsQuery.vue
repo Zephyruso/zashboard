@@ -35,15 +35,31 @@
     v-if="details"
     class="flex gap-1"
   >
-    {{ details?.ip }}: AS{{ details?.asn }}
-    {{ details?.asn_organization }}
-    {{ details?.country }}
+    <div
+      class="mr-3 flex items-center gap-1"
+      v-if="details?.country"
+    >
+      <MapPinIcon class="h-4 w-4 shrink-0" />
+      <template v-if="details?.city && details?.city !== details?.country">
+        {{ details?.city }},
+      </template>
+      <template v-else-if="details?.region && details?.region !== details?.country">
+        {{ details?.region }},
+      </template>
+      {{ details?.country }}
+    </div>
+    <div class="flex items-center gap-1">
+      <ServerIcon class="h-4 w-4 shrink-0" />
+      {{ details?.asnName }}
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { getIPFromIpsbAPI, queryDNSAPI, type GlobalIPType } from '@/api'
+import { queryDNSAPI } from '@/api'
+import { getIPInfo, type IPInfo } from '@/api/geoip'
 import type { DNSQuery } from '@/types'
+import { MapPinIcon, ServerIcon } from '@heroicons/vue/24/outline'
 import { reactive, ref } from 'vue'
 import TextInput from '../common/TextInput.vue'
 
@@ -51,8 +67,7 @@ const form = reactive({
   name: 'www.google.com',
   type: 'A',
 })
-const details = ref<GlobalIPType | null>(null)
-
+const details = ref<IPInfo | null>(null)
 const resultList = ref<DNSQuery['Answer']>([])
 const query = async () => {
   const { data } = await queryDNSAPI(form)
@@ -60,7 +75,7 @@ const query = async () => {
   resultList.value = data.Answer
 
   if (resultList.value?.length) {
-    details.value = await getIPFromIpsbAPI(resultList.value[0].data)
+    details.value = await getIPInfo(resultList.value[0].data)
   } else {
     details.value = null
   }

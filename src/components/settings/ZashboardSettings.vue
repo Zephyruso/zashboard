@@ -150,49 +150,6 @@
             />
           </div>
         </template>
-        <div class="flex items-center gap-2 md:hidden">
-          {{ $t('scrollAnimationEffect') }}
-          <input
-            type="checkbox"
-            v-model="scrollAnimationEffect"
-            class="toggle"
-          />
-        </div>
-        <div class="flex items-center gap-2 md:hidden">
-          {{ $t('swipeInTabs') }}
-          <input
-            type="checkbox"
-            v-model="swipeInTabs"
-            class="toggle"
-          />
-        </div>
-        <div class="flex items-center gap-2 md:hidden">
-          {{ $t('disablePullToRefresh') }}
-          <input
-            type="checkbox"
-            v-model="disablePullToRefresh"
-            class="toggle"
-          />
-          <QuestionMarkCircleIcon
-            class="h-4 w-4 cursor-pointer"
-            @mouseenter="showTip($event, $t('disablePullToRefreshTip'))"
-          />
-        </div>
-        <div
-          class="flex items-center gap-2"
-          v-if="isSingBox"
-        >
-          {{ $t('displayAllFeatures') }}
-          <input
-            type="checkbox"
-            v-model="displayAllFeatures"
-            class="toggle"
-          />
-          <QuestionMarkCircleIcon
-            class="h-4 w-4 cursor-pointer"
-            @mouseenter="showTip($event, $t('displayAllFeaturesTip'))"
-          />
-        </div>
       </div>
       <div
         class="flex items-center gap-2"
@@ -234,7 +191,6 @@ import LanguageSelect from '@/components/settings/LanguageSelect.vue'
 import { useSettings } from '@/composables/settings'
 import { ALL_THEME, FONTS } from '@/constant'
 import { exportSettings, handlerUpgradeSuccess } from '@/helper'
-import { useTooltip } from '@/helper/tooltip'
 import {
   deleteBase64FromIndexedDB,
   isPWA,
@@ -250,18 +206,10 @@ import {
   darkTheme,
   dashboardTransparent,
   defaultTheme,
-  disablePullToRefresh,
   displayAllFeatures,
   font,
-  scrollAnimationEffect,
-  swipeInTabs,
 } from '@/store/settings'
-import {
-  ArrowPathIcon,
-  ArrowUpCircleIcon,
-  PlusIcon,
-  QuestionMarkCircleIcon,
-} from '@heroicons/vue/24/outline'
+import { ArrowPathIcon, ArrowUpCircleIcon, PlusIcon } from '@heroicons/vue/24/outline'
 import { twMerge } from 'tailwind-merge'
 import { computed, ref } from 'vue'
 import ImportSettings from '../common/ImportSettings.vue'
@@ -269,9 +217,6 @@ import TextInput from '../common/TextInput.vue'
 import CustomTheme from './CustomTheme.vue'
 
 const customThemeModal = ref(false)
-
-const { showTip } = useTooltip()
-
 const inputFileRef = ref()
 const handlerClickUpload = () => {
   inputFileRef.value?.click()

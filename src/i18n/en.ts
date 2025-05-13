@@ -188,6 +188,10 @@ const en = {
   displayWeights: 'Display Weights',
   flushWeights: 'Flush Weights',
   flushSmartWeights: 'Flush Smart Weights',
+  IPInfoAPI: 'IP Info API',
+  IPInfoAPITip:
+    "This API will be used for IP checks in global node IP information queries, IP geolocation queries in connection details, and IP geolocation queries in zashboard's DNS query feature.",
+  universal: 'Universal',
 }
 
 export type LANG_MESSAGE = typeof en

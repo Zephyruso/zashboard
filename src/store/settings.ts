@@ -2,6 +2,7 @@ import {
   CONNECTIONS_TABLE_ACCESSOR_KEY,
   DETAILED_CARD_STYLE,
   FONTS,
+  IP_INFO_API,
   LANG,
   PROXY_CARD_SIZE,
   PROXY_CHAIN_DIRECTION,
@@ -99,6 +100,7 @@ export const numberOfChartsInSidebar = useStorage<1 | 2 | 3>(
   'config/number-of-charts-in-sidebar',
   2,
 )
+export const IPInfoAPI = useStorage('config/ip-info-api', IP_INFO_API.IPWHOIS)
 
 // proxies
 export const collapseGroupMap = useStorage<Record<string, boolean>>('config/collapse-group-map', {})
