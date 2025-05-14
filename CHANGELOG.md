@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.85.0](https://github.com/Zephyruso/zashboard/compare/v1.84.0...v1.85.0) (2025-05-14)
+
+
+### Features
+
+* display proxies grouped by provider ([5207e76](https://github.com/Zephyruso/zashboard/commit/5207e76aee03773bf43099070de1c418a0cf6055))
+* usage desc in proxy card for smart group ([8f1b370](https://github.com/Zephyruso/zashboard/commit/8f1b37009222c083ba63c30cda7c72ef13928671))
+
+
+### Bug Fixes
+
+* cache for github api ([51c6926](https://github.com/Zephyruso/zashboard/commit/51c692656405065d6e18a8b6c35cf3fe8a1c0daf))
+* missing lock icon for proxy group in mobile ([c66c846](https://github.com/Zephyruso/zashboard/commit/c66c84635fbf1c379b97c15ab4a333fb54a2708d))
+
 ## [1.84.0](https://github.com/Zephyruso/zashboard/compare/v1.83.0...v1.84.0) (2025-05-13)
 
 
