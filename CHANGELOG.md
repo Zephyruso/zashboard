@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.86.0](https://github.com/Zephyruso/zashboard/compare/v1.85.0...v1.86.0) (2025-05-15)
+
+
+### Features
+
+* search log with type selector ([8741f2c](https://github.com/Zephyruso/zashboard/commit/8741f2cfa59692b564e4851e8c1c12233fea6b24))
+
+
+### Bug Fixes
+
+* delete fixed for smart group ([5bcbd2b](https://github.com/Zephyruso/zashboard/commit/5bcbd2b31819e721a10f76a357e8e881ab59498a))
+
 ## [1.85.0](https://github.com/Zephyruso/zashboard/compare/v1.84.0...v1.85.0) (2025-05-14)
 
 
