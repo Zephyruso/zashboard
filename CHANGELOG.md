@@ -2,6 +2,15 @@
 
 # Changelog
 
+## [1.87.0](https://github.com/Zephyruso/zashboard/compare/v1.86.0...v1.87.0) (2025-05-16)
+
+
+### Features
+
+* adaptive modal height for proxy group mobile ([7a5db3d](https://github.com/Zephyruso/zashboard/commit/7a5db3d2d42c8c1c8086c499512ba2bf2dff8947))
+* auto disconnect idle udp ([7943d73](https://github.com/Zephyruso/zashboard/commit/7943d7304b0716daf687d605cb58ca58a00c92ce))
+* switch for swipe in pages ([6833d5e](https://github.com/Zephyruso/zashboard/commit/6833d5e76bd043b30f3ecafb997f28b8c583d8e5))
+
 ## [1.86.0](https://github.com/Zephyruso/zashboard/compare/v1.85.0...v1.86.0) (2025-05-15)
 
 
