@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.87.1](https://github.com/Zephyruso/zashboard/compare/v1.87.0...v1.87.1) (2025-05-16)
+
+
+### Bug Fixes
+
+* truncate long version numbers ([534891b](https://github.com/Zephyruso/zashboard/commit/534891bf7d3450713a23e847c78af12aad4f6b21))
+
 ## [1.87.0](https://github.com/Zephyruso/zashboard/compare/v1.86.0...v1.87.0) (2025-05-16)
 
 
