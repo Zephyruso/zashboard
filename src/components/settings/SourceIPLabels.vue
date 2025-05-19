@@ -37,11 +37,11 @@
           <template #item="{ element: sourceIP }">
             <div
               :key="sourceIP.id"
-              class="flex items-center gap-2"
+              class="flex w-full items-center gap-2"
             >
               <ChevronUpDownIcon class="drag-handle h-4 w-4 shrink-0 cursor-grab" />
               <TextInput
-                class="w-36 max-w-64 flex-1"
+                class="w-12 max-w-64 flex-1 sm:w-36"
                 :modelValue="sourceIP.key"
                 :menus="sourceList"
                 @change="(e) => handlerLabelKeyChange(sourceIP.id, 'key', e)"
@@ -51,10 +51,17 @@
                 :popovertarget="sourceIP.id"
                 :style="`anchor-name:--${sourceIP.id}`"
               >
-                {{ $t('limitEffectiveScope') }}
+                <LockClosedIcon
+                  v-if="sourceIP.scope?.length && sourceIP.scope.length < backendList.length"
+                  class="h-4 w-4"
+                />
+                <LockOpenIcon
+                  v-else
+                  class="h-4 w-4"
+                />
               </button>
               <ul
-                class="dropdown menu rounded-box bg-base-100 mt-2 w-52 shadow-md"
+                class="dropdown menu bg-base-100 mt-2 rounded-sm shadow-md"
                 popover
                 :id="sourceIP.id"
                 :style="`position-anchor:--${sourceIP.id}`"
@@ -89,7 +96,7 @@
               </ul>
               <ArrowRightCircleIcon class="h-4 w-4 shrink-0" />
               <TextInput
-                class="w-28 sm:w-40"
+                class="w-24 sm:w-40"
                 :modelValue="sourceIP.label"
                 @change="(e) => handlerLabelKeyChange(sourceIP.id, 'label', e)"
               />
@@ -108,7 +115,7 @@
   <div class="flex w-full items-center gap-2">
     <TagIcon class="h-4 w-4 shrink-0" />
     <TextInput
-      class="w-36 max-w-64 flex-1"
+      class="w-28 max-w-64 flex-1 sm:w-36"
       :menus="sourceList"
       v-model="newLabelForIP.key"
       placeholder="IP | eui64 | /Regex"
@@ -118,10 +125,17 @@
       popovertarget="popover-new-sourceip-label"
       style="anchor-name: --new-souceip-label"
     >
-      {{ $t('limitEffectiveScope') }}
+      <LockClosedIcon
+        v-if="newLabelForIP.scope?.length && newLabelForIP.scope.length < backendList.length"
+        class="h-4 w-4"
+      />
+      <LockOpenIcon
+        v-else
+        class="h-4 w-4"
+      />
     </button>
     <ul
-      class="dropdown menu rounded-box bg-base-100 mt-2 w-52 shadow-md"
+      class="dropdown menu bg-base-100 mt-2 rounded-sm shadow-md"
       popover
       id="popover-new-sourceip-label"
       style="position-anchor: --new-souceip-label"
@@ -152,7 +166,7 @@
     </ul>
     <ArrowRightCircleIcon class="h-4 w-4 shrink-0" />
     <TextInput
-      class="w-28 sm:w-40"
+      class="w-24 sm:w-40"
       v-model="newLabelForIP.label"
       :placeholder="$t('label')"
       @keypress.enter="handlerLabelAdd"
@@ -178,6 +192,8 @@ import {
   ChevronDownIcon,
   ChevronUpDownIcon,
   ChevronUpIcon,
+  LockClosedIcon,
+  LockOpenIcon,
   PlusIcon,
   TagIcon,
   TrashIcon,
@@ -197,7 +213,7 @@ const sourceList = computed(() => {
     .sort()
 })
 
-const newLabelForIP = reactive({
+const newLabelForIP = reactive<Omit<SourceIPLabel, 'id'>>({
   key: '',
   label: '',
 })
@@ -215,6 +231,7 @@ const handlerLabelAdd = () => {
 
   newLabelForIP.key = ''
   newLabelForIP.label = ''
+  delete newLabelForIP.scope
 }
 
 const handlerLabelRemove = (id: string) => {

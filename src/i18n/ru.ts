@@ -206,8 +206,6 @@ const ru: LANG_MESSAGE = {
   autoDisconnectIdleUDPTime: 'Время UDP-идле',
   autoDisconnectIdleUDPTip:
     'При включении открытие zashboard приведёт к закрытию UDP-соединений, продолжительность которых превышает заданное количество минут. Это может помочь в случае с некоторыми UDP-соединениями, которые не разрываются автоматически, как ожидается.',
-  limitEffectiveScope: 'Ограничить эффективный диапазон',
-  allBackends: 'Все бэкенды',
 }
 
 export default ru
