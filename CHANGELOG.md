@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.88.0](https://github.com/Zephyruso/zashboard/compare/v1.87.0...v1.88.0) (2025-05-19)
+
+
+### Features
+
+* effective scope for source ip label ([672df69](https://github.com/Zephyruso/zashboard/commit/672df6996c90926b5c04ac69a6c016257cccf34e))
+
+
+### Bug Fixes
+
+* display backend label instead of url ([6cc3469](https://github.com/Zephyruso/zashboard/commit/6cc3469e2b3eda6f064f2fa49e408da4f90facef))
+* truncate long version numbers ([534891b](https://github.com/Zephyruso/zashboard/commit/534891bf7d3450713a23e847c78af12aad4f6b21))
+
 ## [1.87.0](https://github.com/Zephyruso/zashboard/compare/v1.86.0...v1.87.0) (2025-05-16)
 
 
