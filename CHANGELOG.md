@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.89.0](https://github.com/Zephyruso/zashboard/compare/v1.88.0...v1.89.0) (2025-05-20)
+
+
+### Features
+
+* theme selector with preview ([e8a4335](https://github.com/Zephyruso/zashboard/commit/e8a4335bdf2c3e85b3378d2b8a64c98d25884220))
+
+
+### Bug Fixes
+
+* asn name -&gt; org name ([337f2c4](https://github.com/Zephyruso/zashboard/commit/337f2c48c2e0520e93d3e1a5e7f834926c931ca2))
+* is private ip ([570aae9](https://github.com/Zephyruso/zashboard/commit/570aae9be701c41abd8f107e54dba4ac41791b6b))
+* sourceip label scope style ([1cb4c56](https://github.com/Zephyruso/zashboard/commit/1cb4c56f34fdb87716ce637d08baa0e925deddf9))
+
 ## [1.88.0](https://github.com/Zephyruso/zashboard/compare/v1.87.0...v1.88.0) (2025-05-19)
 
 
