@@ -6,11 +6,11 @@
 }
 
 @theme {
-  --font-MiSans: 'MiSans-VF', 'NotoEmoji', 'system-ui';
-  --font-SarasaUI: 'SarasaUiSC-Regular', 'NotoEmoji', 'system-ui';
-  --font-PingFang: 'PingFangSC-Regular', 'NotoEmoji', 'system-ui';
-  --font-FiraSans: 'Fira Sans', 'NotoEmoji', 'system-ui';
-  --font-SystemUI: 'NotoEmoji', 'system-ui';
+  --font-MiSans: 'MiSans-VF', 'NotoEmoji', system-ui;
+  --font-SarasaUI: 'SarasaUiSC-Regular', 'NotoEmoji', system-ui;
+  --font-PingFang: 'PingFangSC-Regular', 'NotoEmoji', system-ui;
+  --font-FiraSans: 'Fira Sans', 'NotoEmoji', system-ui;
+  --font-SystemUI: 'NotoEmoji', system-ui;
 }
 
 @layer utilities {
