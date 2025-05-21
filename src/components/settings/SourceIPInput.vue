@@ -21,50 +21,52 @@
       v-model="sourceIPLabel.key"
       placeholder="IP | eui64 | /Regex"
     />
-    <button
+    <div
+      class="dropdown"
       v-if="backendList.length > 1"
-      class="btn btn-sm"
-      :popovertarget="`popover-${sourceIPLabel.id || 'new-sourceip-label'}`"
-      :style="`anchor-name: --${sourceIPLabel.id || 'new-sourceip-label'}`"
-    >
-      <LockClosedIcon
-        v-if="sourceIPLabel.scope?.length && sourceIPLabel.scope.length < backendList.length"
-        class="h-4 w-4"
-      />
-      <LockOpenIcon
-        v-else
-        class="h-4 w-4"
-      />
-    </button>
-    <ul
-      class="dropdown menu card flex flex-col gap-2"
-      popover
-      :id="`popover-${sourceIPLabel.id || 'new-sourceip-label'}`"
-      :style="`position-anchor: --${sourceIPLabel.id || 'new-sourceip-label'}`"
     >
       <div
-        v-for="backend in backendList"
-        :key="backend.uuid"
+        tabindex="0"
+        role="button"
+        class="btn btn-sm"
       >
-        <label class="flex cursor-pointer items-center gap-2">
-          <input
-            type="checkbox"
-            class="checkbox checkbox-sm"
-            :checked="getScopeValueFromSouceIPByBackendID(backend.uuid, sourceIPLabel)"
-            @change="
-              (e: Event) => {
-                const target = e.target as HTMLInputElement
-
-                setScopeValueFromSouceIPByBackendID(backend.uuid, sourceIPLabel, target.checked)
-              }
-            "
-          />
-          <span>
-            {{ getLabelFromBackend(backend) }}
-          </span>
-        </label>
+        <LockClosedIcon
+          v-if="sourceIPLabel.scope?.length && sourceIPLabel.scope.length < backendList.length"
+          class="h-4 w-4"
+        />
+        <LockOpenIcon
+          v-else
+          class="h-4 w-4"
+        />
       </div>
-    </ul>
+      <ul
+        tabindex="0"
+        class="dropdown-content menu card flex flex-col gap-2 shadow-2xl"
+      >
+        <div
+          v-for="backend in backendList"
+          :key="backend.uuid"
+        >
+          <label class="flex cursor-pointer items-center gap-2">
+            <input
+              type="checkbox"
+              class="checkbox checkbox-sm"
+              :checked="getScopeValueFromSouceIPByBackendID(backend.uuid, sourceIPLabel)"
+              @change="
+                (e: Event) => {
+                  const target = e.target as HTMLInputElement
+
+                  setScopeValueFromSouceIPByBackendID(backend.uuid, sourceIPLabel, target.checked)
+                }
+              "
+            />
+            <span>
+              {{ getLabelFromBackend(backend) }}
+            </span>
+          </label>
+        </div>
+      </ul>
+    </div>
     <ArrowRightCircleIcon class="h-4 w-4 shrink-0" />
     <TextInput
       class="w-24 sm:w-40"

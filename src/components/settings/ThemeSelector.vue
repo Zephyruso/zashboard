@@ -1,17 +1,15 @@
 <template>
-  <div class="join-item input input-sm w-48 p-0">
-    <button
-      class="h-full w-full cursor-pointer text-left indent-4"
-      :popovertarget="`popover-${id}`"
-      :style="`anchor-name: --${id}`"
+  <div class="dropdown join-item input input-sm inline w-48 p-0">
+    <div
+      tabindex="0"
+      role="button"
+      class="flex h-full w-full cursor-pointer items-center indent-4"
     >
       {{ theme }}
-    </button>
+    </div>
     <ul
-      class="dropdown card mt-2 h-96 w-48"
-      popover
-      :id="`popover-${id}`"
-      :style="`position-anchor: --${id}`"
+      class="dropdown-content card mt-2 h-96 w-48 overflow-y-auto overscroll-contain shadow-2xl"
+      tabindex="0"
     >
       <li
         v-for="themeName in themes"
@@ -30,10 +28,8 @@
 <script setup lang="ts">
 import { ALL_THEME } from '@/constant'
 import { customThemes } from '@/store/settings'
-import { v4 as uuid } from 'uuid'
 import { computed } from 'vue'
 
-const id = uuid()
 const theme = defineModel<string>('value', {
   type: String,
   required: true,
