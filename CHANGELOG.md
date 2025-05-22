@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.89.2](https://github.com/Zephyruso/zashboard/compare/v1.89.1...v1.89.2) (2025-05-22)
+
+
+### Bug Fixes
+
+* dropdown position for safari ([51ca0a4](https://github.com/Zephyruso/zashboard/commit/51ca0a4f42a7e9e8a86186e767b3a6117390795c))
+* font name of system-ui ([#381](https://github.com/Zephyruso/zashboard/issues/381)) ([f5a9db9](https://github.com/Zephyruso/zashboard/commit/f5a9db98be666e7c66be6674d51d8b9ea7998a2b))
+
 ## [1.89.1](https://github.com/Zephyruso/zashboard/compare/v1.89.0...v1.89.1) (2025-05-21)
 
 
