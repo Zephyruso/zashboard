@@ -1,7 +1,9 @@
+import { isSingBox } from '@/api'
 import { PROXY_TAB_TYPE } from '@/constant'
 import { isHiddenGroup } from '@/helper'
 import { configs } from '@/store/config'
 import { GLOBAL, proxyGroupList, proxyMap, proxyProviederList } from '@/store/proxies'
+import { rules } from '@/store/rules.ts'
 import { displayGlobalByMode, manageHiddenGroup } from '@/store/settings'
 import { isEmpty } from 'lodash'
 import { computed, ref } from 'vue'
@@ -19,6 +21,16 @@ const proxiesTabShow = ref(PROXY_TAB_TYPE.PROXIES)
 const renderGroups = computed(() => {
   if (isEmpty(proxyMap.value)) {
     return []
+  }
+
+  if (isSingBox) {
+    if (displayGlobalByMode.value && configs.value?.mode.toUpperCase() === GLOBAL) {
+      const globalRule = rules.value.find((rule) => /^clash_mode=Global$/i.test(rule.payload))
+      if (globalRule) {
+        return [globalRule.proxy]
+      }
+    }
+    return filterGroups(proxyGroupList.value)
   }
 
   if (proxiesTabShow.value === PROXY_TAB_TYPE.PROVIDER) {
