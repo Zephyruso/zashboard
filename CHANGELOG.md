@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.90.0](https://github.com/Zephyruso/zashboard/compare/v1.89.2...v1.90.0) (2025-05-23)
+
+
+### Features
+
+* custom global node for sing-box ([9ead3bd](https://github.com/Zephyruso/zashboard/commit/9ead3bdb3fcac40f0c1c0abc6238853ba958560b))
+* new animation for proxy group mobile ([e06225e](https://github.com/Zephyruso/zashboard/commit/e06225ed9065e883ef64bdb6ddbe2d333cab1402))
+
+
+### Bug Fixes
+
+* independent latency test for provider healthcheck ([9f26a5d](https://github.com/Zephyruso/zashboard/commit/9f26a5defd581c18fb20fc828373d9dc57ec6b0b))
+
 ## [1.89.2](https://github.com/Zephyruso/zashboard/compare/v1.89.1...v1.89.2) (2025-05-22)
 
 
