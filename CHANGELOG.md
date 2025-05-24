@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.91.0](https://github.com/Zephyruso/zashboard/compare/v1.90.0...v1.91.0) (2025-05-24)
+
+
+### Features
+
+* auto scroll into view for proxy node ([3064505](https://github.com/Zephyruso/zashboard/commit/30645058f639dbe01cf07654b1460c73db905129))
+* download logs ([16fc9ee](https://github.com/Zephyruso/zashboard/commit/16fc9ee86685a472835e01d9d6108cf6c3a243d9))
+* store scroll status for proxies page ([0522c68](https://github.com/Zephyruso/zashboard/commit/0522c68ca0eed7ae47745e5deb6bd5c3980c1f29))
+
+
+### Bug Fixes
+
+* flickering scrollbar ([7aaa6aa](https://github.com/Zephyruso/zashboard/commit/7aaa6aa6c3bd20a479bb53f9f41fa7c7797c73f6))
+
 ## [1.90.0](https://github.com/Zephyruso/zashboard/compare/v1.89.2...v1.90.0) (2025-05-23)
 
 
