@@ -2,6 +2,25 @@
 
 # Changelog
 
+## [1.91.0](https://github.com/Zephyruso/zashboard/compare/v1.90.0...v1.91.0) (2025-05-26)
+
+
+### Features
+
+* auto scroll into view for proxy node ([3064505](https://github.com/Zephyruso/zashboard/commit/30645058f639dbe01cf07654b1460c73db905129))
+* collapsible sliders for opacity and blur ([5d88196](https://github.com/Zephyruso/zashboard/commit/5d881964ce0c952ab9e2299139cb876573703305))
+* download logs ([16fc9ee](https://github.com/Zephyruso/zashboard/commit/16fc9ee86685a472835e01d9d6108cf6c3a243d9))
+* store scroll status for proxies page ([0522c68](https://github.com/Zephyruso/zashboard/commit/0522c68ca0eed7ae47745e5deb6bd5c3980c1f29))
+
+
+### Bug Fixes
+
+* display issue of the popover for sourceip scope ([6db326e](https://github.com/Zephyruso/zashboard/commit/6db326e2d2c89333e1aa261bdb6703042562c34d))
+* flickering scrollbar ([7aaa6aa](https://github.com/Zephyruso/zashboard/commit/7aaa6aa6c3bd20a479bb53f9f41fa7c7797c73f6))
+* freezing issue when scroll animation is on ([e293832](https://github.com/Zephyruso/zashboard/commit/e2938326b98b8ed9ffd62a66fb7121569df2f479))
+* missing sourceip filter when ip is invalid ([e5ff530](https://github.com/Zephyruso/zashboard/commit/e5ff53080c30e6e7afcea0cc357a3fc964a2fe4a))
+* unable to disable blur in proxies for mobile ([16441fc](https://github.com/Zephyruso/zashboard/commit/16441fc788a7c00c328e5b4617b93102dba01b77))
+
 ## [1.90.0](https://github.com/Zephyruso/zashboard/compare/v1.89.2...v1.90.0) (2025-05-23)
 
 
