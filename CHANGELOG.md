@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.92.0](https://github.com/Zephyruso/zashboard/compare/v1.91.0...v1.92.0) (2025-05-27)
+
+
+### Features
+
+* proxies relationship chart ([c504440](https://github.com/Zephyruso/zashboard/commit/c504440e2e9f4596c6e707b67c6d61a437ce3141))
+
+
+### Bug Fixes
+
+* tab style for mobile ([ed5b7fd](https://github.com/Zephyruso/zashboard/commit/ed5b7fd1db813d58b8bc8a3f60b9052f8f665d9a))
+
 ## [1.91.0](https://github.com/Zephyruso/zashboard/compare/v1.90.0...v1.91.0) (2025-05-26)
 
 
