@@ -1,10 +1,15 @@
-import { isSingBox } from '@/api'
-import { GLOBAL, PROXY_TAB_TYPE } from '@/constant'
-import { isHiddenGroup } from '@/helper'
-import { configs } from '@/store/config'
-import { proxiesTabShow, proxyGroupList, proxyMap, proxyProviederList } from '@/store/proxies'
-import { customGlobalNode, displayGlobalByMode, manageHiddenGroup } from '@/store/settings'
-import { isEmpty } from 'lodash'
+import { isSingBox } from '@renderer/api'
+import { GLOBAL, PROXY_TAB_TYPE } from '@renderer/constant'
+import { isHiddenGroup } from '@renderer/helper'
+import { configs } from '@renderer/store/config'
+import {
+  proxiesTabShow,
+  proxyGroupList,
+  proxyMap,
+  proxyProviederList,
+} from '@renderer/store/proxies'
+import { customGlobalNode, displayGlobalByMode, manageHiddenGroup } from '@renderer/store/settings'
+import { isEmpty } from 'lodash-es'
 import { computed } from 'vue'
 
 const filterGroups = (all: string[]) => {

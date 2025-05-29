@@ -1,7 +1,10 @@
+import AppRu from '@/shared/i18n/ru.js'
 import type { LANG_MESSAGE } from './en'
 
 const ru: LANG_MESSAGE = {
+  ...AppRu,
   setup: 'Настройка',
+  config: 'Конфиг',
   overview: 'Обзор',
   proxies: 'Прокси',
   rules: 'Правила',
@@ -176,6 +179,7 @@ const ru: LANG_MESSAGE = {
   remoteAddress: 'удалённый адрес',
   themeName: 'Название темы',
   save: 'Сохранить',
+  unsaved: 'Не сохранено',
   moreDetails: 'Подробнее',
   customIcon: 'Пользовательская иконка',
   disablePullToRefresh: 'Отключить свойство обновления',

@@ -2,10 +2,12 @@
 import { XCircleIcon } from '@heroicons/vue/24/outline'
 import { computed, onMounted, ref, watch } from 'vue'
 import { RouterView } from 'vue-router'
+import ServiceInstallModal from './components/modals/ServiceInstallModal.vue'
 import { useNotification } from './composables/notification'
+import { useService } from './composables/service'
 import { FONTS } from './constant'
 import { backgroundImage } from './helper/indexeddb'
-import { isPreferredDark } from './helper/utils'
+import { isDarkTheme, isPreferredDark } from './helper/utils'
 import {
   blurIntensity,
   dashboardTransparent,
@@ -16,6 +18,8 @@ import {
 
 const app = ref<HTMLElement>()
 const { tipContent, tipShowModel, tipType } = useNotification()
+const { showServiceInstallModal, checkAndInstallService, handleServiceInstallConfirm } =
+  useService()
 const fontClassMap = {
   [FONTS.MI_SANS]: 'font-MiSans',
   [FONTS.SARASA_UI]: 'font-SarasaUI',
@@ -57,11 +61,16 @@ onMounted(() => {
     () => {
       document.body.setAttribute('data-theme', theme.value)
       setThemeColor()
+      isDarkTheme.value =
+        getComputedStyle(document.body).getPropertyValue('color-scheme') === 'dark'
     },
     {
       immediate: true,
     },
   )
+
+  // 检查服务安装状态
+  checkAndInstallService()
 })
 
 const blurClass = computed(() => {
@@ -75,8 +84,8 @@ const blurClass = computed(() => {
 
 <template>
   <div
-    ref="app"
     id="app-content"
+    ref="app"
     :class="[
       'bg-base-100 flex h-dvh w-screen overflow-x-hidden',
       fontClassName,
@@ -88,8 +97,8 @@ const blurClass = computed(() => {
   >
     <RouterView />
     <div
-      class="toast-sm toast toast-end toast-top z-50 max-w-64 text-sm md:translate-y-8"
       v-if="tipShowModel"
+      class="toast-sm toast toast-end toast-top z-50 max-w-64 text-sm md:translate-y-8"
     >
       <div
         class="breaks-all alert flex p-2 whitespace-normal"
@@ -110,5 +119,10 @@ const blurClass = computed(() => {
         </button>
       </div>
     </div>
+
+    <ServiceInstallModal
+      v-if="showServiceInstallModal"
+      @confirm="handleServiceInstallConfirm"
+    />
   </div>
 </template>

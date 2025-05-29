@@ -1,5 +1,5 @@
-import { getConfigsAPI, patchConfigsAPI } from '@/api'
-import type { Config } from '@/types'
+import { getConfigsAPI, patchConfigsAPI } from '@renderer/api'
+import type { Config } from '@renderer/types'
 import { ref } from 'vue'
 
 export const configs = ref<Config>({

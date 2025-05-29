@@ -11,19 +11,19 @@
       :size="isMiddleScreen ? 96 : 64"
       class="p-2"
     >
-      <template v-slot="{ item }: { item: LogWithSeq }">
-        <LogsCard :log="item"></LogsCard>
+      <template #default="{ item }: { item: LogWithSeq }">
+        <LogsCard :log="item" />
       </template>
     </VirtualScroller>
   </div>
 </template>
 
 <script setup lang="ts">
-import VirtualScroller from '@/components/common/VirtualScroller.vue'
-import LogsCard from '@/components/logs/LogsCard.vue'
-import { isMiddleScreen } from '@/helper/utils'
-import { logFilter, logTypeFilter, logs } from '@/store/logs'
-import type { LogWithSeq } from '@/types'
+import VirtualScroller from '@renderer/components/common/VirtualScroller.vue'
+import LogsCard from '@renderer/components/logs/LogsCard.vue'
+import { isMiddleScreen } from '@renderer/helper/utils'
+import { logFilter, logTypeFilter, logs } from '@renderer/store/logs'
+import type { LogWithSeq } from '@renderer/types'
 import { computed } from 'vue'
 
 const renderLogs = computed(() => {

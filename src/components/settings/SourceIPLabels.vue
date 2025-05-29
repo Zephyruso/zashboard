@@ -25,8 +25,8 @@
       <div class="flex flex-col gap-2">
         <Draggable
           v-if="dialogVisible"
-          class="flex flex-1 flex-col gap-2"
           v-model="sourceIPLabelList"
+          class="flex flex-1 flex-col gap-2"
           group="list"
           :animation="150"
           :handle="'.drag-handle'"
@@ -75,9 +75,6 @@
 </template>
 
 <script setup lang="ts">
-import { disableSwipe } from '@/composables/swipe'
-import { sourceIPLabelList } from '@/store/settings'
-import type { SourceIPLabel } from '@/types'
 import {
   ChevronDownIcon,
   ChevronUpDownIcon,
@@ -86,6 +83,9 @@ import {
   TagIcon,
   TrashIcon,
 } from '@heroicons/vue/24/outline'
+import { disableSwipe } from '@renderer/composables/swipe'
+import { sourceIPLabelList } from '@renderer/store/settings'
+import type { SourceIPLabel } from '@renderer/types'
 import { useSessionStorage } from '@vueuse/core'
 import { v4 as uuid } from 'uuid'
 import { ref } from 'vue'

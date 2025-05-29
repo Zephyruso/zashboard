@@ -7,8 +7,8 @@
       {{ $t('chinaIP') }} :
       {{ showPrivacy ? ipipnetIP.ipWithPrivacy[0] : ipipnetIP.ip[0] }}
       <span
-        class="text-xs"
         v-if="ipipnetIP.ip[1]"
+        class="text-xs"
       >
         ({{ showPrivacy ? ipipnetIP.ipWithPrivacy[1] : ipipnetIP.ip[1] }})
       </span>
@@ -20,8 +20,8 @@
       {{ $t('globalIP') }} :
       {{ showPrivacy ? ipsbIP.ipWithPrivacy[0] : ipsbIP.ip[0] }}
       <span
-        class="text-xs"
         v-if="ipsbIP.ip[1]"
+        class="text-xs"
       >
         ({{ showPrivacy ? ipsbIP.ipWithPrivacy[1] : ipsbIP.ip[1] }})
       </span>
@@ -52,11 +52,11 @@
 </template>
 
 <script setup lang="ts">
-import { getIPFromIpipnetAPI, getIPInfo } from '@/api/geoip'
-import { ipipnetIP, ipsbIP } from '@/composables/overview'
-import { useTooltip } from '@/helper/tooltip'
-import { autoIPCheck, IPInfoAPI } from '@/store/settings'
 import { BoltIcon, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+import { getIPFromIpipnetAPI, getIPInfo } from '@renderer/api/geoip'
+import { ipipnetIP, ipsbIP } from '@renderer/composables/overview'
+import { useTooltip } from '@renderer/helper/tooltip'
+import { autoIPCheck, IPInfoAPI } from '@renderer/store/settings'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

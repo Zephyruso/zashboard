@@ -7,8 +7,8 @@
           v-if="isCoreUpdateAvailable"
           class="indicator-item top-1 -right-1 flex"
         >
-          <span class="bg-secondary absolute h-2 w-2 animate-ping rounded-full"></span>
-          <span class="bg-secondary h-2 w-2 rounded-full"></span>
+          <span class="bg-secondary absolute h-2 w-2 animate-ping rounded-full" />
+          <span class="bg-secondary h-2 w-2 rounded-full" />
         </span>
         <a
           class="flex cursor-pointer items-center gap-2"
@@ -28,18 +28,18 @@
       <BackendSwitch class="w-80" />
 
       <template v-if="(!isSingBox || displayAllFeatures) && configs">
-        <div class="divider"></div>
+        <div class="divider" />
         <div class="grid max-w-3xl grid-cols-2 gap-2 lg:grid-cols-3">
           <div
-            class="flex items-center gap-2"
             v-for="portConfig in portList"
             :key="portConfig.key"
+            class="flex items-center gap-2"
           >
             <span class="shrink-0"> {{ $t(portConfig.label) }} </span>
             <input
+              v-model="configs[portConfig.key as keyof Config]"
               class="input input-sm w-20 sm:w-24"
               type="number"
-              v-model="configs[portConfig.key as keyof Config]"
               @change="
                 updateConfigs({ [portConfig.key]: Number(configs[portConfig.key as keyof Config]) })
               "
@@ -48,23 +48,23 @@
         </div>
         <div class="grid max-w-3xl grid-cols-2 gap-2 lg:grid-cols-4">
           <div
-            class="flex items-center gap-2"
             v-if="configs?.tun"
+            class="flex items-center gap-2"
           >
             {{ $t('tunMode') }}
             <input
+              v-model="configs.tun.enable"
               class="toggle"
               type="checkbox"
-              v-model="configs.tun.enable"
               @change="hanlderTunModeChange"
             />
           </div>
           <div class="flex items-center gap-2">
             {{ $t('allowLan') }}
             <input
+              v-model="configs['allow-lan']"
               class="toggle"
               type="checkbox"
-              v-model="configs['allow-lan']"
               @change="handlerAllowLanChange"
             />
           </div>
@@ -72,21 +72,21 @@
             <div class="flex items-center gap-2">
               {{ $t('checkUpgrade') }}
               <input
+                v-model="checkUpgradeCore"
                 class="toggle"
                 type="checkbox"
-                v-model="checkUpgradeCore"
                 @change="handlerCheckUpgradeCoreChange"
               />
             </div>
             <div
-              class="flex items-center gap-2"
               v-if="checkUpgradeCore"
+              class="flex items-center gap-2"
             >
               {{ $t('autoUpgrade') }}
               <input
+                v-model="autoUpgradeCore"
                 class="toggle"
                 type="checkbox"
-                v-model="autoUpgradeCore"
               />
             </div>
           </template>
@@ -94,8 +94,8 @@
       </template>
 
       <div
-        class="grid max-w-3xl grid-cols-2 gap-2 md:grid-cols-3 xl:max-w-6xl xl:grid-cols-6"
         v-if="version"
+        class="grid max-w-3xl grid-cols-2 gap-2 md:grid-cols-3 xl:max-w-6xl xl:grid-cols-6"
       >
         <template v-if="!isSingBox || displayAllFeatures">
           <button
@@ -138,7 +138,7 @@
           {{ $t('flushSmartWeights') }}
         </button>
       </div>
-      <div class="divider"></div>
+      <div class="divider" />
       <DnsQuery />
     </div>
   </div>
@@ -155,18 +155,18 @@ import {
   updateGeoDataAPI,
   upgradeCoreAPI,
   version,
-} from '@/api'
-import BackendVersion from '@/components/common/BackendVersion.vue'
-import BackendSwitch from '@/components/settings/BackendSwitch.vue'
-import DnsQuery from '@/components/settings/DnsQuery.vue'
-import { PROXY_TYPE } from '@/constant'
-import { handlerUpgradeSuccess } from '@/helper'
-import { configs, fetchConfigs, updateConfigs } from '@/store/config'
-import { fetchProxies, proxyMap } from '@/store/proxies'
-import { fetchRules } from '@/store/rules'
-import { autoUpgradeCore, checkUpgradeCore, displayAllFeatures } from '@/store/settings'
-import { activeBackend } from '@/store/setup'
-import type { Config } from '@/types'
+} from '@renderer/api'
+import BackendVersion from '@renderer/components/common/BackendVersion.vue'
+import BackendSwitch from '@renderer/components/settings/BackendSwitch.vue'
+import DnsQuery from '@renderer/components/settings/DnsQuery.vue'
+import { PROXY_TYPE } from '@renderer/constant'
+import { handlerUpgradeSuccess } from '@renderer/helper'
+import { configs, fetchConfigs, updateConfigs } from '@renderer/store/config'
+import { fetchProxies, proxyMap } from '@renderer/store/proxies'
+import { fetchRules } from '@renderer/store/rules'
+import { autoUpgradeCore, checkUpgradeCore, displayAllFeatures } from '@renderer/store/settings'
+import { activeBackend } from '@renderer/store/setup'
+import type { Config } from '@renderer/types'
 import { twMerge } from 'tailwind-merge'
 import { ref } from 'vue'
 

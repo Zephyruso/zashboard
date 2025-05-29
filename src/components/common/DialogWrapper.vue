@@ -20,18 +20,18 @@
         </button>
       </form>
       <div
-        :class="['max-h-[90dvh] overflow-y-auto max-md:max-h-[70dvh]', noPadding ? 'p-0' : 'p-4']"
         v-if="isOpen"
+        :class="['max-h-[90dvh] overflow-y-auto max-md:max-h-[70dvh]', noPadding ? 'p-0' : 'p-4']"
       >
-        <slot></slot>
+        <slot />
       </div>
     </div>
   </dialog>
 </template>
 
 <script setup lang="ts">
-import { blurIntensity } from '@/store/settings'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { blurIntensity } from '@renderer/store/settings'
 import { ref, watch } from 'vue'
 
 const modalRef = ref<HTMLDialogElement>()

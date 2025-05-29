@@ -1,4 +1,4 @@
-import { i18n } from '@/i18n'
+import { i18n } from '@renderer/i18n'
 import { ref } from 'vue'
 
 const tipShowModel = ref(false)
@@ -6,7 +6,7 @@ const tipContent = ref()
 const tipType = ref('alert-warning')
 const t = i18n.global.t
 
-let timmer = -1
+let timmer
 
 export const useNotification = () => {
   const showNotification = ({

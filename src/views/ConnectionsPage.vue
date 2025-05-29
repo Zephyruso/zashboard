@@ -10,10 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import ConnectionCardList from '@/components/connections/ConnectionCardList.vue'
-import ConnectionDetails from '@/components/connections/ConnectionDetails.vue'
-import ConnectionTable from '@/components/connections/ConnectionTable.vue'
-import { useConnectionCard } from '@/store/settings'
+import ConnectionCardList from '@renderer/components/connections/ConnectionCardList.vue'
+import ConnectionDetails from '@renderer/components/connections/ConnectionDetails.vue'
+import ConnectionTable from '@renderer/components/connections/ConnectionTable.vue'
+import { useConnectionCard } from '@renderer/store/settings'
 </script>
 
 <style>

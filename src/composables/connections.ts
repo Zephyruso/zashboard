@@ -1,4 +1,4 @@
-import type { Connection } from '@/types'
+import type { Connection } from '@renderer/types'
 import { nextTick, ref } from 'vue'
 
 const infoConn = ref<Connection | null>(null)

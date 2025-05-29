@@ -2,8 +2,8 @@
   <div>{{ $t('customTableColumns') }}</div>
   <div class="flex gap-4 rounded-sm">
     <Draggable
-      class="bg-base-200 flex flex-1 flex-col gap-2 p-4"
       v-model="connectionTableColumns"
+      class="bg-base-200 flex flex-1 flex-col gap-2 p-4"
       group="list"
       :animation="150"
       :item-key="(id: string) => id"
@@ -17,8 +17,8 @@
       </template>
     </Draggable>
     <Draggable
-      class="flex flex-1 flex-col gap-2 p-4"
       v-model="restOfColumns"
+      class="flex flex-1 flex-col gap-2 p-4"
       group="list"
       :animation="150"
       :item-key="(id: string) => id"
@@ -35,8 +35,8 @@
 </template>
 
 <script setup lang="ts">
-import { CONNECTIONS_TABLE_ACCESSOR_KEY } from '@/constant'
-import { connectionTableColumns } from '@/store/settings'
+import { CONNECTIONS_TABLE_ACCESSOR_KEY } from '@renderer/constant'
+import { connectionTableColumns } from '@renderer/store/settings'
 import { ref } from 'vue'
 import Draggable from 'vuedraggable'
 

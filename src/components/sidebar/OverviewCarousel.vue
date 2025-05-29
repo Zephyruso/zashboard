@@ -10,10 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import ConnectionsCharts from '@/components/overview/ConnectionsCharts.vue'
-import MemoryCharts from '@/components/overview/MemoryCharts.vue'
-import SpeedCharts from '@/components/overview/SpeedCharts.vue'
-import { numberOfChartsInSidebar } from '@/store/settings'
+import ConnectionsCharts from '@renderer/components/overview/ConnectionsCharts.vue'
+import MemoryCharts from '@renderer/components/overview/MemoryCharts.vue'
+import SpeedCharts from '@renderer/components/overview/SpeedCharts.vue'
+import { numberOfChartsInSidebar } from '@renderer/store/settings'
 
 const classNameMap = {
   1: 'max-h-28',

@@ -1,4 +1,4 @@
-import { customBackgroundURL } from '@/store/settings'
+import { customBackgroundURL } from '@renderer/store/settings'
 import dayjs from 'dayjs'
 import { computed, ref, watch } from 'vue'
 

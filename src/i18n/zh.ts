@@ -1,7 +1,10 @@
+import AppZh from '@/shared/i18n/zh.js'
 import type { LANG_MESSAGE } from './en'
 
 const zh: LANG_MESSAGE = {
+  ...AppZh,
   setup: '配置',
+  config: '配置',
   overview: '概览',
   proxies: '代理',
   rules: '规则',
@@ -173,6 +176,7 @@ const zh: LANG_MESSAGE = {
   remoteAddress: '远端地址',
   themeName: '主题名称',
   save: '保存',
+  unsaved: '未保存',
   moreDetails: '更多详情',
   customIcon: '自定义图标',
   disablePullToRefresh: '禁用下拉刷新',

@@ -1,5 +1,5 @@
-import { IP_INFO_API } from '@/constant'
-import { IPInfoAPI } from '@/store/settings'
+import { IP_INFO_API } from '@renderer/constant'
+import { IPInfoAPI } from '@renderer/store/settings'
 
 export interface IPInfo {
   ip: string

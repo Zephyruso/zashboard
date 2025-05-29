@@ -42,8 +42,8 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '@/composables/notification'
 import { ArrowDownTrayIcon, ArrowUpCircleIcon } from '@heroicons/vue/24/outline'
+import { useNotification } from '@renderer/composables/notification'
 import { useStorage } from '@vueuse/core'
 import { ref } from 'vue'
 import DialogWrapper from './DialogWrapper.vue'

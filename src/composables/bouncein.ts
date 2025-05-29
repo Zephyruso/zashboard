@@ -1,5 +1,5 @@
-import { isMiddleScreen } from '@/helper/utils'
-import { scrollAnimationEffect } from '@/store/settings'
+import { isMiddleScreen } from '@renderer/helper/utils'
+import { scrollAnimationEffect } from '@renderer/store/settings'
 import { useCurrentElement, useElementVisibility } from '@vueuse/core'
 import { onMounted, watch, type Ref } from 'vue'
 

@@ -5,14 +5,18 @@
       :key="stat"
       :class="className.item"
     >
-      <div :class="className.label">{{ $t(stat) }}</div>
-      <div :class="className.value">{{ statisticsMap[stat] }}</div>
+      <div :class="className.label">
+        {{ $t(stat) }}
+      </div>
+      <div :class="className.value">
+        {{ statisticsMap[stat] }}
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { STATISTICS_TYPE, statisticsMap } from '@/composables/statistics'
+import { STATISTICS_TYPE, statisticsMap } from '@renderer/composables/statistics'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -33,7 +37,7 @@ const classMap = {
     value: 'text-base',
   },
   ctrl: {
-    list: 'grid w-full grid-cols-2 gap-1 rounded-lg',
+    list: 'grid w-full grid-cols-1 gap-1 rounded-lg',
     item: 'flex gap-2 items-start',
     label: 'text-sm',
     value: 'text-sm',
@@ -57,14 +61,7 @@ const orderMap = {
     STATISTICS_TYPE.UPLOAD,
     STATISTICS_TYPE.UL_SPEED,
   ],
-  ctrl: [
-    STATISTICS_TYPE.CONNECTIONS,
-    STATISTICS_TYPE.MEMORY_USAGE,
-    STATISTICS_TYPE.DOWNLOAD,
-    STATISTICS_TYPE.DL_SPEED,
-    STATISTICS_TYPE.UPLOAD,
-    STATISTICS_TYPE.UL_SPEED,
-  ],
+  ctrl: [STATISTICS_TYPE.CONNECTIONS, STATISTICS_TYPE.DOWNLOAD, STATISTICS_TYPE.UPLOAD],
 }
 
 const className = computed(() => classMap[props.type])

@@ -1,6 +1,6 @@
 <template>
   <CollapseCard :name="proxyGroup.name">
-    <template v-slot:title>
+    <template #title>
       <div
         class="relative flex items-center gap-2"
         @contextmenu.prevent.stop="handlerLatencyTest"
@@ -48,15 +48,15 @@
         </div>
       </div>
     </template>
-    <template v-slot:preview>
+    <template #preview>
       <ProxyPreview
         :nodes="renderProxies"
         :now="proxyGroup.now"
-        :groupName="proxyGroup.name"
+        :group-name="proxyGroup.name"
         @nodeclick="handlerProxySelect(name, $event)"
       />
     </template>
-    <template v-slot:content="{ showFullContent }">
+    <template #content="{ showFullContent }">
       <Component
         :is="groupProxiesByProvider ? ProxiesByProvider : ProxiesContent"
         :name="name"
@@ -69,19 +69,19 @@
 </template>
 
 <script setup lang="ts">
-import { useBounceOnVisible } from '@/composables/bouncein'
-import { useRenderProxies } from '@/composables/renderProxies'
-import { isHiddenGroup } from '@/helper'
-import { prettyBytesHelper } from '@/helper/utils'
-import { activeConnections } from '@/store/connections'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+import { useBounceOnVisible } from '@renderer/composables/bouncein'
+import { useRenderProxies } from '@renderer/composables/renderProxies'
+import { isHiddenGroup } from '@renderer/helper'
+import { prettyBytesHelper } from '@renderer/helper/utils'
+import { activeConnections } from '@renderer/store/connections'
 import {
   handlerProxySelect,
   hiddenGroupMap,
   proxyGroupLatencyTest,
   proxyMap,
-} from '@/store/proxies'
-import { groupProxiesByProvider, manageHiddenGroup } from '@/store/settings'
-import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+} from '@renderer/store/proxies'
+import { groupProxiesByProvider, manageHiddenGroup } from '@renderer/store/settings'
 import { twMerge } from 'tailwind-merge'
 import { computed, ref } from 'vue'
 import CollapseCard from '../common/CollapseCard.vue'

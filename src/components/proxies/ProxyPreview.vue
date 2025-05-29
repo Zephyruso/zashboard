@@ -8,16 +8,16 @@
       <div
         v-for="node in nodesLatency"
         :key="node.name"
+        ref="dotsRef"
         class="flex h-4 w-4 items-center justify-center rounded-full transition hover:scale-110"
         :class="getBgColor(node.latency)"
-        ref="dotsRef"
         @mouseenter="(e) => makeTippy(e, node)"
         @click.stop="$emit('nodeclick', node.name)"
       >
         <div
-          class="h-2 w-2 rounded-full bg-white"
           v-if="now === node.name"
-        ></div>
+          class="h-2 w-2 rounded-full bg-white"
+        />
       </div>
     </template>
     <div
@@ -53,11 +53,11 @@
 </template>
 
 <script setup lang="ts">
-import { NOT_CONNECTED, PROXY_PREVIEW_TYPE } from '@/constant'
-import { getColorForLatency } from '@/helper'
-import { useTooltip } from '@/helper/tooltip'
-import { getLatencyByName } from '@/store/proxies'
-import { lowLatency, mediumLatency, proxyPreviewType } from '@/store/settings'
+import { NOT_CONNECTED, PROXY_PREVIEW_TYPE } from '@renderer/constant'
+import { getColorForLatency } from '@renderer/helper'
+import { useTooltip } from '@renderer/helper/tooltip'
+import { getLatencyByName } from '@renderer/store/proxies'
+import { lowLatency, mediumLatency, proxyPreviewType } from '@renderer/store/settings'
 import { useElementSize } from '@vueuse/core'
 import { computed, ref } from 'vue'
 

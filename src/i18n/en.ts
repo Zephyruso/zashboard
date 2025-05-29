@@ -1,5 +1,9 @@
+import AppEn from '@/shared/i18n/en.js'
+
 const en = {
+  ...AppEn,
   setup: 'Setup',
+  config: 'Config',
   overview: 'Overview',
   proxies: 'Proxies',
   rules: 'Rules',
@@ -174,6 +178,7 @@ const en = {
   remoteAddress: 'Remote Address',
   themeName: 'Theme Name',
   save: 'Save',
+  unsaved: 'Unsaved',
   moreDetails: 'More Details',
   customIcon: 'Custom Icon',
   disablePullToRefresh: 'Disable Pull To Refresh',

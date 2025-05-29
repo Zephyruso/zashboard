@@ -1,14 +1,20 @@
-import { useNotification } from '@/composables/notification'
-import { ROUTE_NAME } from '@/constant'
-import { getUrlFromBackend } from '@/helper/utils'
-import router from '@/router'
-import { autoUpgradeCore, checkUpgradeCore } from '@/store/settings'
-import { activeBackend, activeUuid } from '@/store/setup'
-import type { Backend, Config, DNSQuery, Proxy, ProxyProvider, Rule, RuleProvider } from '@/types'
+import { useNotification } from '@renderer/composables/notification'
+import { getUrlFromBackend } from '@renderer/helper/utils'
+import { activeBackend, activeUuid } from '@renderer/store/setup'
+import type {
+  Backend,
+  Config,
+  DNSQuery,
+  Proxy,
+  ProxyProvider,
+  Rule,
+  RuleProvider,
+} from '@renderer/types'
 import axios, { AxiosError } from 'axios'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import ReconnectingWebSocket from 'reconnectingwebsocket'
 import { computed, nextTick, ref, watch } from 'vue'
+import { isCoreRunning } from '../store/ipc-store'
 
 axios.interceptors.request.use((config) => {
   config.baseURL = getUrlFromBackend(activeBackend.value!)
@@ -26,12 +32,9 @@ axios.interceptors.response.use(
     const { showNotification } = useNotification()
 
     if (error.status === 401 && activeUuid.value) {
-      const currentBackendUuid = activeUuid.value
-      activeUuid.value = null
-      router.push({
-        name: ROUTE_NAME.setup,
-        query: { editBackend: currentBackendUuid },
-      })
+      // removeBackend(activeUuid.value)
+      // activeUuid.value = null
+      // router.push({ name: ROUTE_NAME.setup })
       nextTick(() => {
         showNotification({ content: 'unauthorizedTip' })
       })
@@ -56,19 +59,12 @@ export const isSingBox = computed(() => version.value?.includes('sing-box'))
 export const zashboardVersion = ref(__APP_VERSION__)
 
 watch(
-  activeBackend,
+  isCoreRunning,
   async (val) => {
     if (val) {
       const { data } = await fetchVersionAPI()
 
       version.value = data?.version || ''
-      if (isSingBox.value || !checkUpgradeCore.value || activeBackend.value?.disableUpgradeCore)
-        return
-      isCoreUpdateAvailable.value = await fetchBackendUpdateAvailableAPI()
-
-      if (isCoreUpdateAvailable.value && autoUpgradeCore.value) {
-        upgradeCoreAPI()
-      }
     }
   },
   { immediate: true },

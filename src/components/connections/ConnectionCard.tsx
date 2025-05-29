@@ -1,24 +1,3 @@
-import { disconnectByIdAPI } from '@/api'
-import { useBounceOnVisible } from '@/composables/bouncein'
-import { useConnections } from '@/composables/connections'
-import {
-  CONNECTION_TAB_TYPE,
-  CONNECTIONS_TABLE_ACCESSOR_KEY,
-  PROXY_CHAIN_DIRECTION,
-} from '@/constant'
-import {
-  getDestinationFromConnection,
-  getDestinationTypeFromConnection,
-  getHostFromConnection,
-  getInboundUserFromConnection,
-  getNetworkTypeFromConnection,
-  getProcessFromConnection,
-} from '@/helper'
-import { getIPLabelFromMap } from '@/helper/sourceip'
-import { fromNow, prettyBytesHelper } from '@/helper/utils'
-import { connectionTabShow } from '@/store/connections'
-import { connectionCardLines, proxyChainDirection } from '@/store/settings'
-import type { Connection } from '@/types'
 import {
   ArrowDownCircleIcon,
   ArrowDownIcon,
@@ -27,18 +6,39 @@ import {
   ArrowUpIcon,
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
-import { first, last } from 'lodash'
+import { disconnectByIdAPI } from '@renderer/api'
+import { useBounceOnVisible } from '@renderer/composables/bouncein'
+import { useConnections } from '@renderer/composables/connections'
+import {
+  CONNECTION_TAB_TYPE,
+  CONNECTIONS_TABLE_ACCESSOR_KEY,
+  PROXY_CHAIN_DIRECTION,
+} from '@renderer/constant'
+import {
+  getDestinationFromConnection,
+  getDestinationTypeFromConnection,
+  getHostFromConnection,
+  getInboundUserFromConnection,
+  getNetworkTypeFromConnection,
+  getProcessFromConnection,
+} from '@renderer/helper'
+import { getIPLabelFromMap } from '@renderer/helper/sourceip'
+import { fromNow, prettyBytesHelper } from '@renderer/helper/utils'
+import { connectionCardLines, proxyChainDirection } from '@renderer/store/settings'
+import type { Connection } from '@renderer/types'
+import { first, last } from 'lodash-es'
 import { defineComponent } from 'vue'
 import type { JSX } from 'vue/jsx-runtime'
+import { connectionTabShow } from '../../store/connections'
 import ProxyName from '../proxies/ProxyName.vue'
 
 export default defineComponent<{
   conn: Connection
 }>({
+  name: 'ConnectionCard',
   props: {
     conn: Object,
   },
-  name: 'ConnectionCard',
   setup(props) {
     const { handlerInfo } = useConnections()
 
