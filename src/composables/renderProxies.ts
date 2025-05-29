@@ -1,7 +1,7 @@
-import { NOT_CONNECTED, PROXY_COUNT_MODE } from '@/constant'
-import { sortAndFilterProxyNodes } from '@/helper'
-import { getLatencyByName } from '@/store/proxies'
-import { proxyCountMode } from '@/store/settings'
+import { NOT_CONNECTED, PROXY_COUNT_MODE } from '@renderer/constant'
+import { sortAndFilterProxyNodes } from '@renderer/helper'
+import { getLatencyByName } from '@renderer/store/proxies'
+import { proxyCountMode } from '@renderer/store/settings'
 import { computed, type ComputedRef } from 'vue'
 
 export function useRenderProxies(proxies: ComputedRef<string[]>, proxyGroup?: string) {

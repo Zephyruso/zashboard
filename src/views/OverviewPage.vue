@@ -21,12 +21,12 @@
 </template>
 
 <script setup lang="ts">
-import BackendVersion from '@/components/common/BackendVersion.vue'
-import ChartsCard from '@/components/overview/ChartsCard.vue'
-import ConnectionHistory from '@/components/overview/ConnectionHistory.vue'
-import NetworkCard from '@/components/overview/NetworkCard.vue'
-import ProxiesCharts from '@/components/overview/ProxiesCharts.vue'
-import { getLabelFromBackend } from '@/helper/utils'
-import { displayProxiesRelationship } from '@/store/settings'
-import { activeBackend } from '@/store/setup'
+import BackendVersion from '@renderer/components/common/BackendVersion.vue'
+import ChartsCard from '@renderer/components/overview/ChartsCard.vue'
+import ConnectionHistory from '@renderer/components/overview/ConnectionHistory.vue'
+import NetworkCard from '@renderer/components/overview/NetworkCard.vue'
+import ProxiesCharts from '@renderer/components/overview/ProxiesCharts.vue'
+import { getLabelFromBackend } from '@renderer/helper/utils'
+import { displayProxiesRelationship } from '@renderer/store/settings'
+import { activeBackend } from '@renderer/store/setup'
 </script>

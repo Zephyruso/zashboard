@@ -25,8 +25,8 @@
 </template>
 
 <script lang="ts" setup>
-import { useTooltip } from '@/helper/tooltip'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { useTooltip } from '@renderer/helper/tooltip'
 import { createApp, defineComponent, h } from 'vue'
 
 const emits = defineEmits<{

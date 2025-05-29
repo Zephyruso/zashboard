@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { proxyMap } from '@/store/proxies'
+import { proxyMap } from '@renderer/store/proxies'
 import { computed } from 'vue'
 import ProxyIcon from './ProxyIcon.vue'
 

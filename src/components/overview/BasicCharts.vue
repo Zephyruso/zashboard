@@ -21,8 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import { font, theme } from '@/store/settings'
 import { PauseCircleIcon, PlayCircleIcon } from '@heroicons/vue/24/outline'
+import { font, theme } from '@renderer/store/settings'
 import { useElementSize } from '@vueuse/core'
 import { LineChart } from 'echarts/charts'
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'

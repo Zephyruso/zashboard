@@ -30,8 +30,8 @@
 </template>
 
 <script setup lang="ts">
-import { blurIntensity } from '@/store/settings'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { blurIntensity } from '@renderer/store/settings'
 import { ref, watch } from 'vue'
 
 const modalRef = ref<HTMLDialogElement>()

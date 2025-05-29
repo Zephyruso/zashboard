@@ -61,11 +61,11 @@
 </template>
 
 <script setup lang="ts">
-import { getIPInfo, type IPInfo } from '@/api/geoip'
-import DialogWrapper from '@/components/common/DialogWrapper.vue'
-import { useConnections } from '@/composables/connections'
-import { proxyMap } from '@/store/proxies'
 import { ArrowRightCircleIcon, MapPinIcon, ServerIcon } from '@heroicons/vue/24/outline'
+import { getIPInfo, type IPInfo } from '@renderer/api/geoip'
+import DialogWrapper from '@renderer/components/common/DialogWrapper.vue'
+import { useConnections } from '@renderer/composables/connections'
+import { proxyMap } from '@renderer/store/proxies'
 import * as ipaddr from 'ipaddr.js'
 import { computed, ref, watch } from 'vue'
 import VueJsonPretty from 'vue-json-pretty'

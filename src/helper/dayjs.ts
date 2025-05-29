@@ -1,4 +1,4 @@
-import { language } from '@/store/settings'
+import { language } from '@renderer/store/settings'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ru'
 import 'dayjs/locale/zh-cn'

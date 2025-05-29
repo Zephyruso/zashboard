@@ -1,4 +1,4 @@
-import '@/helper/dayjs'
+import '@renderer/helper/dayjs'
 import 'tippy.js/animations/scale.css'
 import 'tippy.js/dist/tippy.css'
 import { createApp } from 'vue'

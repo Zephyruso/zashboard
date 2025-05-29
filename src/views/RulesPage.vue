@@ -38,12 +38,18 @@
 </template>
 
 <script setup lang="ts">
-import VirtualScroller from '@/components/common/VirtualScroller.vue'
-import RuleCard from '@/components/rules/RuleCard.vue'
-import RuleProvider from '@/components/rules/RuleProvider.vue'
-import { RULE_TAB_TYPE } from '@/constant'
-import { fetchRules, renderRules, renderRulesProvider, rules, rulesTabShow } from '@/store/rules'
-import type { Rule } from '@/types'
+import VirtualScroller from '@renderer/components/common/VirtualScroller.vue'
+import RuleCard from '@renderer/components/rules/RuleCard.vue'
+import RuleProvider from '@renderer/components/rules/RuleProvider.vue'
+import { RULE_TAB_TYPE } from '@renderer/constant'
+import {
+  fetchRules,
+  renderRules,
+  renderRulesProvider,
+  rules,
+  rulesTabShow,
+} from '@renderer/store/rules'
+import type { Rule } from '@renderer/types'
 
 fetchRules()
 </script>

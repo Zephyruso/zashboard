@@ -14,9 +14,9 @@ import {
   TABLE_WIDTH_MODE,
   TEST_URL,
   type THEME,
-} from '@/constant'
-import { getMinCardWidth, isMiddleScreen, isPreferredDark } from '@/helper/utils'
-import type { SourceIPLabel } from '@/types'
+} from '@renderer/constant'
+import { getMinCardWidth, isMiddleScreen, isPreferredDark } from '@renderer/helper/utils'
+import type { SourceIPLabel } from '@renderer/types'
 import { useStorage } from '@vueuse/core'
 import { isEmpty } from 'lodash'
 import { v4 as uuid } from 'uuid'

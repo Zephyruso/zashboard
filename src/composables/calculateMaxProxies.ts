@@ -1,5 +1,5 @@
-import { PROXY_CARD_SIZE } from '@/constant'
-import { minProxyCardWidth, proxyCardSize } from '@/store/settings'
+import { PROXY_CARD_SIZE } from '@renderer/constant'
+import { minProxyCardWidth, proxyCardSize } from '@renderer/store/settings'
 import { useCurrentElement, useElementSize } from '@vueuse/core'
 import { computed } from 'vue'
 

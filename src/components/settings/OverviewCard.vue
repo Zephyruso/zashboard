@@ -25,13 +25,13 @@
 </template>
 
 <script setup lang="ts">
-import ConnectionsCharts from '@/components/overview/ConnectionsCharts.vue'
-import ConnectionStatus from '@/components/overview/ConnectionStatus.vue'
-import IPCheck from '@/components/overview/IPCheck.vue'
-import MemoryCharts from '@/components/overview/MemoryCharts.vue'
-import SpeedCharts from '@/components/overview/SpeedCharts.vue'
-import StatisticsStats from '@/components/overview/StatisticsStats.vue'
-import { isSidebarCollapsed, showIPAndConnectionInfo } from '@/store/settings'
+import ConnectionsCharts from '@renderer/components/overview/ConnectionsCharts.vue'
+import ConnectionStatus from '@renderer/components/overview/ConnectionStatus.vue'
+import IPCheck from '@renderer/components/overview/IPCheck.vue'
+import MemoryCharts from '@renderer/components/overview/MemoryCharts.vue'
+import SpeedCharts from '@renderer/components/overview/SpeedCharts.vue'
+import StatisticsStats from '@renderer/components/overview/StatisticsStats.vue'
+import { isSidebarCollapsed, showIPAndConnectionInfo } from '@renderer/store/settings'
 import { onMounted, ref } from 'vue'
 
 const isMounted = ref(false)

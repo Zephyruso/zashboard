@@ -79,31 +79,31 @@
 </template>
 
 <script setup lang="ts">
-import { isBackendAvailable } from '@/api'
-import DialogWrapper from '@/components/common/DialogWrapper.vue'
-import ConnectionCtrl from '@/components/sidebar/ConnectionCtrl.tsx'
-import LogsCtrl from '@/components/sidebar/LogsCtrl.tsx'
-import ProxiesCtrl from '@/components/sidebar/ProxiesCtrl.tsx'
-import RulesCtrl from '@/components/sidebar/RulesCtrl.tsx'
-import SideBar from '@/components/sidebar/SideBar.vue'
-import { useNotification } from '@/composables/notification'
-import { useSettings } from '@/composables/settings'
-import { useSwipeRouter } from '@/composables/swipe'
-import { PROXY_TAB_TYPE, ROUTE_ICON_MAP, ROUTE_NAME, RULE_TAB_TYPE } from '@/constant'
-import { renderRoutes } from '@/helper'
-import { getLabelFromBackend, isMiddleScreen } from '@/helper/utils'
-import { fetchConfigs } from '@/store/config'
-import { initConnections } from '@/store/connections'
-import { initLogs } from '@/store/logs'
-import { initSatistic } from '@/store/overview'
-import { fetchProxies, proxiesTabShow } from '@/store/proxies'
-import { fetchRules, rulesTabShow } from '@/store/rules'
-import { isSidebarCollapsed } from '@/store/settings'
-import { activeBackend, activeUuid, backendList } from '@/store/setup'
-import type { Backend } from '@/types'
+import { isBackendAvailable } from '@renderer/api'
+import DialogWrapper from '@renderer/components/common/DialogWrapper.vue'
+import ConnectionCtrl from '@renderer/components/sidebar/ConnectionCtrl.tsx'
+import LogsCtrl from '@renderer/components/sidebar/LogsCtrl.tsx'
+import ProxiesCtrl from '@renderer/components/sidebar/ProxiesCtrl.tsx'
+import RulesCtrl from '@renderer/components/sidebar/RulesCtrl.tsx'
+import SideBar from '@renderer/components/sidebar/SideBar.vue'
+import { useNotification } from '@renderer/composables/notification'
+import { useSwipeRouter } from '@renderer/composables/swipe'
+import { PROXY_TAB_TYPE, ROUTE_ICON_MAP, ROUTE_NAME, RULE_TAB_TYPE } from '@renderer/constant'
+import { renderRoutes } from '@renderer/helper'
+import { getLabelFromBackend, isMiddleScreen } from '@renderer/helper/utils'
+import { fetchConfigs } from '@renderer/store/config'
+import { initConnections } from '@renderer/store/connections'
+import { initLogs } from '@renderer/store/logs'
+import { initSatistic } from '@renderer/store/overview'
+import { fetchProxies, proxiesTabShow } from '@renderer/store/proxies'
+import { fetchRules, rulesTabShow } from '@renderer/store/rules'
+import { isSidebarCollapsed } from '@renderer/store/settings'
+import { activeBackend, activeUuid, backendList } from '@renderer/store/setup'
+import type { Backend } from '@renderer/types'
 import { useDocumentVisibility } from '@vueuse/core'
 import { ref, watch, type Component } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
+import { isCoreRunning } from '../store/ipc'
 
 const ctrlsMap: Record<string, Component> = {
   [ROUTE_NAME.connections]: ConnectionCtrl,
@@ -121,9 +121,9 @@ const router = useRouter()
 const { swiperRef } = useSwipeRouter()
 
 watch(
-  activeUuid,
+  isCoreRunning,
   () => {
-    if (!activeUuid.value) return
+    if (!isCoreRunning.value) return
     rulesTabShow.value = RULE_TAB_TYPE.RULES
     proxiesTabShow.value = PROXY_TAB_TYPE.PROXIES
     fetchConfigs()
@@ -206,8 +206,4 @@ watch(documentVisible, () => {
   if (documentVisible.value !== 'visible') return
   fetchProxies()
 })
-
-const { checkUIUpdate } = useSettings()
-
-checkUIUpdate()
 </script>

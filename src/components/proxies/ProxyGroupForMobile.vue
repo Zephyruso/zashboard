@@ -91,12 +91,12 @@
 </template>
 
 <script setup lang="ts">
-import { useBounceOnVisible } from '@/composables/bouncein'
-import { useRenderProxies } from '@/composables/renderProxies'
-import { isHiddenGroup } from '@/helper'
-import { hiddenGroupMap, proxyGroupLatencyTest, proxyMap } from '@/store/proxies'
-import { blurIntensity, groupProxiesByProvider, manageHiddenGroup } from '@/store/settings'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+import { useBounceOnVisible } from '@renderer/composables/bouncein'
+import { useRenderProxies } from '@renderer/composables/renderProxies'
+import { isHiddenGroup } from '@renderer/helper'
+import { hiddenGroupMap, proxyGroupLatencyTest, proxyMap } from '@renderer/store/proxies'
+import { blurIntensity, groupProxiesByProvider, manageHiddenGroup } from '@renderer/store/settings'
 import { twMerge } from 'tailwind-merge'
 import { computed, nextTick, ref } from 'vue'
 import LatencyTag from './LatencyTag.vue'

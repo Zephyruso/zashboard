@@ -74,9 +74,13 @@
 </template>
 
 <script setup lang="ts">
-import { CONNECTIONS_TABLE_ACCESSOR_KEY, DETAILED_CARD_STYLE, SIMPLE_CARD_STYLE } from '@/constant'
-import { connectionCardLines } from '@/store/settings'
 import { PlusIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import {
+  CONNECTIONS_TABLE_ACCESSOR_KEY,
+  DETAILED_CARD_STYLE,
+  SIMPLE_CARD_STYLE,
+} from '@renderer/constant'
+import { connectionCardLines } from '@renderer/store/settings'
 import { ref } from 'vue'
 import Draggable from 'vuedraggable'
 

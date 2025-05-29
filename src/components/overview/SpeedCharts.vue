@@ -9,9 +9,9 @@
 </template>
 
 <script setup lang="ts">
-import { getToolTipForParams } from '@/helper'
-import { prettyBytesHelper } from '@/helper/utils'
-import { downloadSpeedHistory, uploadSpeedHistory } from '@/store/overview'
+import { getToolTipForParams } from '@renderer/helper'
+import { prettyBytesHelper } from '@renderer/helper/utils'
+import { downloadSpeedHistory, uploadSpeedHistory } from '@renderer/store/overview'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BasicCharts from './BasicCharts.vue'

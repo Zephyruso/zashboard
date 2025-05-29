@@ -1,21 +1,27 @@
-import { ROUTE_NAME } from '@/constant'
-import { renderRoutes } from '@/helper'
-import { i18n } from '@/i18n'
-import { language } from '@/store/settings'
-import { activeBackend } from '@/store/setup'
-import ConnectionsPage from '@/views/ConnectionsPage.vue'
-import HomePage from '@/views/HomePage.vue'
-import LogsPage from '@/views/LogsPage.vue'
-import OverviewPage from '@/views/OverviewPage.vue'
-import ProxiesPage from '@/views/ProxiesPage.vue'
-import RulesPage from '@/views/RulesPage.vue'
-import SettingsPage from '@/views/SettingsPage.vue'
-import SetupPage from '@/views/SetupPage.vue'
+import { ROUTE_NAME } from '@renderer/constant'
+import { renderRoutes } from '@renderer/helper'
+import { i18n } from '@renderer/i18n'
+import { isCoreRunning } from '@renderer/store/ipc'
+import { language } from '@renderer/store/settings'
+import { activeBackend } from '@renderer/store/setup'
+import ConfigPage from '@renderer/views/ConfigPage.vue'
+import ConnectionsPage from '@renderer/views/ConnectionsPage.vue'
+import HomePage from '@renderer/views/HomePage.vue'
+import LogsPage from '@renderer/views/LogsPage.vue'
+import OverviewPage from '@renderer/views/OverviewPage.vue'
+import ProxiesPage from '@renderer/views/ProxiesPage.vue'
+import RulesPage from '@renderer/views/RulesPage.vue'
+import SettingsPage from '@renderer/views/SettingsPage.vue'
 import { useTitle } from '@vueuse/core'
 import { watch } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const childrenRouter = [
+  {
+    path: 'config',
+    name: ROUTE_NAME.config,
+    component: ConfigPage,
+  },
   {
     path: 'proxies',
     name: ROUTE_NAME.proxies,
@@ -49,7 +55,7 @@ const childrenRouter = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory('/'),
   routes: [
     {
       path: '/',
@@ -58,23 +64,18 @@ const router = createRouter({
       children: childrenRouter,
     },
     {
-      path: '/setup',
-      name: ROUTE_NAME.setup,
-      component: SetupPage,
-    },
-    {
       path: '/:catchAll(.*)',
       redirect: ROUTE_NAME.proxies,
     },
   ],
 })
 
-const title = useTitle('zashboard')
+const title = useTitle('pantheon')
 const setTitleByName = (name: string | symbol | undefined) => {
   if (typeof name === 'string' && activeBackend.value) {
-    title.value = `zashboard | ${i18n.global.t(name)}`
+    title.value = `pantheon | ${i18n.global.t(name)}`
   } else {
-    title.value = 'zashboard'
+    title.value = 'pantheon'
   }
 }
 
@@ -90,8 +91,8 @@ router.beforeEach((to, from) => {
     to.meta.transition = toIndex < fromIndex ? 'slide-right' : 'slide-left'
   }
 
-  if (!activeBackend.value && to.name !== ROUTE_NAME.setup) {
-    router.push({ name: ROUTE_NAME.setup })
+  if (!isCoreRunning.value && to.name !== ROUTE_NAME.config) {
+    router.push({ name: ROUTE_NAME.config })
   }
 })
 

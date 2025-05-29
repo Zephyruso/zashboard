@@ -10,9 +10,9 @@
 </template>
 
 <script setup lang="ts">
-import { ALL_THEME } from '@/constant'
-import { useTooltip } from '@/helper/tooltip'
-import { customThemes } from '@/store/settings'
+import { ALL_THEME } from '@renderer/constant'
+import { useTooltip } from '@renderer/helper/tooltip'
+import { customThemes } from '@renderer/store/settings'
 import { computed } from 'vue'
 
 const theme = defineModel<string>('value', {

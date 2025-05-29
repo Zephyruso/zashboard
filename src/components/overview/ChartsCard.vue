@@ -16,8 +16,8 @@
 </template>
 
 <script setup lang="ts">
-import ConnectionsCharts from '@/components/overview/ConnectionsCharts.vue'
-import MemoryCharts from '@/components/overview/MemoryCharts.vue'
-import SpeedCharts from '@/components/overview/SpeedCharts.vue'
-import StatisticsStats from '@/components/overview/StatisticsStats.vue'
+import ConnectionsCharts from '@renderer/components/overview/ConnectionsCharts.vue'
+import MemoryCharts from '@renderer/components/overview/MemoryCharts.vue'
+import SpeedCharts from '@renderer/components/overview/SpeedCharts.vue'
+import StatisticsStats from '@renderer/components/overview/StatisticsStats.vue'
 </script>

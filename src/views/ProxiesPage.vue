@@ -35,14 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import ProxyGroup from '@/components/proxies/ProxyGroup.vue'
-import ProxyGroupForMobile from '@/components/proxies/ProxyGroupForMobile.vue'
-import ProxyProvider from '@/components/proxies/ProxyProvider.vue'
-import { renderGroups } from '@/composables/proxies'
-import { PROXY_TAB_TYPE } from '@/constant'
-import { isMiddleScreen } from '@/helper/utils'
-import { fetchProxies, proxiesTabShow } from '@/store/proxies'
-import { twoColumnProxyGroup } from '@/store/settings'
+import ProxyGroup from '@renderer/components/proxies/ProxyGroup.vue'
+import ProxyGroupForMobile from '@renderer/components/proxies/ProxyGroupForMobile.vue'
+import ProxyProvider from '@renderer/components/proxies/ProxyProvider.vue'
+import { renderGroups } from '@renderer/composables/proxies'
+import { PROXY_TAB_TYPE } from '@renderer/constant'
+import { isMiddleScreen } from '@renderer/helper/utils'
+import { fetchProxies, proxiesTabShow } from '@renderer/store/proxies'
+import { twoColumnProxyGroup } from '@renderer/store/settings'
 import { useElementSize, useSessionStorage } from '@vueuse/core'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 

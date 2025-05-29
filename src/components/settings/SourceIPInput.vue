@@ -46,13 +46,13 @@
 </template>
 
 <script setup lang="ts">
-import { checkTruncation, useTooltip } from '@/helper/tooltip'
-import { getLabelFromBackend } from '@/helper/utils'
-import { connections } from '@/store/connections'
-import { sourceIPLabelList } from '@/store/settings'
-import { backendList } from '@/store/setup'
-import type { SourceIPLabel } from '@/types'
 import { ArrowRightCircleIcon, LockClosedIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
+import { checkTruncation, useTooltip } from '@renderer/helper/tooltip'
+import { getLabelFromBackend } from '@renderer/helper/utils'
+import { connections } from '@renderer/store/connections'
+import { sourceIPLabelList } from '@renderer/store/settings'
+import { backendList } from '@renderer/store/setup'
+import type { SourceIPLabel } from '@renderer/types'
 import { uniq } from 'lodash'
 import { computed } from 'vue'
 import TextInput from '../common/TextInput.vue'

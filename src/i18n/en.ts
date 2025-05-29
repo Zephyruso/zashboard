@@ -1,5 +1,9 @@
+import AppEn from '@/shared/i18n/en.js'
+
 const en = {
+  pantheon: AppEn,
   setup: 'Setup',
+  config: 'Config',
   overview: 'Overview',
   proxies: 'Proxies',
   rules: 'Rules',

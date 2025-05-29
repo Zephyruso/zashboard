@@ -74,8 +74,6 @@
 </template>
 
 <script setup lang="ts">
-import { proxyGroupList } from '@/store/proxies'
-import { iconReflectList } from '@/store/settings'
 import {
   ArrowRightCircleIcon,
   ChevronDownIcon,
@@ -83,6 +81,8 @@ import {
   PlusIcon,
   TrashIcon,
 } from '@heroicons/vue/24/outline'
+import { proxyGroupList } from '@renderer/store/proxies'
+import { iconReflectList } from '@renderer/store/settings'
 import { useSessionStorage } from '@vueuse/core'
 import { v4 as uuid } from 'uuid'
 import { reactive } from 'vue'

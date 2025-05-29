@@ -122,16 +122,16 @@
 </template>
 
 <script setup lang="ts">
-import ImportSettings from '@/components/common/ImportSettings.vue'
-import TextInput from '@/components/common/TextInput.vue'
-import LanguageSelect from '@/components/settings/LanguageSelect.vue'
-import { useNotification } from '@/composables/notification'
-import { ROUTE_NAME } from '@/constant'
-import { getLabelFromBackend, getUrlFromBackend } from '@/helper/utils'
-import router from '@/router'
-import { activeUuid, addBackend, backendList, removeBackend } from '@/store/setup'
-import type { Backend } from '@/types'
 import { ChevronUpDownIcon, QuestionMarkCircleIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import ImportSettings from '@renderer/components/common/ImportSettings.vue'
+import TextInput from '@renderer/components/common/TextInput.vue'
+import LanguageSelect from '@renderer/components/settings/LanguageSelect.vue'
+import { useNotification } from '@renderer/composables/notification'
+import { ROUTE_NAME } from '@renderer/constant'
+import { getLabelFromBackend, getUrlFromBackend } from '@renderer/helper/utils'
+import router from '@renderer/router'
+import { activeUuid, addBackend, backendList, removeBackend } from '@renderer/store/setup'
+import type { Backend } from '@renderer/types'
 import { reactive } from 'vue'
 import Draggable from 'vuedraggable'
 

@@ -7,8 +7,8 @@ import {
   fetchProxyProviderAPI,
   isSingBox,
   selectProxyAPI,
-} from '@/api'
-import { useNotification } from '@/composables/notification'
+} from '@renderer/api'
+import { useNotification } from '@renderer/composables/notification'
 import {
   GLOBAL,
   IPV6_TEST_URL,
@@ -16,9 +16,9 @@ import {
   PROXY_TAB_TYPE,
   PROXY_TYPE,
   TEST_URL,
-} from '@/constant'
-import { isProxyGroup } from '@/helper'
-import type { Proxy, ProxyProvider } from '@/types'
+} from '@renderer/constant'
+import { isProxyGroup } from '@renderer/helper'
+import type { Proxy, ProxyProvider } from '@renderer/types'
 import { useStorage } from '@vueuse/core'
 import { debounce, last } from 'lodash'
 import pLimit from 'p-limit'

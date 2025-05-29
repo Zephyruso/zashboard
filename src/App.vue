@@ -6,7 +6,7 @@ import { RouterView } from 'vue-router'
 import { useNotification } from './composables/notification'
 import { FONTS } from './constant'
 import { getBase64FromIndexedDB, LOCAL_IMAGE } from './helper/indexeddb'
-import { isPreferredDark } from './helper/utils'
+import { isDarkTheme, isPreferredDark } from './helper/utils'
 import {
   blurIntensity,
   customBackgroundURL,
@@ -88,6 +88,8 @@ onMounted(() => {
     () => {
       document.body.setAttribute('data-theme', theme.value)
       setThemeColor()
+      isDarkTheme.value =
+        getComputedStyle(document.body).getPropertyValue('color-scheme') === 'dark'
     },
     {
       immediate: true,

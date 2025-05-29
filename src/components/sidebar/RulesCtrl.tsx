@@ -1,10 +1,16 @@
-import { updateRuleProviderAPI } from '@/api'
-import { useNotification } from '@/composables/notification'
-import { RULE_TAB_TYPE } from '@/constant'
-import { isMiddleScreen } from '@/helper/utils'
-import { fetchRules, ruleProviderList, rules, rulesFilter, rulesTabShow } from '@/store/rules'
-import { displayLatencyInRule, displayNowNodeInRule } from '@/store/settings'
 import { ArrowPathIcon, WrenchScrewdriverIcon } from '@heroicons/vue/24/outline'
+import { updateRuleProviderAPI } from '@renderer/api'
+import { useNotification } from '@renderer/composables/notification'
+import { RULE_TAB_TYPE } from '@renderer/constant'
+import { isMiddleScreen } from '@renderer/helper/utils'
+import {
+  fetchRules,
+  ruleProviderList,
+  rules,
+  rulesFilter,
+  rulesTabShow,
+} from '@renderer/store/rules'
+import { displayLatencyInRule, displayNowNodeInRule } from '@renderer/store/settings'
 import { computed, defineComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import DialogWrapper from '../common/DialogWrapper.vue'

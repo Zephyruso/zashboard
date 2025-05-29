@@ -1,4 +1,4 @@
-import type { Backend } from '@/types'
+import type { Backend } from '@renderer/types'
 import { useStorage } from '@vueuse/core'
 import { isEqual, omit } from 'lodash'
 import { v4 as uuid } from 'uuid'

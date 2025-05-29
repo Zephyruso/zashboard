@@ -24,8 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import { collapsedBus } from '@/composables/bus'
-import { collapseGroupMap } from '@/store/settings'
+import { collapsedBus } from '@renderer/composables/bus'
+import { collapseGroupMap } from '@renderer/store/settings'
 import { computed, onUnmounted, ref } from 'vue'
 
 const props = defineProps<{

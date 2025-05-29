@@ -16,8 +16,8 @@
 </template>
 
 <script setup lang="ts">
-import { getIPLabelFromMap } from '@/helper/sourceip'
-import { connections, sourceIPFilter } from '@/store/connections'
+import { getIPLabelFromMap } from '@renderer/helper/sourceip'
+import { connections, sourceIPFilter } from '@renderer/store/connections'
 import * as ipaddr from 'ipaddr.js'
 import { isEqual, uniq } from 'lodash'
 import { computed, ref, watch } from 'vue'

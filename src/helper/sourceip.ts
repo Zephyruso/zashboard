@@ -1,5 +1,5 @@
-import { sourceIPLabelList } from '@/store/settings'
-import { activeBackend } from '@/store/setup'
+import { sourceIPLabelList } from '@renderer/store/settings'
+import { activeBackend } from '@renderer/store/setup'
 import { watch } from 'vue'
 
 const CACHE_SIZE = 256

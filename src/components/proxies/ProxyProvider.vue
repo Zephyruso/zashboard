@@ -62,13 +62,13 @@
 </template>
 
 <script setup lang="ts">
-import { proxyProviderHealthCheckAPI, updateProxyProviderAPI } from '@/api'
-import { useBounceOnVisible } from '@/composables/bouncein'
-import { useRenderProxies } from '@/composables/renderProxies'
-import { fromNow, prettyBytesHelper } from '@/helper/utils'
-import { fetchProxies, proxyProviederList } from '@/store/proxies'
-import { twoColumnProxyGroup } from '@/store/settings'
 import { ArrowPathIcon, BoltIcon } from '@heroicons/vue/24/outline'
+import { proxyProviderHealthCheckAPI, updateProxyProviderAPI } from '@renderer/api'
+import { useBounceOnVisible } from '@renderer/composables/bouncein'
+import { useRenderProxies } from '@renderer/composables/renderProxies'
+import { fromNow, prettyBytesHelper } from '@renderer/helper/utils'
+import { fetchProxies, proxyProviederList } from '@renderer/store/proxies'
+import { twoColumnProxyGroup } from '@renderer/store/settings'
 import dayjs from 'dayjs'
 import { toFinite } from 'lodash'
 import { twMerge } from 'tailwind-merge'

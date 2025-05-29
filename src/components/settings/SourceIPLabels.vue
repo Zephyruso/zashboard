@@ -75,9 +75,6 @@
 </template>
 
 <script setup lang="ts">
-import { disableSwipe } from '@/composables/swipe'
-import { sourceIPLabelList } from '@/store/settings'
-import type { SourceIPLabel } from '@/types'
 import {
   ChevronDownIcon,
   ChevronUpDownIcon,
@@ -86,6 +83,9 @@ import {
   TagIcon,
   TrashIcon,
 } from '@heroicons/vue/24/outline'
+import { disableSwipe } from '@renderer/composables/swipe'
+import { sourceIPLabelList } from '@renderer/store/settings'
+import type { SourceIPLabel } from '@renderer/types'
 import { useSessionStorage } from '@vueuse/core'
 import { v4 as uuid } from 'uuid'
 import { ref } from 'vue'

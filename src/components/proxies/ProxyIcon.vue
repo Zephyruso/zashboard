@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { iconMarginRight, iconSize } from '@/store/settings'
+import { iconMarginRight, iconSize } from '@renderer/store/settings'
 import DOMPurify from 'dompurify'
 import { computed } from 'vue'
 

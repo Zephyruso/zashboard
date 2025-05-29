@@ -175,11 +175,12 @@
 </template>
 
 <script setup lang="ts">
-import { isSingBox } from '@/api'
-import { PROXY_CARD_SIZE, PROXY_COUNT_MODE, PROXY_PREVIEW_TYPE } from '@/constant'
-import { useTooltip } from '@/helper/tooltip'
-import { getMinCardWidth } from '@/helper/utils'
-import { proxyMap } from '@/store/proxies'
+import { QuestionMarkCircleIcon } from '@heroicons/vue/24/outline'
+import { isSingBox } from '@renderer/api'
+import { PROXY_CARD_SIZE, PROXY_COUNT_MODE, PROXY_PREVIEW_TYPE } from '@renderer/constant'
+import { useTooltip } from '@renderer/helper/tooltip'
+import { getMinCardWidth } from '@renderer/helper/utils'
+import { proxyMap } from '@renderer/store/proxies'
 import {
   customGlobalNode,
   displayGlobalByMode,
@@ -197,8 +198,7 @@ import {
   speedtestUrl,
   truncateProxyName,
   twoColumnProxyGroup,
-} from '@/store/settings'
-import { QuestionMarkCircleIcon } from '@heroicons/vue/24/outline'
+} from '@renderer/store/settings'
 import { useI18n } from 'vue-i18n'
 import TextInput from '../common/TextInput.vue'
 import IconSettings from './IconSettings.vue'

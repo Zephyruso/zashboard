@@ -1,9 +1,16 @@
-import { updateProxyProviderAPI } from '@/api'
-import { collapsedBus } from '@/composables/bus'
-import { renderGroups } from '@/composables/proxies'
-import { PROXY_SORT_TYPE, PROXY_TAB_TYPE } from '@/constant'
-import { getMinCardWidth, isMiddleScreen } from '@/helper/utils'
-import { configs, updateConfigs } from '@/store/config'
+import {
+  ArrowPathIcon,
+  BoltIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  WrenchScrewdriverIcon,
+} from '@heroicons/vue/24/outline'
+import { updateProxyProviderAPI } from '@renderer/api'
+import { collapsedBus } from '@renderer/composables/bus'
+import { renderGroups } from '@renderer/composables/proxies'
+import { PROXY_SORT_TYPE, PROXY_TAB_TYPE } from '@renderer/constant'
+import { getMinCardWidth, isMiddleScreen } from '@renderer/helper/utils'
+import { configs, updateConfigs } from '@renderer/store/config'
 import {
   allProxiesLatencyTest,
   fetchProxies,
@@ -11,7 +18,7 @@ import {
   proxiesTabShow,
   proxyGroupList,
   proxyProviederList,
-} from '@/store/proxies'
+} from '@renderer/store/proxies'
 import {
   automaticDisconnection,
   collapseGroupMap,
@@ -22,14 +29,7 @@ import {
   proxyCardSize,
   proxySortType,
   twoColumnProxyGroup,
-} from '@/store/settings'
-import {
-  ArrowPathIcon,
-  BoltIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  WrenchScrewdriverIcon,
-} from '@heroicons/vue/24/outline'
+} from '@renderer/store/settings'
 import { every } from 'lodash'
 import { computed, defineComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'

@@ -22,11 +22,11 @@
 </template>
 
 <script setup lang="ts">
-import { ROUTE_NAME } from '@/constant'
-import { getLabelFromBackend } from '@/helper/utils'
-import router from '@/router'
-import { activeUuid, backendList } from '@/store/setup'
 import { PlusIcon } from '@heroicons/vue/24/outline'
+import { ROUTE_NAME } from '@renderer/constant'
+import { getLabelFromBackend } from '@renderer/helper/utils'
+import router from '@renderer/router'
+import { activeUuid, backendList } from '@renderer/store/setup'
 import { computed } from 'vue'
 
 const opts = computed(() => {

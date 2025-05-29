@@ -149,33 +149,6 @@
 </template>
 
 <script setup lang="ts">
-import { disconnectByIdAPI } from '@/api'
-import { useConnections } from '@/composables/connections'
-import {
-  CONNECTIONS_TABLE_ACCESSOR_KEY,
-  PROXY_CHAIN_DIRECTION,
-  TABLE_SIZE,
-  TABLE_WIDTH_MODE,
-} from '@/constant'
-import {
-  getChainsStringFromConnection,
-  getDestinationFromConnection,
-  getDestinationTypeFromConnection,
-  getHostFromConnection,
-  getInboundUserFromConnection,
-  getNetworkTypeFromConnection,
-  getProcessFromConnection,
-} from '@/helper'
-import { getIPLabelFromMap } from '@/helper/sourceip'
-import { fromNow, prettyBytesHelper } from '@/helper/utils'
-import { renderConnections } from '@/store/connections'
-import {
-  connectionTableColumns,
-  proxyChainDirection,
-  tableSize,
-  tableWidthMode,
-} from '@/store/settings'
-import type { Connection } from '@/types'
 import {
   ArrowDownCircleIcon,
   ArrowRightCircleIcon,
@@ -184,6 +157,33 @@ import {
   MagnifyingGlassPlusIcon,
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
+import { disconnectByIdAPI } from '@renderer/api'
+import { useConnections } from '@renderer/composables/connections'
+import {
+  CONNECTIONS_TABLE_ACCESSOR_KEY,
+  PROXY_CHAIN_DIRECTION,
+  TABLE_SIZE,
+  TABLE_WIDTH_MODE,
+} from '@renderer/constant'
+import {
+  getChainsStringFromConnection,
+  getDestinationFromConnection,
+  getDestinationTypeFromConnection,
+  getHostFromConnection,
+  getInboundUserFromConnection,
+  getNetworkTypeFromConnection,
+  getProcessFromConnection,
+} from '@renderer/helper'
+import { getIPLabelFromMap } from '@renderer/helper/sourceip'
+import { fromNow, prettyBytesHelper } from '@renderer/helper/utils'
+import { renderConnections } from '@renderer/store/connections'
+import {
+  connectionTableColumns,
+  proxyChainDirection,
+  tableSize,
+  tableWidthMode,
+} from '@renderer/store/settings'
+import type { Connection } from '@renderer/types'
 import {
   FlexRender,
   getCoreRowModel,

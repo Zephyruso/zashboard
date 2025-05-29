@@ -1,7 +1,10 @@
+import AppRu from '@/shared/i18n/ru.js'
 import type { LANG_MESSAGE } from './en'
 
 const ru: LANG_MESSAGE = {
+  pantheon: AppRu,
   setup: 'Настройка',
+  config: 'Конфиг',
   overview: 'Обзор',
   proxies: 'Прокси',
   rules: 'Правила',

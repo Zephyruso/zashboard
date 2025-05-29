@@ -80,7 +80,12 @@
 </template>
 
 <script setup lang="ts">
-import SourceIPLabels from '@/components/settings/SourceIPLabels.vue'
-import { PROXY_CHAIN_DIRECTION, TABLE_SIZE, TABLE_WIDTH_MODE } from '@/constant'
-import { proxyChainDirection, tableSize, tableWidthMode, useConnectionCard } from '@/store/settings'
+import SourceIPLabels from '@renderer/components/settings/SourceIPLabels.vue'
+import { PROXY_CHAIN_DIRECTION, TABLE_SIZE, TABLE_WIDTH_MODE } from '@renderer/constant'
+import {
+  proxyChainDirection,
+  tableSize,
+  tableWidthMode,
+  useConnectionCard,
+} from '@renderer/store/settings'
 </script>

@@ -1,7 +1,10 @@
+import AppZh from '@/shared/i18n/zh.js'
 import type { LANG_MESSAGE } from './en'
 
 const zh: LANG_MESSAGE = {
+  pantheon: AppZh,
   setup: '配置',
+  config: '配置',
   overview: '概览',
   proxies: '代理',
   rules: '规则',

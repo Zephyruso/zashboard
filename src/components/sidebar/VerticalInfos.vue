@@ -30,8 +30,6 @@
 </template>
 
 <script setup lang="ts">
-import { STATISTICS_TYPE, statisticsMap } from '@/composables/statistics'
-import { isSidebarCollapsed } from '@/store/settings'
 import {
   ArrowDownCircleIcon,
   ArrowRightCircleIcon,
@@ -39,4 +37,6 @@ import {
   ArrowUpCircleIcon,
   CpuChipIcon,
 } from '@heroicons/vue/24/outline'
+import { STATISTICS_TYPE, statisticsMap } from '@renderer/composables/statistics'
+import { isSidebarCollapsed } from '@renderer/store/settings'
 </script>

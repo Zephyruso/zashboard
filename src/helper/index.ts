@@ -1,13 +1,14 @@
-import { useNotification } from '@/composables/notification'
+import { useNotification } from '@renderer/composables/notification'
 import {
   NOT_CONNECTED,
   PROXY_CHAIN_DIRECTION,
   PROXY_SORT_TYPE,
   PROXY_TYPE,
   ROUTE_NAME,
-} from '@/constant'
-import { timeSaved } from '@/store/overview'
-import { getLatencyByName, hiddenGroupMap, proxiesFilter, proxyMap } from '@/store/proxies'
+} from '@renderer/constant'
+import { isCoreRunning } from '@renderer/store/ipc'
+import { timeSaved } from '@renderer/store/overview'
+import { getLatencyByName, hiddenGroupMap, proxiesFilter, proxyMap } from '@renderer/store/proxies'
 import {
   customThemes,
   hideUnavailableProxies,
@@ -16,8 +17,8 @@ import {
   proxyChainDirection,
   proxySortType,
   splitOverviewPage,
-} from '@/store/settings'
-import type { Connection } from '@/types'
+} from '@renderer/store/settings'
+import type { Connection } from '@renderer/types'
 import dayjs from 'dayjs'
 import { computed } from 'vue'
 import { prettyBytesHelper } from './utils'
@@ -177,6 +178,9 @@ export const getColorForLatency = (latency: number) => {
 }
 
 export const renderRoutes = computed(() => {
+  if (!isCoreRunning.value) {
+    return [ROUTE_NAME.config]
+  }
   return Object.values(ROUTE_NAME).filter((r) => {
     return ![ROUTE_NAME.setup, !splitOverviewPage.value && ROUTE_NAME.overview].includes(r)
   })

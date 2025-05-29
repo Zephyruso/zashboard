@@ -18,9 +18,9 @@
 </template>
 
 <script setup lang="ts">
-import { LANG } from '@/constant'
-import { i18n } from '@/i18n'
-import { language } from '@/store/settings'
+import { LANG } from '@renderer/constant'
+import { i18n } from '@renderer/i18n'
+import { language } from '@renderer/store/settings'
 
 const langLabelMap = {
   [LANG.EN_US]: 'English',

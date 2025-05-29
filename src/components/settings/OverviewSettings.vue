@@ -87,5 +87,5 @@ import {
   showIPAndConnectionInfo,
   showStatisticsWhenSidebarCollapsed,
   splitOverviewPage,
-} from '@/store/settings'
+} from '@renderer/store/settings'
 </script>

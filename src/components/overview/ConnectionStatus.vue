@@ -34,21 +34,21 @@
 </template>
 
 <script setup lang="ts">
+import { BoltIcon } from '@heroicons/vue/24/outline'
 import {
   getBaiduLatencyAPI,
   getCloudflareLatencyAPI,
   getGithubLatencyAPI,
   getYouTubeLatencyAPI,
-} from '@/api/latency'
+} from '@renderer/api/latency'
 import {
   baiduLatency,
   cloudflareLatency,
   githubLatency,
   youtubeLatency,
-} from '@/composables/overview'
-import { getColorForLatency } from '@/helper'
-import { autoConnectionCheck } from '@/store/settings'
-import { BoltIcon } from '@heroicons/vue/24/outline'
+} from '@renderer/composables/overview'
+import { getColorForLatency } from '@renderer/helper'
+import { autoConnectionCheck } from '@renderer/store/settings'
 import { onMounted } from 'vue'
 
 const getLatency = async () => {

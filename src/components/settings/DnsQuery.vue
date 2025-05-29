@@ -56,10 +56,10 @@
 </template>
 
 <script lang="ts" setup>
-import { queryDNSAPI } from '@/api'
-import { getIPInfo, type IPInfo } from '@/api/geoip'
-import type { DNSQuery } from '@/types'
 import { MapPinIcon, ServerIcon } from '@heroicons/vue/24/outline'
+import { queryDNSAPI } from '@renderer/api'
+import { getIPInfo, type IPInfo } from '@renderer/api/geoip'
+import type { DNSQuery } from '@renderer/types'
 import { reactive, ref } from 'vue'
 import TextInput from '../common/TextInput.vue'
 

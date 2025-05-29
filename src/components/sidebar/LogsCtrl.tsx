@@ -1,8 +1,3 @@
-import { isSingBox } from '@/api'
-import { LOG_LEVEL } from '@/constant'
-import { isMiddleScreen } from '@/helper/utils'
-import { initLogs, isPaused, logFilter, logLevel, logTypeFilter, logs } from '@/store/logs'
-import { logRetentionLimit, logSearchHistory } from '@/store/settings'
 import {
   ArrowDownTrayIcon,
   PauseIcon,
@@ -10,6 +5,11 @@ import {
   WrenchScrewdriverIcon,
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
+import { isSingBox } from '@renderer/api'
+import { LOG_LEVEL } from '@renderer/constant'
+import { isMiddleScreen } from '@renderer/helper/utils'
+import { initLogs, isPaused, logFilter, logLevel, logTypeFilter, logs } from '@renderer/store/logs'
+import { logRetentionLimit, logSearchHistory } from '@renderer/store/settings'
 import dayjs from 'dayjs'
 import { debounce } from 'lodash'
 import { computed, defineComponent, ref, watch } from 'vue'

@@ -53,11 +53,11 @@
 </template>
 
 <script setup lang="ts">
-import { NOT_CONNECTED, PROXY_PREVIEW_TYPE } from '@/constant'
-import { getColorForLatency } from '@/helper'
-import { useTooltip } from '@/helper/tooltip'
-import { getLatencyByName } from '@/store/proxies'
-import { lowLatency, mediumLatency, proxyPreviewType } from '@/store/settings'
+import { NOT_CONNECTED, PROXY_PREVIEW_TYPE } from '@renderer/constant'
+import { getColorForLatency } from '@renderer/helper'
+import { useTooltip } from '@renderer/helper/tooltip'
+import { getLatencyByName } from '@renderer/store/proxies'
+import { lowLatency, mediumLatency, proxyPreviewType } from '@renderer/store/settings'
 import { useElementSize } from '@vueuse/core'
 import { computed, ref } from 'vue'
 

@@ -2,24 +2,21 @@
   <!-- dashboard -->
   <div class="card">
     <div class="card-title px-4 pt-4">
-      <div class="indicator">
+      <!-- <div class="indicator">
         <span
           v-if="isUIUpdateAvailable"
           class="indicator-item top-1 -right-1 flex"
         >
           <span class="bg-secondary absolute h-2 w-2 animate-ping rounded-full"></span>
           <span class="bg-secondary h-2 w-2 rounded-full"></span>
-        </span>
-        <a
-          href="https://github.com/Zephyruso/zashboard"
-          target="_blank"
-        >
-          <span> zashboard </span>
-          <span class="text-sm font-normal">
-            {{ zashboardVersion }}
-          </span>
-        </a>
-      </div>
+        </span> -->
+      <a
+        href="https://github.com/Zephyruso/panteon"
+        target="_blank"
+      >
+        <span> pantheon </span>
+      </a>
+      <!-- </div> -->
       <button
         class="btn btn-sm absolute top-2 right-2"
         @click="refreshPages"
@@ -171,13 +168,22 @@
 </template>
 
 <script setup lang="ts">
-import { isSingBox, upgradeUIAPI, zashboardVersion } from '@/api'
-import LanguageSelect from '@/components/settings/LanguageSelect.vue'
-import { useSettings } from '@/composables/settings'
-import { FONTS } from '@/constant'
-import { handlerUpgradeSuccess } from '@/helper'
-import { deleteBase64FromIndexedDB, LOCAL_IMAGE, saveBase64ToIndexedDB } from '@/helper/indexeddb'
-import { exportSettings, isPWA } from '@/helper/utils'
+import {
+  AdjustmentsHorizontalIcon,
+  ArrowPathIcon,
+  ArrowUpTrayIcon,
+  PlusIcon,
+} from '@heroicons/vue/24/outline'
+import { isSingBox, upgradeUIAPI } from '@renderer/api'
+import LanguageSelect from '@renderer/components/settings/LanguageSelect.vue'
+import { FONTS } from '@renderer/constant'
+import { handlerUpgradeSuccess } from '@renderer/helper'
+import {
+  deleteBase64FromIndexedDB,
+  LOCAL_IMAGE,
+  saveBase64ToIndexedDB,
+} from '@renderer/helper/indexeddb'
+import { exportSettings, isPWA } from '@renderer/helper/utils'
 import {
   autoTheme,
   autoUpgrade,
@@ -188,13 +194,7 @@ import {
   defaultTheme,
   displayAllFeatures,
   font,
-} from '@/store/settings'
-import {
-  AdjustmentsHorizontalIcon,
-  ArrowPathIcon,
-  ArrowUpTrayIcon,
-  PlusIcon,
-} from '@heroicons/vue/24/outline'
+} from '@renderer/store/settings'
 import { twMerge } from 'tailwind-merge'
 import { ref, watch } from 'vue'
 import ImportSettings from '../common/ImportSettings.vue'
@@ -231,8 +231,6 @@ const handlerFileChange = (e: Event) => {
   }
   reader.readAsDataURL(file)
 }
-
-const { isUIUpdateAvailable } = useSettings()
 
 const isUIUpgrading = ref(false)
 const handlerClickUpgradeUI = async () => {

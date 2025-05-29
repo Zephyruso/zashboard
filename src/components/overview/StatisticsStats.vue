@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { STATISTICS_TYPE, statisticsMap } from '@/composables/statistics'
+import { STATISTICS_TYPE, statisticsMap } from '@renderer/composables/statistics'
 import { computed } from 'vue'
 
 const props = defineProps<{

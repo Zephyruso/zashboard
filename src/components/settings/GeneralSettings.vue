@@ -110,9 +110,10 @@
 </template>
 
 <script setup lang="ts">
-import { isSingBox } from '@/api'
-import { IP_INFO_API } from '@/constant'
-import { useTooltip } from '@/helper/tooltip'
+import { QuestionMarkCircleIcon } from '@heroicons/vue/24/outline'
+import { isSingBox } from '@renderer/api'
+import { IP_INFO_API } from '@renderer/constant'
+import { useTooltip } from '@renderer/helper/tooltip'
 import {
   autoDisconnectIdleUDP,
   autoDisconnectIdleUDPTime,
@@ -122,8 +123,7 @@ import {
   scrollAnimationEffect,
   swipeInPages,
   swipeInTabs,
-} from '@/store/settings'
-import { QuestionMarkCircleIcon } from '@heroicons/vue/24/outline'
+} from '@renderer/store/settings'
 
 const { showTip } = useTooltip()
 </script>
