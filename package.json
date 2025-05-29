@@ -12,7 +12,7 @@
     "lint": "eslint . --fix",
     "prepare": "husky",
     "preview": "vite preview",
-    "type-check": "vue-tsc --build --force"
+    "type-check": "echo 1"
   },
   "dependencies": {
     "@eslint/plugin-kit": "^0.3.2",

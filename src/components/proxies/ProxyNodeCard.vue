@@ -45,13 +45,13 @@
 </template>
 
 <script setup lang="ts">
-import { PROXY_CARD_SIZE, PROXY_SORT_TYPE } from '@/constant'
-import { checkTruncation } from '@/helper/tooltip'
-import { scrollIntoCenter } from '@/helper/utils'
-import { i18n } from '@/i18n'
-import { getIPv6ByName, getTestUrl, proxyLatencyTest, proxyMap } from '@/store/proxies'
-import { IPv6test, proxyCardSize, proxySortType, truncateProxyName } from '@/store/settings'
-import { smartWeightsMap } from '@/store/smart'
+import { PROXY_CARD_SIZE, PROXY_SORT_TYPE } from '@renderer/constant'
+import { checkTruncation } from '@renderer/helper/tooltip'
+import { scrollIntoCenter } from '@renderer/helper/utils'
+import { i18n } from '@renderer/i18n'
+import { getIPv6ByName, getTestUrl, proxyLatencyTest, proxyMap } from '@renderer/store/proxies'
+import { IPv6test, proxyCardSize, proxySortType, truncateProxyName } from '@renderer/store/settings'
+import { smartWeightsMap } from '@renderer/store/smart'
 import { twMerge } from 'tailwind-merge'
 import { computed, onMounted, ref } from 'vue'
 import LatencyTag from './LatencyTag.vue'

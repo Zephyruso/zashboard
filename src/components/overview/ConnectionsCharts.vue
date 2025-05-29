@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { connectionsHistory, timeSaved } from '@/store/overview'
+import { connectionsHistory, timeSaved } from '@renderer/store/overview'
 import dayjs from 'dayjs'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'

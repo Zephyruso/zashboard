@@ -1,5 +1,5 @@
-import { fetchIsUIUpdateAvailable, upgradeUIAPI } from '@/api'
-import { autoUpgrade } from '@/store/settings'
+import { fetchIsUIUpdateAvailable, upgradeUIAPI } from '@renderer/api'
+import { autoUpgrade } from '@renderer/store/settings'
 import { ref } from 'vue'
 
 const isUIUpdateAvailable = ref(false)

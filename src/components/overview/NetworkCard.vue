@@ -13,6 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import ConnectionStatus from '@/components/overview/ConnectionStatus.vue'
-import IPCheck from '@/components/overview/IPCheck.vue'
+import ConnectionStatus from '@renderer/components/overview/ConnectionStatus.vue'
+import IPCheck from '@renderer/components/overview/IPCheck.vue'
 </script>

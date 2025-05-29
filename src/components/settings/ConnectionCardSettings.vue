@@ -14,7 +14,7 @@
       >
         {{ $t('detailedCardPreset') }}
       </button>
-      <div class="flex-1"></div>
+      <div class="flex-1" />
       <button
         class="btn btn-circle btn-neutral btn-sm"
         @click="addLine"
@@ -36,11 +36,11 @@
           <TrashIcon class="h-4 w-4" />
         </button>
         <Draggable
-          class="flex flex-1 flex-wrap items-center gap-2"
           v-model="connectionCardLines[index]"
+          class="flex flex-1 flex-wrap items-center gap-2"
           :animation="150"
           group="list"
-          ghostClass="ghost"
+          ghost-class="ghost"
           :item-key="(id: string) => id"
         >
           <template #item="{ element }">
@@ -54,11 +54,11 @@
       </div>
 
       <Draggable
-        class="flex flex-1 flex-wrap gap-2 p-2"
         v-model="restOfColumns"
+        class="flex flex-1 flex-wrap gap-2 p-2"
         :animation="150"
         group="list"
-        ghostClass="ghost"
+        ghost-class="ghost"
         :item-key="(id: string) => id"
       >
         <template #item="{ element }">
@@ -74,9 +74,13 @@
 </template>
 
 <script setup lang="ts">
-import { CONNECTIONS_TABLE_ACCESSOR_KEY, DETAILED_CARD_STYLE, SIMPLE_CARD_STYLE } from '@/constant'
-import { connectionCardLines } from '@/store/settings'
 import { PlusIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import {
+  CONNECTIONS_TABLE_ACCESSOR_KEY,
+  DETAILED_CARD_STYLE,
+  SIMPLE_CARD_STYLE,
+} from '@renderer/constant'
+import { connectionCardLines } from '@renderer/store/settings'
 import { ref } from 'vue'
 import Draggable from 'vuedraggable'
 

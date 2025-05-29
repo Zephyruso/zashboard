@@ -1,13 +1,13 @@
-import { NOT_CONNECTED, PROXY_COUNT_MODE, PROXY_SORT_TYPE } from '@/constant'
-import { isProxyGroup } from '@/helper'
-import { getLatencyByName, proxiesFilter } from '@/store/proxies'
+import { NOT_CONNECTED, PROXY_COUNT_MODE, PROXY_SORT_TYPE } from '@renderer/constant'
+import { isProxyGroup } from '@renderer/helper'
+import { getLatencyByName, proxiesFilter } from '@renderer/store/proxies'
 import {
   hideUnavailableProxies,
   proxyCountMode,
   proxySortType,
   useSmartGroupSort,
-} from '@/store/settings'
-import { smartWeightsMap } from '@/store/smart'
+} from '@renderer/store/settings'
+import { smartWeightsMap } from '@renderer/store/smart'
 import { computed, type ComputedRef } from 'vue'
 
 export function useRenderProxies(proxies: ComputedRef<string[]>, proxyGroup?: string) {

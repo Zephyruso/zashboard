@@ -9,8 +9,8 @@
       class="h-full w-full"
     />
     <span
-      class="border-base-content/30 text-base-content/10 bg-base-100/70 hidden"
       ref="colorRef"
+      class="border-base-content/30 text-base-content/10 bg-base-100/70 hidden"
     />
     <button
       class=""
@@ -51,20 +51,20 @@
 </template>
 
 <script setup lang="ts">
-import { isSingBox } from '@/api'
-import { backgroundImage } from '@/helper/indexeddb'
-import { proxyGroupList, proxyMap } from '@/store/proxies'
-import { blurIntensity, dashboardTransparent, font, theme } from '@/store/settings'
-import { activeUuid } from '@/store/setup'
 import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from '@heroicons/vue/24/outline'
+import { isSingBox } from '@renderer/api'
+import { proxyGroupList, proxyMap } from '@renderer/store/proxies'
+import { blurIntensity, dashboardTransparent, font, theme } from '@renderer/store/settings'
+import { activeUuid } from '@renderer/store/setup'
 import { useElementSize } from '@vueuse/core'
 import { TreeChart } from 'echarts/charts'
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { twMerge } from 'tailwind-merge'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { backgroundImage } from '../../helper/indexeddb'
 
 echarts.use([TreeChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer])
 

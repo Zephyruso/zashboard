@@ -1,7 +1,7 @@
 <template>
   <div
-    class="relative h-20 cursor-pointer"
     ref="cardWrapperRef"
+    class="relative h-20 cursor-pointer"
     @click="handlerGroupClick"
     @touchmove="preventDefault"
     @wheel="preventDefault"
@@ -9,14 +9,14 @@
     <div
       v-if="modalMode"
       class="fixed inset-0 z-40 overflow-hidden bg-black/30 transition-all duration-300"
-    ></div>
+    />
     <div
+      ref="cardRef"
       class="card absolute overflow-hidden transition-[max-height,width,transform] duration-250 ease-in-out will-change-[max-height,width,transform]"
       :class="modalMode && blurIntensity < 5 && 'backdrop-blur-sm!'"
       :style="cardStyle"
       @contextmenu.prevent.stop="handlerLatencyTest"
       @transitionend="handlerTransitionEnd"
-      ref="cardRef"
     >
       <div class="flex h-20 shrink-0 flex-col p-2 pb-1">
         <div class="flex flex-1">
@@ -72,10 +72,10 @@
 
       <div
         v-if="displayContent"
+        ref="cardContentRef"
         class="overflow-x-hidden overflow-y-auto overscroll-contain p-2"
         :class="SCROLLABLE_PARENT_CLASS"
         style="width: calc(100vw - 1rem)"
-        ref="cardContentRef"
         @touchmove.stop="preventDefaultForContent"
         @wheel.stop="preventDefaultForContent"
       >
@@ -93,15 +93,15 @@
 </template>
 
 <script setup lang="ts">
-import { useBounceOnVisible } from '@/composables/bouncein'
-import { useRenderProxies } from '@/composables/renderProxies'
-import { isHiddenGroup } from '@/helper'
-import { SCROLLABLE_PARENT_CLASS } from '@/helper/utils'
-import { hiddenGroupMap, proxyGroupLatencyTest, proxyMap } from '@/store/proxies'
-import { blurIntensity, groupProxiesByProvider, manageHiddenGroup } from '@/store/settings'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+import { useBounceOnVisible } from '@renderer/composables/bouncein'
+import { useRenderProxies } from '@renderer/composables/renderProxies'
+import { isHiddenGroup } from '@renderer/helper'
+import { hiddenGroupMap, proxyGroupLatencyTest, proxyMap } from '@renderer/store/proxies'
+import { blurIntensity, groupProxiesByProvider, manageHiddenGroup } from '@renderer/store/settings'
 import { twMerge } from 'tailwind-merge'
 import { computed, nextTick, ref } from 'vue'
+import { SCROLLABLE_PARENT_CLASS } from '../../helper/utils'
 import LatencyTag from './LatencyTag.vue'
 import ProxiesByProvider from './ProxiesByProvider.vue'
 import ProxiesContent from './ProxiesContent.vue'

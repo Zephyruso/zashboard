@@ -1,5 +1,9 @@
+import AppEn from '@/shared/i18n/en.js'
+
 const en = {
+  ...AppEn,
   setup: 'Setup',
+  config: 'Config',
   overview: 'Overview',
   proxies: 'Proxies',
   rules: 'Rules',
@@ -98,6 +102,10 @@ const en = {
   currentBackendUnavailable:
     'The current backend is unavailable. Would you like to switch to another backend?',
   confirm: 'Confirm',
+  delete: 'Delete',
+  deleteProfile: 'Delete Profile',
+  deleteProfileConfirm:
+    'Are you sure you want to delete profile "{name}"? This action cannot be undone.',
   backendSwitchTo: 'Automatic Switch to {backend}',
   ipv6Test: 'IPv6 Test',
   socksPort: 'Socks Port',
@@ -175,6 +183,7 @@ const en = {
   remoteAddress: 'Remote Address',
   themeName: 'Theme Name',
   save: 'Save',
+  unsaved: 'Unsaved',
   moreDetails: 'More Details',
   customIcon: 'Custom Icon',
   disablePullToRefresh: 'Disable Pull To Refresh',
@@ -193,6 +202,7 @@ const en = {
   displayWeights: 'Display Weights',
   flushWeights: 'Flush Weights',
   flushSmartWeights: 'Flush Smart Weights',
+  clearRuntimeDir: 'Clear Runtime Directory',
   IPInfoAPI: 'IP Info API',
   IPInfoAPITip:
     "This API will be used for IP checks in global node IP information queries, IP geolocation queries in connection details, and IP geolocation queries in zashboard's DNS query feature.",
@@ -225,6 +235,38 @@ const en = {
   autoImportFromUrl: 'Auto Import',
   autoImportFromUrlTip:
     'When enabled, the settings will be automatically imported from the url when opening the zashboard. If the hash is different from the last imported hash, the settings will be re-imported and the page will be refreshed.',
+  coreStartupLogs: 'Core Startup Logs',
+  starting: 'Starting',
+  startupFailed: 'Startup Failed',
+  waitingForLogs: 'Waiting for logs...',
+  logCount: 'Log Count: {count}',
+  clear: 'Clear',
+  title: 'Pantheon',
+  subtitle: 'Proxy Manager',
+  profiles: 'Profiles',
+  downloadProfile: 'Download Profile',
+  importProfile: 'Import Profile',
+  importFromLocalFile: 'Import From Local File',
+  subscriptionURL: 'Subscription URL',
+  coreStatus: 'Core Status',
+  autoLaunch: 'Auto Launch',
+  installBinary: 'Install Binary',
+  uninstallBinary: 'Uninstall Binary',
+  saveSuccess: 'Save Success',
+  binaryInstallRequired: 'Binary Installation Required',
+  binaryInstallDescription:
+    'To ensure the application runs properly, we need to install necessary binary files. Please click the button below to continue with the installation.',
+  installNow: 'Install Now',
+  addProfile: 'Add Profile',
+  editProfile: 'Edit Profile',
+  createEmptyProfile: 'Create Empty Profile',
+  profileName: 'Profile Name',
+  create: 'Create',
+  systemProxy: 'System Proxy',
+  profileUpdated: 'Profile updated successfully',
+  profileUpdateFailed: 'Profile update failed',
+  updateInterval: 'Update Interval',
+  autoUpdate: 'Auto Update',
 }
 
 export type LANG_MESSAGE = typeof en

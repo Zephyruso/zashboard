@@ -8,44 +8,44 @@
         <div class="flex w-full items-center gap-2">
           <span> {{ $t('speedtestUrl') }} </span>
           <TextInput
-            class="w-36 flex-1 sm:max-w-80"
             v-model="speedtestUrl"
+            class="w-36 flex-1 sm:max-w-80"
             :clearable="true"
           />
         </div>
         <div class="flex w-full items-center gap-2">
           <span> {{ $t('speedtestTimeout') }} </span>
           <input
+            v-model="speedtestTimeout"
             type="number"
             class="input input-sm w-20"
-            v-model="speedtestTimeout"
           />
           ms
         </div>
         <div class="flex items-center gap-2">
           <span> {{ $t('lowLatencyDesc') }} </span>
           <input
+            v-model="lowLatency"
             type="number"
             class="input input-sm w-20"
-            v-model="lowLatency"
           />
           ms
         </div>
         <div class="flex items-center gap-2">
           <span> {{ $t('mediumLatencyDesc') }} </span>
           <input
+            v-model="mediumLatency"
             type="number"
             class="input input-sm w-20"
-            v-model="mediumLatency"
           />
           ms
         </div>
         <div class="flex w-full items-center gap-2">
           <span> {{ $t('independentLatencyTest') }} </span>
           <input
+            v-model="independentLatencyTest"
             class="toggle"
             type="checkbox"
-            v-model="independentLatencyTest"
           />
           <QuestionMarkCircleIcon
             class="h-4 w-4"
@@ -55,27 +55,27 @@
         <div class="flex items-center gap-2">
           {{ $t('ipv6Test') }}
           <input
+            v-model="IPv6test"
             class="toggle"
             type="checkbox"
-            v-model="IPv6test"
           />
         </div>
       </div>
-      <div class="divider"></div>
+      <div class="divider" />
       <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
         <div class="flex items-center gap-2">
           {{ $t('twoColumnProxyGroup') }}
           <input
+            v-model="twoColumnProxyGroup"
             class="toggle"
             type="checkbox"
-            v-model="twoColumnProxyGroup"
           />
         </div>
         <div class="flex items-center gap-2">
           {{ $t('proxyPreviewType') }}
           <select
-            class="select select-sm min-w-24"
             v-model="proxyPreviewType"
+            class="select select-sm min-w-24"
           >
             <option
               v-for="opt in Object.values(PROXY_PREVIEW_TYPE)"
@@ -89,8 +89,8 @@
         <div class="flex items-center gap-2">
           {{ $t('proxyCountMode') }}
           <select
-            class="select select-sm min-w-24"
             v-model="proxyCountMode"
+            class="select select-sm min-w-24"
           >
             <option
               v-for="opt in Object.values(PROXY_COUNT_MODE)"
@@ -104,8 +104,8 @@
         <div class="flex items-center gap-2">
           {{ $t('proxyCardSize') }}
           <select
-            class="select select-sm min-w-24"
             v-model="proxyCardSize"
+            class="select select-sm min-w-24"
             @change="handlerProxyCardSizeChange"
           >
             <option
@@ -120,19 +120,19 @@
         <div class="flex items-center gap-2">
           {{ $t('displayGlobalByMode') }}
           <input
+            v-model="displayGlobalByMode"
             class="toggle"
             type="checkbox"
-            v-model="displayGlobalByMode"
           />
         </div>
         <div
-          class="flex items-center gap-2"
           v-if="displayGlobalByMode && isSingBox"
+          class="flex items-center gap-2"
         >
           {{ $t('customGlobalNode') }}
           <select
-            class="select select-sm min-w-24"
             v-model="customGlobalNode"
+            class="select select-sm min-w-24"
           >
             <option
               v-for="opt in Object.keys(proxyMap)"
@@ -146,40 +146,41 @@
         <div class="flex items-center gap-2">
           {{ $t('truncateProxyName') }}
           <input
+            v-model="truncateProxyName"
             class="toggle"
             type="checkbox"
-            v-model="truncateProxyName"
           />
         </div>
         <div class="flex items-center gap-2">
           {{ $t('proxyGroupIconSize') }}
           <input
+            v-model="proxyGroupIconSize"
             type="number"
             class="input input-sm w-20"
-            v-model="proxyGroupIconSize"
           />
         </div>
         <div class="flex items-center gap-2">
           {{ $t('proxyGroupIconMargin') }}
           <input
+            v-model="proxyGroupIconMargin"
             type="number"
             class="input input-sm w-20"
-            v-model="proxyGroupIconMargin"
           />
         </div>
       </div>
-      <div class="divider"></div>
+      <div class="divider" />
       <IconSettings />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { isSingBox } from '@/api'
-import { PROXY_CARD_SIZE, PROXY_COUNT_MODE, PROXY_PREVIEW_TYPE } from '@/constant'
-import { useTooltip } from '@/helper/tooltip'
-import { getMinCardWidth } from '@/helper/utils'
-import { proxyMap } from '@/store/proxies'
+import { QuestionMarkCircleIcon } from '@heroicons/vue/24/outline'
+import { isSingBox } from '@renderer/api'
+import { PROXY_CARD_SIZE, PROXY_COUNT_MODE, PROXY_PREVIEW_TYPE } from '@renderer/constant'
+import { useTooltip } from '@renderer/helper/tooltip'
+import { getMinCardWidth } from '@renderer/helper/utils'
+import { proxyMap } from '@renderer/store/proxies'
 import {
   customGlobalNode,
   displayGlobalByMode,
@@ -197,8 +198,7 @@ import {
   speedtestUrl,
   truncateProxyName,
   twoColumnProxyGroup,
-} from '@/store/settings'
-import { QuestionMarkCircleIcon } from '@heroicons/vue/24/outline'
+} from '@renderer/store/settings'
 import { useI18n } from 'vue-i18n'
 import TextInput from '../common/TextInput.vue'
 import IconSettings from './IconSettings.vue'

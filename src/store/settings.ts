@@ -14,11 +14,11 @@ import {
   TABLE_WIDTH_MODE,
   TEST_URL,
   type THEME,
-} from '@/constant'
-import { getMinCardWidth, isMiddleScreen, isPreferredDark } from '@/helper/utils'
-import type { SourceIPLabel } from '@/types'
+} from '@renderer/constant'
+import { getMinCardWidth, isMiddleScreen, isPreferredDark } from '@renderer/helper/utils'
+import type { SourceIPLabel } from '@renderer/types'
 import { useStorage } from '@vueuse/core'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { v4 as uuid } from 'uuid'
 import { computed } from 'vue'
 
@@ -109,7 +109,7 @@ export const displayProxiesRelationship = useStorage('config/display-proxies-rel
 
 // proxies
 export const collapseGroupMap = useStorage<Record<string, boolean>>('config/collapse-group-map', {})
-export const twoColumnProxyGroup = useStorage('config/two-columns', true)
+export const twoColumnProxyGroup = useStorage('config/two-columns', false)
 export const speedtestUrl = useStorage<string>('config/speedtest-url', TEST_URL)
 export const independentLatencyTest = useStorage('config/independent-latency-test', false)
 export const speedtestTimeout = useStorage<number>('config/speedtest-timeout', 5000)
@@ -165,7 +165,6 @@ export const connectionTableColumns = useStorage<CONNECTIONS_TABLE_ACCESSOR_KEY[
     CONNECTIONS_TABLE_ACCESSOR_KEY.Close,
     CONNECTIONS_TABLE_ACCESSOR_KEY.Host,
     CONNECTIONS_TABLE_ACCESSOR_KEY.Type,
-    CONNECTIONS_TABLE_ACCESSOR_KEY.Rule,
     CONNECTIONS_TABLE_ACCESSOR_KEY.Chains,
     CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed,
     CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed,

@@ -25,8 +25,8 @@
         </template>
       </VueJsonPretty>
       <div
-        class="min-h-12 shrink-0 px-4 pt-2 text-sm"
         v-if="destinationIP && !isPrivateIP"
+        class="min-h-12 shrink-0 px-4 pt-2 text-sm"
       >
         <template v-if="details">
           <div class="flex flex-wrap items-center gap-1">
@@ -38,8 +38,8 @@
           </div>
           <div class="flex flex-wrap">
             <div
-              class="mr-3 flex items-center gap-1"
               v-if="details?.country"
+              class="mr-3 flex items-center gap-1"
             >
               <MapPinIcon class="h-4 w-4 shrink-0" />
               <template v-if="details?.city && details?.city !== details?.country">
@@ -62,11 +62,11 @@
 </template>
 
 <script setup lang="ts">
-import { getIPInfo, type IPInfo } from '@/api/geoip'
-import DialogWrapper from '@/components/common/DialogWrapper.vue'
-import { useConnections } from '@/composables/connections'
-import { proxyMap } from '@/store/proxies'
 import { ArrowRightCircleIcon, MapPinIcon, ServerIcon } from '@heroicons/vue/24/outline'
+import { getIPInfo, type IPInfo } from '@renderer/api/geoip'
+import DialogWrapper from '@renderer/components/common/DialogWrapper.vue'
+import { useConnections } from '@renderer/composables/connections'
+import { proxyMap } from '@renderer/store/proxies'
 import * as ipaddr from 'ipaddr.js'
 import { computed, ref, watch } from 'vue'
 import VueJsonPretty from 'vue-json-pretty'

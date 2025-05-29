@@ -8,5 +8,5 @@
 </template>
 
 <script lang="ts" setup>
-import { minProxyCardWidth } from '@/store/settings'
+import { minProxyCardWidth } from '@renderer/store/settings'
 </script>

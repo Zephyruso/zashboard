@@ -23,12 +23,12 @@
 </template>
 
 <script setup lang="ts">
-import { updateRuleProviderAPI } from '@/api'
-import { useBounceOnVisible } from '@/composables/bouncein'
-import { fromNow } from '@/helper/utils'
-import { fetchRules } from '@/store/rules'
-import type { RuleProvider } from '@/types'
 import { ArrowPathIcon } from '@heroicons/vue/24/outline'
+import { updateRuleProviderAPI } from '@renderer/api'
+import { useBounceOnVisible } from '@renderer/composables/bouncein'
+import { fromNow } from '@renderer/helper/utils'
+import { fetchRules } from '@renderer/store/rules'
+import type { RuleProvider } from '@renderer/types'
 import { twMerge } from 'tailwind-merge'
 import { ref } from 'vue'
 const isUpdating = ref(false)

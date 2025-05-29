@@ -1,10 +1,12 @@
-import { MIN_PROXY_CARD_WIDTH, PROXY_CARD_SIZE } from '@/constant'
-import type { Backend } from '@/types'
+import { MIN_PROXY_CARD_WIDTH, PROXY_CARD_SIZE } from '@renderer/constant'
+import type { Backend } from '@renderer/types'
 import { useMediaQuery } from '@vueuse/core'
 import dayjs from 'dayjs'
 import prettyBytes, { type Options } from 'pretty-bytes'
+import { ref } from 'vue'
 
 export const isPreferredDark = useMediaQuery('(prefers-color-scheme: dark)')
+export const isDarkTheme = ref(false)
 export const isMiddleScreen = useMediaQuery('(max-width: 768px)')
 export const isLargeScreen = useMediaQuery('(max-width: 1024px)')
 export const isPWA = (() => {
@@ -18,7 +20,7 @@ export const prettyBytesHelper = (bytes: number, opts?: Options) => {
   })
 }
 
-export const fromNow = (timestamp: string) => {
+export const fromNow = (timestamp: string | number) => {
   return dayjs(timestamp).fromNow()
 }
 

@@ -11,8 +11,8 @@
             {{ $t('connectionStyle') }}
           </span>
           <select
-            class="select select-sm min-w-24"
             v-model="useConnectionCard"
+            class="select select-sm min-w-24"
           >
             <option :value="false">
               {{ $t('table') }}
@@ -25,8 +25,8 @@
         <div class="flex items-center gap-2">
           {{ $t('proxyChainDirection') }}
           <select
-            class="select select-sm w-24"
             v-model="proxyChainDirection"
+            class="select select-sm w-24"
           >
             <option
               v-for="opt in Object.values(PROXY_CHAIN_DIRECTION)"
@@ -39,14 +39,14 @@
         </div>
       </div>
       <div
-        class="grid grid-cols-1 gap-2 lg:grid-cols-2"
         v-if="!useConnectionCard"
+        class="grid grid-cols-1 gap-2 lg:grid-cols-2"
       >
         <div class="flex items-center gap-2">
           <div>{{ $t('tableWidthMode') }}</div>
           <select
-            class="select select-sm min-w-24"
             v-model="tableWidthMode"
+            class="select select-sm min-w-24"
           >
             <option
               v-for="opt in Object.values(TABLE_WIDTH_MODE)"
@@ -60,8 +60,8 @@
         <div class="flex items-center gap-2">
           <div>{{ $t('tableSize') }}</div>
           <select
-            class="select select-sm min-w-24"
             v-model="tableSize"
+            class="select select-sm min-w-24"
           >
             <option
               v-for="opt in Object.values(TABLE_SIZE)"
@@ -73,14 +73,19 @@
           </select>
         </div>
       </div>
-      <div class="divider"></div>
+      <div class="divider" />
       <SourceIPLabels />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import SourceIPLabels from '@/components/settings/SourceIPLabels.vue'
-import { PROXY_CHAIN_DIRECTION, TABLE_SIZE, TABLE_WIDTH_MODE } from '@/constant'
-import { proxyChainDirection, tableSize, tableWidthMode, useConnectionCard } from '@/store/settings'
+import SourceIPLabels from '@renderer/components/settings/SourceIPLabels.vue'
+import { PROXY_CHAIN_DIRECTION, TABLE_SIZE, TABLE_WIDTH_MODE } from '@renderer/constant'
+import {
+  proxyChainDirection,
+  tableSize,
+  tableWidthMode,
+  useConnectionCard,
+} from '@renderer/store/settings'
 </script>

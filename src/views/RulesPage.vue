@@ -7,7 +7,7 @@
       <RuleProvider
         v-for="(ruleProvider, index) in renderRulesProvider"
         :key="ruleProvider.name"
-        :ruleProvider="ruleProvider"
+        :rule-provider="ruleProvider"
         :index="index + 1"
       />
     </template>
@@ -25,10 +25,10 @@
       :size="64"
       class="p-2"
     >
-      <template v-slot="{ item: rule }: { item: Rule }">
+      <template #default="{ item: rule }: { item: Rule }">
         <RuleCard
-          class="mb-1"
           :key="rule.payload"
+          class="mb-1"
           :rule="rule"
           :index="rules.indexOf(rule) + 1"
         />
@@ -38,12 +38,18 @@
 </template>
 
 <script setup lang="ts">
-import VirtualScroller from '@/components/common/VirtualScroller.vue'
-import RuleCard from '@/components/rules/RuleCard.vue'
-import RuleProvider from '@/components/rules/RuleProvider.vue'
-import { RULE_TAB_TYPE } from '@/constant'
-import { fetchRules, renderRules, renderRulesProvider, rules, rulesTabShow } from '@/store/rules'
-import type { Rule } from '@/types'
+import VirtualScroller from '@renderer/components/common/VirtualScroller.vue'
+import RuleCard from '@renderer/components/rules/RuleCard.vue'
+import RuleProvider from '@renderer/components/rules/RuleProvider.vue'
+import { RULE_TAB_TYPE } from '@renderer/constant'
+import {
+  fetchRules,
+  renderRules,
+  renderRulesProvider,
+  rules,
+  rulesTabShow,
+} from '@renderer/store/rules'
+import type { Rule } from '@renderer/types'
 
 fetchRules()
 </script>

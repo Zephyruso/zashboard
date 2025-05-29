@@ -1,7 +1,10 @@
+import AppRu from '@/shared/i18n/ru.js'
 import type { LANG_MESSAGE } from './en'
 
 const ru: LANG_MESSAGE = {
+  ...AppRu,
   setup: 'Настройка',
+  config: 'Конфиг',
   overview: 'Обзор',
   proxies: 'Прокси',
   rules: 'Правила',
@@ -177,6 +180,7 @@ const ru: LANG_MESSAGE = {
   remoteAddress: 'удалённый адрес',
   themeName: 'Название темы',
   save: 'Сохранить',
+  unsaved: 'Не сохранено',
   moreDetails: 'Подробнее',
   customIcon: 'Пользовательская иконка',
   disablePullToRefresh: 'Отключить свойство обновления',
@@ -195,6 +199,7 @@ const ru: LANG_MESSAGE = {
   displayWeights: 'Показать веса',
   flushWeights: 'Очистить веса',
   flushSmartWeights: 'Очистить Smart веса',
+  clearRuntimeDir: 'Очистить каталог времени выполнения',
   IPInfoAPI: 'API информации о IP',
   IPInfoAPITip:
     'Этот API будет использоваться для проверки IP-адресов при запросах информации о глобальных узлах, определения геолокации IP-адресов в деталях соединения, а также для определения геолокации IP-адресов при DNS-запросах в панели.',
@@ -227,6 +232,41 @@ const ru: LANG_MESSAGE = {
   autoImportFromUrl: 'Автоматический импорт',
   autoImportFromUrlTip:
     'При включении настройки будут автоматически импортироваться из url при открытии zashboard. Если хэш отличается от последнего импортированного хэша, настройки будут импортированы заново и страница будет обновлена.',
+  coreStartupLogs: 'Журнал запуска ядра',
+  starting: 'Запуск',
+  startupFailed: 'Ошибка запуска',
+  waitingForLogs: 'Ожидание журналов...',
+  logCount: 'Количество журналов: {count}',
+  clear: 'Очистить',
+  title: 'Pantheon',
+  subtitle: 'Менеджер прокси',
+  profiles: 'Профили',
+  downloadProfile: 'Скачать профиль',
+  importProfile: 'Импортировать профиль',
+  importFromLocalFile: 'Импортировать из локального файла',
+  subscriptionURL: 'URL подписки',
+  coreStatus: 'Статус ядра',
+  autoLaunch: 'Автозапуск',
+  installBinary: 'Установить бинарный файл',
+  uninstallBinary: 'Удалить бинарный файл',
+  saveSuccess: 'Сохранено успешно',
+  binaryInstallRequired: 'Требуется установка бинарного файла',
+  binaryInstallDescription:
+    'Для обеспечения корректной работы приложения необходимо установить бинарные файлы. Пожалуйста, нажмите кнопку ниже для продолжения установки.',
+  installNow: 'Установить сейчас',
+  addProfile: 'Добавить профиль',
+  editProfile: 'Редактировать профиль',
+  createEmptyProfile: 'Создать пустой профиль',
+  profileName: 'Имя профиля',
+  create: 'Создать',
+  systemProxy: 'Системный прокси',
+  profileUpdated: 'Конфигурация успешно обновлена',
+  profileUpdateFailed: 'Не удалось обновить конфигурацию',
+  updateInterval: 'Интервал обновления',
+  deleteProfile: 'Удалить профиль',
+  deleteProfileConfirm: 'Вы уверены, что хотите удалить профиль {name}?',
+  delete: 'Удалить',
+  autoUpdate: 'Автоматическое обновление',
 }
 
 export default ru

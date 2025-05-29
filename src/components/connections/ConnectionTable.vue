@@ -54,15 +54,14 @@
                   v-if="!header.isPlaceholder"
                   :render="header.column.columnDef.header"
                   :props="header.getContext()"
-                >
-                </FlexRender>
+                />
                 <ArrowUpCircleIcon
-                  class="h-4 w-4"
                   v-if="header.column.getIsSorted() === 'asc'"
+                  class="h-4 w-4"
                 />
                 <ArrowDownCircleIcon
-                  class="h-4 w-4"
                   v-if="header.column.getIsSorted() === 'desc'"
+                  class="h-4 w-4"
                 />
                 <div>
                   <button
@@ -100,11 +99,11 @@
               </div>
               <div
                 v-if="isManualTable"
+                class="resizer bg-neutral absolute top-0 right-0 h-full w-1 cursor-ew-resize"
                 @dblclick="() => header.column.resetSize()"
                 @click.stop
                 @mousedown.stop="(e) => header.getResizeHandler()(e)"
                 @touchstart.stop="(e) => header.getResizeHandler()(e)"
-                class="resizer bg-neutral absolute top-0 right-0 h-full w-1 cursor-ew-resize"
               />
             </th>
           </tr>
@@ -189,34 +188,6 @@
 </template>
 
 <script setup lang="ts">
-import { disconnectByIdAPI } from '@/api'
-import { useConnections } from '@/composables/connections'
-import { useNotification } from '@/composables/notification'
-import {
-  CONNECTION_TAB_TYPE,
-  CONNECTIONS_TABLE_ACCESSOR_KEY,
-  PROXY_CHAIN_DIRECTION,
-  TABLE_SIZE,
-  TABLE_WIDTH_MODE,
-} from '@/constant'
-import {
-  getDestinationFromConnection,
-  getDestinationTypeFromConnection,
-  getHostFromConnection,
-  getInboundUserFromConnection,
-  getNetworkTypeFromConnection,
-  getProcessFromConnection,
-} from '@/helper'
-import { getIPLabelFromMap } from '@/helper/sourceip'
-import { fromNow, prettyBytesHelper } from '@/helper/utils'
-import { connectionTabShow, renderConnections } from '@/store/connections'
-import {
-  connectionTableColumns,
-  proxyChainDirection,
-  tableSize,
-  tableWidthMode,
-} from '@/store/settings'
-import type { Connection } from '@/types'
 import {
   ArrowDownCircleIcon,
   ArrowRightCircleIcon,
@@ -226,6 +197,33 @@ import {
   MapPinIcon,
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
+import { disconnectByIdAPI } from '@renderer/api'
+import { useConnections } from '@renderer/composables/connections'
+import {
+  CONNECTION_TAB_TYPE,
+  CONNECTIONS_TABLE_ACCESSOR_KEY,
+  PROXY_CHAIN_DIRECTION,
+  TABLE_SIZE,
+  TABLE_WIDTH_MODE,
+} from '@renderer/constant'
+import {
+  getDestinationFromConnection,
+  getDestinationTypeFromConnection,
+  getHostFromConnection,
+  getInboundUserFromConnection,
+  getNetworkTypeFromConnection,
+  getProcessFromConnection,
+} from '@renderer/helper'
+import { getIPLabelFromMap } from '@renderer/helper/sourceip'
+import { fromNow, prettyBytesHelper } from '@renderer/helper/utils'
+import { connectionTabShow, renderConnections } from '@renderer/store/connections'
+import {
+  connectionTableColumns,
+  proxyChainDirection,
+  tableSize,
+  tableWidthMode,
+} from '@renderer/store/settings'
+import type { Connection } from '@renderer/types'
 import {
   FlexRender,
   getCoreRowModel,
@@ -248,6 +246,7 @@ import dayjs from 'dayjs'
 import { twMerge } from 'tailwind-merge'
 import { computed, h, ref, type VNode } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useNotification } from '../../composables/notification'
 import ProxyName from '../proxies/ProxyName.vue'
 
 const { handlerInfo } = useConnections()

@@ -1,4 +1,4 @@
-import { fetchMemoryAPI, fetchTrafficAPI } from '@/api'
+import { fetchMemoryAPI, fetchTrafficAPI } from '@renderer/api'
 import { ref, watch } from 'vue'
 import { activeConnections } from './connections'
 

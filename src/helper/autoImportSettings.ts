@@ -1,4 +1,4 @@
-import { useNotification } from '@/composables/notification'
+import { useNotification } from '@renderer/composables/notification'
 import { useStorage } from '@vueuse/core'
 
 const { showNotification } = useNotification()

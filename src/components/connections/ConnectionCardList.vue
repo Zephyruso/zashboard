@@ -9,19 +9,19 @@
     :data="renderConnections"
     :size="size"
   >
-    <template v-slot="{ item }: { item: Connection }">
+    <template #default="{ item }: { item: Connection }">
       <ConnectionCard
         class="mb-1"
         :conn="item"
-      ></ConnectionCard>
+      />
     </template>
   </VirtualScroller>
 </template>
 
 <script setup lang="ts">
-import { renderConnections } from '@/store/connections'
-import { connectionCardLines } from '@/store/settings'
-import type { Connection } from '@/types'
+import { renderConnections } from '@renderer/store/connections'
+import { connectionCardLines } from '@renderer/store/settings'
+import type { Connection } from '@renderer/types'
 import { computed } from 'vue'
 import VirtualScroller from '../common/VirtualScroller.vue'
 import ConnectionCard from './ConnectionCard'

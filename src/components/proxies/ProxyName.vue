@@ -14,8 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import { proxyMap } from '@/store/proxies'
-import { proxyGroupIconMargin, proxyGroupIconSize } from '@/store/settings'
+import { proxyMap } from '@renderer/store/proxies'
+import { proxyGroupIconMargin, proxyGroupIconSize } from '@renderer/store/settings'
 import { computed } from 'vue'
 import ProxyIcon from './ProxyIcon.vue'
 

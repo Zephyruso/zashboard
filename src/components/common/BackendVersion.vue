@@ -14,8 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import { isSingBox, version } from '@/api'
-import MetacubexLogo from '@/assets/metacubex.jpg'
-import SingBoxLogo from '@/assets/sing-box.svg'
-import { checkTruncation } from '@/helper/tooltip'
+import { isSingBox, version } from '@renderer/api'
+import MetacubexLogo from '@renderer/assets/metacubex.jpg'
+import SingBoxLogo from '@renderer/assets/sing-box.svg'
+import { checkTruncation } from '@renderer/helper/tooltip'
 </script>

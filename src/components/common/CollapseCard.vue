@@ -4,11 +4,11 @@
       class="collapse-title cursor-pointer pr-4 select-none"
       @click="showCollapse = !showCollapse"
     >
-      <slot name="title"></slot>
+      <slot name="title" />
       <slot
         v-if="!showCollapse"
         name="preview"
-      ></slot>
+      />
     </div>
     <div
       class="collapse-content flex flex-col gap-2 max-sm:px-2"
@@ -18,14 +18,14 @@
         v-if="showContent"
         :show-full-content="showFullContent"
         name="content"
-      ></slot>
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { collapsedBus } from '@/composables/bus'
-import { collapseGroupMap } from '@/store/settings'
+import { collapsedBus } from '@renderer/composables/bus'
+import { collapseGroupMap } from '@renderer/store/settings'
 import { computed, onUnmounted, ref } from 'vue'
 
 const props = defineProps<{

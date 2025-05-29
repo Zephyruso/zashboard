@@ -1,6 +1,6 @@
-import { prettyBytesHelper } from '@/helper/utils'
-import { activeConnections, downloadTotal, uploadTotal } from '@/store/connections'
-import { downloadSpeed, memory, uploadSpeed } from '@/store/overview'
+import { prettyBytesHelper } from '@renderer/helper/utils'
+import { activeConnections, downloadTotal, uploadTotal } from '@renderer/store/connections'
+import { downloadSpeed, memory, uploadSpeed } from '@renderer/store/overview'
 import { computed } from 'vue'
 
 export enum STATISTICS_TYPE {

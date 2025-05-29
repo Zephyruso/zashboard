@@ -1,10 +1,12 @@
 <template>
   <select
     v-if="!horizontal"
-    class="join-item select select-sm"
     v-model="sourceIPFilter"
+    class="join-item select select-sm"
   >
-    <option :value="null">{{ $t('allSourceIP') }}</option>
+    <option :value="null">
+      {{ $t('allSourceIP') }}
+    </option>
     <option
       v-for="opt in sourceIPOpts"
       :key="opt.value.join(',')"
@@ -16,10 +18,10 @@
 </template>
 
 <script setup lang="ts">
-import { getIPLabelFromMap } from '@/helper/sourceip'
-import { connections, sourceIPFilter } from '@/store/connections'
+import { getIPLabelFromMap } from '@renderer/helper/sourceip'
+import { connections, sourceIPFilter } from '@renderer/store/connections'
 import * as ipaddr from 'ipaddr.js'
-import { isEqual, uniq } from 'lodash'
+import { isEqual, uniq } from 'lodash-es'
 import { computed, ref, watch } from 'vue'
 
 defineProps<{

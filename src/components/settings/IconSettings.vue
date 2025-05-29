@@ -30,8 +30,8 @@
             class="flex items-center gap-2"
           >
             <TextInput
-              class="w-32"
               v-model="iconReflect.name"
+              class="w-32"
               placeholder="Name"
             />
             <ArrowRightCircleIcon class="h-4 w-4 shrink-0" />
@@ -52,8 +52,8 @@
   </div>
   <div class="flex items-center gap-2">
     <TextInput
-      class="w-32"
       v-model="newIconReflect.name"
+      class="w-32"
       placeholder="Name"
       :menus="
         proxyGroupList.filter((group) => !iconReflectList.some((item) => item.name === group))
@@ -74,8 +74,6 @@
 </template>
 
 <script setup lang="ts">
-import { proxyGroupList } from '@/store/proxies'
-import { iconReflectList } from '@/store/settings'
 import {
   ArrowRightCircleIcon,
   ChevronDownIcon,
@@ -83,6 +81,8 @@ import {
   PlusIcon,
   TrashIcon,
 } from '@heroicons/vue/24/outline'
+import { proxyGroupList } from '@renderer/store/proxies'
+import { iconReflectList } from '@renderer/store/settings'
 import { useSessionStorage } from '@vueuse/core'
 import { v4 as uuid } from 'uuid'
 import { reactive } from 'vue'

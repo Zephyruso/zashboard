@@ -110,13 +110,13 @@
 </template>
 
 <script setup lang="ts">
-import { isBackendAvailable } from '@/api'
-import DialogWrapper from '@/components/common/DialogWrapper.vue'
-import TextInput from '@/components/common/TextInput.vue'
-import { useNotification } from '@/composables/notification'
-import { getLabelFromBackend } from '@/helper/utils'
-import { activeBackend, backendList, updateBackend } from '@/store/setup'
-import type { Backend } from '@/types'
+import { isBackendAvailable } from '@renderer/api'
+import DialogWrapper from '@renderer/components/common/DialogWrapper.vue'
+import TextInput from '@renderer/components/common/TextInput.vue'
+import { useNotification } from '@renderer/composables/notification'
+import { getLabelFromBackend } from '@renderer/helper/utils'
+import { activeBackend, backendList, updateBackend } from '@renderer/store/setup'
+import type { Backend } from '@renderer/types'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

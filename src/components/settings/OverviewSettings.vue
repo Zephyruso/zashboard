@@ -8,17 +8,17 @@
       <div class="flex items-center gap-2">
         {{ $t('splitOverviewPage') }}
         <input
+          v-model="splitOverviewPage"
           class="toggle"
           type="checkbox"
-          v-model="splitOverviewPage"
         />
       </div>
       <div class="flex items-center gap-2">
         {{ $t('showIPAndConnectionInfo') }}
         <input
+          v-model="showIPAndConnectionInfo"
           class="toggle"
           type="checkbox"
-          v-model="showIPAndConnectionInfo"
         />
       </div>
       <template v-if="showIPAndConnectionInfo">
@@ -40,29 +40,29 @@
         </div>
       </template>
       <div
-        class="flex items-center gap-2"
         v-if="splitOverviewPage"
+        class="flex items-center gap-2"
       >
         {{ $t('displayProxiesRelationship') }}
         <input
+          v-model="displayProxiesRelationship"
           class="toggle"
           type="checkbox"
-          v-model="displayProxiesRelationship"
         />
       </div>
       <div class="flex items-center gap-2 max-md:hidden">
         {{ $t('showStatisticsWhenSidebarCollapsed') }}
         <input
+          v-model="showStatisticsWhenSidebarCollapsed"
           class="toggle"
           type="checkbox"
-          v-model="showStatisticsWhenSidebarCollapsed"
         />
       </div>
       <div class="flex items-center gap-2 max-md:hidden">
         {{ $t('numberOfChartsInSidebar') }}
         <select
-          class="select select-sm min-w-24"
           v-model="numberOfChartsInSidebar"
+          class="select select-sm min-w-24"
         >
           <option
             v-for="opt in [1, 2, 3]"
@@ -86,5 +86,5 @@ import {
   showIPAndConnectionInfo,
   showStatisticsWhenSidebarCollapsed,
   splitOverviewPage,
-} from '@/store/settings'
+} from '@renderer/store/settings'
 </script>

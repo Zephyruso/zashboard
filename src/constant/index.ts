@@ -4,6 +4,7 @@ import {
   CubeTransparentIcon,
   DocumentTextIcon,
   GlobeAltIcon,
+  ServerStackIcon,
   SwatchIcon,
 } from '@heroicons/vue/24/outline'
 
@@ -111,6 +112,7 @@ export enum LOG_LEVEL {
 }
 
 export enum ROUTE_NAME {
+  profiles = 'profiles',
   overview = 'overview',
   proxies = 'proxies',
   connections = 'connections',
@@ -121,6 +123,7 @@ export enum ROUTE_NAME {
 }
 
 export const ROUTE_ICON_MAP = {
+  [ROUTE_NAME.profiles]: ServerStackIcon,
   [ROUTE_NAME.overview]: CubeTransparentIcon,
   [ROUTE_NAME.proxies]: GlobeAltIcon,
   [ROUTE_NAME.connections]: ArrowsRightLeftIcon,

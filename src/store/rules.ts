@@ -1,6 +1,6 @@
-import { fetchRuleProvidersAPI, fetchRulesAPI } from '@/api'
-import { RULE_TAB_TYPE } from '@/constant'
-import type { Rule, RuleProvider } from '@/types'
+import { fetchRuleProvidersAPI, fetchRulesAPI } from '@renderer/api'
+import { RULE_TAB_TYPE } from '@renderer/constant'
+import type { Rule, RuleProvider } from '@renderer/types'
 import { computed, ref } from 'vue'
 
 export const rulesFilter = ref('')

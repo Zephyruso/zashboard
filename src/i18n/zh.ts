@@ -1,7 +1,10 @@
+import AppZh from '@/shared/i18n/zh.js'
 import type { LANG_MESSAGE } from './en'
 
 const zh: LANG_MESSAGE = {
+  ...AppZh,
   setup: '配置',
+  config: '配置',
   overview: '概览',
   proxies: '代理',
   rules: '规则',
@@ -99,6 +102,9 @@ const zh: LANG_MESSAGE = {
   DNSQuery: 'DNS 查询',
   currentBackendUnavailable: '当前后端不可用，尝试切换到其他后端?',
   confirm: '确定',
+  delete: '删除',
+  deleteProfile: '删除配置',
+  deleteProfileConfirm: '确定要删除配置 "{name}" 吗？此操作不可撤销。',
   backendSwitchTo: '自动切换到{backend}',
   ipv6Test: 'IPv6 测试',
   socksPort: 'Socks 端口',
@@ -174,6 +180,7 @@ const zh: LANG_MESSAGE = {
   remoteAddress: '远端地址',
   themeName: '主题名称',
   save: '保存',
+  unsaved: '未保存',
   moreDetails: '更多详情',
   customIcon: '自定义图标',
   disablePullToRefresh: '禁用下拉刷新',
@@ -192,6 +199,7 @@ const zh: LANG_MESSAGE = {
   displayWeights: '显示权重',
   flushWeights: '清空权重',
   flushSmartWeights: '清空Smart权重',
+  clearRuntimeDir: '清空运行时目录',
   IPInfoAPI: 'IP信息API',
   IPInfoAPITip:
     '此API会用于IP检查中全球节点IP信息查询、连接详情中的IP地理信息查询、面板DNS查询中的IP地理信息查询。',
@@ -224,6 +232,38 @@ const zh: LANG_MESSAGE = {
   autoImportFromUrl: '自动导入',
   autoImportFromUrlTip:
     '启用后，每次打开zashboard时会自动从url设置导入并计算hash，如果hash与上次导入的hash不同，则重新导入并刷新页面。',
+  coreStartupLogs: '核心启动日志',
+  starting: '启动中',
+  startupFailed: '启动失败',
+  waitingForLogs: '等待日志输出...',
+  logCount: '日志数量: {count}',
+  clear: '清空',
+  title: 'Pantheon',
+  subtitle: '代理管理',
+  profiles: '配置',
+  downloadProfile: '下载配置',
+  importProfile: '导入配置',
+  importFromLocalFile: '从本地文件导入',
+  subscriptionURL: '订阅地址',
+  coreStatus: '核心状态',
+  autoLaunch: '自动启动',
+  installBinary: '安装二进制',
+  uninstallBinary: '卸载二进制',
+  saveSuccess: '保存成功',
+  binaryInstallRequired: '需要安装二进制',
+  binaryInstallDescription:
+    '为了确保应用正常运行，我们需要安装必要的二进制文件。请点击下方按钮继续安装。',
+  installNow: '立即安装',
+  addProfile: '新增配置',
+  editProfile: '编辑配置',
+  createEmptyProfile: '创建空白配置',
+  profileName: '配置名称',
+  create: '创建',
+  systemProxy: '系统代理',
+  profileUpdated: '配置更新成功',
+  profileUpdateFailed: '配置更新失败',
+  updateInterval: '更新间隔',
+  autoUpdate: '自动更新',
 }
 
 export default zh

@@ -8,9 +8,9 @@
 </template>
 
 <script setup lang="ts">
-import { getToolTipForParams } from '@/helper'
-import { prettyBytesHelper } from '@/helper/utils'
-import { memoryHistory } from '@/store/overview'
+import { getToolTipForParams } from '@renderer/helper'
+import { prettyBytesHelper } from '@renderer/helper/utils'
+import { memoryHistory } from '@renderer/store/overview'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BasicCharts from './BasicCharts.vue'

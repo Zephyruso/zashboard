@@ -1,7 +1,7 @@
 <template>
   <div
-    class="max-sm:scrollbar-hidden h-full overflow-y-scroll p-2 sm:pr-1"
     ref="proxiesRef"
+    class="max-sm:scrollbar-hidden h-full overflow-y-scroll p-2 sm:pr-1"
     @scroll.passive="handleScroll"
   >
     <template v-if="displayTwoColumns">
@@ -12,8 +12,8 @@
           class="flex flex-1 flex-col gap-1"
         >
           <component
-            v-for="name in filterContent(renderGroups, idx)"
             :is="renderComponent"
+            v-for="name in filterContent(renderGroups, idx)"
             :key="name"
             :name="name"
           />
@@ -21,12 +21,12 @@
       </div>
     </template>
     <div
-      class="grid grid-cols-1 gap-1"
       v-else
+      class="grid grid-cols-1 gap-1"
     >
       <component
-        v-for="name in renderGroups"
         :is="renderComponent"
+        v-for="name in renderGroups"
         :key="name"
         :name="name"
       />
@@ -35,14 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import ProxyGroup from '@/components/proxies/ProxyGroup.vue'
-import ProxyGroupForMobile from '@/components/proxies/ProxyGroupForMobile.vue'
-import ProxyProvider from '@/components/proxies/ProxyProvider.vue'
-import { renderGroups } from '@/composables/proxies'
-import { PROXY_TAB_TYPE } from '@/constant'
-import { isMiddleScreen } from '@/helper/utils'
-import { fetchProxies, proxiesTabShow } from '@/store/proxies'
-import { twoColumnProxyGroup } from '@/store/settings'
+import ProxyGroup from '@renderer/components/proxies/ProxyGroup.vue'
+import ProxyGroupForMobile from '@renderer/components/proxies/ProxyGroupForMobile.vue'
+import ProxyProvider from '@renderer/components/proxies/ProxyProvider.vue'
+import { renderGroups } from '@renderer/composables/proxies'
+import { PROXY_TAB_TYPE } from '@renderer/constant'
+import { isMiddleScreen } from '@renderer/helper/utils'
+import { fetchProxies, proxiesTabShow } from '@renderer/store/proxies'
+import { twoColumnProxyGroup } from '@renderer/store/settings'
 import { useElementSize, useSessionStorage } from '@vueuse/core'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 

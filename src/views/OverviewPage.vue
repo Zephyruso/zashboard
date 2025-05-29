@@ -3,8 +3,8 @@
     <ChartsCard />
     <NetworkCard v-if="showIPAndConnectionInfo" />
     <div
-      class="card"
       v-if="displayProxiesRelationship"
+      class="card"
     >
       <div class="card-title absolute px-4 pt-4">
         {{ $t('proxiesRelationship') }}
@@ -12,7 +12,7 @@
       <ProxiesCharts />
     </div>
     <ConnectionHistory />
-    <div class="flex-1"></div>
+    <div class="flex-1" />
     <div class="card items-center justify-center gap-2 p-2 sm:flex-row">
       {{ getLabelFromBackend(activeBackend!) }} :
       <BackendVersion />
@@ -21,12 +21,12 @@
 </template>
 
 <script setup lang="ts">
-import BackendVersion from '@/components/common/BackendVersion.vue'
-import ChartsCard from '@/components/overview/ChartsCard.vue'
-import ConnectionHistory from '@/components/overview/ConnectionHistory.vue'
-import NetworkCard from '@/components/overview/NetworkCard.vue'
-import ProxiesCharts from '@/components/overview/ProxiesCharts.vue'
-import { getLabelFromBackend } from '@/helper/utils'
-import { displayProxiesRelationship, showIPAndConnectionInfo } from '@/store/settings'
-import { activeBackend } from '@/store/setup'
+import BackendVersion from '@renderer/components/common/BackendVersion.vue'
+import ChartsCard from '@renderer/components/overview/ChartsCard.vue'
+import ConnectionHistory from '@renderer/components/overview/ConnectionHistory.vue'
+import NetworkCard from '@renderer/components/overview/NetworkCard.vue'
+import ProxiesCharts from '@renderer/components/overview/ProxiesCharts.vue'
+import { getLabelFromBackend } from '@renderer/helper/utils'
+import { displayProxiesRelationship, showIPAndConnectionInfo } from '@renderer/store/settings'
+import { activeBackend } from '@renderer/store/setup'
 </script>

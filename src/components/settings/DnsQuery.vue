@@ -22,9 +22,9 @@
   </div>
   <div class="flex max-h-96 flex-col gap-1 overflow-y-auto">
     <div
-      class="flex gap-1"
       v-for="item in resultList"
       :key="item.data"
+      class="flex gap-1"
     >
       <div>{{ item.name }}</div>
       :
@@ -36,8 +36,8 @@
     class="flex gap-1"
   >
     <div
-      class="mr-3 flex items-center gap-1"
       v-if="details?.country"
+      class="mr-3 flex items-center gap-1"
     >
       <MapPinIcon class="h-4 w-4 shrink-0" />
       <template v-if="details?.city && details?.city !== details?.country">
@@ -56,10 +56,10 @@
 </template>
 
 <script lang="ts" setup>
-import { queryDNSAPI } from '@/api'
-import { getIPInfo, type IPInfo } from '@/api/geoip'
-import type { DNSQuery } from '@/types'
 import { MapPinIcon, ServerIcon } from '@heroicons/vue/24/outline'
+import { queryDNSAPI } from '@renderer/api'
+import { getIPInfo, type IPInfo } from '@renderer/api/geoip'
+import type { DNSQuery } from '@renderer/types'
 import { reactive, ref } from 'vue'
 import TextInput from '../common/TextInput.vue'
 

@@ -18,8 +18,8 @@
         <div
           v-for="row in virtualRows"
           :key="row.key.toString()"
-          :data-index="row.index"
           :ref="measureElement"
+          :data-index="row.index"
         >
           <slot
             :item="data[row.index]"

@@ -2,8 +2,8 @@
   <div class="flex items-center gap-2">
     {{ $t('language') }}
     <select
-      class="select select-sm w-48"
       v-model="language"
+      class="select select-sm w-48"
       @change="() => (i18n.global.locale = language)"
     >
       <option
@@ -18,9 +18,9 @@
 </template>
 
 <script setup lang="ts">
-import { LANG } from '@/constant'
-import { i18n } from '@/i18n'
-import { language } from '@/store/settings'
+import { LANG } from '@renderer/constant'
+import { i18n } from '@renderer/i18n'
+import { language } from '@renderer/store/settings'
 
 const langLabelMap = {
   [LANG.EN_US]: 'English',

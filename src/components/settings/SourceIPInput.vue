@@ -3,7 +3,7 @@
     class="relative flex w-full items-center gap-2"
     :class="sourceIPLabel.scope?.length ? 'pt-4' : ''"
   >
-    <slot name="prefix"></slot>
+    <slot name="prefix" />
     <span
       class="absolute top-0 left-6 truncate text-xs"
       @mouseenter="checkTruncation"
@@ -16,9 +16,9 @@
       }}
     </span>
     <TextInput
+      v-model="sourceIPLabel.key"
       class="w-12 max-w-64 flex-1 sm:w-36"
       :menus="sourceList"
-      v-model="sourceIPLabel.key"
       placeholder="IP | eui64 | /Regex"
     />
     <div
@@ -37,23 +37,23 @@
     </div>
     <ArrowRightCircleIcon class="h-4 w-4 shrink-0" />
     <TextInput
-      class="w-24 sm:w-40"
       v-model="sourceIPLabel.label"
+      class="w-24 sm:w-40"
       :placeholder="$t('label')"
     />
-    <slot></slot>
+    <slot />
   </div>
 </template>
 
 <script setup lang="ts">
-import { checkTruncation, useTooltip } from '@/helper/tooltip'
-import { getLabelFromBackend } from '@/helper/utils'
-import { connections } from '@/store/connections'
-import { sourceIPLabelList } from '@/store/settings'
-import { backendList } from '@/store/setup'
-import type { SourceIPLabel } from '@/types'
 import { ArrowRightCircleIcon, LockClosedIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
-import { uniq } from 'lodash'
+import { checkTruncation, useTooltip } from '@renderer/helper/tooltip'
+import { getLabelFromBackend } from '@renderer/helper/utils'
+import { connections } from '@renderer/store/connections'
+import { sourceIPLabelList } from '@renderer/store/settings'
+import { backendList } from '@renderer/store/setup'
+import type { SourceIPLabel } from '@renderer/types'
+import { uniq } from 'lodash-es'
 import { computed } from 'vue'
 import TextInput from '../common/TextInput.vue'
 
