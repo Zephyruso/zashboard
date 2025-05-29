@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.93.0](https://github.com/Zephyruso/zashboard/compare/v1.92.0...v1.93.0) (2025-05-29)
+
+
+### Features
+
+* support multiple keywords in search ([0fc9775](https://github.com/Zephyruso/zashboard/commit/0fc97751a3d31268f0e6bbf7d00e65574882ecea))
+
+
+### Bug Fixes
+
+* incorrect scrolling status when switching tabs in proxies ([bce9465](https://github.com/Zephyruso/zashboard/commit/bce9465b21b9206a277b6ec0f63581f6ff34da5c))
+* popover position for theme selector ([e9adf77](https://github.com/Zephyruso/zashboard/commit/e9adf77874d443d301fc86877c917b13f57c2129))
+
 ## [1.92.0](https://github.com/Zephyruso/zashboard/compare/v1.91.0...v1.92.0) (2025-05-27)
 
 
