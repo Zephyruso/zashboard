@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.93.1](https://github.com/Zephyruso/zashboard/compare/v1.93.0...v1.93.1) (2025-05-30)
+
+
+### Bug Fixes
+
+* collapse style ([5af878f](https://github.com/Zephyruso/zashboard/commit/5af878fb156cd0cef36e3970f183d3263df18290))
+
 ## [1.93.0](https://github.com/Zephyruso/zashboard/compare/v1.92.0...v1.93.0) (2025-05-29)
 
 
