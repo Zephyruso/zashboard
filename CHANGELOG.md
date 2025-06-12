@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.94.0](https://github.com/Zephyruso/zashboard/compare/v1.93.1...v1.94.0) (2025-06-12)
+
+
+### Features
+
+* copy table content with right click ([c932df2](https://github.com/Zephyruso/zashboard/commit/c932df2f2a17ba8a74afec59c320244f8ccc78dc))
+* drag the table with left mouse button ([4832487](https://github.com/Zephyruso/zashboard/commit/4832487886beecf412c3f4a243483a9661080a75))
+* make backend editable ([1bc72de](https://github.com/Zephyruso/zashboard/commit/1bc72deaa9e47589970a56ceb5e4d55775015198))
+* pinnable columns ([abd8184](https://github.com/Zephyruso/zashboard/commit/abd8184707c153533fbd2619a60a51721ff2009c))
+
+
+### Bug Fixes
+
+* sourceip scope for logs ([16379ff](https://github.com/Zephyruso/zashboard/commit/16379ffa423a99bd133672282b21d6dde8554d75))
+
 ## [1.93.1](https://github.com/Zephyruso/zashboard/compare/v1.93.0...v1.93.1) (2025-06-05)
 
 
