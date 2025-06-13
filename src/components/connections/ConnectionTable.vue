@@ -39,7 +39,7 @@
               :class="[
                 header.column.getCanSort() ? 'cursor-pointer select-none' : '',
                 header.column.getIsPinned && header.column.getIsPinned() === 'left'
-                  ? 'bg-base-100 sticky -left-2 z-20'
+                  ? 'sticky -left-2 z-20 backdrop-blur-md'
                   : '',
               ]"
               :style="
@@ -146,7 +146,7 @@
                         'max-w-xl truncate',
                     ),
                 cell.column.getIsPinned && cell.column.getIsPinned() === 'left'
-                  ? 'sticky -left-2 z-20 bg-inherit shadow-md backdrop-blur-md'
+                  ? 'sticky -left-2 z-20 shadow-md backdrop-blur-md'
                   : '',
               ]"
               @contextmenu="handleCellRightClick($event, cell)"
