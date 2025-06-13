@@ -2,6 +2,16 @@
 
 # Changelog
 
+## [1.94.1](https://github.com/Zephyruso/zashboard/compare/v1.94.0...v1.94.1) (2025-06-13)
+
+
+### Bug Fixes
+
+* auto scroll into view for mobile ([c5e701c](https://github.com/Zephyruso/zashboard/commit/c5e701cd970903b290f97ca93c6ecdbd56e2d64c))
+* blur bg style for pinned columns ([3f4f8ec](https://github.com/Zephyruso/zashboard/commit/3f4f8ec4603c3a15767d22e76a354e20b89eee08))
+* copy value for proxy chains column ([1ab23bf](https://github.com/Zephyruso/zashboard/commit/1ab23bf0fe45ff76d27688d140d23d80d1a91847))
+* fullscreen mode for proxies chart with bg-image ([acac4b6](https://github.com/Zephyruso/zashboard/commit/acac4b64596ee38483b7337228c2f12166cc6ebd))
+
 ## [1.94.0](https://github.com/Zephyruso/zashboard/compare/v1.93.1...v1.94.0) (2025-06-12)
 
 
