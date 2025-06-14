@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.94.2](https://github.com/Zephyruso/zashboard/compare/v1.94.1...v1.94.2) (2025-06-14)
+
+
+### Bug Fixes
+
+* drag behavier ([3fdfd73](https://github.com/Zephyruso/zashboard/commit/3fdfd73b4b160a63d61b88a20a64873fa37f20de))
+* remove close btn for closed conns ([23abefe](https://github.com/Zephyruso/zashboard/commit/23abefe66de64723dc47026461b58596f73727df))
+
 ## [1.94.1](https://github.com/Zephyruso/zashboard/compare/v1.94.0...v1.94.1) (2025-06-13)
 
 
