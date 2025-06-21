@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.95.0](https://github.com/Zephyruso/zashboard/compare/v1.94.2...v1.95.0) (2025-06-21)
+
+
+### Features
+
+* add level filter options for logs ([6f5c9dc](https://github.com/Zephyruso/zashboard/commit/6f5c9dcf5fe4d44ac8c57880fdb684b27eb667cd))
+* smart group sort by usage ([116f01d](https://github.com/Zephyruso/zashboard/commit/116f01dda993fe5dc19bb84506ef76041936cf03))
+
+
+### Bug Fixes
+
+* drag for thead resize handler ([bdea376](https://github.com/Zephyruso/zashboard/commit/bdea3765252f86997a12914fd1789d7b4ba6bfbb))
+* duplicate theme selector ([b76f9b7](https://github.com/Zephyruso/zashboard/commit/b76f9b75b87ef487fd5015136c45bbcdb5522a6a))
+
 ## [1.94.2](https://github.com/Zephyruso/zashboard/compare/v1.94.1...v1.94.2) (2025-06-16)
 
 
