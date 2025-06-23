@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.95.1](https://github.com/Zephyruso/zashboard/compare/v1.95.0...v1.95.1) (2025-06-23)
+
+
+### Bug Fixes
+
+* proxy group sort by latency ([8ee9827](https://github.com/Zephyruso/zashboard/commit/8ee9827030fce65530036dd44181e3673ff0b078))
+
 ## [1.95.0](https://github.com/Zephyruso/zashboard/compare/v1.94.2...v1.95.0) (2025-06-21)
 
 
