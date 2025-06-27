@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.96.0](https://github.com/Zephyruso/zashboard/compare/v1.95.1...v1.96.0) (2025-06-27)
+
+
+### Features
+
+* add network info switch for overview page ([bc5403d](https://github.com/Zephyruso/zashboard/commit/bc5403da40134b0d6800806321930e7e62dfb955))
+
+
+### Bug Fixes
+
+* add key for proxy chains ([c2ec9b6](https://github.com/Zephyruso/zashboard/commit/c2ec9b66f91e4576ede113f00277911c0a5411bf))
+* performance for massive connections ([a1de977](https://github.com/Zephyruso/zashboard/commit/a1de977005eeae0e02e139ea466390fa9623b0a5))
+
 ## [1.95.1](https://github.com/Zephyruso/zashboard/compare/v1.95.0...v1.95.1) (2025-06-23)
 
 
