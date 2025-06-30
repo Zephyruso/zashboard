@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.96.1](https://github.com/Zephyruso/zashboard/compare/v1.96.0...v1.96.1) (2025-06-30)
+
+
+### Bug Fixes
+
+* table columns resize handler with bg-blur ([c63784f](https://github.com/Zephyruso/zashboard/commit/c63784fe98be19bd5e2ecafdc85777423dd5ae2c))
+
 ## [1.96.0](https://github.com/Zephyruso/zashboard/compare/v1.95.1...v1.96.0) (2025-06-27)
 
 
