@@ -1,0 +1,45 @@
+name: Sync with Upstream
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天 UTC 时间 00:00 同步一次
+  workflow_dispatch:     # 支持手动触发
+
+jobs:
+  sync-main:
+    name: Sync main branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your fork (main)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync with upstream (main)
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
+        with:
+          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+          target_sync_branch: main
+          upstream_sync_repo: Zephyruso/zashboard
+          upstream_sync_branch: main
+  sync-gh-pages:
+    name: Sync gh-pages branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your fork (gh-pages)
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync with upstream (gh-pages)
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
+        with:
+          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+          target_sync_branch: gh-pages
+          upstream_sync_repo: Zephyruso/zashboard
+          upstream_sync_branch: gh-pages
