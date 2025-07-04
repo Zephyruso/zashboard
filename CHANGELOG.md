@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.97.0](https://github.com/Zephyruso/zashboard/compare/v1.96.0...v1.97.0) (2025-07-04)
+
+
+### Features
+
+* import settings with auto update ([2935456](https://github.com/Zephyruso/zashboard/commit/2935456f8dbba9d192543e3255d2dfdb08071ac4))
+
+
+### Bug Fixes
+
+* icon size settings ([95dc3a5](https://github.com/Zephyruso/zashboard/commit/95dc3a51d566f7189c5804a2d8d72e1bb4b43ff0))
+* some minor fix ([6f2edb6](https://github.com/Zephyruso/zashboard/commit/6f2edb651f32bfcda05f341647650d9cc5dfda84))
+
 ## [1.96.0](https://github.com/Zephyruso/zashboard/compare/v1.95.1...v1.96.0) (2025-06-27)
 
 
