@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.98.0](https://github.com/Zephyruso/zashboard/compare/v1.97.0...v1.98.0) (2025-07-08)
+
+
+### Features
+
+* new looking for sidebar ([934d949](https://github.com/Zephyruso/zashboard/commit/934d94942d797c81317bccec21804305ba5b7ded))
+
+
+### Bug Fixes
+
+* i18n ([37e3a01](https://github.com/Zephyruso/zashboard/commit/37e3a01fa7113fe92149ca60919966af7cbd5a13))
+* performance for massive connections ([866ea1d](https://github.com/Zephyruso/zashboard/commit/866ea1d46358b946b76a2aadeb4d28460878c01d))
+
 ## [1.97.0](https://github.com/Zephyruso/zashboard/compare/v1.96.0...v1.97.0) (2025-07-04)
 
 
