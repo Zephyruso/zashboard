@@ -4,6 +4,7 @@ import {
   IS_CORE_RUNNING,
   IS_SYSTEM_PROXY_ENABLED,
 } from '@/shared/event'
+import { getRuntimeProfileContentAPI } from '@renderer/api/ipc-invoke'
 import { addMessageListener } from '@renderer/api/ipc-message'
 import { ref, watch } from 'vue'
 import { ROUTE_NAME } from '../constant'
@@ -30,12 +31,20 @@ export const resetCoreLogs = () => {
 addMessageListener<boolean>(IS_CORE_RUNNING, async (isRunning) => {
   backendList.value = []
   if (isRunning) {
+    const runtimeConfigContent = await getRuntimeProfileContentAPI()
+    const runtimeConfig = JSON.parse(runtimeConfigContent)
+
+    const externalController =
+      runtimeConfig.experimental?.clash_api?.external_controller || '127.0.0.1:9090'
+    const [, port] = externalController.split(':')
+    const password = runtimeConfig.experimental?.clash_api?.secret || activeProfileUuid.value
+
     addBackend({
       host: '127.0.0.1',
-      port: '9999',
+      port: port || '9090',
       protocol: 'http',
       secondaryPath: '',
-      password: activeProfileUuid.value,
+      password: password,
     })
   } else {
     router.push({ name: ROUTE_NAME.profiles })
