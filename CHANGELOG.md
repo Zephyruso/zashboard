@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [1.99.0](https://github.com/Zephyruso/zashboard/compare/v1.98.0...v1.99.0) (2025-07-11)
+
+
+### Features
+
+* shortcut key for router switch ([f246d36](https://github.com/Zephyruso/zashboard/commit/f246d3620fcb2e3fe359a0f53af9e4769bb18c01))
+
+
+### Bug Fixes
+
+* sorting will not affects on proxy group ([5d9a2e6](https://github.com/Zephyruso/zashboard/commit/5d9a2e6b58d4ecfbf2a46046d38d124a66d82fab))
+
 ## [1.98.0](https://github.com/Zephyruso/zashboard/compare/v1.97.0...v1.98.0) (2025-07-08)
 
 
