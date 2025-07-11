@@ -51,7 +51,7 @@
           </button>
         </div>
         <input
-          ref="configFileInput"
+          ref="profileFileInput"
           type="file"
           class="hidden"
           @change="handleAddLocalConfigUploaded"
