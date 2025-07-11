@@ -89,6 +89,7 @@ const toggleCoreRunning = async (e: Event) => {
   e.preventDefault()
   e.stopPropagation()
   if (!isCoreRunning.value) {
+    showCoreStartupModal.value = true
     await startCoreAPI()
   } else {
     await stopCoreAPI()
