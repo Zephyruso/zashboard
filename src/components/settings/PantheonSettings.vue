@@ -28,6 +28,14 @@
             @click="toggleAutoLaunch"
           />
         </div>
+        <div class="flex items-center gap-2">
+          {{ $t('autoSystemProxy') }}
+          <input
+            v-model="autoSystemProxy"
+            type="checkbox"
+            class="toggle"
+          />
+        </div>
         <LanguageSelect />
         <div class="flex items-center gap-2">
           {{ $t('autoSwitchTheme') }}
@@ -182,6 +190,7 @@ import {
 } from '@renderer/helper/indexeddb'
 import { exportSettings, isPWA } from '@renderer/helper/utils'
 import {
+  autoSystemProxy,
   autoTheme,
   blurIntensity,
   customBackgroundURL,

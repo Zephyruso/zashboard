@@ -241,6 +241,7 @@ const zh: LANG_MESSAGE = {
   subscriptionURL: '订阅地址',
   coreStatus: '核心状态',
   autoLaunch: '自动启动',
+  autoSystemProxy: '自动系统代理',
   saveSuccess: '保存成功',
   installNow: '立即安装',
   addProfile: '新增配置',

@@ -244,6 +244,7 @@ const ru: LANG_MESSAGE = {
   subscriptionURL: 'URL подписки',
   coreStatus: 'Статус ядра',
   autoLaunch: 'Автозапуск',
+  autoSystemProxy: 'Автоматический системный прокси',
   saveSuccess: 'Сохранено успешно',
   installNow: 'Установить сейчас',
   addProfile: 'Добавить профиль',

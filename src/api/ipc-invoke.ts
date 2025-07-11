@@ -21,7 +21,7 @@ import {
   UPDATE_REMOTE_PROFILE,
   UPDATE_SETTINGS,
 } from '@/shared/event'
-import { Profile } from '@/shared/type'
+import { Profile, SettingsKey, SettingsValue } from '@/shared/type'
 
 const api = window.api
 
@@ -83,7 +83,7 @@ export const unsetSystemProxyAPI = async (): Promise<void> => {
 }
 
 // 设置相关API
-export const updateSettingsAPI = async (key: string, value: string): Promise<void> => {
+export const updateSettingsAPI = async (key: SettingsKey, value: SettingsValue): Promise<void> => {
   return await api.invoke(UPDATE_SETTINGS, { key, value })
 }
 
