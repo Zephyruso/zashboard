@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.99.0](https://github.com/Zephyruso/zashboard/compare/v1.98.0...v1.99.0) (2025-07-16)
+
+
+### Features
+
+* shortcut key for router switch ([f246d36](https://github.com/Zephyruso/zashboard/commit/f246d3620fcb2e3fe359a0f53af9e4769bb18c01))
+
+
+### Bug Fixes
+
+* import settings modal style ([48fa4f8](https://github.com/Zephyruso/zashboard/commit/48fa4f8c6cba0ab5309be3a75cb7dfc9e6546ef5))
+* optgroup bg with opacity ([4b57b0b](https://github.com/Zephyruso/zashboard/commit/4b57b0b578cc0afa7b9642e843ea5f490d3d536d))
+* proxy sorting will no longer affect policy groups ([4467657](https://github.com/Zephyruso/zashboard/commit/446765780a142025d4e3752b388e45b8b5310033))
+* sort for proxy group not in GLOBAL ([27a6c5a](https://github.com/Zephyruso/zashboard/commit/27a6c5a2e4d926362539a34e01aa67f8d5ae1a83))
+
 ## [1.98.0](https://github.com/Zephyruso/zashboard/compare/v1.97.0...v1.98.0) (2025-07-08)
 
 
