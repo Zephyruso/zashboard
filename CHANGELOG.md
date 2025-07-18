@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.99.1](https://github.com/Zephyruso/zashboard/compare/v1.99.0...v1.99.1) (2025-07-18)
+
+
+### Bug Fixes
+
+* remove plimit for latency test ([bea13e6](https://github.com/Zephyruso/zashboard/commit/bea13e63fba0d984f3407c74fb890edc775f334d))
+
 ## [1.99.0](https://github.com/Zephyruso/zashboard/compare/v1.98.0...v1.99.0) (2025-07-16)
 
 
