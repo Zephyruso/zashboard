@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [1.100.0](https://github.com/Zephyruso/zashboard/compare/v1.99.0...v1.100.0) (2025-07-25)
+
+
+### Features
+
+* outbound column ([715481c](https://github.com/Zephyruso/zashboard/commit/715481c18b4dcf181e483d494f4f52cf803bd2cf))
+
+
+### Bug Fixes
+
+* isProxyGroup for smart ([48efc1f](https://github.com/Zephyruso/zashboard/commit/48efc1fc2abf95a5b7eecec2de97d4ae5ec8d9b9))
+* log & toast style ([d2be891](https://github.com/Zephyruso/zashboard/commit/d2be891e07f3eda7460bf199883af2e8c7f841a7))
+* remove plimit for latency test ([5f8f70e](https://github.com/Zephyruso/zashboard/commit/5f8f70e63e5cc558ce919f2e6115496a8c14ca97))
+
 ## [1.99.0](https://github.com/Zephyruso/zashboard/compare/v1.98.0...v1.99.0) (2025-07-16)
 
 
