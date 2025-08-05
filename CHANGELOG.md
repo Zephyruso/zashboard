@@ -2,6 +2,24 @@
 
 # Changelog
 
+## [1.101.0](https://github.com/Zephyruso/zashboard/compare/v1.100.0...v1.101.0) (2025-08-05)
+
+
+### Features
+
+* adaptation for sing-box ui upgrade API ([8f35a14](https://github.com/Zephyruso/zashboard/commit/8f35a14189057d693c66d0c575e95db0d3d52722))
+* channel selector for core upgrade ([b181dd1](https://github.com/Zephyruso/zashboard/commit/b181dd1aeef80fbb2c9f648477afce3ed06b1886))
+* check update for `mihomo_smart`'s fork ([#461](https://github.com/Zephyruso/zashboard/issues/461)) ([0a48f44](https://github.com/Zephyruso/zashboard/commit/0a48f4411c81ee742434907d66ee664497df67d4))
+* log card style ([ecaaea7](https://github.com/Zephyruso/zashboard/commit/ecaaea7a33af5f489198af74347da61b6b2b2029))
+
+
+### Bug Fixes
+
+* backend api buttons grid style ([375ab8e](https://github.com/Zephyruso/zashboard/commit/375ab8ee8ca1745d9a40cf7c035bcdf701c1a187))
+* collapse animation ([8453456](https://github.com/Zephyruso/zashboard/commit/8453456412e7af5e2378fc6e0a027656844dfc13))
+* force import settings ([e7ce551](https://github.com/Zephyruso/zashboard/commit/e7ce55108ef952ff1eed637baf9a67575243af61))
+* proxies scroll style ([96389aa](https://github.com/Zephyruso/zashboard/commit/96389aacdfbe055cd82e9678c0ca14199f2b6157))
+
 ## [1.100.0](https://github.com/Zephyruso/zashboard/compare/v1.99.0...v1.100.0) (2025-07-27)
 
 
