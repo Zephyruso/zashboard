@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.102.0](https://github.com/Zephyruso/zashboard/compare/v1.101.0...v1.102.0) (2025-08-08)
+
+
+### Features
+
+* replace some emoji on apple platform ([6a7795e](https://github.com/Zephyruso/zashboard/commit/6a7795ed402b6799894556d6475b1c643e55ff29))
+
+
+### Bug Fixes
+
+* add timestamp for geoip api ([6737a1e](https://github.com/Zephyruso/zashboard/commit/6737a1eafe7e53cead02c07f20376e1dac05aebf))
+* add tip for mmdb file size ([8fd1521](https://github.com/Zephyruso/zashboard/commit/8fd15213beb5010a79cf127a04474d99509f8bb4))
+* tip for latency test failed ([47196a8](https://github.com/Zephyruso/zashboard/commit/47196a80215e430d1f3cd2b242bf86d881f2b8db))
+* tip position for import config ([6caf07c](https://github.com/Zephyruso/zashboard/commit/6caf07cb3d230da0efcb62227f1453e8ea6e76ad))
+
 ## [1.101.0](https://github.com/Zephyruso/zashboard/compare/v1.100.0...v1.101.0) (2025-08-05)
 
 
