@@ -2,6 +2,16 @@
 
 # Changelog
 
+## [1.101.1](https://github.com/Zephyruso/zashboard/compare/v1.101.0...v1.101.1) (2025-08-11)
+
+
+### Bug Fixes
+
+* add timestamp for geoip api ([82258a9](https://github.com/Zephyruso/zashboard/commit/82258a9432bc22d2b2cccbdde50abde73545b60a))
+* add tip for mmdb file size ([e71aa4c](https://github.com/Zephyruso/zashboard/commit/e71aa4c49ff93ffb5ab34917d6010b4c6c46bbec))
+* tip for latency test failed ([47196a8](https://github.com/Zephyruso/zashboard/commit/47196a80215e430d1f3cd2b242bf86d881f2b8db))
+* tip position for import config ([6caf07c](https://github.com/Zephyruso/zashboard/commit/6caf07cb3d230da0efcb62227f1453e8ea6e76ad))
+
 ## [1.101.0](https://github.com/Zephyruso/zashboard/compare/v1.100.0...v1.101.0) (2025-08-05)
 
 
