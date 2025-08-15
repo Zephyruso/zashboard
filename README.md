@@ -30,12 +30,26 @@ You can download the zashboard files here:
 release:
 
 - [dist.zip (7.7MB)](https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip) – Includes better font-loading experience.
-- [dist-cdn-fonts.zip (1.3MB)](https://github.com/Zephyruso/zashboard/releases/latest/download/dist-cdn-fonts.zip) – Optimized for devices with limited storage.
+- [dist-cdn-fonts.zip (1.3MB)](https://github.com/Zephyruso/zashboard/releases/latest/download/dist-cdn-fonts.zip) – Optimized for devices with limited storage, fonts loaded from CDN.
+- [dist-firasans-only.zip (1.7MB)](https://github.com/Zephyruso/zashboard/releases/latest/download/dist-firasans-only.zip) – Only with FiraSans Font
+- [dist-misans-only.zip (3.5MB)](https://github.com/Zephyruso/zashboard/releases/latest/download/dist-misans-only.zip) – Only with MiSans Font
+- [dist-pingfang-only.zip (3.2MB)](https://github.com/Zephyruso/zashboard/releases/latest/download/dist-pingfang-only.zip) – Only with PingFang Font
+- [dist-sarasa-only.zip (3.6MB)](https://github.com/Zephyruso/zashboard/releases/latest/download/dist-sarasa-only.zip) – Only with Sarasa Font
+- [dist-no-fonts.zip (1.4MB)](https://github.com/Zephyruso/zashboard/releases/latest/download/dist-no-fonts.zip) – No fonts included, uses system fonts only.
+
+**Font Package Selection Guide:**
+- **dist-cdn-fonts.zip**: Load fonts from unpkg.com CDN.
+- **dist-no-fonts.zip**: Uses system fonts only.
 
 dev:
 
 - [gh-pages.zip (7.7MB)](https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip)
 - [gh-pages-cdn-fonts.zip (1.3MB)](https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages-cdn-fonts.zip)
+- [gh-pages-firasans-only.zip (1.7MB)](https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages-firasans-only.zip)
+- [gh-pages-misans-only.zip (3.5MB)](https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages-misans-only.zip)
+- [gh-pages-pingfang-only.zip (3.2MB)](https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages-pingfang-only.zip)
+- [gh-pages-sarasa-only.zip (3.6MB)](https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages-sarasa-only.zip)
+- [gh-pages-no-fonts.zip (1.4MB)](https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages-no-fonts.zip)
 
 ## **Docker Setup**
 

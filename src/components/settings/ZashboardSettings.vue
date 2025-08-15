@@ -67,7 +67,7 @@
             v-model="font"
           >
             <option
-              v-for="opt in Object.values(FONTS)"
+              v-for="opt in fontOptions"
               :key="opt"
               :value="opt"
             >
@@ -206,7 +206,7 @@ import {
   PlusIcon,
 } from '@heroicons/vue/24/outline'
 import { twMerge } from 'tailwind-merge'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import ImportSettings from '../common/ImportSettings.vue'
 import TextInput from '../common/TextInput.vue'
 import CustomTheme from './CustomTheme.vue'
@@ -241,6 +241,16 @@ const handlerFileChange = (e: Event) => {
   }
   reader.readAsDataURL(file)
 }
+
+const fontOptions = computed(() => {
+  const mode = import.meta.env.MODE
+
+  if (Object.values(FONTS).includes(mode as FONTS)) {
+    return [mode]
+  }
+
+  return Object.values(FONTS)
+})
 
 const { isUIUpdateAvailable } = useSettings()
 

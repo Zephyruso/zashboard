@@ -7,6 +7,11 @@
   "scripts": {
     "build": "vite build",
     "build:cdn-fonts": "vite build --mode cdn-fonts",
+    "build:firasans-only": "vite build --mode FiraSans",
+    "build:misans-only": "vite build --mode MiSans",
+    "build:no-fonts": "vite build --mode SystemUI",
+    "build:pingfang-only": "vite build --mode PingFang",
+    "build:sarasa-only": "vite build --mode SarasaUi",
     "dev": "vite",
     "format": "prettier --write src/",
     "lint": "eslint . --fix",
