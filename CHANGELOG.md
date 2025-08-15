@@ -2,6 +2,25 @@
 
 # Changelog
 
+## [1.102.0](https://github.com/Zephyruso/zashboard/compare/v1.101.1...v1.102.0) (2025-08-15)
+
+
+### Features
+
+* add gh-pages-cdn-fonts branch ([899c1d0](https://github.com/Zephyruso/zashboard/commit/899c1d0a1e0af4ab807e90724c8cea7c434cfba1))
+* add toast for backend API call ([07833ba](https://github.com/Zephyruso/zashboard/commit/07833ba696865c9e54cce655a383a94da58e7ec0))
+* flush dns cache for sing-box ([acdee6f](https://github.com/Zephyruso/zashboard/commit/acdee6f4eb587cb4f66a802588f757ee58cb6806))
+* rule card style ([b0a421f](https://github.com/Zephyruso/zashboard/commit/b0a421f867512fbadc60eed3aaa12d326375b4cb))
+* style for proxy group ([b1de8f6](https://github.com/Zephyruso/zashboard/commit/b1de8f68eece3d767f66af577516e778c1141a62))
+* use twemoji for apple device ([5a7a6ff](https://github.com/Zephyruso/zashboard/commit/5a7a6ff804fb0f5ff8c6f4da452db94b8beb6971))
+
+
+### Bug Fixes
+
+* add default test turl ([be21958](https://github.com/Zephyruso/zashboard/commit/be21958e53024ee53996a3aa9e19593208041a21))
+* animation performance for proxy group mobile ([8547702](https://github.com/Zephyruso/zashboard/commit/85477025fa372705b7360567f585dc08e87f3f43))
+* placeholder for ip check failed ([e3a5aa3](https://github.com/Zephyruso/zashboard/commit/e3a5aa3c46ded51219d2be9d6083903ecc73b2a5))
+
 ## [1.101.1](https://github.com/Zephyruso/zashboard/compare/v1.101.0...v1.101.1) (2025-08-11)
 
 
