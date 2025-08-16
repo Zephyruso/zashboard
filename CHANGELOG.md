@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.103.0](https://github.com/Zephyruso/zashboard/compare/v1.102.0...v1.103.0) (2025-08-16)
+
+
+### Features
+
+* build with only one font ([0bcfb95](https://github.com/Zephyruso/zashboard/commit/0bcfb953484972aeb6eb8b8be47327fcdf92facc))
+
 ## [1.102.0](https://github.com/Zephyruso/zashboard/compare/v1.101.1...v1.102.0) (2025-08-15)
 
 
