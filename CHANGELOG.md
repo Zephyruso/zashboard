@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.103.0](https://github.com/Zephyruso/zashboard/compare/v1.102.0...v1.103.0) (2025-08-24)
+
+
+### Features
+
+* build with only one font ([fcb5592](https://github.com/Zephyruso/zashboard/commit/fcb559216fa6ef517bb9fbf3dc6c0f04d5060ed3))
+* display final outbound in proxy group ([f2ffb34](https://github.com/Zephyruso/zashboard/commit/f2ffb34e63bf7eebb4b5c7258738c2c0882905e9))
+
+
+### Bug Fixes
+
+* emoji font ([71a5a50](https://github.com/Zephyruso/zashboard/commit/71a5a501da3193c937ffafeedc974289db880dc9))
+* safe area padding ([8cdfdcd](https://github.com/Zephyruso/zashboard/commit/8cdfdcdec3b8dd3399fa8228b5418b5b32cd4578))
+* set history after latency test ([3210bbc](https://github.com/Zephyruso/zashboard/commit/3210bbc4176f4c2b418960adf841f8f72d3df9a0))
+
 ## [1.102.0](https://github.com/Zephyruso/zashboard/compare/v1.101.1...v1.102.0) (2025-08-15)
 
 
