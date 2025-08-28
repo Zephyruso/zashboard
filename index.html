@@ -30,12 +30,25 @@
       name="theme-color"
       content="#FFFFFF"
     />
+    <!-- 安全距离样式文件（核心，提供--window-inset-top/bottom变量） -->
+    <link rel="stylesheet" type="text/css" href="https://mui.kernelsu.org/internal/insets.css" />
+    <!-- 主题配色样式文件（统一主题色，可选但推荐） -->
+    <link rel="stylesheet" type="text/css" href="https://mui.kernelsu.org/internal/colors.css" />
+    <!-- 原有脚本和样式引入 -->
+    <script type="module" crossorigin src="./assets/index-B-Kv0Uy0.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Baj7MSC1.css">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script>
   </head>
-  <body class="overflow-hidden">
+  <body class="h-dvh overflow-hidden">
     <div id="app"></div>
-    <script
-      type="module"
-      src="/src/main.ts"
-    ></script>
+    <!-- 安全距离样式配置 -->
+    <style>
+      body {
+        padding-top: var(--window-inset-top);
+        padding-bottom: var(--window-inset-bottom);
+        background-color: var(--background); /* 复用主题样式文件的背景色变量 */
+      }
+    </style>
   </body>
 </html>
