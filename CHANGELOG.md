@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.103.0](https://github.com/Zephyruso/zashboard/compare/v1.102.0...v1.103.0) (2025-08-29)
+
+
+### Features
+
+* build with only one font ([fcb5592](https://github.com/Zephyruso/zashboard/commit/fcb559216fa6ef517bb9fbf3dc6c0f04d5060ed3))
+* display final outbound in proxy group ([e974d50](https://github.com/Zephyruso/zashboard/commit/e974d50f7cd8a0bacb404ca9a0de01087cbd1d77))
+
+
+### Bug Fixes
+
+* set history after latency test ([cee66f8](https://github.com/Zephyruso/zashboard/commit/cee66f8ecca239b388e1133e7bead2d9a9503785))
+* style for vertical info ([82c390c](https://github.com/Zephyruso/zashboard/commit/82c390c22a5bcab86b890802631aadec05a42e37))
+* twemoji color on ios ([b533a17](https://github.com/Zephyruso/zashboard/commit/b533a1757d6e7079f71a98390d45fc11cf8070f8))
+
 ## [1.102.0](https://github.com/Zephyruso/zashboard/compare/v1.101.1...v1.102.0) (2025-08-15)
 
 
