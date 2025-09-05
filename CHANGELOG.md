@@ -2,6 +2,15 @@
 
 # Changelog
 
+## [1.103.1](https://github.com/Zephyruso/zashboard/compare/v1.103.0...v1.103.1) (2025-09-04)
+
+
+### Bug Fixes
+
+* latency test result tip ([cd50643](https://github.com/Zephyruso/zashboard/commit/cd50643d6743fa224c3ec6300a835d00f46548a1))
+* proxies page performance ([b73f2ac](https://github.com/Zephyruso/zashboard/commit/b73f2acdb298307af362c346eab3ffbb582ed0dd))
+* smart core weights fetch ([748272b](https://github.com/Zephyruso/zashboard/commit/748272b082a2505ad4b37713a3e19f5893382593))
+
 ## [1.103.0](https://github.com/Zephyruso/zashboard/compare/v1.102.0...v1.103.0) (2025-08-31)
 
 
