@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.103.2](https://github.com/Zephyruso/zashboard/compare/v1.103.1...v1.103.2) (2025-09-12)
+
+
+### Bug Fixes
+
+* add p-limiter for latency test ([7c656e8](https://github.com/Zephyruso/zashboard/commit/7c656e8bc0e5e21011ca40c97a297d536640e142))
+
 ## [1.103.1](https://github.com/Zephyruso/zashboard/compare/v1.103.0...v1.103.1) (2025-09-08)
 
 
