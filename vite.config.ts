@@ -8,9 +8,9 @@ import { version } from './package.json'
 
 const getGitCommitId = (): string => {
   try {
-    const tags = execSync('git tag --points-at HEAD', { encoding: 'utf8' }).trim()
+    const commitMessage = execSync('git log -1 --pretty=%B', { encoding: 'utf8' }).trim()
 
-    if (tags) {
+    if (commitMessage.includes('chore(main): release')) {
       return ''
     }
 

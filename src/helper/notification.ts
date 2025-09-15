@@ -7,6 +7,10 @@ const alertMap = new Map<
   {
     timer: number
     alert: HTMLElement
+    progressBar: HTMLElement
+    startTime: number
+    remainingTime: number
+    isPaused: boolean
   }
 >()
 let toastRef: Ref<HTMLElement> | null = null
@@ -15,10 +19,43 @@ export const initNotification = (toast: Ref<HTMLElement>) => {
   toastRef = toast
 }
 
-const setTimer = (alert: HTMLElement, timeout: number, alertKey?: string) => {
+const pauseTimer = (alertKey: string) => {
+  const alertData = alertMap.get(alertKey)
+  if (alertData && !alertData.isPaused) {
+    clearTimeout(alertData.timer)
+    alertData.isPaused = true
+    alertData.remainingTime = alertData.remainingTime - (Date.now() - alertData.startTime)
+    alertData.progressBar.style.animationPlayState = 'paused'
+  }
+}
+
+const resumeTimer = (alertKey: string) => {
+  const alertData = alertMap.get(alertKey)
+  if (alertData && alertData.isPaused) {
+    alertData.isPaused = false
+    alertData.startTime = Date.now()
+    alertData.timer = setTimeout(() => {
+      alertMap.delete(alertKey)
+      alertData.alert.remove()
+    }, alertData.remainingTime)
+    alertData.progressBar.style.animationPlayState = 'running'
+  }
+}
+
+const setTimer = (
+  alert: HTMLElement,
+  timeout: number,
+  alertKey?: string,
+  progressBar?: HTMLElement | null,
+) => {
   let timer = -1
 
   if (timeout !== 0) {
+    // 设置进度条动画
+    if (progressBar) {
+      progressBar.style.animation = `progressBar ${timeout}ms linear forwards`
+    }
+
     timer = setTimeout(() => {
       if (alertKey) {
         alertMap.delete(alertKey)
@@ -27,8 +64,15 @@ const setTimer = (alert: HTMLElement, timeout: number, alertKey?: string) => {
     }, timeout)
   }
 
-  if (alertKey) {
-    alertMap.set(alertKey, { alert, timer })
+  if (alertKey && progressBar) {
+    alertMap.set(alertKey, {
+      alert,
+      timer,
+      progressBar,
+      startTime: Date.now(),
+      remainingTime: timeout,
+      isPaused: false,
+    })
   }
 }
 
@@ -49,8 +93,8 @@ const setAlert = (
   params: Record<string, string>,
   type: string,
   alertKey?: string,
-) => {
-  alert.className = `alert flex p-2 pr-5 break-all whitespace-normal relative ${type}`
+): HTMLElement | null => {
+  alert.className = `alert flex p-2 pr-5 break-all whitespace-pre relative ${type}`
 
   const contentDiv = document.createElement('div')
   contentDiv.className = 'flex-1'
@@ -65,9 +109,29 @@ const setAlert = (
   `
   closeButton.addEventListener('click', () => closeAlert(alert, alertKey))
 
+  // 创建进度条容器
+  const progressContainer = document.createElement('div')
+  progressContainer.className =
+    'absolute -bottom-2 left-1 right-1 h-1 bg-transparent rounded-lg overflow-hidden'
+
+  const progressBar = document.createElement('div')
+  progressBar.className = 'h-full bg-primary/30 transition-all duration-100 ease-linear'
+  progressBar.style.width = '100%'
+
+  progressContainer.appendChild(progressBar)
+
   alert.innerHTML = ''
   alert.appendChild(contentDiv)
   alert.appendChild(closeButton)
+  alert.appendChild(progressContainer)
+
+  // 添加鼠标悬停事件监听器
+  if (alertKey) {
+    alert.addEventListener('mouseenter', () => pauseTimer(alertKey))
+    alert.addEventListener('mouseleave', () => resumeTimer(alertKey))
+  }
+
+  return progressBar
 }
 
 export const showNotification = ({
@@ -89,14 +153,14 @@ export const showNotification = ({
     const { alert, timer } = alertMap.get(alertKey)!
     clearTimeout(timer)
 
-    setAlert(alert, content, params, type, alertKey)
-    setTimer(alert, timeout, alertKey)
+    const progressBar = setAlert(alert, content, params, type, alertKey)
+    setTimer(alert, timeout, alertKey, progressBar)
     return
   }
 
   const alert = document.createElement('div')
 
-  setAlert(alert, content, params, type, alertKey)
+  const progressBar = setAlert(alert, content, params, type, alertKey)
   toastRef?.value?.insertBefore(alert, toastRef?.value?.firstChild)
-  setTimer(alert, timeout, alertKey)
+  setTimer(alert, timeout, alertKey, progressBar)
 }
