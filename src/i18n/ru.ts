@@ -149,9 +149,9 @@ const ru: LANG_MESSAGE = {
   mostUploadProxy: 'Прокси с наибольшей отдачей',
   manual: 'Ручной',
   tableWidthMode: 'Режим ширины таблицы',
-  testFinishedTip: '{number} Тест завершен',
-  testFinishedResultTip: 'Тест завершен: {success} Успешно, {failed} Таймаут',
-  testFailedTip: 'Тест задержки таймаут',
+  testFinishedTip: "{name}{'@'}{url} \n{number}/{total} Тест завершен",
+  testFinishedResultTip: "{name}{'@'}{url} \nТест завершен: {success} Успешно, {failed} Таймаут",
+  testFailedTip: "{name}{'@'}{url} \nТест задержки таймаут",
   updateFinishedTip: '{number} Обновление завершено',
   independentLatencyTest: 'Независимый тест задержки',
   independentLatencyTestTip:

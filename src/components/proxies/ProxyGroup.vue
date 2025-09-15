@@ -1,10 +1,10 @@
 <template>
-  <CollapseCard :name="proxyGroup.name">
+  <CollapseCard
+    :name="proxyGroup.name"
+    @contextmenu.prevent.stop="handlerLatencyTest"
+  >
     <template v-slot:title>
-      <div
-        class="relative flex items-center gap-2"
-        @contextmenu.prevent.stop="handlerLatencyTest"
-      >
+      <div class="relative flex items-center gap-2">
         <div class="flex flex-1 items-center gap-1">
           <ProxyName
             :name="name"
@@ -37,10 +37,7 @@
           @click.stop="handlerLatencyTest"
         />
       </div>
-      <div
-        class="text-base-content/80 mt-1.5 flex items-center gap-2"
-        @contextmenu.prevent.stop="handlerLatencyTest"
-      >
+      <div class="text-base-content/80 mt-1.5 flex items-center gap-2">
         <div class="flex flex-1 items-center gap-1 truncate text-sm">
           <ProxyGroupNow :name="name" />
         </div>

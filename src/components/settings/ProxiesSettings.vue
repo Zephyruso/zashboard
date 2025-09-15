@@ -40,6 +40,14 @@
           />
           ms
         </div>
+        <div class="flex items-center gap-2">
+          {{ $t('ipv6Test') }}
+          <input
+            class="toggle"
+            type="checkbox"
+            v-model="IPv6test"
+          />
+        </div>
         <div class="flex w-full items-center gap-2">
           <span> {{ $t('independentLatencyTest') }} </span>
           <input
@@ -57,14 +65,6 @@
           class="col-span-full"
         >
           <GroupTestUrlsSettings />
-        </div>
-        <div class="flex items-center gap-2">
-          {{ $t('ipv6Test') }}
-          <input
-            class="toggle"
-            type="checkbox"
-            v-model="IPv6test"
-          />
         </div>
       </div>
       <div class="divider"></div>
