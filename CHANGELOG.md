@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.104.0](https://github.com/Zephyruso/zashboard/compare/v1.103.1...v1.104.0) (2025-09-16)
+
+
+### Features
+
+* allow setting separate test URLs for each group ([a7ef57a](https://github.com/Zephyruso/zashboard/commit/a7ef57a0ff5e466ab4f4177948dc2f57f5b93c58))
+* display URL in latency test result ([38744d4](https://github.com/Zephyruso/zashboard/commit/38744d4b2f4d1a42f29e97ec9c92ae8d123a9c0a))
+
+
+### Bug Fixes
+
+* add p-limiter for latency test ([7c656e8](https://github.com/Zephyruso/zashboard/commit/7c656e8bc0e5e21011ca40c97a297d536640e142))
+
 ## [1.103.1](https://github.com/Zephyruso/zashboard/compare/v1.103.0...v1.103.1) (2025-09-08)
 
 
