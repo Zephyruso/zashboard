@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [1.106.0](https://github.com/Zephyruso/zashboard/compare/v1.105.0...v1.106.0) (2025-09-28)
+
+
+### Features
+
+* add manual block(degrade) btn for conn which belongs to smart group ([#502](https://github.com/Zephyruso/zashboard/issues/502)) ([1a9c12b](https://github.com/Zephyruso/zashboard/commit/1a9c12b9b40979f480707d227ea588f58a484552))
+* select proxy node in connections and rules ([acd1cd2](https://github.com/Zephyruso/zashboard/commit/acd1cd286d71c9bf67f34c91fb70069e9901a422))
+
+
+### Bug Fixes
+
+* connection card style ([717108f](https://github.com/Zephyruso/zashboard/commit/717108fdd48e9bbe563614c2d1e474a1bd1b2bc3))
+* notification style ([9da9272](https://github.com/Zephyruso/zashboard/commit/9da927232cd0a73f260d52794fddf2a82179c618))
+* proxies page dual column style ([edda6f3](https://github.com/Zephyruso/zashboard/commit/edda6f37b7f6a073452ffc8ea49542d351dc4829))
+
 ## [1.105.0](https://github.com/Zephyruso/zashboard/compare/v1.104.0...v1.105.0) (2025-09-22)
 
 
