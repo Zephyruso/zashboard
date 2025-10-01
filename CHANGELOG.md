@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [1.106.1](https://github.com/Zephyruso/zashboard/compare/v1.106.0...v1.106.1) (2025-10-01)
+
+
+### Bug Fixes
+
+* unexpected dual column for proxies provider ([ace7864](https://github.com/Zephyruso/zashboard/commit/ace78646489a9ebf5c28abb6616e29acd64028c1))
+
 ## [1.106.0](https://github.com/Zephyruso/zashboard/compare/v1.105.0...v1.106.0) (2025-09-28)
 
 
