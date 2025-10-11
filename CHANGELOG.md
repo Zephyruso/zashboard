@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [1.107.0](https://github.com/Zephyruso/zashboard/compare/v1.106.1...v1.107.0) (2025-10-11)
+
+
+### Features
+
+* add more settings button and improve layout in sidebar components ([73de34f](https://github.com/Zephyruso/zashboard/commit/73de34f00d1abf242766ea8eacb90640d29445ae))
+
+
+### Bug Fixes
+
+* dialog style ([616cecb](https://github.com/Zephyruso/zashboard/commit/616cecb25386407f41fc0f16269c77c60a31c7ab))
+* url will only be shown in independentLatencyTest mode ([fd28fd4](https://github.com/Zephyruso/zashboard/commit/fd28fd4033445f515ec3793718e1ebeee85fc25b))
+
 ## [1.106.1](https://github.com/Zephyruso/zashboard/compare/v1.106.0...v1.106.1) (2025-10-01)
 
 
