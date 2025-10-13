@@ -7,6 +7,7 @@ const zh: LANG_MESSAGE = {
   rules: '规则',
   connections: '连接',
   logs: '日志',
+  topology: '拓扑',
   protocol: '协议',
   host: '主机',
   port: '端口',
@@ -246,6 +247,9 @@ const zh: LANG_MESSAGE = {
   groupTestUrlsTip:
     '对于从面板手动触发的测试，此处设置测试链接 > 配置中的链接 > 面板全局测试链接，但是对于UrlTest/Fallback等具有核心内部的定时测速逻辑的组，仍然需要修改配置中的链接，此处仅推荐Selector等场景',
   groupName: '组名',
+  topologyColumnAlign: '拓扑列对齐',
+  topAlign: '靠上',
+  centerAlign: '居中',
 }
 
 export default zh

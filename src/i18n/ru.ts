@@ -7,6 +7,7 @@ const ru: LANG_MESSAGE = {
   rules: 'Правила',
   connections: 'Подключения',
   logs: 'Журнал',
+  topology: 'Топология',
   protocol: 'Протокол',
   host: 'Хост',
   port: 'Порт',
@@ -249,6 +250,9 @@ const ru: LANG_MESSAGE = {
   groupTestUrlsTip:
     'Для ручных тестов, запущенных из панели, установите тестовые URL > URL в конфигурации > Глобальные тестовые URL, но для групп с UrlTest/Fallback и т.д., URL в конфигурации все равно нужно изменить, поэтому это рекомендуется только для Selector и т.д. ',
   groupName: 'Группа имени',
+  topologyColumnAlign: 'Выравнивание столбцов топологии',
+  topAlign: 'Сверху',
+  centerAlign: 'По центру',
 }
 
 export default ru

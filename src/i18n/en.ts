@@ -5,6 +5,7 @@ const en = {
   rules: 'Rules',
   connections: 'Connections',
   logs: 'Logs',
+  topology: 'Topology',
   protocol: 'Protocol',
   host: 'Host',
   port: 'Port',
@@ -247,6 +248,9 @@ const en = {
   groupTestUrlsTip:
     'For manual tests triggered from the panel, set test URLs here > URLs in configuration > Global test URLs, but for groups with UrlTest/Fallback, etc., the URLs in the configuration still need to be modified, So this is only recommended for Selector scenes',
   groupName: 'Group Name',
+  topologyColumnAlign: 'Topology Column Align',
+  topAlign: 'Align Top',
+  centerAlign: 'Align Center',
 }
 
 export type LANG_MESSAGE = typeof en

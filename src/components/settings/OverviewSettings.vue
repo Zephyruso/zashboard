@@ -73,6 +73,16 @@
           </option>
         </select>
       </div>
+      <div class="flex items-center gap-2">
+        {{ $t('topologyColumnAlign') }}
+        <select
+          class="select select-sm min-w-24"
+          v-model="topologyColumnAlign"
+        >
+          <option :value="TOPOLOGY_COLUMN_ALIGN.TOP">{{ $t('topAlign') }}</option>
+          <option :value="TOPOLOGY_COLUMN_ALIGN.CENTER">{{ $t('centerAlign') }}</option>
+        </select>
+      </div>
     </div>
   </div>
 </template>
@@ -86,5 +96,7 @@ import {
   showIPAndConnectionInfo,
   showStatisticsWhenSidebarCollapsed,
   splitOverviewPage,
+  TOPOLOGY_COLUMN_ALIGN,
+  topologyColumnAlign,
 } from '@/store/settings'
 </script>
