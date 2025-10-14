@@ -9,7 +9,7 @@
       <div class="card-title absolute px-4 pt-4">
         {{ $t('proxiesRelationship') }}
       </div>
-      <ProxiesCharts />
+      <TopologyHome />
     </div>
     <ConnectionHistory />
     <div class="flex-1"></div>
@@ -25,7 +25,7 @@ import BackendVersion from '@/components/common/BackendVersion.vue'
 import ChartsCard from '@/components/overview/ChartsCard.vue'
 import ConnectionHistory from '@/components/overview/ConnectionHistory.vue'
 import NetworkCard from '@/components/overview/NetworkCard.vue'
-import ProxiesCharts from '@/components/overview/ProxiesCharts.vue'
+import TopologyHome from '@/components/overview/TopologyCharts.vue'
 import { getLabelFromBackend } from '@/helper/utils'
 import { displayProxiesRelationship, showIPAndConnectionInfo } from '@/store/settings'
 import { activeBackend } from '@/store/setup'

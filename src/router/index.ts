@@ -11,17 +11,11 @@ import ProxiesPage from '@/views/ProxiesPage.vue'
 import RulesPage from '@/views/RulesPage.vue'
 import SettingsPage from '@/views/SettingsPage.vue'
 import SetupPage from '@/views/SetupPage.vue'
-import TopologyPage from '@/views/TopologyPage.vue'
 import { useTitle } from '@vueuse/core'
 import { watch } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const childrenRouter = [
-  {
-    path: 'topology',
-    name: ROUTE_NAME.topology,
-    component: TopologyPage,
-  },
   {
     path: 'proxies',
     name: ROUTE_NAME.proxies,
