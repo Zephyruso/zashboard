@@ -46,6 +46,9 @@ importers:
       ipaddr.js:
         specifier: ^2.2.0
         version: 2.2.0
+      konva:
+        specifier: ^10.0.2
+        version: 10.0.2
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -7638,6 +7641,8 @@ snapshots:
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
+
+  konva@10.0.2: {}
 
   leven@3.1.0: {}
 

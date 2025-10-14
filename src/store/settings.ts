@@ -189,3 +189,6 @@ export const displayLatencyInRule = useStorage('config/display-latency-in-rule',
 // logs
 export const logRetentionLimit = useStorage<number>('config/log-retention-limit', 1000)
 export const logSearchHistory = useStorage<string[]>('config/log-search-history', [])
+
+// topology
+export const topologyAlign = useStorage<'center' | 'top'>('config/topology-align', 'center')

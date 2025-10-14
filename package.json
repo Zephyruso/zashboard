@@ -33,6 +33,7 @@
     "dompurify": "^3.2.7",
     "echarts": "^6.0.0",
     "ipaddr.js": "^2.2.0",
+    "konva": "^10.0.2",
     "lodash": "^4.17.21",
     "misans": "^4.1.0",
     "p-limit": "^7.1.1",
