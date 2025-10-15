@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.108.0](https://github.com/Zephyruso/zashboard/compare/v1.107.0...v1.108.0) (2025-10-15)
+
+
+### Features
+
+* add dark mode favicon and update asset inclusion in Vite configuration ([50a66c3](https://github.com/Zephyruso/zashboard/commit/50a66c3f478cf50942ba1d40751fa38e09fd8353))
+* remove ProxiesCharts component and update to TopologyCharts ([130fd1d](https://github.com/Zephyruso/zashboard/commit/130fd1db95df6a56a1e1869815d477f74dcbff20))
+
 ## [1.107.0](https://github.com/Zephyruso/zashboard/compare/v1.106.1...v1.107.0) (2025-10-11)
 
 
