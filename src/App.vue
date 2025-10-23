@@ -6,7 +6,7 @@ import { EMOJIS, FONTS } from './constant'
 import { autoImportSettings, importSettingsFromUrl } from './helper/autoImportSettings'
 import { backgroundImage } from './helper/indexeddb'
 import { initNotification } from './helper/notification'
-import { getBackendFromUrl, isPreferredDark } from './helper/utils'
+import { getBackendFromUrl, isDarkTheme, isPreferredDark } from './helper/utils'
 import {
   blurIntensity,
   dashboardTransparent,
@@ -107,6 +107,8 @@ onMounted(() => {
     () => {
       document.body.setAttribute('data-theme', theme.value)
       setThemeColor()
+      isDarkTheme.value =
+        getComputedStyle(document.body).getPropertyValue('color-scheme') === 'dark'
     },
     {
       immediate: true,
@@ -127,8 +129,8 @@ useKeyboard()
 
 <template>
   <div
-    ref="app"
     id="app-content"
+    ref="app"
     :class="[
       'bg-base-100 flex h-dvh w-screen overflow-x-hidden',
       fontClassName,

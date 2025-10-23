@@ -16,12 +16,12 @@
           <div
             class="border-base-content h-6 w-6 rounded border-2"
             :style="`background-color: ${customTheme[color as keyof typeof customTheme]};`"
-          ></div>
+          />
           <input
-            class="h-1 w-1 opacity-0"
             :key="color"
-            type="color"
             v-model="customTheme[color as keyof typeof customTheme]"
+            class="h-1 w-1 opacity-0"
+            type="color"
           />
         </label>
       </div>
@@ -35,8 +35,8 @@
       >
         {{ radius.replace('--radius-', '') }}
         <TextInput
-          class="w-20"
           v-model="customTheme[radius as keyof typeof customTheme] as string"
+          class="w-20"
         />
       </div>
     </div>
@@ -49,15 +49,15 @@
       >
         {{ size.replace('--size-', '') }}
         <TextInput
-          class="w-20"
           v-model="customTheme[size as keyof typeof customTheme] as string"
+          class="w-20"
         />
       </div>
       <div class="flex items-center gap-2">
         border
         <TextInput
-          class="w-20"
           v-model="customTheme['--border']"
+          class="w-20"
         />
       </div>
     </div>
@@ -66,24 +66,24 @@
       <div>
         depth
         <input
-          class="toggle"
           v-model="depth"
+          class="toggle"
           type="checkbox"
         />
       </div>
       <div>
         noise
         <input
-          class="toggle"
           v-model="noise"
+          class="toggle"
           type="checkbox"
         />
       </div>
       <div>
         dark
         <input
-          class="toggle"
           v-model="dark"
+          class="toggle"
           type="checkbox"
         />
       </div>
@@ -92,8 +92,8 @@
       class="bg-base-100 border-base-200 absolute right-0 bottom-0 left-0 flex gap-2 border-t p-2 pt-2"
     >
       <select
-        class="select select-sm w-26"
         v-model="applyFrom"
+        class="select select-sm w-26"
       >
         <option
           v-for="opt in ALL_THEME"
@@ -109,7 +109,7 @@
       >
         {{ $t('reset') }}
       </button>
-      <div class="flex-1"></div>
+      <div class="flex-1" />
       <a
         class="btn btn-sm"
         href="https://daisyui.com/theme-generator/"

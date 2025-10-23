@@ -5,8 +5,8 @@
       class="h-full w-full"
     />
     <span
-      class="border-b-primary/30 border-t-primary/60 border-l-info/30 border-r-info/60 text-base-content/10 bg-base-100/70 hidden"
       ref="colorRef"
+      class="border-b-primary/30 border-t-primary/60 border-l-info/30 border-r-info/60 text-base-content/10 bg-base-100/70 hidden"
     />
     <button
       class="btn btn-ghost btn-xs absolute right-1 bottom-0"
@@ -28,7 +28,7 @@ import { LineChart } from 'echarts/charts'
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { computed, onMounted, ref, watch } from 'vue'
 
 echarts.use([LineChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer])

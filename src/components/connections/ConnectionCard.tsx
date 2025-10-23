@@ -16,7 +16,6 @@ import {
 } from '@/helper'
 import { getIPLabelFromMap } from '@/helper/sourceip'
 import { fromNow, prettyBytesHelper } from '@/helper/utils'
-import { connectionTabShow } from '@/store/connections'
 import { connectionCardLines, proxyChainDirection } from '@/store/settings'
 import type { Connection } from '@/types'
 import {
@@ -28,18 +27,19 @@ import {
   NoSymbolIcon,
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
-import { first, last } from 'lodash'
+import { first, last } from 'lodash-es'
 import { defineComponent } from 'vue'
 import type { JSX } from 'vue/jsx-runtime'
+import { connectionTabShow } from '../../store/connections'
 import ProxyName from '../proxies/ProxyName.vue'
 
 export default defineComponent<{
   conn: Connection
 }>({
+  name: 'ConnectionCard',
   props: {
     conn: Object,
   },
-  name: 'ConnectionCard',
   setup(props) {
     const { handlerInfo } = useConnections()
 

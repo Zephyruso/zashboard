@@ -29,11 +29,11 @@
           <TrashIcon class="h-4 w-4" />
         </button>
         <Draggable
-          class="flex flex-1 flex-wrap items-center gap-2"
           v-model="connectionCardLines[index]"
+          class="flex flex-1 flex-wrap items-center gap-2"
           :animation="150"
           group="list"
-          ghostClass="ghost"
+          ghost-class="ghost"
           :item-key="(id: string) => id"
         >
           <template #item="{ element }">
@@ -53,11 +53,11 @@
       </div>
 
       <Draggable
-        class="flex flex-1 flex-wrap gap-2 p-2"
         v-model="restOfColumns"
+        class="flex flex-1 flex-wrap gap-2 p-2"
         :animation="150"
         group="list"
-        ghostClass="ghost"
+        ghost-class="ghost"
         :item-key="(id: string) => id"
       >
         <template #item="{ element }">

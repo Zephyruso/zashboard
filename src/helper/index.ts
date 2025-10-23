@@ -9,10 +9,11 @@ import {
   proxyChainDirection,
   splitOverviewPage,
 } from '@/store/settings'
+import { isCoreRunning } from '@/store/status'
 import type { Connection } from '@/types'
 import dayjs from 'dayjs'
 import * as ipaddr from 'ipaddr.js'
-import { head } from 'lodash'
+import { head } from 'lodash-es'
 import { computed } from 'vue'
 import { prettyBytesHelper } from './utils'
 
@@ -137,6 +138,9 @@ export const getColorForLatency = (latency: number) => {
 }
 
 export const renderRoutes = computed(() => {
+  if (!isCoreRunning.value) {
+    return [ROUTE_NAME.profiles, ROUTE_NAME.settings]
+  }
   return Object.values(ROUTE_NAME).filter((r) => {
     return ![ROUTE_NAME.setup, !splitOverviewPage.value && ROUTE_NAME.overview].includes(r)
   })

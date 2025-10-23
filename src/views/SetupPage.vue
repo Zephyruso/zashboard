@@ -10,14 +10,16 @@
       <LanguageSelect />
     </div>
     <div class="card mx-auto w-96 max-w-[90%] gap-3 px-6 py-2 max-sm:my-4">
-      <h1 class="text-2xl font-semibold">{{ $t('setup') }}</h1>
+      <h1 class="text-2xl font-semibold">
+        {{ $t('setup') }}
+      </h1>
       <div class="flex flex-col gap-1">
         <label class="text-sm">
           <span>{{ $t('protocol') }}</span>
         </label>
         <select
-          class="select select-sm w-full"
           v-model="form.protocol"
+          class="select select-sm w-full"
         >
           <option value="http">HTTP</option>
           <option value="https">HTTPS</option>
@@ -28,10 +30,10 @@
           <span>{{ $t('host') }}</span>
         </label>
         <TextInput
+          v-model="form.host"
           class="w-full"
           name="username"
           autocomplete="username"
-          v-model="form.host"
         />
       </div>
       <div class="flex flex-col gap-1">
@@ -39,8 +41,8 @@
           <span>{{ $t('port') }}</span>
         </label>
         <TextInput
-          class="w-full"
           v-model="form.port"
+          class="w-full"
         />
       </div>
       <div class="flex flex-col gap-1">
@@ -54,8 +56,8 @@
           </span>
         </label>
         <TextInput
-          class="w-full"
           v-model="form.secondaryPath"
+          class="w-full"
         />
       </div>
       <div class="flex flex-col gap-1">
@@ -63,9 +65,9 @@
           <span>{{ $t('password') }}</span>
         </label>
         <input
+          v-model="form.password"
           type="password"
           class="input input-sm w-full"
-          v-model="form.password"
         />
       </div>
       <div class="flex flex-col gap-1">
@@ -73,8 +75,8 @@
           <span>{{ $t('label') }} ({{ $t('optional') }})</span>
         </label>
         <TextInput
-          class="w-full"
           v-model="form.label"
+          class="w-full"
         />
       </div>
       <button
@@ -84,8 +86,8 @@
         {{ $t('submit') }}
       </button>
       <Draggable
-        class="flex flex-1 flex-col gap-2"
         v-model="backendList"
+        class="flex flex-1 flex-col gap-2"
         group="list"
         :animation="150"
         :item-key="'uuid'"
@@ -136,7 +138,6 @@
 <script setup lang="ts">
 import ImportSettings from '@/components/common/ImportSettings.vue'
 import TextInput from '@/components/common/TextInput.vue'
-import EditBackendModal from '@/components/settings/EditBackendModal.vue'
 import LanguageSelect from '@/components/settings/LanguageSelect.vue'
 import { ROUTE_NAME } from '@/constant'
 import { showNotification } from '@/helper/notification'
@@ -152,6 +153,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import { reactive, ref, watch } from 'vue'
 import Draggable from 'vuedraggable'
+import EditBackendModal from '../components/settings/EditBackendModal.vue'
 
 const form = reactive({
   protocol: 'http',

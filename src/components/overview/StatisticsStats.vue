@@ -5,8 +5,12 @@
       :key="stat"
       :class="className.item"
     >
-      <div :class="className.label">{{ $t(stat) }}</div>
-      <div :class="className.value">{{ statisticsMap[stat] }}</div>
+      <div :class="className.label">
+        {{ $t(stat) }}
+      </div>
+      <div :class="className.value">
+        {{ statisticsMap[stat] }}
+      </div>
     </div>
   </div>
 </template>

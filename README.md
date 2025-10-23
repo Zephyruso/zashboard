@@ -78,20 +78,25 @@ docker run -d -p 80:80 ghcr.io/zephyruso/zashboard:latest
 http://host:port/#/setup?hostname=ipordomain&port=9090&secret=123456
 
 1. **`http` / `https`**
+
    - Determines the protocol (`http` or `https`).
    - Default: current page protocol
 
 2. **`hostname`**
+
    - The Clash API's IP or domain.
 
 3. **`port`**
+
    - The Clash API port.
 
 4. **`secondaryPath`**
+
    - Optional path appended to the base URL.
    - Default: An empty string.
 
 5. **`secret`**
+
    - Password for authentication.
 
 6. **`disableUpgradeCore`**

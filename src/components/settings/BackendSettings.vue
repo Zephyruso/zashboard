@@ -7,8 +7,8 @@
           v-if="isCoreUpdateAvailable"
           class="indicator-item top-1 -right-1 flex"
         >
-          <span class="bg-secondary absolute h-2 w-2 animate-ping rounded-full"></span>
-          <span class="bg-secondary h-2 w-2 rounded-full"></span>
+          <span class="bg-secondary absolute h-2 w-2 animate-ping rounded-full" />
+          <span class="bg-secondary h-2 w-2 rounded-full" />
         </span>
         <a
           class="flex cursor-pointer items-center gap-2"
@@ -25,21 +25,19 @@
       </div>
     </div>
     <div class="card-body gap-4">
-      <BackendSwitch />
-
       <template v-if="!isSingBox && configs">
         <div class="divider"></div>
         <div class="grid max-w-3xl grid-cols-2 gap-2 lg:grid-cols-3">
           <div
-            class="flex items-center gap-2"
             v-for="portConfig in portList"
             :key="portConfig.key"
+            class="flex items-center gap-2"
           >
             <span class="shrink-0"> {{ $t(portConfig.label) }} </span>
             <input
+              v-model="configs[portConfig.key as keyof Config]"
               class="input input-sm w-20 sm:w-24"
               type="number"
-              v-model="configs[portConfig.key as keyof Config]"
               @change="
                 updateConfigs({ [portConfig.key]: Number(configs[portConfig.key as keyof Config]) })
               "
@@ -48,23 +46,23 @@
         </div>
         <div class="grid max-w-3xl grid-cols-2 gap-2 lg:grid-cols-4">
           <div
-            class="flex items-center gap-2"
             v-if="configs?.tun"
+            class="flex items-center gap-2"
           >
             {{ $t('tunMode') }}
             <input
+              v-model="configs.tun.enable"
               class="toggle"
               type="checkbox"
-              v-model="configs.tun.enable"
               @change="hanlderTunModeChange"
             />
           </div>
           <div class="flex items-center gap-2">
             {{ $t('allowLan') }}
             <input
+              v-model="configs['allow-lan']"
               class="toggle"
               type="checkbox"
-              v-model="configs['allow-lan']"
               @change="handlerAllowLanChange"
             />
           </div>
@@ -72,21 +70,21 @@
             <div class="flex items-center gap-2">
               {{ $t('checkUpgrade') }}
               <input
+                v-model="checkUpgradeCore"
                 class="toggle"
                 type="checkbox"
-                v-model="checkUpgradeCore"
                 @change="handlerCheckUpgradeCoreChange"
               />
             </div>
             <div
-              class="flex items-center gap-2"
               v-if="checkUpgradeCore"
+              class="flex items-center gap-2"
             >
               {{ $t('autoUpgrade') }}
               <input
+                v-model="autoUpgradeCore"
                 class="toggle"
                 type="checkbox"
-                v-model="autoUpgradeCore"
               />
             </div>
           </template>
@@ -160,7 +158,7 @@
           {{ $t('flushSmartWeights') }}
         </button>
       </div>
-      <div class="divider"></div>
+      <div class="divider" />
       <DnsQuery />
     </div>
     <UpgradeCoreModal v-model="showUpgradeCoreModal" />
@@ -179,9 +177,7 @@ import {
   updateGeoDataAPI,
 } from '@/api'
 import BackendVersion from '@/components/common/BackendVersion.vue'
-import BackendSwitch from '@/components/settings/BackendSwitch.vue'
 import DnsQuery from '@/components/settings/DnsQuery.vue'
-import { showNotification } from '@/helper/notification'
 import { configs, fetchConfigs, updateConfigs } from '@/store/config'
 import { fetchProxies, hasSmartGroup } from '@/store/proxies'
 import { fetchRules } from '@/store/rules'
@@ -189,6 +185,7 @@ import { autoUpgradeCore, checkUpgradeCore, displayAllFeatures } from '@/store/s
 import { activeBackend } from '@/store/setup'
 import type { Config } from '@/types'
 import { ref } from 'vue'
+import { showNotification } from '../../helper/notification'
 import UpgradeCoreModal from './UpgradeCoreModal.vue'
 
 const portList = [

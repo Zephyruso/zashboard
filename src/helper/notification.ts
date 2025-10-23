@@ -37,7 +37,7 @@ const resumeTimer = (alertKey: string) => {
     alertData.timer = setTimeout(() => {
       alertMap.delete(alertKey)
       alertData.alert.remove()
-    }, alertData.remainingTime)
+    }, alertData.remainingTime) as unknown as number
     alertData.progressBar.style.animationPlayState = 'running'
   }
 }
@@ -61,7 +61,7 @@ const setTimer = (
         alertMap.delete(alertKey)
       }
       alert.remove()
-    }, timeout)
+    }, timeout) as unknown as number
   }
 
   if (alertKey && progressBar) {

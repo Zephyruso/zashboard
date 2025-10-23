@@ -1,6 +1,6 @@
 import type { Backend } from '@/types'
 import { useStorage } from '@vueuse/core'
-import { isEqual, omit } from 'lodash'
+import { isEqual, omit } from 'lodash-es'
 import { v4 as uuid } from 'uuid'
 import { computed } from 'vue'
 import { sourceIPLabelList } from './settings'

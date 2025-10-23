@@ -9,8 +9,8 @@
         <div class="flex items-center gap-2">
           {{ $t('autoDisconnectIdleUDP') }}
           <input
-            type="checkbox"
             v-model="autoDisconnectIdleUDP"
+            type="checkbox"
             class="toggle"
           />
           <QuestionMarkCircleIcon
@@ -19,22 +19,22 @@
           />
         </div>
         <div
-          class="flex items-center gap-2"
           v-if="autoDisconnectIdleUDP"
+          class="flex items-center gap-2"
         >
           {{ $t('autoDisconnectIdleUDPTime') }}
           <input
+            v-model="autoDisconnectIdleUDPTime"
             type="number"
             class="input input-sm w-20"
-            v-model="autoDisconnectIdleUDPTime"
           />
           mins
         </div>
         <div class="flex items-center gap-2">
           {{ $t('IPInfoAPI') }}
           <select
-            class="select select-sm min-w-24"
             v-model="IPInfoAPI"
+            class="select select-sm min-w-24"
           >
             <option
               v-for="opt in Object.values(IP_INFO_API)"
@@ -53,35 +53,35 @@
         <div class="flex items-center gap-2 md:hidden">
           {{ $t('scrollAnimationEffect') }}
           <input
-            type="checkbox"
             v-model="scrollAnimationEffect"
+            type="checkbox"
             class="toggle"
           />
         </div>
         <div class="flex items-center gap-2 md:hidden">
           {{ $t('swipeInPages') }}
           <input
-            type="checkbox"
             v-model="swipeInPages"
+            type="checkbox"
             class="toggle"
           />
         </div>
         <div
-          class="flex items-center gap-2 md:hidden"
           v-if="swipeInPages"
+          class="flex items-center gap-2 md:hidden"
         >
           {{ $t('swipeInTabs') }}
           <input
-            type="checkbox"
             v-model="swipeInTabs"
+            type="checkbox"
             class="toggle"
           />
         </div>
         <div class="flex items-center gap-2 md:hidden">
           {{ $t('disablePullToRefresh') }}
           <input
-            type="checkbox"
             v-model="disablePullToRefresh"
+            type="checkbox"
             class="toggle"
           />
           <QuestionMarkCircleIcon
@@ -90,13 +90,13 @@
           />
         </div>
         <div
-          class="flex items-center gap-2"
           v-if="isSingBox"
+          class="flex items-center gap-2"
         >
           {{ $t('displayAllFeatures') }}
           <input
-            type="checkbox"
             v-model="displayAllFeatures"
+            type="checkbox"
             class="toggle"
           />
           <QuestionMarkCircleIcon

@@ -22,9 +22,9 @@
   </div>
   <div class="flex max-h-96 flex-col gap-1 overflow-y-auto">
     <div
-      class="flex gap-1"
       v-for="item in resultList"
       :key="item.data"
+      class="flex gap-1"
     >
       <div>{{ item.name }}</div>
       :
@@ -36,8 +36,8 @@
     class="flex gap-1"
   >
     <div
-      class="mr-3 flex items-center gap-1"
       v-if="details?.country"
+      class="mr-3 flex items-center gap-1"
     >
       <MapPinIcon class="h-4 w-4 shrink-0" />
       <template v-if="details?.city && details?.city !== details?.country">

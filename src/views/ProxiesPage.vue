@@ -1,8 +1,8 @@
 <template>
   <div
+    ref="proxiesRef"
     class="max-md:scrollbar-hidden h-full p-2 md:pr-1"
     :class="disableProxiesPageScroll ? 'overflow-y-hidden' : 'overflow-y-scroll'"
-    ref="proxiesRef"
     @scroll.passive="handleScroll"
   >
     <template v-if="displayTwoColumns">
@@ -13,8 +13,8 @@
           class="flex flex-1 flex-col gap-1"
         >
           <component
-            v-for="name in filterContent(renderGroups, idx)"
             :is="renderComponent"
+            v-for="name in filterContent(renderGroups, idx)"
             :key="name"
             :name="name"
           />
@@ -22,12 +22,12 @@
       </div>
     </template>
     <div
-      class="grid grid-cols-1 gap-1"
       v-else
+      class="grid grid-cols-1 gap-1"
     >
       <component
-        v-for="name in renderGroups"
         :is="renderComponent"
+        v-for="name in renderGroups"
         :key="name"
         :name="name"
       />

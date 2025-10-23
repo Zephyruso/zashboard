@@ -14,7 +14,6 @@
       :style="cardStyle"
       @contextmenu.prevent.stop="handlerLatencyTest"
       @transitionend="handlerTransitionEnd"
-      ref="cardRef"
     >
       <div class="relative flex h-22 shrink-0 flex-col justify-between p-2">
         <div
@@ -90,15 +89,15 @@
 
 <script setup lang="ts">
 import { useBounceOnVisible } from '@/composables/bouncein'
-import { disableProxiesPageScroll } from '@/composables/proxies'
 import { useRenderProxies } from '@/composables/renderProxies'
 import { isHiddenGroup } from '@/helper'
-import { SCROLLABLE_PARENT_CLASS } from '@/helper/utils'
 import { hiddenGroupMap, proxyGroupLatencyTest, proxyMap } from '@/store/proxies'
 import { blurIntensity, groupProxiesByProvider, manageHiddenGroup } from '@/store/settings'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 import { twMerge } from 'tailwind-merge'
 import { computed, nextTick, ref } from 'vue'
+import { disableProxiesPageScroll } from '../../composables/proxies'
+import { SCROLLABLE_PARENT_CLASS } from '../../helper/utils'
 import LatencyTag from './LatencyTag.vue'
 import ProxiesByProvider from './ProxiesByProvider.vue'
 import ProxiesContent from './ProxiesContent.vue'

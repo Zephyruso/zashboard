@@ -32,13 +32,16 @@ export const uploadTotal = ref(0)
 let cancel: () => void
 let previousConnectionsMap = new Map<string, Connection>()
 
-export const initConnections = () => {
+export const resetConnections = () => {
   cancel?.()
   activeConnections.value = []
   closedConnections.value = []
   downloadTotal.value = 0
   uploadTotal.value = 0
   previousConnectionsMap.clear()
+}
+export const initConnections = () => {
+  resetConnections()
 
   const ws = fetchConnectionsAPI<{
     connections: ConnectionRawMessage[]

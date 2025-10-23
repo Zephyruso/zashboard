@@ -5,7 +5,7 @@ import { proxiesTabShow, proxyProviederList } from '@/store/proxies'
 import { ruleProviderList, rulesTabShow } from '@/store/rules'
 import { swipeInPages, swipeInTabs } from '@/store/settings'
 import { useSwipe } from '@vueuse/core'
-import { flatten } from 'lodash'
+import { flatten } from 'lodash-es'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 

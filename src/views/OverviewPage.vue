@@ -12,7 +12,7 @@
       <TopologyCharts />
     </div>
     <ConnectionHistory />
-    <div class="flex-1"></div>
+    <div class="flex-1" />
     <div class="card items-center justify-center gap-2 p-2 sm:flex-row">
       {{ getLabelFromBackend(activeBackend!) }} :
       <BackendVersion />

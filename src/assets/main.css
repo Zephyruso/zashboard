@@ -159,6 +159,7 @@
     .ctrls-bar,
     .nav-bar,
     .modal-box,
+    .profile-editor,
     .table thead {
       /* prettier-ignore */
       backdrop-filter: blur($(i)px);

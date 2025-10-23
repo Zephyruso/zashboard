@@ -3,8 +3,10 @@ import type { Backend } from '@/types'
 import { useMediaQuery } from '@vueuse/core'
 import dayjs from 'dayjs'
 import prettyBytes, { type Options } from 'pretty-bytes'
+import { ref } from 'vue'
 
 export const isPreferredDark = useMediaQuery('(prefers-color-scheme: dark)')
+export const isDarkTheme = ref(false)
 export const isMiddleScreen = useMediaQuery('(max-width: 768px)')
 export const isPWA = (() => {
   return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone
@@ -17,7 +19,7 @@ export const prettyBytesHelper = (bytes: number, opts?: Options) => {
   })
 }
 
-export const fromNow = (timestamp: string) => {
+export const fromNow = (timestamp: string | number) => {
   return dayjs(timestamp).fromNow()
 }
 

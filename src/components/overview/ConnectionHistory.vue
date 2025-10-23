@@ -7,33 +7,45 @@
     <div class="card-body gap-4">
       <div class="bg-base-200/50 grid grid-cols-1 gap-2 rounded-lg px-4 py-2 lg:grid-cols-3">
         <div class="flex h-14 flex-col items-start justify-center gap-1">
-          <div class="text-sm">{{ $t('mostDownloadHost') }}</div>
+          <div class="text-sm">
+            {{ $t('mostDownloadHost') }}
+          </div>
           <div class="text-base">{{ mostDownloadHost.host }} = {{ mostDownloadHost.download }}</div>
         </div>
         <div class="flex h-14 flex-col items-start justify-center gap-1">
-          <div class="text-sm">{{ $t('mostDownloadSourceIP') }}</div>
+          <div class="text-sm">
+            {{ $t('mostDownloadSourceIP') }}
+          </div>
           <div class="text-base">
             {{ mostDownloadSourceIP.sourceIP }} = {{ mostDownloadSourceIP.download }}
           </div>
         </div>
         <div class="flex h-14 flex-col items-start justify-center gap-1">
-          <div class="text-sm">{{ $t('mostDownloadProxy') }}</div>
+          <div class="text-sm">
+            {{ $t('mostDownloadProxy') }}
+          </div>
           <div class="text-base">
             {{ mostDownloadProxy.proxy }} = {{ mostDownloadProxy.download }}
           </div>
         </div>
         <div class="flex h-14 flex-col items-start justify-center gap-1">
-          <div class="text-sm">{{ $t('mostUploadHost') }}</div>
+          <div class="text-sm">
+            {{ $t('mostUploadHost') }}
+          </div>
           <div class="text-base">{{ mostUploadHost.host }} = {{ mostUploadHost.upload }}</div>
         </div>
         <div class="flex h-14 flex-col items-start justify-center gap-1">
-          <div class="text-sm">{{ $t('mostUploadSourceIP') }}</div>
+          <div class="text-sm">
+            {{ $t('mostUploadSourceIP') }}
+          </div>
           <div class="text-base">
             {{ mostUploadSourceIP.sourceIP }} = {{ mostUploadSourceIP.upload }}
           </div>
         </div>
         <div class="flex h-14 flex-col items-start justify-center gap-1">
-          <div class="text-sm">{{ $t('mostUploadProxy') }}</div>
+          <div class="text-sm">
+            {{ $t('mostUploadProxy') }}
+          </div>
           <div class="text-base">{{ mostUploadProxy.proxy }} = {{ mostUploadProxy.upload }}</div>
         </div>
       </div>

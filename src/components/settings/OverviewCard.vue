@@ -6,10 +6,8 @@
     </div>
     <div
       :class="[
-        'card-body grid grid-cols-1 gap-2',
-        isSidebarCollapsed
-          ? ['md:grid-cols-2', showIPAndConnectionInfo ? 'lg:grid-cols-3' : 'xl:grid-cols-4']
-          : ['lg:grid-cols-2', showIPAndConnectionInfo ? 'xl:grid-cols-3' : '2xl:grid-cols-4'],
+        'card-body grid grid-cols-1 gap-2 lg:grid-cols-2',
+        showIPAndConnectionInfo ? 'xl:grid-cols-3' : '2xl:grid-cols-4',
       ]"
     >
       <StatisticsStats type="settings" />
@@ -31,7 +29,7 @@ import IPCheck from '@/components/overview/IPCheck.vue'
 import MemoryCharts from '@/components/overview/MemoryCharts.vue'
 import SpeedCharts from '@/components/overview/SpeedCharts.vue'
 import StatisticsStats from '@/components/overview/StatisticsStats.vue'
-import { isSidebarCollapsed, showIPAndConnectionInfo } from '@/store/settings'
+import { showIPAndConnectionInfo } from '@/store/settings'
 import { onMounted, ref } from 'vue'
 
 const isMounted = ref(false)

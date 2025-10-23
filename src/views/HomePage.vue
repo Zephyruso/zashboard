@@ -3,8 +3,8 @@
     <SideBar v-if="!isMiddleScreen" />
     <RouterView v-slot="{ Component, route }">
       <div
-        class="flex flex-1 flex-col overflow-hidden"
         ref="swiperRef"
+        class="flex flex-1 flex-col overflow-hidden"
       >
         <div
           v-if="ctrlsMap[route.name as string]"
@@ -20,14 +20,14 @@
         <div class="relative h-0 flex-1">
           <div class="absolute flex h-full w-full flex-col overflow-y-auto">
             <Transition
-              :name="(route.meta.transition as string) || 'fade'"
               v-if="isMiddleScreen"
+              :name="(route.meta.transition as string) || 'fade'"
             >
               <Component :is="Component" />
             </Transition>
             <Component
-              v-else
               :is="Component"
+              v-else
             />
           </div>
         </div>
@@ -43,8 +43,8 @@
             <button
               v-for="r in renderRoutes"
               :key="r"
-              @click="router.push({ name: r })"
               :class="r === route.name && 'dock-active'"
+              @click="router.push({ name: r })"
             >
               <component
                 :is="ROUTE_ICON_MAP[r]"
@@ -60,9 +60,9 @@
     </RouterView>
 
     <DialogWrapper v-model="autoSwitchBackendDialog">
-      <div>
+      <h3 class="text-lg font-bold">
         {{ $t('currentBackendUnavailable') }}
-      </div>
+      </h3>
       <div class="flex justify-end gap-2">
         <button
           class="btn btn-sm"
@@ -89,7 +89,6 @@ import LogsCtrl from '@/components/sidebar/LogsCtrl.tsx'
 import ProxiesCtrl from '@/components/sidebar/ProxiesCtrl.tsx'
 import RulesCtrl from '@/components/sidebar/RulesCtrl.tsx'
 import SideBar from '@/components/sidebar/SideBar.vue'
-import { useSettings } from '@/composables/settings'
 import { useSwipeRouter } from '@/composables/swipe'
 import { PROXY_TAB_TYPE, ROUTE_ICON_MAP, ROUTE_NAME, RULE_TAB_TYPE } from '@/constant'
 import { renderRoutes } from '@/helper'
@@ -101,12 +100,16 @@ import { initLogs } from '@/store/logs'
 import { initSatistic } from '@/store/overview'
 import { fetchProxies, proxiesTabShow } from '@/store/proxies'
 import { fetchRules, rulesTabShow } from '@/store/rules'
-import { useConnectionCard } from '@/store/settings'
 import { activeBackend, activeUuid, backendList } from '@/store/setup'
 import type { Backend } from '@/types'
 import { useDocumentVisibility, useElementSize } from '@vueuse/core'
 import { computed, ref, watch, type Component } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
+import { resetConnections } from '../store/connections'
+import { resetLogs } from '../store/logs'
+import { resetStatistic } from '../store/overview'
+import { useConnectionCard } from '../store/settings'
+import { isCoreRunning } from '../store/status'
 
 const ctrlsMap: Record<string, Component> = {
   [ROUTE_NAME.connections]: ConnectionCtrl,
@@ -133,9 +136,14 @@ const isLargeCtrlsBar = computed(() => {
 })
 
 watch(
-  activeUuid,
+  isCoreRunning,
   () => {
-    if (!activeUuid.value) return
+    if (!isCoreRunning.value) {
+      resetStatistic()
+      resetConnections()
+      resetLogs()
+      return
+    }
     rulesTabShow.value = RULE_TAB_TYPE.RULES
     proxiesTabShow.value = PROXY_TAB_TYPE.PROXIES
     fetchConfigs()
@@ -215,11 +223,7 @@ watch(
 )
 
 watch(documentVisible, () => {
-  if (documentVisible.value !== 'visible') return
+  if (documentVisible.value !== 'visible' || !isCoreRunning.value) return
   fetchProxies()
 })
-
-const { checkUIUpdate } = useSettings()
-
-checkUIUpdate()
 </script>

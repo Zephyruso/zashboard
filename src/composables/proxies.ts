@@ -4,7 +4,7 @@ import { isHiddenGroup } from '@/helper'
 import { configs } from '@/store/config'
 import { proxiesTabShow, proxyGroupList, proxyMap, proxyProviederList } from '@/store/proxies'
 import { customGlobalNode, displayGlobalByMode, manageHiddenGroup } from '@/store/settings'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { computed, ref } from 'vue'
 
 const filterGroups = (all: string[]) => {

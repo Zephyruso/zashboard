@@ -21,6 +21,7 @@
         {{ title }}
         <slot name="title-right"></slot>
         <form
+          v-if="!noCloseButton"
           method="dialog"
           class="-mr-1"
         >
@@ -33,7 +34,7 @@
         v-if="isOpen"
         class="max-h-[90dvh] overflow-y-auto p-4 max-md:max-h-[70dvh]"
       >
-        <slot></slot>
+        <slot />
       </div>
     </div>
   </dialog>
@@ -46,7 +47,7 @@ import { ref, watch } from 'vue'
 
 const modalRef = ref<HTMLDialogElement>()
 const isOpen = defineModel<boolean>()
-defineProps<{ noPadding?: boolean; boxClass?: string; title?: string }>()
+defineProps<{ noPadding?: boolean; boxClass?: string; title?: string; noCloseButton?: boolean }>()
 
 watch(isOpen, (value) => {
   if (value) {

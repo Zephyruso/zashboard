@@ -109,7 +109,6 @@ import { toggleRuleDisabledAPI, updateRuleProviderAPI } from '@/api'
 import { useBounceOnVisible } from '@/composables/bouncein'
 import { NOT_CONNECTED } from '@/constant'
 import { getColorForLatency } from '@/helper'
-import { useTooltip } from '@/helper/tooltip'
 import {
   getLatencyByName,
   getNowProxyNodeName,
@@ -128,6 +127,7 @@ import {
 import { twMerge } from 'tailwind-merge'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useTooltip } from '../../helper/tooltip'
 import ProxyGroup from '../proxies/ProxyGroup.vue'
 import ProxyName from '../proxies/ProxyName.vue'
 

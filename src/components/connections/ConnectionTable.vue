@@ -54,15 +54,14 @@
                   v-if="!header.isPlaceholder"
                   :render="header.column.columnDef.header"
                   :props="header.getContext()"
-                >
-                </FlexRender>
+                />
                 <ArrowUpCircleIcon
-                  class="h-4 w-4"
                   v-if="header.column.getIsSorted() === 'asc'"
+                  class="h-4 w-4"
                 />
                 <ArrowDownCircleIcon
-                  class="h-4 w-4"
                   v-if="header.column.getIsSorted() === 'desc'"
+                  class="h-4 w-4"
                 />
                 <div>
                   <button
@@ -100,11 +99,11 @@
               </div>
               <div
                 v-if="isManualTable"
+                class="resizer bg-neutral absolute top-0 right-0 h-full w-1 cursor-ew-resize"
                 @dblclick="() => header.column.resetSize()"
                 @click.stop
                 @mousedown.stop="(e) => header.getResizeHandler()(e)"
                 @touchstart.stop="(e) => header.getResizeHandler()(e)"
-                class="resizer bg-neutral absolute top-0 right-0 h-full w-1 cursor-ew-resize"
               />
             </th>
           </tr>

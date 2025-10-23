@@ -10,8 +10,8 @@
       :data="renderLogs"
       :size="isMiddleScreen ? 96 : 64"
     >
-      <template v-slot="{ item }: { item: LogWithSeq }">
-        <LogsCard :log="item"></LogsCard>
+      <template #default="{ item }: { item: LogWithSeq }">
+        <LogsCard :log="item" />
       </template>
     </VirtualScroller>
   </div>

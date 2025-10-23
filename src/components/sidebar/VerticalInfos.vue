@@ -21,23 +21,14 @@
       </div>
     </div>
 
-    <div class="flex flex-col items-center justify-center">
-      <button
-        class="btn btn-circle btn-sm"
-        @click="isSidebarCollapsed = false"
-      >
-        <ArrowRightCircleIcon class="h-5 w-5" />
-      </button>
-    </div>
+    <div class="flex flex-col items-center justify-center"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { STATISTICS_TYPE, statisticsMap } from '@/composables/statistics'
-import { isSidebarCollapsed } from '@/store/settings'
 import {
   ArrowDownCircleIcon,
-  ArrowRightCircleIcon,
   ArrowsRightLeftIcon,
   ArrowUpCircleIcon,
   CpuChipIcon,

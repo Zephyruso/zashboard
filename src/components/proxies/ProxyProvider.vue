@@ -1,6 +1,6 @@
 <template>
   <CollapseCard :name="proxyProvider.name">
-    <template v-slot:title>
+    <template #title>
       <div class="flex items-center justify-between gap-2">
         <div class="text-xl font-medium">
           {{ proxyProvider.name }}
@@ -14,7 +14,7 @@
             <span
               v-if="isHealthChecking"
               class="loading loading-spinner loading-xs"
-            ></span>
+            />
             <BoltIcon
               v-else
               class="h-4 w-4"
@@ -43,7 +43,7 @@
         <div>{{ $t('updated') }} {{ fromNow(proxyProvider.updatedAt) }}</div>
       </div>
     </template>
-    <template v-slot:preview>
+    <template #preview>
       <ProxyPreview :nodes="renderProxies" />
     </template>
     <template v-slot:content>
@@ -63,7 +63,7 @@ import { fromNow, prettyBytesHelper } from '@/helper/utils'
 import { fetchProxies, proxyProviederList } from '@/store/proxies'
 import { ArrowPathIcon, BoltIcon } from '@heroicons/vue/24/outline'
 import dayjs from 'dayjs'
-import { toFinite } from 'lodash'
+import { toFinite } from 'lodash-es'
 import { twMerge } from 'tailwind-merge'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'

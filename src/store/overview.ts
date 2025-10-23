@@ -16,12 +16,19 @@ export const uploadSpeedHistory = ref([...initValue])
 
 let cancel: () => void
 
-export const initSatistic = () => {
+export const resetStatistic = () => {
   cancel?.()
-
+  memory.value = 0
+  downloadSpeed.value = 0
+  uploadSpeed.value = 0
   downloadSpeedHistory.value = [...initValue]
   uploadSpeedHistory.value = [...initValue]
   memoryHistory.value = [...initValue]
+  connectionsHistory.value = [...initValue]
+}
+
+export const initSatistic = () => {
+  resetStatistic()
 
   const { data: memoryWsData, close: memoryWsClose } = fetchMemoryAPI<{
     inuse: number

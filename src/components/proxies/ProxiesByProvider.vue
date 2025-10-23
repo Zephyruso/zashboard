@@ -77,8 +77,8 @@ const truncatedProxies = computed(() => {
       :key="index"
     >
       <p
-        class="my-2 text-sm font-semibold"
         v-if="providerName !== ''"
+        class="my-2 text-sm font-semibold"
       >
         {{ providerName }}
       </p>

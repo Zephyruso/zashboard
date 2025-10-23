@@ -3,7 +3,7 @@ import { LOG_LEVEL } from '@/constant'
 import type { Log, LogWithSeq } from '@/types'
 import { useStorage } from '@vueuse/core'
 import dayjs from 'dayjs'
-import { throttle } from 'lodash'
+import { throttle } from 'lodash-es'
 import { ref, watch } from 'vue'
 import { logRetentionLimit, sourceIPLabelList } from './settings'
 import { activeBackend } from './setup'
@@ -45,10 +45,14 @@ watch(
   },
 )
 
-export const initLogs = () => {
+export const resetLogs = () => {
   cancel?.()
   logs.value = []
   logsTemp = []
+}
+
+export const initLogs = () => {
+  resetLogs()
 
   let idx = 1
   const ws = fetchLogsAPI<Log>({

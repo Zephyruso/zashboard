@@ -46,11 +46,11 @@
         </div>
       </div>
     </template>
-    <template v-slot:preview>
+    <template #preview>
       <ProxyPreview
         :nodes="renderProxies"
         :now="proxyGroup.now"
-        :groupName="proxyGroup.name"
+        :group-name="proxyGroup.name"
         @nodeclick="handlerProxySelect(name, $event)"
       />
     </template>

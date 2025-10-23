@@ -1,48 +1,38 @@
 <template>
-  <!-- dashboard -->
   <div class="card">
     <div class="card-title px-4 pt-4">
-      <div class="indicator">
-        <span
-          v-if="isUIUpdateAvailable"
-          class="indicator-item top-1 -right-1 flex"
-        >
-          <span class="bg-secondary absolute h-2 w-2 animate-ping rounded-full"></span>
-          <span class="bg-secondary h-2 w-2 rounded-full"></span>
-        </span>
-        <a
-          href="https://github.com/Zephyruso/zashboard"
-          target="_blank"
-        >
-          <span> zashboard </span>
-          <span class="text-sm font-normal">
-            {{ zashboardVersion }}
-            <span
-              v-if="commitId"
-              class="text-xs"
-            >
-              {{ commitId }}
-            </span>
-          </span>
-        </a>
-      </div>
-      <button
-        class="btn btn-sm absolute top-2 right-2"
-        @click="refreshPages"
-        v-if="isPWA"
+      <a
+        href="https://github.com/Zephyruso/Pantheon"
+        target="_blank"
       >
-        {{ $t('refresh') }}
-        <ArrowPathIcon class="h-4 w-4" />
-      </button>
+        <span> Pantheon v{{ appVersion }} </span>
+      </a>
     </div>
     <div class="card-body gap-4">
       <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+        <div class="flex items-center gap-2">
+          {{ $t('autoLaunch') }}
+          <input
+            v-model="isAutoLaunchEnabled"
+            type="checkbox"
+            class="toggle"
+            @click="toggleAutoLaunch"
+          />
+        </div>
+        <div class="flex items-center gap-2">
+          {{ $t('autoSystemProxy') }}
+          <input
+            v-model="autoSystemProxy"
+            type="checkbox"
+            class="toggle"
+          />
+        </div>
         <LanguageSelect />
         <div class="flex items-center gap-2">
           {{ $t('autoSwitchTheme') }}
           <input
-            type="checkbox"
             v-model="autoTheme"
+            type="checkbox"
             class="toggle"
           />
         </div>
@@ -60,8 +50,8 @@
           <CustomTheme v-model:value="customThemeModal" />
         </div>
         <div
-          class="flex items-center gap-2"
           v-if="autoTheme"
+          class="flex items-center gap-2"
         >
           {{ $t('darkTheme') }}
           <ThemeSelector v-model:value="darkTheme" />
@@ -69,8 +59,8 @@
         <div class="flex items-center gap-2">
           {{ $t('fonts') }}
           <select
-            class="select select-sm w-48"
             v-model="font"
+            class="select select-sm w-48"
           >
             <option
               v-for="opt in fontOptions"
@@ -100,10 +90,10 @@
           <span class="shrink-0"> {{ $t('customBackgroundURL') }} </span>
           <div class="join">
             <TextInput
-              class="join-item w-48"
               v-model="customBackgroundURL"
+              class="join-item w-48"
               :clearable="true"
-              @update:modelValue="handlerBackgroundURLChange"
+              @update:model-value="handlerBackgroundURLChange"
             />
             <button
               class="btn join-item btn-sm"
@@ -113,8 +103,8 @@
             </button>
           </div>
           <button
-            class="btn btn-circle join-item btn-sm"
             v-if="customBackgroundURL"
+            class="btn btn-circle join-item btn-sm"
             @click="displayBgProperty = !displayBgProperty"
           >
             <AdjustmentsHorizontalIcon class="h-4 w-4" />
@@ -131,10 +121,10 @@
           <div class="flex items-center gap-2">
             {{ $t('transparent') }}
             <input
+              v-model="dashboardTransparent"
               type="range"
               min="0"
               max="100"
-              v-model="dashboardTransparent"
               class="range max-w-64"
               @touchstart.passive.stop
               @touchmove.passive.stop
@@ -145,10 +135,10 @@
           <div class="flex items-center gap-2">
             {{ $t('blurIntensity') }}
             <input
+              v-model="blurIntensity"
               type="range"
               min="0"
               max="40"
-              v-model="blurIntensity"
               class="range max-w-64"
               @touchstart.stop
               @touchmove.stop
@@ -156,24 +146,20 @@
             />
           </div>
         </template>
-        <div class="flex items-center gap-2">
-          {{ $t('autoUpgrade') }}
-          <input
-            class="toggle"
-            type="checkbox"
-            v-model="autoUpgrade"
-          />
-        </div>
       </div>
       <div class="grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">
         <button
-          :class="twMerge('btn btn-primary btn-sm', isUIUpgrading ? 'animate-pulse' : '')"
-          @click="handlerClickUpgradeUI"
+          class="btn btn-sm"
+          @click="handlerClickClearRuntimeDir"
         >
-          {{ $t('upgradeUI') }}
+          {{ $t('clearRuntimeDir') }}
         </button>
-        <div class="sm:hidden"></div>
-
+        <button
+          class="btn btn-sm"
+          @click="showCoreUpdateModal = true"
+        >
+          {{ $t('updateCore') }}
+        </button>
         <button
           class="btn btn-sm"
           @click="exportSettings"
@@ -184,19 +170,19 @@
       </div>
     </div>
   </div>
+
+  <CoreUpdateModal v-model="showCoreUpdateModal" />
 </template>
 
 <script setup lang="ts">
-import { upgradeUIAPI, zashboardVersion } from '@/api'
+import { clearRuntimeDirAPI, disableAutoLaunchAPI, enableAutoLaunchAPI } from '@/api/ipc-invoke'
 import LanguageSelect from '@/components/settings/LanguageSelect.vue'
-import { useSettings } from '@/composables/settings'
 import { EMOJIS, FONTS } from '@/constant'
-import { handlerUpgradeSuccess } from '@/helper'
 import { deleteBase64FromIndexedDB, LOCAL_IMAGE, saveBase64ToIndexedDB } from '@/helper/indexeddb'
-import { exportSettings, isPWA } from '@/helper/utils'
+import { exportSettings } from '@/helper/utils'
 import {
+  autoSystemProxy,
   autoTheme,
-  autoUpgrade,
   blurIntensity,
   customBackgroundURL,
   darkTheme,
@@ -205,22 +191,19 @@ import {
   emoji,
   font,
 } from '@/store/settings'
-import {
-  AdjustmentsHorizontalIcon,
-  ArrowPathIcon,
-  ArrowUpTrayIcon,
-  PlusIcon,
-} from '@heroicons/vue/24/outline'
-import { twMerge } from 'tailwind-merge'
+import { isAutoLaunchEnabled } from '@/store/status'
+import { AdjustmentsHorizontalIcon, ArrowUpTrayIcon, PlusIcon } from '@heroicons/vue/24/outline'
 import { computed, ref, watch } from 'vue'
 import ImportSettings from '../common/ImportSettings.vue'
 import TextInput from '../common/TextInput.vue'
+import CoreUpdateModal from '../modals/CoreUpdateModal.vue'
 import CustomTheme from './CustomTheme.vue'
 import ThemeSelector from './ThemeSelector.vue'
 
 const customThemeModal = ref(false)
 const displayBgProperty = ref(false)
-const commitId = __COMMIT_ID__
+const appVersion = __APP_VERSION__
+const showCoreUpdateModal = ref(false)
 
 watch(customBackgroundURL, (value) => {
   if (value) {
@@ -250,39 +233,24 @@ const handlerFileChange = (e: Event) => {
 }
 
 const fontOptions = computed(() => {
-  const mode = import.meta.env.MODE
-
-  if (Object.values(FONTS).includes(mode as FONTS)) {
-    return [mode]
-  }
-
   return Object.values(FONTS)
 })
 
-const { isUIUpdateAvailable } = useSettings()
-
-const isUIUpgrading = ref(false)
-const handlerClickUpgradeUI = async () => {
-  if (isUIUpgrading.value) return
-  isUIUpgrading.value = true
+const handlerClickClearRuntimeDir = async () => {
   try {
-    await upgradeUIAPI()
-    isUIUpgrading.value = false
-    handlerUpgradeSuccess()
-    setTimeout(() => {
-      window.location.reload()
-    }, 1000)
-  } catch {
-    isUIUpgrading.value = false
+    await clearRuntimeDirAPI()
+  } catch (error) {
+    console.error('Failed to clear runtime directory:', error)
   }
 }
 
-const refreshPages = async () => {
-  const registrations = await navigator.serviceWorker.getRegistrations()
-
-  for (const registration of registrations) {
-    registration.unregister()
+const toggleAutoLaunch = async (e: Event) => {
+  e.preventDefault()
+  e.stopPropagation()
+  if (!isAutoLaunchEnabled.value) {
+    await enableAutoLaunchAPI()
+  } else {
+    await disableAutoLaunchAPI()
   }
-  window.location.reload()
 }
 </script>

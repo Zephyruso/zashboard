@@ -2,8 +2,8 @@
   <div class="flex items-center gap-2">
     {{ $t('language') }}
     <select
-      class="select select-sm w-48"
       v-model="language"
+      class="select select-sm w-48"
       @change="() => (i18n.global.locale = language)"
     >
       <option

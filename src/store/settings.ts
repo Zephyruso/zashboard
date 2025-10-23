@@ -17,7 +17,7 @@ import {
   TEST_URL,
   type THEME,
 } from '@/constant'
-import { getMinCardWidth, isMiddleScreen, isPreferredDark } from '@/helper/utils'
+import { getMinCardWidth, isPreferredDark } from '@/helper/utils'
 import type { SourceIPLabel } from '@/types'
 import { useStorage } from '@vueuse/core'
 import { computed } from 'vue'
@@ -41,26 +41,10 @@ export const language = useStorage<LANG>(
     ? (navigator.language as LANG)
     : LANG.EN_US,
 )
-export const isSidebarCollapsedConfig = useStorage('config/is-sidebar-collapsed', true)
-export const isSidebarCollapsed = computed({
-  get: () => {
-    if (isMiddleScreen.value) {
-      return true
-    }
 
-    return isSidebarCollapsedConfig.value
-  },
-  set: (value) => {
-    isSidebarCollapsedConfig.value = value
-  },
-})
 const fontConfig = useStorage<FONTS>('config/font', FONTS.MI_SANS)
 export const font = computed({
   get: () => {
-    const mode = import.meta.env.MODE
-    if (Object.values(FONTS).includes(mode as FONTS)) {
-      return mode as FONTS
-    }
     return fontConfig.value
   },
   set: (val) => {
@@ -85,6 +69,7 @@ export const scrollAnimationEffect = useStorage('config/scroll-animation-effect'
 export const IPInfoAPI = useStorage('config/geoip-info-api', IP_INFO_API.IPSB)
 export const autoDisconnectIdleUDP = useStorage('config/auto-disconnect-idle-udp', false)
 export const autoDisconnectIdleUDPTime = useStorage('config/auto-disconnect-idle-udp-time', 300)
+export const autoSystemProxy = useStorage('config/auto-system-proxy', false)
 
 // overview
 export const splitOverviewPage = useStorage('config/split-overview-page', false)
@@ -104,7 +89,7 @@ export const displayConnectionTopology = useStorage('config/display-connection-t
 // proxies
 export const collapseGroupMap = useStorage<Record<string, boolean>>('config/collapse-group-map', {})
 export const displayFinalOutbound = useStorage('config/show-seleted-for-now-node', false)
-export const twoColumnProxyGroup = useStorage('config/two-columns', true)
+export const twoColumnProxyGroup = useStorage('config/two-columns', false)
 export const speedtestUrl = useStorage<string>('config/speedtest-url', TEST_URL)
 export const independentLatencyTest = useStorage('config/independent-latency-test', false)
 export const speedtestTimeout = useStorage<number>('config/speedtest-timeout', 5000)
@@ -166,7 +151,6 @@ export const connectionTableColumns = useStorage<CONNECTIONS_TABLE_ACCESSOR_KEY[
     CONNECTIONS_TABLE_ACCESSOR_KEY.Close,
     CONNECTIONS_TABLE_ACCESSOR_KEY.Host,
     CONNECTIONS_TABLE_ACCESSOR_KEY.Type,
-    CONNECTIONS_TABLE_ACCESSOR_KEY.Rule,
     CONNECTIONS_TABLE_ACCESSOR_KEY.Chains,
     CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed,
     CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed,

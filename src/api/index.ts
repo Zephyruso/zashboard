@@ -1,8 +1,5 @@
-import { ROUTE_NAME } from '@/constant'
 import { showNotification } from '@/helper/notification'
 import { getUrlFromBackend } from '@/helper/utils'
-import router from '@/router'
-import { autoUpgradeCore, checkUpgradeCore } from '@/store/settings'
 import { activeBackend, activeUuid } from '@/store/setup'
 import type {
   Backend,
@@ -15,9 +12,11 @@ import type {
   RuleProvider,
 } from '@/types'
 import axios, { AxiosError } from 'axios'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import ReconnectingWebSocket from 'reconnectingwebsocket'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref } from 'vue'
+import { CORE_VERSION } from '../../../shared/event'
+import { addMessageListener } from './ipc-message'
 
 axios.interceptors.request.use((config) => {
   config.baseURL = getUrlFromBackend(activeBackend.value!)
@@ -35,12 +34,9 @@ axios.interceptors.response.use(
     }>,
   ) => {
     if (error.status === 401 && activeUuid.value) {
-      const currentBackendUuid = activeUuid.value
-      activeUuid.value = null
-      router.push({
-        name: ROUTE_NAME.setup,
-        query: { editBackend: currentBackendUuid },
-      })
+      // removeBackend(activeUuid.value)
+      // activeUuid.value = null
+      // router.push({ name: ROUTE_NAME.setup })
       nextTick(() => {
         showNotification({ content: 'unauthorizedTip' })
       })
@@ -61,30 +57,13 @@ axios.interceptors.response.use(
 
 export const version = ref()
 export const isCoreUpdateAvailable = ref(false)
-export const fetchVersionAPI = () => {
-  return axios.get<{ version: string }>('/version')
-}
-export const isSingBox = computed(() => version.value?.includes('sing-box'))
+
+addMessageListener(CORE_VERSION, (value: string) => {
+  version.value = value
+})
+
+export const isSingBox = computed(() => true)
 export const zashboardVersion = ref(__APP_VERSION__)
-
-watch(
-  activeBackend,
-  async (val) => {
-    if (val) {
-      const { data } = await fetchVersionAPI()
-
-      version.value = data?.version || ''
-      if (isSingBox.value || !checkUpgradeCore.value || activeBackend.value?.disableUpgradeCore)
-        return
-      isCoreUpdateAvailable.value = await fetchBackendUpdateAvailableAPI()
-
-      if (isCoreUpdateAvailable.value && autoUpgradeCore.value) {
-        upgradeCoreAPI('auto')
-      }
-    }
-  },
-  { immediate: true },
-)
 
 export const fetchProxiesAPI = () => {
   return axios.get<{ proxies: Record<string, Proxy> }>('/proxies')

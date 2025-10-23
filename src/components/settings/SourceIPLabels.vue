@@ -25,8 +25,8 @@
       <div class="flex flex-col gap-2">
         <Draggable
           v-if="dialogVisible"
-          class="flex flex-1 flex-col gap-2"
           v-model="sourceIPLabelList"
+          class="flex flex-1 flex-col gap-2"
           group="list"
           :animation="150"
           :handle="'.drag-handle'"

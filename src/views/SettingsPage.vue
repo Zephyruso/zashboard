@@ -1,6 +1,6 @@
 <template>
   <div class="grid grid-cols-1 gap-2 overflow-x-hidden p-2">
-    <ZashboardSettings />
+    <PantheonSettings />
     <OverviewCard v-if="!splitOverviewPage" />
     <BackendSettings />
     <GeneralSettings />
@@ -19,8 +19,8 @@ import ConnectionsSettings from '@/components/settings/ConnectionsSettings.vue'
 import GeneralSettings from '@/components/settings/GeneralSettings.vue'
 import OverviewCard from '@/components/settings/OverviewCard.vue'
 import OverviewSettings from '@/components/settings/OverviewSettings.vue'
+import PantheonSettings from '@/components/settings/PantheonSettings.vue'
 import ProxiesSettings from '@/components/settings/ProxiesSettings.vue'
-import ZashboardSettings from '@/components/settings/ZashboardSettings.vue'
 import { splitOverviewPage } from '@/store/settings'
 import { nextTick, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'

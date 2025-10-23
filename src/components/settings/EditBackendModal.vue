@@ -112,12 +112,12 @@
 import { isBackendAvailable } from '@/api'
 import DialogWrapper from '@/components/common/DialogWrapper.vue'
 import TextInput from '@/components/common/TextInput.vue'
-import { showNotification } from '@/helper/notification'
 import { getLabelFromBackend } from '@/helper/utils'
 import { activeBackend, backendList, updateBackend } from '@/store/setup'
 import type { Backend } from '@/types'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { showNotification } from '../../helper/notification'
 
 interface Props {
   modelValue: boolean

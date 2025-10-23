@@ -30,7 +30,6 @@
             class="flex items-center gap-2"
           >
             <TextInput
-              class="w-32"
               v-model="iconReflect.name"
               :placeholder="$t('groupName')"
             />
@@ -52,8 +51,8 @@
   </div>
   <div class="flex items-center gap-2">
     <TextInput
-      class="w-32"
       v-model="newIconReflect.name"
+      class="w-32"
       placeholder="Name"
       :menus="
         proxyGroupList.filter((group) => !iconReflectList.some((item) => item.name === group))

@@ -7,7 +7,7 @@
       <RuleProvider
         v-for="(ruleProvider, index) in renderRulesProvider"
         :key="ruleProvider.name"
-        :ruleProvider="ruleProvider"
+        :rule-provider="ruleProvider"
         :index="index + 1"
       />
     </template>
@@ -24,9 +24,10 @@
       :data="renderRules"
       :size="64"
     >
-      <template v-slot="{ item: rule }: { item: Rule }">
+      <template #default="{ item: rule }: { item: Rule }">
         <RuleCard
           :key="rule.payload"
+          class="mb-1"
           :rule="rule"
           :index="rules.indexOf(rule) + 1"
         />
