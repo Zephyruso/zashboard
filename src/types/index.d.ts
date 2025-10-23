@@ -163,3 +163,10 @@ export type SourceIPLabel = {
   id: string
   scope?: string[]
 }
+
+// smart core
+export interface NodeRank {
+  Name: string
+  Rank: string
+  Weight: number
+}

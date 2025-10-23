@@ -4,7 +4,16 @@ import { getUrlFromBackend } from '@/helper/utils'
 import router from '@/router'
 import { autoUpgradeCore, checkUpgradeCore } from '@/store/settings'
 import { activeBackend, activeUuid } from '@/store/setup'
-import type { Backend, Config, DNSQuery, Proxy, ProxyProvider, Rule, RuleProvider } from '@/types'
+import type {
+  Backend,
+  Config,
+  DNSQuery,
+  NodeRank,
+  Proxy,
+  ProxyProvider,
+  Rule,
+  RuleProvider,
+} from '@/types'
 import axios, { AxiosError } from 'axios'
 import { debounce } from 'lodash'
 import ReconnectingWebSocket from 'reconnectingwebsocket'
@@ -110,7 +119,7 @@ export const fetchProxyGroupLatencyAPI = (proxyName: string, url: string, timeou
 export const fetchSmartWeightsAPI = () => {
   return axios.get<{
     message: string
-    weights: Record<string, Record<string, string>>
+    weights: Record<string, NodeRank[]>
   }>(`/group/weights`)
 }
 
@@ -118,7 +127,7 @@ export const fetchSmartWeightsAPI = () => {
 export const fetchSmartGroupWeightsAPI = (proxyName: string) => {
   return axios.get<{
     message: string
-    weights: Record<string, string>
+    weights: NodeRank[]
   }>(`/group/${encodeURIComponent(proxyName)}/weights`)
 }
 
