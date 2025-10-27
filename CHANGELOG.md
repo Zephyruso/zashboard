@@ -2,6 +2,23 @@
 
 # Changelog
 
+## [1.108.0](https://github.com/Zephyruso/zashboard/compare/v1.107.0...v1.108.0) (2025-10-27)
+
+
+### Features
+
+* add dark mode favicon and update asset inclusion in Vite configuration ([50a66c3](https://github.com/Zephyruso/zashboard/commit/50a66c3f478cf50942ba1d40751fa38e09fd8353))
+* add toggle functionality for rule disabling in RuleCard component and update API integration ([6e4512d](https://github.com/Zephyruso/zashboard/commit/6e4512dd69dc013701eabfff38a059bca4c3799f))
+* add Traditional Chinese localization support in zh-tw.ts ([5e837d1](https://github.com/Zephyruso/zashboard/commit/5e837d1a55e24fb4b1635fcf2382e0be29197201))
+* adjust smart rank display ([#520](https://github.com/Zephyruso/zashboard/issues/520)) ([7e2b125](https://github.com/Zephyruso/zashboard/commit/7e2b125d77897b47e691fda4e1a1830967f7750a))
+* remove ProxiesCharts component and update to TopologyCharts ([724f444](https://github.com/Zephyruso/zashboard/commit/724f4443f06fa41f50f33fe59ea49d5d2b3d9a45))
+
+
+### Bug Fixes
+
+* improve menu item interaction in TextInput component by adding overflow handling and refining delete functionality ([7010d41](https://github.com/Zephyruso/zashboard/commit/7010d41cc1bd7d11e2f9a1820fc815819f6efbf7))
+* standardize capitalization in English localization strings ([89bdeeb](https://github.com/Zephyruso/zashboard/commit/89bdeeb71834ed509fa6802121724aa635378325))
+
 ## [1.107.0](https://github.com/Zephyruso/zashboard/compare/v1.106.1...v1.107.0) (2025-10-11)
 
 
