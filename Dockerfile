@@ -1,12 +1,9 @@
-FROM --platform=linux/amd64 docker.io/node:alpine AS builder
+FROM --platform=linux/amd64 docker.io/pnpm/pnpm:latest AS builder
 
-ENV HUSKY=0
 WORKDIR /build
 
 COPY . .
 
-RUN corepack enable
-RUN corepack prepare pnpm@latest --activate
 RUN pnpm install
 RUN pnpm build
 
