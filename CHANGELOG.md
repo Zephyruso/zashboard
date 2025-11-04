@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.108.1](https://github.com/Zephyruso/zashboard/compare/v1.108.0...v1.108.1) (2025-11-04)
+
+
+### Bug Fixes
+
+* implement dynamic favicon switching based on color scheme preference for firfox ([005ff49](https://github.com/Zephyruso/zashboard/commit/005ff49a315db6e3668ee4a13d11add78d2bb4ea))
+* update RuleCard component to enhance toggle functionality and adjust checkbox styling; modify HomePage dialog layout ([9e123fc](https://github.com/Zephyruso/zashboard/commit/9e123fca102f88f707fb36e89141bfb8c90b7b9e))
+
 ## [1.108.0](https://github.com/Zephyruso/zashboard/compare/v1.107.0...v1.108.0) (2025-10-28)
 
 
