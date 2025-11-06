@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [2.0.0](https://github.com/Zephyruso/zashboard/compare/v1.108.1...v2.0.0) (2025-11-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* add styles to the dock in a style similar to the new Apple design
+* add styles to the controls in a style similar to the new Apple design
+
+### Features
+
+* add styles to the controls in a style similar to the new Apple design ([11aa106](https://github.com/Zephyruso/zashboard/commit/11aa10611c29413668454074390cae0486d8f3b9))
+* add styles to the dock in a style similar to the new Apple design ([9680744](https://github.com/Zephyruso/zashboard/commit/9680744d11e8558815fb66fc3d879af631b6b906))
+* enhance settings UI by restructuring components for better layout and styling; implement consistent setting item design across various settings pages ([081141e](https://github.com/Zephyruso/zashboard/commit/081141eb9a5b1921304e9b2bf58c552468895b66))
+* simplify SettingsPage layout by replacing inline menu with a dedicated SettingsMenu component; enhance scroll behavior for menu item navigation ([7793ee2](https://github.com/Zephyruso/zashboard/commit/7793ee2910ecffbb5b4095d4424f3dd6e8885ee8))
+
 ## [1.108.1](https://github.com/Zephyruso/zashboard/compare/v1.108.0...v1.108.1) (2025-11-04)
 
 
