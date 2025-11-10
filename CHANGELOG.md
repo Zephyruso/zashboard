@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [2.1.0](https://github.com/Zephyruso/zashboard/compare/v2.0.0...v2.1.0) (2025-11-10)
+
+
+### Features
+
+* enhance ConnectionHistory component with aggregation options and clear history functionality inspired by metacubexd ([b052b83](https://github.com/Zephyruso/zashboard/commit/b052b83c8757d3e3cc6c08629cee3f2f9a2c7cba))
+* implement visibility checks for settings items across multiple components; enhance user experience by conditionally rendering UI elements based on visibility state ([bb6990e](https://github.com/Zephyruso/zashboard/commit/bb6990e8c7b1c2c2cb9cdc1bd963edc011a9326d))
+* implement visibility control for settings items across multiple components; enhance user experience by conditionally rendering settings based on hiddenSettingsItems ([0509244](https://github.com/Zephyruso/zashboard/commit/050924475d7b3a94424d4cb7e43ee7ce82f98979))
+
+
+### Bug Fixes
+
+* add settings-menu and ctrls-bar styles in main.css; update SettingsMenu.vue class for improved styling and functionality ([ec00509](https://github.com/Zephyruso/zashboard/commit/ec00509bd0fca0ae35736dbbdfb3c977f04a0560))
+* adjust setting item height in main.css; conditionally render OverviewCard in OverviewSettings.vue; improve scroll behavior logic in SettingsPage.vue ([d68c581](https://github.com/Zephyruso/zashboard/commit/d68c58180797531842b1c3570eebd61ae9235189))
+
 ## [2.0.0](https://github.com/Zephyruso/zashboard/compare/v1.108.1...v2.0.0) (2025-11-06)
 
 
