@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [2.2.0](https://github.com/Zephyruso/zashboard/compare/v2.1.0...v2.2.0) (2025-11-18)
+
+
+### Features
+
+* add backend selection dialog to sidebar ([9b31df2](https://github.com/Zephyruso/zashboard/commit/9b31df2e78d12f47900304f88b80fd4602732440))
+* add full-screen toggle functionality to TopologyCharts component with responsive chart rendering ([565ea7e](https://github.com/Zephyruso/zashboard/commit/565ea7edb66bb4958d18a5d3c03014e293cc06be))
+
+
+### Bug Fixes
+
+* improve getHostFromConnection function to handle different host scenarios and support IPv6 formatting ([33003b8](https://github.com/Zephyruso/zashboard/commit/33003b851d980ce9becbbfe06c052745fa93257d))
+* make table grouping state persistent ([017cbf9](https://github.com/Zephyruso/zashboard/commit/017cbf9a69c7306e7add1b2b1f9a08dcb6530354))
+
 ## [2.1.0](https://github.com/Zephyruso/zashboard/compare/v2.0.0...v2.1.0) (2025-11-10)
 
 
