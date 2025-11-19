@@ -1,5 +1,13 @@
 @import 'tailwindcss';
+@import url('https://mui.kernelsu.org/internal/insets.css');
 
+body {
+  padding-top: var(--window-inset-top, 0px);
+  padding-bottom: var(--window-inset-bottom, 0px);
+}
+#app{
+  height: calc(100dvh - var(--window-inset-top, 0px)  - var(--window-inset-bottom, 0px))
+}
 @config '../../tailwind.config.ts';
 @plugin 'daisyui' {
   themes: all;
@@ -330,7 +338,8 @@ div {
   @apply bg-base-100/20 shadow-sm backdrop-blur-md;
 }
 .ctrls-bar {
-  @apply fixed top-0 right-0 left-0 z-30 md:sticky;
+  @apply fixed right-0 left-0 z-30 md:sticky;
+  top:var(--window-inset-top, 0px)
 }
 
 .dock {
