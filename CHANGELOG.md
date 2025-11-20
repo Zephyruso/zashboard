@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [2.3.0](https://github.com/Zephyruso/zashboard/compare/v2.2.0...v2.3.0) (2025-11-20)
+
+
+### Features
+
+* add quick filter toggle for connection visibility in ctrl with tooltip updates ([02e4441](https://github.com/Zephyruso/zashboard/commit/02e4441504d1cb1a19bb90bd1b9f5ff1e2844562))
+
 ## [2.2.0](https://github.com/Zephyruso/zashboard/compare/v2.1.0...v2.2.0) (2025-11-18)
 
 
