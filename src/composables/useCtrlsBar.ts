@@ -4,7 +4,8 @@ import { ctrlsBottom } from './paddingViews'
 
 export function useCtrlsBar(width: number = 720) {
   const element = useCurrentElement()
-  const { width: ctrlsBarWidth, bottom: ctrlsBarBottom } = useElementBounding(element)
+  const { width: ctrlsBarWidth, bottom: ctrlsBarBottom, top } = useElementBounding(element)
+
   const isLargeCtrlsBar = computed(() => {
     return ctrlsBarWidth.value > width
   })
@@ -12,7 +13,7 @@ export function useCtrlsBar(width: number = 720) {
   watch(
     ctrlsBarBottom,
     () => {
-      ctrlsBottom.value = ctrlsBarBottom.value
+      ctrlsBottom.value = ctrlsBarBottom.value - top.value
     },
     { immediate: true },
   )
