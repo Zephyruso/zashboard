@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [2.3.0](https://github.com/Zephyruso/zashboard/compare/v2.2.0...v2.3.0) (2025-11-28)
+
+
+### Features
+
+* add provider traffic overview localization and integrate component into OverviewPage ([5c432c0](https://github.com/Zephyruso/zashboard/commit/5c432c0a4b1847a93e36cca56f6dfb06b6271711))
+* add quick filter toggle for connection visibility in ctrl with tooltip updates ([02e4441](https://github.com/Zephyruso/zashboard/commit/02e4441504d1cb1a19bb90bd1b9f5ff1e2844562))
+* implement touchend event handling for mobile charts and improve chart disposal logic ([b099a2a](https://github.com/Zephyruso/zashboard/commit/b099a2aa2ecf34189d2c91b820f8f8d1a1ad519c))
+* refactor OverviewPage to dynamically render cards based on visibility settings ([251fe79](https://github.com/Zephyruso/zashboard/commit/251fe79bed055c8effec94b5cb923bdc9576e642))
+
+
+### Bug Fixes
+
+* update regex handling in restructMatchs function to correctly match keys with and without colons ([528fcc8](https://github.com/Zephyruso/zashboard/commit/528fcc8333a2bafa2328acf621bc72bc79610301))
+
 ## [2.2.0](https://github.com/Zephyruso/zashboard/compare/v2.1.0...v2.2.0) (2025-11-18)
 
 
