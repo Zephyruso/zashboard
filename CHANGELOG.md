@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [2.3.1](https://github.com/Zephyruso/zashboard/compare/v2.3.0...v2.3.1) (2025-12-02)
+
+
+### Bug Fixes
+
+* control bar loses focus when the search result is empty ([32c8ca0](https://github.com/Zephyruso/zashboard/commit/32c8ca043b34e9ff122f84b583ed004136e01c17))
+* latency tests for all will now follow the logic of the independent latency test. ([8ccd6f3](https://github.com/Zephyruso/zashboard/commit/8ccd6f3d176b6bb9f69edff603d7460b86e9553a))
+
 ## [2.3.0](https://github.com/Zephyruso/zashboard/compare/v2.2.0...v2.3.0) (2025-11-28)
 
 
