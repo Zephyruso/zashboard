@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [2.4.0](https://github.com/Zephyruso/zashboard/compare/v2.3.1...v2.4.0) (2025-12-09)
+
+
+### Features
+
+* add log filtering functionality with regex support ([1b4c56b](https://github.com/Zephyruso/zashboard/commit/1b4c56b5ee03414b5bd4a595f11992c00d24b772))
+* add toggle for full proxy chain display and update related components for improved user experience ([a378cc1](https://github.com/Zephyruso/zashboard/commit/a378cc1255413f6eb76b1c53603d07a240bfd01b))
+* enhance ProxyName component to display dialer proxy information dynamically ([d4faa97](https://github.com/Zephyruso/zashboard/commit/d4faa97ba1879a564917b8d7f43b22ad1e5653e1))
+
+
+### Bug Fixes
+
+* enhance TopologyCharts component by implementing node sorting and ID remapping for improved data visualization ([4873bf3](https://github.com/Zephyruso/zashboard/commit/4873bf311d3900c150d0ad256ec476121769391c))
+* update ProxyNodeCard layout and text styling for improved readability and responsiveness ([dd59806](https://github.com/Zephyruso/zashboard/commit/dd598062246e40ac975a901a08a24b80e2e600a6))
+
 ## [2.3.1](https://github.com/Zephyruso/zashboard/compare/v2.3.0...v2.3.1) (2025-12-02)
 
 
