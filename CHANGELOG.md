@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [2.4.1](https://github.com/Zephyruso/zashboard/compare/v2.4.0...v2.4.1) (2025-12-11)
+
+
+### Bug Fixes
+
+* implement tooltip activation handling in TopologyCharts component to prevent data updates during tooltip visibility ([ccf3ee4](https://github.com/Zephyruso/zashboard/commit/ccf3ee40ece01c512bc6dacc245b0e6605af80ad))
+* update destination and destinationType labels in multiple language files for clarity ([5add1d8](https://github.com/Zephyruso/zashboard/commit/5add1d847963f3f7e095f520ba5b567da5967fbf))
+
 ## [2.4.0](https://github.com/Zephyruso/zashboard/compare/v2.3.1...v2.4.0) (2025-12-09)
 
 
