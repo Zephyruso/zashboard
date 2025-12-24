@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [2.5.0](https://github.com/Zephyruso/zashboard/compare/v2.4.1...v2.5.0) (2025-12-24)
+
+
+### Features
+
+* add auto cleanup interval feature to ConnectionHistory component with multilingual support ([1d358bd](https://github.com/Zephyruso/zashboard/commit/1d358bdb775a1129e5635400eaf34b32137ca3e5))
+* allow user input for DNS query type ([e230304](https://github.com/Zephyruso/zashboard/commit/e230304a5b56dd0fb5a72f6a7849f774134b2290))
+
+
+### Bug Fixes
+
+* adjust styling for ProxyIcon and ProxyNodeCard components for better alignment ([d14e6ff](https://github.com/Zephyruso/zashboard/commit/d14e6ff226a4c7b596b83bbe9e6662196424d9f9))
+* enhance styling and structure of menu items in TextInput component for improved user experience ([21c6a82](https://github.com/Zephyruso/zashboard/commit/21c6a829240c7393a3e93a1dacb3e01ce711bcb0))
+
 ## [2.4.1](https://github.com/Zephyruso/zashboard/compare/v2.4.0...v2.4.1) (2025-12-11)
 
 
