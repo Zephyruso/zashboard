@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [2.6.0](https://github.com/Zephyruso/zashboard/compare/v2.5.0...v2.6.0) (2026-01-12)
+
+
+### Features
+
+* add RuleHitCountCard component and update related translations for enhanced statistics display ([372cd67](https://github.com/Zephyruso/zashboard/commit/372cd67450d4dafe913daad94d33c3ff946028c3))
+* enhance rule management with mihomo API for toggling rule disable status and display rule hit/miss statistics in RuleCard component ([d93ae9b](https://github.com/Zephyruso/zashboard/commit/d93ae9bfd363718be2f93483ad00fcc33aac1394))
+* implement disconnect option on rule disable in RuleCard and update translations ([0476333](https://github.com/Zephyruso/zashboard/commit/04763334be4b6a264a7a870c4b97072d641a967c))
+
+
+### Bug Fixes
+
+* ensure dbPromise is awaited in put, clear, and del functions of useIndexedDB for proper transaction handling ([b194dfd](https://github.com/Zephyruso/zashboard/commit/b194dfd2c787cafa3b3d00be3dc2bf10803fdf86))
+
 ## [2.5.0](https://github.com/Zephyruso/zashboard/compare/v2.4.1...v2.5.0) (2025-12-24)
 
 
