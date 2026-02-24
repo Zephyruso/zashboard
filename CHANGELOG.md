@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [2.6.1](https://github.com/Zephyruso/zashboard/compare/v2.6.0...v2.6.1) (2026-02-24)
+
+
+### Bug Fixes
+
+* clash mode selector style for latest Chrome ([644e352](https://github.com/Zephyruso/zashboard/commit/644e352651bf8f04281ffe96d0a91149f747309c))
+* update styling for CollapseCard and ProxyNodeCard components to improve layout and hover effects ([485909e](https://github.com/Zephyruso/zashboard/commit/485909e60f753b5e469dfedecff52e0bda49a6c8))
+
 ## [2.6.0](https://github.com/Zephyruso/zashboard/compare/v2.5.0...v2.6.0) (2026-01-12)
 
 
