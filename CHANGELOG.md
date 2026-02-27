@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [2.7.0](https://github.com/Zephyruso/zashboard/compare/v2.6.1...v2.7.0) (2026-02-27)
+
+
+### Features
+
+* enhance sourceip helper to support CIDR notation for IP addresses ([14fd233](https://github.com/Zephyruso/zashboard/commit/14fd2334447119aa7d5816b613983c444c5b7308))
+* improve modal structure and accessibility; add transition effects ([cb358ef](https://github.com/Zephyruso/zashboard/commit/cb358efd078a3bc125d57c0cc34fe0ce3f73d07c))
+
+
+### Bug Fixes
+
+* increase swipe threshold in useSwipeRouter for improved gesture recognition ([de1f690](https://github.com/Zephyruso/zashboard/commit/de1f6909b7bfafc4cc87382346694f944d29eab1))
+
 ## [2.6.1](https://github.com/Zephyruso/zashboard/compare/v2.6.0...v2.6.1) (2026-02-24)
 
 
