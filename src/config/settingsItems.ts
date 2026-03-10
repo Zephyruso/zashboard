@@ -157,6 +157,10 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
         key: `${SETTINGS_MENU_KEY.proxies}.proxyGroupIconMargin`,
         label: 'proxyGroupIconMargin',
       },
+      {
+        key: `${SETTINGS_MENU_KEY.proxies}.providerProxyNodeLayout`,
+        label: 'providerProxyNodeLayout',
+      },
       { key: `${SETTINGS_MENU_KEY.proxies}.iconSettings`, label: 'icon' },
     ],
   },

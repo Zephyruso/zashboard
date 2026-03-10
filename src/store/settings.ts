@@ -171,6 +171,7 @@ export const minProxyCardWidth = useStorage<number>(
   getMinCardWidth(proxyCardSize.value),
 )
 export const manageHiddenGroup = useStorage('config/manage-hidden-group-mode', false)
+export const providerProxyNodeUseList = useStorage('config/provider-proxy-node-use-list', true)
 
 export const displayGlobalByMode = useStorage('config/display-global-by-mode', false)
 export const customGlobalNode = useStorage('config/custom-global-node-name', GLOBAL)

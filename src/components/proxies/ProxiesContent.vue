@@ -3,7 +3,7 @@ import { useCalculateMaxProxies } from '@/composables/proxiesScroll'
 import { handlerProxySelect } from '@/store/proxies'
 import { computed } from 'vue'
 import ProxyNodeCard from './ProxyNodeCard.vue'
-import ProxyNodeGrid from './ProxyNodeGrid.vue'
+import ProxyNodeList from './ProxyNodeList.vue'
 
 const props = defineProps<{
   name: string
@@ -19,7 +19,7 @@ const proxies = computed(() => props.renderProxies.slice(0, maxProxies.value))
 </script>
 
 <template>
-  <ProxyNodeGrid>
+  <ProxyNodeList>
     <ProxyNodeCard
       v-for="node in proxies"
       :key="node"
@@ -28,5 +28,5 @@ const proxies = computed(() => props.renderProxies.slice(0, maxProxies.value))
       :active="node === now"
       @click.stop="handlerProxySelect(name, node)"
     />
-  </ProxyNodeGrid>
+  </ProxyNodeList>
 </template>

@@ -134,6 +134,25 @@
           />
         </div>
         <div
+          v-if="isVisibleProviderProxyNodeUseList"
+          class="setting-item"
+        >
+          <div class="setting-item-label">
+            {{ $t('providerProxyNodeLayout') }}
+          </div>
+          <select
+            class="select select-sm min-w-24"
+            v-model="providerProxyNodeLayout"
+          >
+            <option value="list">
+              {{ $t('list') }}
+            </option>
+            <option value="grid">
+              {{ $t('grid') }}
+            </option>
+          </select>
+        </div>
+        <div
           v-if="isVisibleDisplayGlobalByMode"
           class="setting-item"
         >
@@ -265,6 +284,7 @@ import {
   lowLatency,
   mediumLatency,
   minProxyCardWidth,
+  providerProxyNodeUseList,
   proxyCardSize,
   proxyGroupIconMargin,
   proxyGroupIconSize,
@@ -290,6 +310,7 @@ const isVisibleIpv6Test = useIsSettingVisible(k.ipv6Test)
 const isVisibleIndependentLatencyTest = useIsSettingVisible(k.independentLatencyTest)
 const isVisibleGroupTestUrls = useIsSettingVisible(k.groupTestUrls)
 const isVisibleTwoColumnProxyGroup = useIsSettingVisible(k.twoColumnProxyGroup)
+const isVisibleProviderProxyNodeUseList = useIsSettingVisible(k.providerProxyNodeLayout)
 const isVisibleTruncateProxyName = useIsSettingVisible(k.truncateProxyName)
 const isVisibleDisplayGlobalByMode = useIsSettingVisible(k.displayGlobalByMode)
 const isVisibleCustomGlobalNode = useIsSettingVisible(k.customGlobalNode)
@@ -324,6 +345,7 @@ const hasVisibleLatencyItems = computed(() => {
 const hasVisibleProxyStyleItems = computed(() => {
   return (
     isVisibleTwoColumnProxyGroup.value ||
+    isVisibleProviderProxyNodeUseList.value ||
     isVisibleTruncateProxyName.value ||
     isVisibleDisplayGlobalByMode.value ||
     (displayGlobalByMode.value && isSingBox.value && isVisibleCustomGlobalNode.value) ||
@@ -332,5 +354,14 @@ const hasVisibleProxyStyleItems = computed(() => {
     isVisibleProxyGroupIconSize.value ||
     isVisibleProxyGroupIconMargin.value
   )
+})
+
+const providerProxyNodeLayout = computed<'list' | 'grid'>({
+  get() {
+    return providerProxyNodeUseList.value ? 'list' : 'grid'
+  },
+  set(val) {
+    providerProxyNodeUseList.value = val === 'list'
+  },
 })
 </script>
