@@ -297,3 +297,26 @@ export enum OVERVIEW_CARD {
   ConnectionHistory = 'ConnectionHistory',
   RuleHitCountCard = 'RuleHitCountCard',
 }
+
+export enum MIHOMO {
+  Meta = 'meta',
+  Alpha = 'alpha',
+  Smart = 'smart',
+}
+
+export const MIHOMO_CHANNEL: Record<MIHOMO, { url: string; check_update_url: string }> = {
+  [MIHOMO.Meta]: {
+    url: 'https://github.com/metacubex/mihomo',
+    check_update_url: 'https://api.github.com/repos/MetaCubeX/mihomo/releases/latest',
+  },
+  [MIHOMO.Alpha]: {
+    url: 'https://github.com/metacubex/mihomo',
+    check_update_url:
+      'https://api.github.com/repos/MetaCubeX/mihomo/releases/tags/Prerelease-Alpha',
+  },
+  [MIHOMO.Smart]: {
+    url: 'https://github.com/vernesong/mihomo',
+    check_update_url:
+      'https://api.github.com/repos/vernesong/mihomo/releases/tags/Prerelease-Alpha',
+  },
+}

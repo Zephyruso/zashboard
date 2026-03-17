@@ -18,7 +18,7 @@
           :href="
             isSingBox
               ? 'https://github.com/sagernet/sing-box'
-              : 'https://github.com/metacubex/mihomo'
+              : MIHOMO_CHANNEL[mihomo?.[0] ?? MIHOMO.Meta].url
           "
           target="_blank"
         >
@@ -202,6 +202,7 @@ import {
   flushSmartGroupWeightsAPI,
   isCoreUpdateAvailable,
   isSingBox,
+  mihomo,
   reloadConfigsAPI,
   restartCoreAPI,
   updateGeoDataAPI,
@@ -211,6 +212,7 @@ import BackendSwitch from '@/components/settings/BackendSwitch.vue'
 import DnsQuery from '@/components/settings/DnsQuery.vue'
 import { useIsSettingVisible } from '@/composables/settings'
 import { BACKEND_ITEM_KEYS } from '@/config/settingsItems'
+import { MIHOMO, MIHOMO_CHANNEL } from '@/constant'
 import { showNotification } from '@/helper/notification'
 import { configs, fetchConfigs, updateConfigs } from '@/store/config'
 import { fetchProxies, hasSmartGroup } from '@/store/proxies'

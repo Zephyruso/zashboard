@@ -1,4 +1,4 @@
-import { ROUTE_NAME } from '@/constant'
+import { MIHOMO, MIHOMO_CHANNEL, ROUTE_NAME } from '@/constant'
 import { showNotification } from '@/helper/notification'
 import { getUrlFromBackend } from '@/helper/utils'
 import router from '@/router'
@@ -65,6 +65,22 @@ export const fetchVersionAPI = () => {
   return axios.get<{ version: string }>('/version')
 }
 export const isSingBox = computed(() => version.value?.includes('sing-box'))
+export const mihomo = computed<[MIHOMO, string] | undefined>(() => {
+  if (isSingBox.value) return undefined
+  else {
+    const match = /(alpha-smart|alpha|beta|meta)-?(\w+)/.exec(version.value)
+    switch (match?.[1]) {
+      case 'alpha':
+        return [MIHOMO.Alpha, match[2] ?? version.value]
+      case 'alpha-smart':
+        return [MIHOMO.Smart, match[2] ?? version.value]
+      case 'meta':
+        return [MIHOMO.Meta, match[2] ?? version.value]
+      default:
+        return undefined
+    }
+  }
+})
 export const zashboardVersion = ref(__APP_VERSION__)
 
 watch(
@@ -356,35 +372,8 @@ const check = async (url: string, versionNumber: string) => {
 }
 
 export const fetchBackendUpdateAvailableAPI = async () => {
-  const match = /(alpha-smart|alpha|beta|meta)-?(\w+)/.exec(version.value)
-
-  if (!match) {
-    const { tag_name } = await fetchWithLocalCache<{ tag_name: string }>(
-      'https://api.github.com/repos/MetaCubeX/mihomo/releases/latest',
-      version.value,
-    )
-
-    return Boolean(tag_name && !tag_name.endsWith(version.value))
-  }
-
-  const channel = match[1],
-    versionNumber = match[2]
-
-  if (channel === 'meta')
-    return await check(
-      'https://api.github.com/repos/MetaCubeX/mihomo/releases/latest',
-      versionNumber,
-    )
-  if (channel === 'alpha')
-    return await check(
-      'https://api.github.com/repos/MetaCubeX/mihomo/releases/tags/Prerelease-Alpha',
-      versionNumber,
-    )
-  if (channel === 'alpha-smart')
-    return await check(
-      'https://api.github.com/repos/vernesong/mihomo/releases/tags/Prerelease-Alpha',
-      versionNumber,
-    )
-
-  return false
+  return await check(
+    MIHOMO_CHANNEL[mihomo.value?.[0] ?? MIHOMO.Meta].check_update_url,
+    mihomo.value?.[1] ?? version.value,
+  )
 }
