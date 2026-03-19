@@ -2,6 +2,23 @@
 
 # Changelog
 
+## [2.8.0](https://github.com/Zephyruso/zashboard/compare/v2.7.0...v2.8.0) (2026-03-19)
+
+
+### Features
+
+* add `light-monet` and `dark-monet` accent color themes provided by ksu webui when running in ksu app ([#592](https://github.com/Zephyruso/zashboard/issues/592)) ([69c276b](https://github.com/Zephyruso/zashboard/commit/69c276b36af024c9bebc877f46600162e6884224))
+* add scroll-to-group button in ProxyGroupNow ([b148917](https://github.com/Zephyruso/zashboard/commit/b148917518a9931e56a974a05cc9555a1bc5a44f))
+* add update configs functionality via path or payload ([4308a92](https://github.com/Zephyruso/zashboard/commit/4308a92a1cdfaa7711c36c0c00f2eaeff43d38db))
+* redesign settings layout and icon settings with drag-drop upload ([7c914d2](https://github.com/Zephyruso/zashboard/commit/7c914d2ada8a6231052171b2d7edea1c8710a4c5))
+
+
+### Bug Fixes
+
+* click on the backend  version will redirect you to an incorrect repository link when the backend is `mihomo_smart` ([#594](https://github.com/Zephyruso/zashboard/issues/594)) ([b0c4872](https://github.com/Zephyruso/zashboard/commit/b0c487280f91021a7e75b2f8dc3bab9a34b09669))
+* improve DNS query and TextInput component ([42bde0a](https://github.com/Zephyruso/zashboard/commit/42bde0ab8f974529e1f74795cacef0fb9b857897))
+* update ProxyNodeGrid styling to ensure proper grid layout and responsiveness ([edb87c7](https://github.com/Zephyruso/zashboard/commit/edb87c70ee64ed5fd00d85e100592b65620fbc4d))
+
 ## [2.7.0](https://github.com/Zephyruso/zashboard/compare/v2.6.1...v2.7.0) (2026-02-27)
 
 
