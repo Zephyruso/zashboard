@@ -9,7 +9,6 @@
         aria-modal="true"
         :aria-labelledby="title ? 'dialog-title' : undefined"
         @keydown.escape="close"
-        @keydown.enter="enter"
       >
         <!-- 遮罩层，点击关闭 -->
         <div
@@ -20,14 +19,13 @@
 
         <!-- 弹层内容，阻止点击穿透 -->
         <div
+          ref="modalBoxRef"
           class="modal-box bg-base-100 relative overflow-hidden p-0"
           :class="[blurIntensity < 5 && 'backdrop-blur-sm!', boxClass]"
+          tabindex="-1"
           @click.stop
+          @keydown.enter.self="enter"
         >
-          <input
-            ref="hiddenInput"
-            class="hidden-input"
-          />
           <div
             v-if="title && isOpen"
             id="dialog-title"
@@ -68,19 +66,15 @@ const emits = defineEmits<{
   (e: 'enter'): void
 }>()
 
-const hiddenInput = ref<HTMLInputElement | undefined>(undefined)
+const modalBoxRef = ref<HTMLDivElement | undefined>(undefined)
 
-watch(
-  () => isOpen.value,
-  (val) => {
-    if (val) {
-      console.log('open', document.activeElement)
-      requestAnimationFrame(() => {
-        hiddenInput.value?.focus()
-      })
-    }
-  },
-)
+watch(isOpen, (val) => {
+  if (val) {
+    requestAnimationFrame(() => {
+      modalBoxRef.value?.focus()
+    })
+  }
+})
 function close() {
   isOpen.value = false
 }
@@ -114,10 +108,5 @@ function enter() {
 .modal-enter-from .modal-box,
 .modal-leave-to .modal-box {
   transform: scale(0.95);
-}
-.hidden-input {
-  width: 0;
-  height: 0;
-  position: absolute;
 }
 </style>
