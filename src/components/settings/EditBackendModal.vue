@@ -2,7 +2,7 @@
   <DialogWrapper
     v-model="isVisible"
     :title="t('editBackendTitle')"
-    @keydown.enter="!isSaving && handleSave()"
+    @enter="!isSaving && handleSave()"
   >
     <div class="flex flex-col gap-4">
       <!-- 后端选择器 -->

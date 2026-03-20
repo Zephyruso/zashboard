@@ -195,10 +195,7 @@
         </template>
       </div>
     </template>
-    <DnsQuery
-      v-if="isVisibleDnsQuery"
-      class="mt-4"
-    />
+    <DnsQuery v-if="isVisibleDnsQuery" />
 
     <UpgradeCoreModal v-model="showUpgradeCoreModal" />
     <UpdateConfigModal v-model="showUpdateConfigModal" />

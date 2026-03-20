@@ -9,6 +9,7 @@
         aria-modal="true"
         :aria-labelledby="title ? 'dialog-title' : undefined"
         @keydown.escape="close"
+        @keydown.enter="enter"
       >
         <!-- 遮罩层，点击关闭 -->
         <div
@@ -16,12 +17,17 @@
           aria-hidden="true"
           @click="close"
         />
+
         <!-- 弹层内容，阻止点击穿透 -->
         <div
           class="modal-box bg-base-100 relative overflow-hidden p-0"
           :class="[blurIntensity < 5 && 'backdrop-blur-sm!', boxClass]"
           @click.stop
         >
+          <input
+            ref="hiddenInput"
+            class="hidden-input"
+          />
           <div
             v-if="title && isOpen"
             id="dialog-title"
@@ -54,12 +60,32 @@
 <script setup lang="ts">
 import { blurIntensity } from '@/store/settings'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { ref, watch } from 'vue'
 
 const isOpen = defineModel<boolean>()
 defineProps<{ noPadding?: boolean; boxClass?: string; title?: string }>()
+const emits = defineEmits<{
+  (e: 'enter'): void
+}>()
 
+const hiddenInput = ref<HTMLInputElement | undefined>(undefined)
+
+watch(
+  () => isOpen.value,
+  (val) => {
+    if (val) {
+      console.log('open', document.activeElement)
+      requestAnimationFrame(() => {
+        hiddenInput.value?.focus()
+      })
+    }
+  },
+)
 function close() {
   isOpen.value = false
+}
+function enter() {
+  emits('enter')
 }
 </script>
 
@@ -88,5 +114,10 @@ function close() {
 .modal-enter-from .modal-box,
 .modal-leave-to .modal-box {
   transform: scale(0.95);
+}
+.hidden-input {
+  width: 0;
+  height: 0;
+  position: absolute;
 }
 </style>
