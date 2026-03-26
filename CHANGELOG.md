@@ -2,6 +2,17 @@
 
 # Changelog
 
+## [2.8.1](https://github.com/Zephyruso/zashboard/compare/v2.8.0...v2.8.1) (2026-03-26)
+
+
+### Bug Fixes
+
+* abnormal scrolling when expanding proxy groups ([d865be9](https://github.com/Zephyruso/zashboard/commit/d865be9e50e830816ddf9ece3c87f7538471f560))
+* add replace option to router push for consistent navigation behavior when running in mobile browser or in webui app like ksu ([#601](https://github.com/Zephyruso/zashboard/issues/601)) ([8307db4](https://github.com/Zephyruso/zashboard/commit/8307db4e5048345ecf391e98fd52b34c5b90c9e2))
+* **api:** decode URL in error notification for better readability ([a66cb4c](https://github.com/Zephyruso/zashboard/commit/a66cb4c8e4dfe4af3e3c7e35459a27341506742b))
+* **DialogWrapper:** add Enter key event support and optimized focus management ([#599](https://github.com/Zephyruso/zashboard/issues/599)) ([f228d21](https://github.com/Zephyruso/zashboard/commit/f228d2124807514238247f7f8953500bef34c4b8))
+* **DialogWrapper:** remove default focus outline on modal box ([cd280da](https://github.com/Zephyruso/zashboard/commit/cd280dad817dec8f71bb76aade0cd6cab633c29d))
+
 ## [2.8.0](https://github.com/Zephyruso/zashboard/compare/v2.7.0...v2.8.0) (2026-03-19)
 
 
