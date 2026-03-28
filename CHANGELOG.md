@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [2.9.0](https://github.com/Zephyruso/zashboard/compare/v2.8.1...v2.9.0) (2026-03-28)
+
+
+### Features
+
+* add Apple-style themes and refine UI to macOS/iOS aesthetic ([f75144a](https://github.com/Zephyruso/zashboard/commit/f75144addf8072b049798f9aef463aa61537c6cc))
+* enhance settings components with improved dialog handling and grid layout ([4711084](https://github.com/Zephyruso/zashboard/commit/4711084d26646a1990d6d4bceb271ac70fe4c223))
+* enhance settings UI with improved layout and new components ([761ae3f](https://github.com/Zephyruso/zashboard/commit/761ae3f5bffe3e3b75bbd68c5b139e3ae31f18d5))
+* improve settings page scroll tracking and relocate refresh button ([7eaebee](https://github.com/Zephyruso/zashboard/commit/7eaebeed0f3d673a132096b5dc92040788551d2e))
+* refine overview charts with MiniSparkline and improved axis labels ([ca22d39](https://github.com/Zephyruso/zashboard/commit/ca22d398578256d0e16b4a4c1d928ec833bd83c7))
+* refine UI components with macOS-style design improvements ([a9a93a6](https://github.com/Zephyruso/zashboard/commit/a9a93a63d60cbd3b014b2afa3ffe32e6aaba4610))
+* reorganize settings layout and consolidate panel style section ([349c0b3](https://github.com/Zephyruso/zashboard/commit/349c0b328a7ab5800e0fcc6e76030b3093a4e90b))
+
 ## [2.8.1](https://github.com/Zephyruso/zashboard/compare/v2.8.0...v2.8.1) (2026-03-26)
 
 
