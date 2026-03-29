@@ -2,6 +2,16 @@
 
 # Changelog
 
+## [2.10.0](https://github.com/Zephyruso/zashboard/compare/v2.9.0...v2.10.0) (2026-03-29)
+
+
+### Features
+
+* add two-column layout for settings page on wide screens ([85d675b](https://github.com/Zephyruso/zashboard/commit/85d675b215afd368a9ef5a733c8076a63a2ce376))
+* force ProxyGroup open when rule proxy chain is expanded ([789d080](https://github.com/Zephyruso/zashboard/commit/789d0803d673f989f552d3df8c2f6b088b552334))
+* improve slide transitions with iOS-style animation ([eb7d932](https://github.com/Zephyruso/zashboard/commit/eb7d932a163371e18e6d8d90d47de213d2b5487b))
+* refine card layout with scroller-group system and proxy chain redesign ([6dfad29](https://github.com/Zephyruso/zashboard/commit/6dfad29a1ec68b730079faf994bcc2057ddf0987))
+
 ## [2.9.0](https://github.com/Zephyruso/zashboard/compare/v2.8.1...v2.9.0) (2026-03-28)
 
 
