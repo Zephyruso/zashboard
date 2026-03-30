@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [2.10.1](https://github.com/Zephyruso/zashboard/compare/v2.10.0...v2.10.1) (2026-03-30)
+
+
+### Bug Fixes
+
+* blur effect for rules and logs page ([cea23ab](https://github.com/Zephyruso/zashboard/commit/cea23ab6f06d194a9b8bf37d12a580e9fb2cc538))
+* padding top style in 768px screen ([7031b8b](https://github.com/Zephyruso/zashboard/commit/7031b8b6b0d3287d67fa6701983a4ba90d421c5f))
+
 ## [2.10.0](https://github.com/Zephyruso/zashboard/compare/v2.9.0...v2.10.0) (2026-03-29)
 
 
