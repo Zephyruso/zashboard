@@ -2,6 +2,25 @@
 
 # Changelog
 
+## [3.0.0](https://github.com/Zephyruso/zashboard/compare/v2.10.1...v3.0.0) (2026-03-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* removed several legacy and daisyUI default themes. Removed the zashboard@2 light theme and the light-legacy/dark-legacy themes. Renamed the zashboard@2 dark theme to dark-daisyui5, which will be kept temporarily until a possible zashboard@4 release.
+
+### Features
+
+* add reset settings functionality with confirmation dialog ([63aab08](https://github.com/Zephyruso/zashboard/commit/63aab08a8d6628c8e6b89d4531e582e241723a0d))
+* redesign zashboard@3 themes around the new Apple-inspired design language ([79f12bb](https://github.com/Zephyruso/zashboard/commit/79f12bbcbeae2d4d98d69e721a9c05a38a9f7277))
+
+
+### Bug Fixes
+
+* border radius styling of connnection table ([dd8d1d9](https://github.com/Zephyruso/zashboard/commit/dd8d1d961f1a8026421b69a1776f326d62cbfeb3))
+* improve node handling in Sankey chart to prevent incorrect loops and enhance link filtering ([900b277](https://github.com/Zephyruso/zashboard/commit/900b2774bf0de5101c5cb1495e1677bd90b56f62))
+* update row background color logic for improved styling consistency ([eb70c18](https://github.com/Zephyruso/zashboard/commit/eb70c18240588b0a2ce30a7b5b6e53d559e7c612))
+
 ## [2.10.1](https://github.com/Zephyruso/zashboard/compare/v2.10.0...v2.10.1) (2026-03-30)
 
 
