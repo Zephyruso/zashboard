@@ -2,6 +2,23 @@
 
 # Changelog
 
+## [3.1.0](https://github.com/Zephyruso/zashboard/compare/v3.0.0...v3.1.0) (2026-04-02)
+
+
+### Features
+
+* enhance backend settings UI and add BackendPortsGrid component ([4eeb05d](https://github.com/Zephyruso/zashboard/commit/4eeb05d5b7a33c17bca1027adef077aa9a82b4c1))
+* **settings:** implement background settings component with theme detection ([482f8d0](https://github.com/Zephyruso/zashboard/commit/482f8d0a1308f4c03511f7238962c6b159d6f684))
+
+
+### Bug Fixes
+
+* **main:** prevent history state manipulation in Edge browser ([87799dd](https://github.com/Zephyruso/zashboard/commit/87799dd9e9f3312c10d257f59f29909fabc2fdaf))
+* **proxy:** update display format for proxy group type and count ([1acc253](https://github.com/Zephyruso/zashboard/commit/1acc253f8a08350e5578a7ed82f6364cb7a27bc6))
+* **pwa:** load fonts and images from assets instead of public ([773e2d6](https://github.com/Zephyruso/zashboard/commit/773e2d6f324f83ebb74bc54c8d9e3f3be9d439b2))
+* **storage:** migrate legacy storage keys for selected node and connection card ([72d2b49](https://github.com/Zephyruso/zashboard/commit/72d2b492fd2d7b8c59dea92581b415b47216c2d7))
+* **table:** correct translucent background styling ([c8f34cc](https://github.com/Zephyruso/zashboard/commit/c8f34cc2f07c78500b58f2cec0aa4be3a199c0f0))
+
 ## [3.0.0](https://github.com/Zephyruso/zashboard/compare/v2.10.1...v3.0.0) (2026-03-31)
 
 
