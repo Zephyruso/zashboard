@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [3.2.0](https://github.com/Zephyruso/zashboard/compare/v3.1.0...v3.2.0) (2026-04-03)
+
+
+### Features
+
+* **backend:** add disableTunMode property and update related logic ([356f1cb](https://github.com/Zephyruso/zashboard/commit/356f1cba577c449cc4edbd252feec4c698f77bca))
+* **providers:** redesign ProxyProvider and RuleProvider with Apple-style aesthetics ([5d7035b](https://github.com/Zephyruso/zashboard/commit/5d7035bb794dfc4614528710b562e73369c4241f))
+* **sidebar:** simplify statistics structure and improve readability ([0f04fb6](https://github.com/Zephyruso/zashboard/commit/0f04fb6392c4d95101831057c5e5f2a756b431ad))
+
+
+### Bug Fixes
+
+* **ConnectionDetails:** improve layout and styling for better responsiveness ([544f096](https://github.com/Zephyruso/zashboard/commit/544f0967bf1b18c7a04eda946dd8ee2b36c08df8))
+* **i18n:** missing i18n for smart core ([64e786d](https://github.com/Zephyruso/zashboard/commit/64e786de453b514a8635a72806d5ef37c7454594))
+
 ## [3.1.0](https://github.com/Zephyruso/zashboard/compare/v3.0.0...v3.1.0) (2026-04-02)
 
 
