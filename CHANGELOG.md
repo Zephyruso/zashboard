@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [3.3.0](https://github.com/Zephyruso/zashboard/compare/v3.2.0...v3.3.0) (2026-04-09)
+
+
+### Features
+
+* **connections:** Add auto-toggle display type for connections page ([184ed82](https://github.com/Zephyruso/zashboard/commit/184ed823d3014445f8e524aa1aeaf47514ad32c0))
+* **ConnectionTable:** add no data message to ConnectionTable component ([925980c](https://github.com/Zephyruso/zashboard/commit/925980c8c94376336c5e31d28d71b2d07abd5240))
+* **controls:** update sorting icons in ConnectionCtrl with new design ([1191b70](https://github.com/Zephyruso/zashboard/commit/1191b701b3b8a2ab793a231923ee4a8bdd8c60e1))
+
+
+### Bug Fixes
+
+* prevent TypeError when proxiesRef is null during scroll or waitTick ([#629](https://github.com/Zephyruso/zashboard/issues/629)) ([4b0f0f1](https://github.com/Zephyruso/zashboard/commit/4b0f0f144a9c69cdbb0c7dd69916f335d962ab20))
+* **sidebar:** adjust collapse animation timing ([5b1aa2f](https://github.com/Zephyruso/zashboard/commit/5b1aa2f597423a48538087c7ccb58405ceef4192))
+
 ## [3.2.0](https://github.com/Zephyruso/zashboard/compare/v3.1.0...v3.2.0) (2026-04-03)
 
 
