@@ -98,6 +98,7 @@ const zh: LANG_MESSAGE = {
   updateGeoDatabase: '更新GEO',
   tunMode: 'Tun 模式',
   truncateProxyName: '截断节点名称',
+  disableProxiesPageTextSelect: '禁用代理页文字选中',
   sourceIPLabels: '源IP标签',
   proxyPreviewType: '节点预览类型',
   auto: '自动',

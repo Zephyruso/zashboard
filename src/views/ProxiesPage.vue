@@ -1,7 +1,10 @@
 <template>
   <div
     class="max-md:scrollbar-hidden h-full"
-    :class="disableProxiesPageScroll ? 'overflow-y-hidden' : 'overflow-y-scroll'"
+    :class="[
+      disableProxiesPageScroll ? 'overflow-y-hidden' : 'overflow-y-scroll',
+      disableProxiesPageTextSelect ? 'select-none' : '',
+    ]"
     :style="padding"
     :id="PROXIES_PAGE"
     ref="proxiesRef"
@@ -48,7 +51,7 @@ import { disableProxiesPageScroll, isProxiesPageMounted, renderGroups } from '@/
 import { PROXY_TAB_TYPE } from '@/constant'
 import { isMiddleScreen, PROXIES_PAGE } from '@/helper/utils'
 import { fetchProxies, proxiesTabShow } from '@/store/proxies'
-import { twoColumnProxyGroup } from '@/store/settings'
+import { disableProxiesPageTextSelect, twoColumnProxyGroup } from '@/store/settings'
 import { useSessionStorage } from '@vueuse/core'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 

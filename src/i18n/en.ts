@@ -96,6 +96,7 @@ const en = {
   upgradeToAlpha: 'Upgrade to alpha release',
   updateGeoDatabase: 'Update GEO database',
   truncateProxyName: 'Truncate proxy name',
+  disableProxiesPageTextSelect: 'Disable text selection on proxies page',
   sourceIPLabels: 'Source IP labels',
   proxyPreviewType: 'Proxy preview type',
   auto: 'Auto',

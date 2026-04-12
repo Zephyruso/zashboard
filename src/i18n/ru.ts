@@ -98,6 +98,7 @@ const ru: LANG_MESSAGE = {
   upgradeToAlpha: 'Обновить ядро до Alpha',
   updateGeoDatabase: 'Обновить GEO',
   truncateProxyName: 'Усечение имени прокси',
+  disableProxiesPageTextSelect: 'Запретить выделение текста на странице прокси',
   sourceIPLabels: 'Метки исходного IP',
   proxyPreviewType: 'Тип предварительного просмотра прокси',
   auto: 'Авто',

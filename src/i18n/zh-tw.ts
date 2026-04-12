@@ -98,6 +98,7 @@ const zhTW: LANG_MESSAGE = {
   updateGeoDatabase: '更新GEO',
   tunMode: 'Tun 模式',
   truncateProxyName: '截斷節點名稱',
+  disableProxiesPageTextSelect: '禁用代理頁文字選取',
   sourceIPLabels: '源IP標籤',
   proxyPreviewType: '節點預覽類型',
   auto: '自動',

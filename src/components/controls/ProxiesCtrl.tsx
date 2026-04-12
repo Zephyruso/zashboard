@@ -17,6 +17,7 @@ import {
 import {
   automaticDisconnection,
   collapseGroupMap,
+  disableProxiesPageTextSelect,
   displayFinalOutbound,
   groupProxiesByProvider,
   hideUnavailableProxies,
@@ -295,6 +296,14 @@ export default defineComponent({
                   class="toggle"
                   type="checkbox"
                   v-model={displayFinalOutbound.value}
+                />
+              </div>
+              <div class="flex items-center gap-2">
+                {t('disableProxiesPageTextSelect')}
+                <input
+                  class="toggle"
+                  type="checkbox"
+                  v-model={disableProxiesPageTextSelect.value}
                 />
               </div>
               <div class="flex items-center gap-2">

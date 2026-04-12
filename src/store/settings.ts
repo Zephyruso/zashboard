@@ -218,6 +218,10 @@ export const proxySortType = useStorage<PROXY_SORT_TYPE>(
 )
 export const automaticDisconnection = useStorage('config/automatic-disconnection', true)
 export const truncateProxyName = useStorage('config/truncate-proxy-name', true)
+export const disableProxiesPageTextSelect = useStorage(
+  'config/disable-proxies-page-text-select',
+  false,
+)
 export const proxyPreviewType = useStorage('config/proxy-preview-type', PROXY_PREVIEW_TYPE.AUTO)
 export const hideUnavailableProxies = useStorage('config/hide-unavailable-proxies', false)
 export const lowLatency = useStorage('config/low-latency', 400)
