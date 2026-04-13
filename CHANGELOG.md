@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [3.4.0](https://github.com/Zephyruso/zashboard/compare/v3.3.0...v3.4.0) (2026-04-13)
+
+
+### Features
+
+* **backend:** add success notification for flushing smart weights ([426491f](https://github.com/Zephyruso/zashboard/commit/426491f55ac6a37366a29b10a01b49bad2ac3460))
+* **proxies:** add option to disable text selection on proxies page ([#631](https://github.com/Zephyruso/zashboard/issues/631)) ([2db4168](https://github.com/Zephyruso/zashboard/commit/2db4168e70712ef26ca3abe3222ff27600b62f11))
+* **shortcuts:** add backend switch shortcuts ([52f3686](https://github.com/Zephyruso/zashboard/commit/52f3686c2eaceb47219f3ba5d70cfc0e2aaee309))
+* **shortcuts:** add configurable keyboard shortcuts ([c467b4f](https://github.com/Zephyruso/zashboard/commit/c467b4f5fd60a3a13a13149f5a4a5ff1f5a3f7d7))
+
+
+### Bug Fixes
+
+* **btn:** primary btn style with background ([59324be](https://github.com/Zephyruso/zashboard/commit/59324bef543ada3cfd478a011459e0993e3d5518))
+
 ## [3.3.0](https://github.com/Zephyruso/zashboard/compare/v3.2.0...v3.3.0) (2026-04-09)
 
 
