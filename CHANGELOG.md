@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [3.5.0](https://github.com/Zephyruso/zashboard/compare/v3.4.0...v3.5.0) (2026-04-20)
+
+
+### Features
+
+* **connections:** add additional metadata fields to search connections ([3df4b58](https://github.com/Zephyruso/zashboard/commit/3df4b5893742d6e60de7e03f1ac79f26b9e39644))
+* **connections:** add source IP editing functionality in connection details ([b34b83a](https://github.com/Zephyruso/zashboard/commit/b34b83a854c1cbe968ba98e05603ff57d75e3086))
+* **dashboard:** replace ImportSettings with DashboardSettings component and update related functionality ([fd07743](https://github.com/Zephyruso/zashboard/commit/fd07743d6ff6a148040b2e46d1feb5333ab3c05f))
+* **proxies:** add ProxyGroupFilter component and integrate filtering functionality ([b6107d3](https://github.com/Zephyruso/zashboard/commit/b6107d30bd60ebcf36048b25efc1a7c7cbc9e78a))
+* **settings:** add single column layout toggle for settings page ([94639f8](https://github.com/Zephyruso/zashboard/commit/94639f8bbbc8d46aeb6159504ab2e3f16c84cf4f))
+* **settings:** implement sync settings functionality and enhance import/export options ([a21d9ea](https://github.com/Zephyruso/zashboard/commit/a21d9ea6ef31d2aae8cadaf4719f23bc06715908))
+
 ## [3.4.0](https://github.com/Zephyruso/zashboard/compare/v3.3.0...v3.4.0) (2026-04-13)
 
 
