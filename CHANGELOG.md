@@ -2,6 +2,15 @@
 
 # Changelog
 
+## [3.5.1](https://github.com/Zephyruso/zashboard/compare/v3.5.0...v3.5.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* **ConnectionTable:** correct usage of cell methods for grouping and placeholders ([8cfd9b5](https://github.com/Zephyruso/zashboard/commit/8cfd9b5e1f0ee4b358943be7885973165920716b))
+* **controls:** enhance layout and styling of settings components for improved usability ([8af8693](https://github.com/Zephyruso/zashboard/commit/8af86937d94c582a55b02b5cb23cd9ca656bd506))
+* **proxies:** provider search functionality with dynamic placeholders and localization for proxy nodes ([5816d09](https://github.com/Zephyruso/zashboard/commit/5816d09f9f247c06ef82817830cd93676a6e0148))
+
 ## [3.5.0](https://github.com/Zephyruso/zashboard/compare/v3.4.0...v3.5.0) (2026-04-20)
 
 
