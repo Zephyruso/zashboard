@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [3.6.0](https://github.com/Zephyruso/zashboard/compare/v3.5.1...v3.6.0) (2026-05-14)
+
+
+### Features
+
+* add proxy node search mode ([ef8d3ee](https://github.com/Zephyruso/zashboard/commit/ef8d3ee244410fb499bf1ef380e2a9c4916793b9))
+* **ProxiesSettings:** add speedtest mode configuration with multilingual support ([64241ee](https://github.com/Zephyruso/zashboard/commit/64241eecbe365f276e4ad315450869807ee99dc5))
+
+
+### Bug Fixes
+
+* **DnsQuery:** enhance DNS query input with history management and improved result display ([5b13c53](https://github.com/Zephyruso/zashboard/commit/5b13c537145ca38f6896f299a30fe5228fe48145))
+* **proxies:** update global proxy handling to utilize getProxyGroupChains for improved filtering ([f750c66](https://github.com/Zephyruso/zashboard/commit/f750c665891a1571212667d72eb309a45f7b10fe))
+* **SourceIPFilter:** optimize source IP options handling in watch function ([58364be](https://github.com/Zephyruso/zashboard/commit/58364be31f7a13aebb74333864ea6fe38eabe051))
+
 ## [3.5.1](https://github.com/Zephyruso/zashboard/compare/v3.5.0...v3.5.1) (2026-04-23)
 
 
