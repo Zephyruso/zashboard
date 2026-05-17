@@ -35,7 +35,7 @@ docker run -d -p 80:80 ghcr.io/zephyruso/zashboard:latest
 ```
 
  Manual Deployment
-1. Download the latest release from [GitHub Releases](https://github.com/Zephyruso/zashboard/releases)
+1. Download the latest release from [GitHub Releases]()
 2. Extract the archive
 3. Serve the files using any static web server (Nginx, Apache, etc.)
 
