@@ -23,17 +23,8 @@ Requirements
 - Safari 16.4+ (March 2023)
 - Not supported on iOS 16.4 jailbroken version
 
-  Online Demo
-
-  Installation
-
-Docker (Recommended)
-```bash
-docker run -d -p 80:80 ghcr.io/zephyruso/zashboard:latest
-```
-
  Manual Deployment
-1. Download the latest release from [GitHub Releases](https://github.com/Unwilledflow/zashboard-ios-style-adn-m3e/releases/tag/v1)
+1. Download the latest release from [GitHub Releases](https://github.com/Unwilledflow/zashboard-ios-style-adn-m3e/releases/tag/v2)
 2. Extract the archive
 3. Serve the files using any static web server (Nginx, Apache, etc.)
 
