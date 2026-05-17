@@ -39,12 +39,3 @@ docker run -d -p 80:80 ghcr.io/zephyruso/zashboard:latest
 2. Extract the archive
 3. Serve the files using any static web server (Nginx, Apache, etc.)
 
- Available Downloads
-- **dist.zip** (7.81 MB) - Includes all fonts for best experience
-- **dist-no-fonts.zip** (1.44 MB) - Uses system fonts only
-- **dist-cdn-fonts.zip** (1.44 MB) - Loads fonts from CDN
-- **dist-firasans-only.zip** (1.67 MB) - Only FiraSans font
-- **dist-misans-only.zip** (3.54 MB) - Only MiSans font
-- **dist-pingfang-only.zip** (3.25 MB) - Only PingFang font
-- **dist-sarasa-only.zip** (3.67 MB) - Only Sarasa font
-
