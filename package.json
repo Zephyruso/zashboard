@@ -15,6 +15,7 @@
     "dev": "vite",
     "format": "prettier --write src/",
     "lint": "eslint . --fix",
+    "package:ios": "vite build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-ios.ps1",
     "prepare": "husky",
     "preview": "vite preview",
     "type-check": "vue-tsc --build --force"
