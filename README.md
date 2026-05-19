@@ -24,7 +24,7 @@ Requirements
 - Not supported on iOS 16.4 jailbroken version
 
  Manual Deployment
-1. Download the latest release from [GitHub Releases](https://github.com/Unwilledflow/zashboard-ios-style-adn-m3e/releases/tag/v2)
+1. Download the latest release from [GitHub Releases](https://github.com/Unwilledflow/zashboard-ios-style-adn-m3e/releases/tag/v3)
 2. Extract the archive
 3. Serve the files using any static web server (Nginx, Apache, etc.)
 
