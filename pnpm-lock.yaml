@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@eslint/plugin-kit':
-        specifier: ^0.7.1
-        version: 0.7.1
       '@fontsource/fira-sans':
         specifier: ^5.2.7
         version: 5.2.7
@@ -50,9 +47,6 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.18.1
-      misans:
-        specifier: ^4.1.0
-        version: 4.1.0
       p-limit:
         specifier: ^7.3.0
         version: 7.3.0
@@ -2467,9 +2461,6 @@ packages:
   minimatch@5.1.9:
     resolution: {integrity: sha512-7o1wEA2RyMP7Iu7GNba9vc0RWWGACJOCZBJX2GJWip0ikV+wcOsgVuY9uE8CPiyQhkGFSlhuSkZPavN7u1c2Fw==}
     engines: {node: '>=10'}
-
-  misans@4.1.0:
-    resolution: {integrity: sha512-CcIRrIVhnt+OpGXvw1Q8llGBVAy5P2mdov/kJ0gGa81sJ0RY7mZp2fNAt2ySTCeZos+wo7ZnzDZxl1In//7FdA==}
 
   mlly@1.8.2:
     resolution: {integrity: sha512-d+ObxMQFmbt10sretNDytwt85VrbkhhUA/JBGm1MPaWJ65Cl4wOgLaB1NYvJSZ0Ef03MMEU/0xpPMXUIQ29UfA==}
@@ -5775,8 +5766,6 @@ snapshots:
   minimatch@5.1.9:
     dependencies:
       brace-expansion: 2.1.0
-
-  misans@4.1.0: {}
 
   mlly@1.8.2:
     dependencies:

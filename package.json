@@ -1,6 +1,6 @@
 {
   "name": "zashboard",
-  "version": "3.5.1",
+  "version": "3.6.0",
   "description": "A Dashboard Using Clash API",
   "license": "MIT",
   "type": "module",
@@ -21,7 +21,6 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
-    "@eslint/plugin-kit": "^0.7.1",
     "@fontsource/fira-sans": "^5.2.7",
     "@heroicons/vue": "^2.2.0",
     "@tanstack/vue-table": "^8.21.3",
@@ -35,7 +34,6 @@
     "echarts": "^6.0.0",
     "ipaddr.js": "^2.4.0",
     "lodash-es": "^4.17.21",
-    "misans": "^4.1.0",
     "p-limit": "^7.3.0",
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "^0.8.0",
