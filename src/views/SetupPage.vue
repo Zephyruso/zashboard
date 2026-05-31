@@ -141,6 +141,7 @@ import TextInput from '@/components/common/TextInput.vue'
 import EditBackendModal from '@/components/settings/backend/EditBackendModal.vue'
 import LanguageSelect from '@/components/settings/general/LanguageSelect.vue'
 import { ROUTE_NAME } from '@/constant'
+import { syncSettingsFromCore } from '@/helper/autoImportSettings'
 import { showNotification } from '@/helper/notification'
 import { getBackendFromUrl, getLabelFromBackend, getUrlFromBackend } from '@/helper/utils'
 import router from '@/router'
@@ -235,6 +236,11 @@ const handleSubmit = async (form: Omit<Backend, 'uuid'>, quiet = false) => {
     }
 
     addBackend(form)
+    const synced = await syncSettingsFromCore()
+    if (synced) {
+      return
+    }
+
     router.push({ name: ROUTE_NAME.proxies })
   } catch (e) {
     if (!quiet) {
