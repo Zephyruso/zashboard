@@ -16,8 +16,8 @@
     >
       <div
         v-if="showContent"
-        class="max-h-108 overflow-y-auto p-4 pt-0"
-        :class="[PROXIES_PARENT_CLASS, !showCollapse && 'opacity-0']"
+        class="overflow-y-auto p-4 pt-0"
+        :class="[PROXIES_PARENT_CLASS, contentClass || 'max-h-108', !showCollapse && 'opacity-0']"
       >
         <slot name="content" />
       </div>
@@ -33,6 +33,7 @@ import { computed, ref, watch } from 'vue'
 const props = defineProps<{
   name: string
   forceOpen?: boolean
+  contentClass?: string
 }>()
 
 const showCollapse = computed({

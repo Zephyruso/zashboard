@@ -1,5 +1,11 @@
 import { disconnectByIdAPI, isSingBox, updateProxyProviderAPI } from '@/api'
 import { renderProxiesPageItems } from '@/composables/proxies'
+import {
+  PROXY_GROUP_MAX_COLUMNS,
+  createProxyGroupFolder,
+  normalizeProxyGroupColumns,
+  resetProxyGroupLayout,
+} from '@/composables/proxyGroupFolders'
 import { isProxyNodeSearchMode, toggleProxySearchMode } from '@/composables/proxySearch'
 import { useCtrlsBar } from '@/composables/useCtrlsBar'
 import { PROXY_SORT_TYPE, PROXY_TAB_TYPE, ROUTE_NAME, SETTINGS_MENU_KEY } from '@/constant'
@@ -25,6 +31,7 @@ import {
   manageHiddenGroup,
   minProxyCardWidth,
   proxyCardSize,
+  proxyGroupColumns,
   proxySortType,
   twoColumnProxyGroup,
   useSmartGroupSort,
@@ -34,8 +41,10 @@ import {
   BoltIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  FolderPlusIcon,
   GlobeAltIcon,
   RectangleGroupIcon,
+  Squares2X2Icon,
   WrenchScrewdriverIcon,
 } from '@heroicons/vue/24/outline'
 import { every } from 'lodash'
@@ -119,6 +128,19 @@ export default defineComponent({
       minProxyCardWidth.value = getMinCardWidth(proxyCardSize.value)
     }
 
+    const setProxyGroupColumns = (value: number) => {
+      proxyGroupColumns.value = normalizeProxyGroupColumns(value)
+      twoColumnProxyGroup.value = proxyGroupColumns.value > 1
+    }
+
+    const handlerAddFolder = () => {
+      createProxyGroupFolder()
+    }
+
+    const handlerResetProxyLayout = () => {
+      resetProxyGroupLayout()
+    }
+
     const tabsWithNumbers = computed(() => {
       return Object.values(PROXY_TAB_TYPE).map((type) => {
         return {
@@ -194,6 +216,26 @@ export default defineComponent({
         </select>
       )
 
+      const renderProxyGroupColumnSelect = () => (
+        <select
+          class="select select-sm min-w-24"
+          aria-label={t('proxyGroupColumns')}
+          value={proxyGroupColumns.value}
+          onChange={(e) => setProxyGroupColumns(Number((e.target as HTMLSelectElement).value))}
+        >
+          {Array.from({ length: PROXY_GROUP_MAX_COLUMNS }, (_, index) => index + 1).map(
+            (columns) => (
+              <option
+                key={columns}
+                value={columns}
+              >
+                {columns} {t('columns')}
+              </option>
+            ),
+          )}
+        </select>
+      )
+
       const latencyTestAll = (
         <button
           class="btn btn-circle btn-sm"
@@ -222,6 +264,16 @@ export default defineComponent({
           ) : (
             <ChevronDownIcon class="h-4 w-4" />
           )}
+        </button>
+      )
+
+      const addFolderButton = proxiesTabShow.value === PROXY_TAB_TYPE.PROXIES && (
+        <button
+          class="btn btn-circle btn-sm"
+          title={t('addProxyFolder')}
+          onClick={handlerAddFolder}
+        >
+          <FolderPlusIcon class="h-4 w-4" />
         </button>
       )
 
@@ -269,6 +321,29 @@ export default defineComponent({
                 <div class="setting-item">
                   <div class="setting-item-label">{t('sortBy')}</div>
                   {sort}
+                </div>
+                <div class="setting-item">
+                  <div class="setting-item-label">{t('proxyGroupColumns')}</div>
+                  {renderProxyGroupColumnSelect()}
+                </div>
+                <div class="setting-item">
+                  <div class="setting-item-label">{t('addProxyFolder')}</div>
+                  <button
+                    class="btn btn-sm"
+                    onClick={handlerAddFolder}
+                  >
+                    <FolderPlusIcon class="h-4 w-4" />
+                    {t('add')}
+                  </button>
+                </div>
+                <div class="setting-item">
+                  <div class="setting-item-label">{t('proxyGroupLayout')}</div>
+                  <button
+                    class="btn btn-sm"
+                    onClick={handlerResetProxyLayout}
+                  >
+                    {t('reset')}
+                  </button>
                 </div>
                 {hasSmartGroup.value && (
                   <div class="setting-item">
@@ -374,6 +449,8 @@ export default defineComponent({
           <div class="flex w-full gap-2">
             {modeSelect}
             {searchInput}
+            {proxiesTabShow.value === PROXY_TAB_TYPE.PROXIES && renderProxyGroupColumnSelect()}
+            {addFolderButton}
             {settingsModal}
             {toggleCollapseAll}
             {latencyTestAll}
@@ -385,6 +462,15 @@ export default defineComponent({
           {modeSelect}
           <div class="flex flex-1">{searchInput}</div>
           {upgradeAllIcon}
+          {proxiesTabShow.value === PROXY_TAB_TYPE.PROXIES && (
+            <div class="join">
+              <button class="btn join-item btn-sm pointer-events-none">
+                <Squares2X2Icon class="h-4 w-4" />
+              </button>
+              {renderProxyGroupColumnSelect()}
+            </div>
+          )}
+          {addFolderButton}
           {settingsModal}
           {toggleCollapseAll}
           {latencyTestAll}

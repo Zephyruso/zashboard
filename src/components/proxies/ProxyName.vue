@@ -6,7 +6,7 @@
       :margin="iconMargin"
       :size="iconSize"
     />
-    {{ name }}
+    {{ displayName || name }}
     <template v-if="dialerProxy"> ({{ dialerProxy }}) </template>
   </div>
 </template>
@@ -19,6 +19,7 @@ import ProxyIcon from './ProxyIcon.vue'
 const props = withDefaults(
   defineProps<{
     name: string
+    displayName?: string
     iconSize?: number
     iconMargin?: number
   }>(),

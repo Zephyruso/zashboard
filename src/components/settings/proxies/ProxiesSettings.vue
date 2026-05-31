@@ -126,13 +126,43 @@
           class="setting-item"
         >
           <div class="setting-item-label">
-            {{ $t('twoColumnProxyGroup') }}
+            {{ $t('proxyGroupColumns') }}
           </div>
-          <input
-            class="toggle"
-            type="checkbox"
-            v-model="twoColumnProxyGroup"
-          />
+          <select
+            class="select select-sm min-w-24"
+            :value="proxyGroupColumns"
+            @change="handlerProxyGroupColumnsChange"
+          >
+            <option
+              v-for="columns in proxyGroupColumnOptions"
+              :key="columns"
+              :value="columns"
+            >
+              {{ columns }} {{ $t('columns') }}
+            </option>
+          </select>
+        </div>
+        <div
+          v-if="isVisibleProxyGroupLayout"
+          class="setting-item"
+        >
+          <div class="setting-item-label">
+            {{ $t('proxyGroupLayout') }}
+          </div>
+          <div class="flex gap-2">
+            <button
+              class="btn btn-sm"
+              @click="handlerAddFolder"
+            >
+              {{ $t('addProxyFolder') }}
+            </button>
+            <button
+              class="btn btn-sm"
+              @click="handlerResetProxyLayout"
+            >
+              {{ $t('reset') }}
+            </button>
+          </div>
         </div>
         <div
           v-if="isVisibleTruncateProxyName"
@@ -255,6 +285,12 @@
 
 <script setup lang="ts">
 import { isSingBox } from '@/api'
+import {
+  PROXY_GROUP_MAX_COLUMNS,
+  createProxyGroupFolder,
+  normalizeProxyGroupColumns,
+  resetProxyGroupLayout,
+} from '@/composables/proxyGroupFolders'
 import { useIsSettingVisible } from '@/composables/settings'
 import { PROXIES_ITEM_KEYS } from '@/config/settingsItems'
 import { PROXY_CARD_SIZE, PROXY_PREVIEW_TYPE, SPEEDTEST_MODE } from '@/constant'
@@ -270,6 +306,7 @@ import {
   mediumLatency,
   minProxyCardWidth,
   proxyCardSize,
+  proxyGroupColumns,
   proxyGroupIconMargin,
   proxyGroupIconSize,
   proxyPreviewType,
@@ -296,6 +333,7 @@ const isVisibleIpv6Test = useIsSettingVisible(k.ipv6Test)
 const isVisibleIndependentLatencyTest = useIsSettingVisible(k.independentLatencyTest)
 const isVisibleGroupTestUrls = useIsSettingVisible(k.groupTestUrls)
 const isVisibleTwoColumnProxyGroup = useIsSettingVisible(k.twoColumnProxyGroup)
+const isVisibleProxyGroupLayout = useIsSettingVisible(k.proxyGroupLayout)
 const isVisibleTruncateProxyName = useIsSettingVisible(k.truncateProxyName)
 const isVisibleDisplayGlobalByMode = useIsSettingVisible(k.displayGlobalByMode)
 const isVisibleCustomGlobalNode = useIsSettingVisible(k.customGlobalNode)
@@ -317,6 +355,22 @@ const independentLatencyTestTip = (e: Event) => {
 const handlerProxyCardSizeChange = () => {
   minProxyCardWidth.value = getMinCardWidth(proxyCardSize.value)
 }
+const proxyGroupColumnOptions = Array.from(
+  { length: PROXY_GROUP_MAX_COLUMNS },
+  (_, index) => index + 1,
+)
+const handlerProxyGroupColumnsChange = (event: Event) => {
+  proxyGroupColumns.value = normalizeProxyGroupColumns(
+    Number((event.target as HTMLSelectElement).value),
+  )
+  twoColumnProxyGroup.value = proxyGroupColumns.value > 1
+}
+const handlerAddFolder = () => {
+  createProxyGroupFolder()
+}
+const handlerResetProxyLayout = () => {
+  resetProxyGroupLayout()
+}
 
 const hasVisibleLatencyItems = computed(() => {
   return (
@@ -334,6 +388,7 @@ const hasVisibleLatencyItems = computed(() => {
 const hasVisibleProxyStyleItems = computed(() => {
   return (
     isVisibleTwoColumnProxyGroup.value ||
+    isVisibleProxyGroupLayout.value ||
     isVisibleTruncateProxyName.value ||
     isVisibleDisplayGlobalByMode.value ||
     (displayGlobalByMode.value && isSingBox.value && isVisibleCustomGlobalNode.value) ||

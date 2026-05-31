@@ -218,6 +218,31 @@ export const proxyGroupFilterMap = useStorage<Record<string, string>>(
 )
 export const displayFinalOutbound = useStorage('config/show-selected-for-now-node', false)
 export const twoColumnProxyGroup = useStorage('config/two-columns', true)
+export const proxyGroupColumns = useStorage<number>(
+  'config/proxy-group-columns',
+  twoColumnProxyGroup.value ? 2 : 1,
+)
+export const proxyGroupFolderMetaMap = useStorage<
+  Record<
+    string,
+    {
+      custom?: boolean
+      emoji?: string
+      height?: 'compact' | 'normal' | 'tall' | 'open'
+      name?: string
+      span?: number
+    }
+  >
+>('config/proxy-group-folder-meta-map', {})
+export const proxyGroupFolderAssignments = useStorage<Record<string, string>>(
+  'config/proxy-group-folder-assignments',
+  {},
+)
+export const proxyGroupEntryOrder = useStorage<string[]>('config/proxy-group-entry-order', [])
+export const proxyGroupFolderChildOrder = useStorage<Record<string, string[]>>(
+  'config/proxy-group-folder-child-order',
+  {},
+)
 export const speedtestUrl = useStorage<string>('config/speedtest-url', TEST_URL)
 export const independentLatencyTest = useStorage('config/independent-latency-test', false)
 export const speedtestTimeout = useStorage<number>('config/speedtest-timeout', 5000)

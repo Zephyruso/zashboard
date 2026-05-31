@@ -9,6 +9,7 @@
       <div class="relative flex w-full items-center gap-2 overflow-hidden">
         <ProxyName
           :name="name"
+          :display-name="displayName"
           :icon-size="proxyGroupIconSize"
           :icon-margin="proxyGroupIconMargin"
         />
@@ -103,6 +104,7 @@ import ProxyPreview from './ProxyPreview.vue'
 const props = defineProps<{
   name: string
   forceOpen?: boolean
+  displayName?: string
 }>()
 const proxyGroup = computed(() => proxyMap.value[props.name])
 const allProxies = computed(() => proxyGroup.value.all ?? [])
