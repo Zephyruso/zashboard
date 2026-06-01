@@ -2,6 +2,22 @@
 
 # Changelog
 
+## [3.7.0](https://github.com/Zephyruso/zashboard/compare/v3.6.0...v3.7.0) (2026-06-01)
+
+
+### Features
+
+* add proxy folder management feature ([379ec4e](https://github.com/Zephyruso/zashboard/commit/379ec4e1e9b74f149b7d0ede84717e980796977f))
+* enhance search functionality with testAny method for improved regex matching ([4c8faaf](https://github.com/Zephyruso/zashboard/commit/4c8faafcced2b283709ec58a66b0d6382374bb25))
+* implement proxy folder mode with improved settings and UI updates ([c36b593](https://github.com/Zephyruso/zashboard/commit/c36b59398a3b4ade26bd6dcd81158a908f79ceda))
+* refactor folder management UI components for improved layout and responsiveness ([8d6b58a](https://github.com/Zephyruso/zashboard/commit/8d6b58ad784b7f4bf882c6af6a17823feebf5675))
+* Sync settings after adding backend ([#656](https://github.com/Zephyruso/zashboard/issues/656)) ([f554b27](https://github.com/Zephyruso/zashboard/commit/f554b27eeba714f4553fc46cc873dc5e79035884))
+
+
+### Bug Fixes
+
+* **SetupPage:** improve button styling for better responsiveness and text truncation ([3bcc915](https://github.com/Zephyruso/zashboard/commit/3bcc915177bd736c3e93d25ec60a4a10baa9fd95))
+
 ## [3.6.0](https://github.com/Zephyruso/zashboard/compare/v3.5.1...v3.6.0) (2026-05-26)
 
 
