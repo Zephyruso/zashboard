@@ -236,9 +236,12 @@ const handleSubmit = async (form: Omit<Backend, 'uuid'>, quiet = false) => {
     }
 
     addBackend(form)
-    const synced = await syncSettingsFromCore()
-    if (synced) {
-      return
+
+    if (!String(version).includes('sing-box')) {
+      const synced = await syncSettingsFromCore()
+      if (synced) {
+        return
+      }
     }
 
     router.push({ name: ROUTE_NAME.proxies })
