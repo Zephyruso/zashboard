@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [3.7.1](https://github.com/Zephyruso/zashboard/compare/v3.7.0...v3.7.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* add '/storage/zashboard' to ignoreNotificationUrls and update FolderTopBar for swipe handling ([1ddbf1e](https://github.com/Zephyruso/zashboard/commit/1ddbf1e083b2521d55ff768a62e60e467a8808ee))
+
 ## [3.7.0](https://github.com/Zephyruso/zashboard/compare/v3.6.0...v3.7.0) (2026-06-01)
 
 
