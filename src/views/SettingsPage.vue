@@ -113,7 +113,7 @@ const route = useRoute()
 
 const scrollContainerRef = ref<HTMLDivElement>()
 const { width } = useElementSize(scrollContainerRef)
-const twoColumnsAvailable = computed(() => width.value >= 1000)
+const twoColumnsAvailable = computed(() => false)
 const isTwoColumns = computed(() => settingsPageTwoColumns.value && twoColumnsAvailable.value)
 const menuItems = computed<MenuItem[]>(() => {
   const itemsMap = new Map<SETTINGS_MENU_KEY, MenuItem>([
