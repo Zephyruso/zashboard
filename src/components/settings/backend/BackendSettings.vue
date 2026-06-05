@@ -6,13 +6,7 @@
   >
     <div class="flex items-center gap-2 px-1">
       <div class="indicator">
-        <span
-          v-if="isCoreUpdateAvailable"
-          class="indicator-item top-1 -right-1 flex"
-        >
-          <span class="bg-secondary absolute h-2 w-2 animate-ping rounded-full"></span>
-          <span class="bg-secondary h-2 w-2 rounded-full"></span>
-        </span>
+
         <a
           class="flex cursor-pointer items-center gap-2 text-lg font-semibold"
           :href="
@@ -44,13 +38,7 @@
         class="grid grid-cols-1 gap-2 px-4 py-3 md:grid-cols-2"
       >
         <template v-if="!isSingBox || displayAllFeatures">
-          <button
-            v-if="!activeBackend?.disableUpgradeCore"
-            class="btn btn-neutral btn-sm"
-            @click="showUpgradeCoreModal = true"
-          >
-            {{ $t('upgradeCore') }}
-          </button>
+
           <button
             class="btn btn-sm"
             @click="handlerClickRestartCore"
@@ -61,6 +49,7 @@
             ></span>
             {{ $t('restartCore') }}
           </button>
+
           <button
             class="btn btn-sm"
             @click="handlerClickReloadConfigs"
@@ -71,43 +60,31 @@
             ></span>
             {{ $t('reloadConfigs') }}
           </button>
-          <button
-            v-if="!isSingBox"
-            class="btn btn-sm"
-            @click="showUpdateConfigModal = true"
-          >
-            {{ $t('updateConfigs') }}
-          </button>
+
           <button
             class="btn btn-sm"
-            @click="handlerClickUpdateGeo"
+            @click="handlerClickFlushDNS"
           >
             <span
-              v-if="isGeoUpdating"
+              v-if="isDNSFlushing"
               class="loading loading-spinner loading-md"
             ></span>
-            {{ $t('updateGeoDatabase') }}
+            {{ $t('flushDNSCache') }}
           </button>
+
+          <button
+            class="btn btn-sm"
+            @click="handlerClickFlushFakeIP"
+          >
+            <span
+              v-if="isFakeIPFlushing"
+              class="loading loading-spinner loading-md"
+            ></span>
+            {{ $t('flushFakeIP') }}
+          </button>
+
         </template>
-        <button
-          class="btn btn-sm"
-          @click="handleFlushDNSCache"
-        >
-          {{ $t('flushDNSCache') }}
-        </button>
-        <button
-          class="btn btn-sm"
-          @click="handleFlushFakeIP"
-        >
-          {{ $t('flushFakeIP') }}
-        </button>
-        <button
-          v-if="hasSmartGroup"
-          class="btn btn-sm"
-          @click="handleFlushSmartWeights"
-        >
-          {{ $t('flushSmartWeights') }}
-        </button>
+
       </div>
 
       <div
@@ -132,20 +109,7 @@
       </div>
       <div class="settings-grid">
         <BackendPortsGrid v-if="isVisiblePorts" />
-        <div
-          v-if="configs?.tun && canShowTunMode"
-          class="setting-item"
-        >
-          <div class="setting-item-label">
-            {{ $t('tunMode') }}
-          </div>
-          <input
-            class="toggle"
-            type="checkbox"
-            v-model="configs.tun.enable"
-            @change="hanlderTunModeChange"
-          />
-        </div>
+
         <div
           v-if="isVisibleAllowLan"
           class="setting-item"
@@ -160,35 +124,7 @@
             @change="handlerAllowLanChange"
           />
         </div>
-        <template v-if="!activeBackend?.disableUpgradeCore">
-          <div
-            v-if="isVisibleCheckUpgrade"
-            class="setting-item"
-          >
-            <div class="setting-item-label">
-              {{ $t('checkCoreUpgrade') }}
-            </div>
-            <input
-              class="toggle"
-              type="checkbox"
-              v-model="checkUpgradeCore"
-              @change="handlerCheckUpgradeCoreChange"
-            />
-          </div>
-          <div
-            v-if="checkUpgradeCore && isVisibleAutoUpgrade"
-            class="setting-item"
-          >
-            <div class="setting-item-label">
-              {{ $t('autoUpgradeCore') }}
-            </div>
-            <input
-              class="toggle"
-              type="checkbox"
-              v-model="autoUpgradeCore"
-            />
-          </div>
-        </template>
+
       </div>
     </div>
 
@@ -302,6 +238,36 @@ const handlerClickReloadConfigs = async () => {
     })
   } catch {
     isConfigReloading.value = false
+  }
+}
+
+const isDNSFlushing = ref(false)
+const handlerClickFlushDNS = async () => {
+  if (isDNSFlushing.value) return
+  isDNSFlushing.value = true
+  try {
+    await flushDNSCacheAPI()
+    showNotification({
+      content: 'flushDNSCacheSuccess',
+      type: 'alert-success',
+    })
+  } finally {
+    isDNSFlushing.value = false
+  }
+}
+
+const isFakeIPFlushing = ref(false)
+const handlerClickFlushFakeIP = async () => {
+  if (isFakeIPFlushing.value) return
+  isFakeIPFlushing.value = true
+  try {
+    await flushFakeIPAPI()
+    showNotification({
+      content: 'flushFakeIPSuccess',
+      type: 'alert-success',
+    })
+  } finally {
+    isFakeIPFlushing.value = false
   }
 }
 
