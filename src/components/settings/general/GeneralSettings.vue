@@ -5,50 +5,7 @@
     </div>
     <div class="settings-grid">
       <LanguageSelect v-if="isVisibleLanguage" />
-      <div
-        v-if="isVisibleAutoUpgrade"
-        class="setting-item"
-      >
-        <div class="setting-item-label">
-          {{ $t('autoUpgradeDashboard') }}
-        </div>
-        <input
-          class="toggle"
-          type="checkbox"
-          v-model="autoUpgradeDashboard"
-        />
-      </div>
-      <div
-        v-if="isVisibleAutoDisconnectIdleUDP"
-        class="setting-item"
-      >
-        <div class="setting-item-label">
-          {{ $t('autoDisconnectIdleUDP') }}
-          <QuestionMarkCircleIcon
-            class="h-4 w-4 cursor-pointer"
-            @mouseenter="showTip($event, $t('autoDisconnectIdleUDPTip'))"
-          />
-        </div>
-        <input
-          type="checkbox"
-          v-model="autoDisconnectIdleUDP"
-          class="toggle"
-        />
-      </div>
-      <div
-        v-if="autoDisconnectIdleUDP && isVisibleAutoDisconnectIdleUDPTime"
-        class="setting-item"
-      >
-        <div class="setting-item-label">
-          {{ $t('autoDisconnectIdleUDPTime') }}
-        </div>
-        <input
-          type="number"
-          class="input input-sm w-20"
-          v-model="autoDisconnectIdleUDPTime"
-        />
-        mins
-      </div>
+
       <div
         v-if="isVisibleIPInfoAPI"
         class="setting-item"
@@ -130,29 +87,11 @@
         />
       </div>
       <KeyboardShortcutsSettings v-if="isVisibleShortcuts" />
-      <div
-        v-if="isSingBox && isVisibleDisplayAllFeatures"
-        class="setting-item"
-      >
-        <div class="setting-item-label">
-          {{ $t('displayAllFeatures') }}
-          <QuestionMarkCircleIcon
-            class="h-4 w-4 cursor-pointer"
-            @mouseenter="showTip($event, $t('displayAllFeaturesTip'))"
-          />
-        </div>
-        <input
-          type="checkbox"
-          v-model="displayAllFeatures"
-          class="toggle"
-        />
-      </div>
     </div>
   </template>
 </template>
 
 <script setup lang="ts">
-import { isSingBox } from '@/api'
 import KeyboardShortcutsSettings from '@/components/settings/general/KeyboardShortcutsSettings.vue'
 import LanguageSelect from '@/components/settings/general/LanguageSelect.vue'
 import { useIsSettingVisible } from '@/composables/settings'
@@ -165,7 +104,6 @@ import {
   autoDisconnectIdleUDPTime,
   autoUpgradeDashboard,
   disablePullToRefresh,
-  displayAllFeatures,
   IPInfoAPI,
   scrollAnimationEffect,
   swipeInPages,
@@ -188,7 +126,6 @@ const isVisibleScrollAnimationEffect = useIsSettingVisible(k.scrollAnimationEffe
 const isVisibleSwipeInPages = useIsSettingVisible(k.swipeInPages)
 const isVisibleSwipeInTabs = useIsSettingVisible(k.swipeInTabs)
 const isVisibleDisablePullToRefresh = useIsSettingVisible(k.disablePullToRefresh)
-const isVisibleDisplayAllFeatures = useIsSettingVisible(k.displayAllFeatures)
 
 const hasVisibleGeneralItems = computed(() => {
   return (
@@ -201,8 +138,7 @@ const hasVisibleGeneralItems = computed(() => {
     isVisibleScrollAnimationEffect.value ||
     isVisibleSwipeInPages.value ||
     (swipeInPages.value && isVisibleSwipeInTabs.value) ||
-    isVisibleDisablePullToRefresh.value ||
-    (isSingBox.value && isVisibleDisplayAllFeatures.value)
+    isVisibleDisablePullToRefresh.value
   )
 })
 </script>

@@ -2,15 +2,9 @@
   <div class="relative flex flex-col text-sm">
     <div class="flex items-center gap-2 px-1">
       <div class="indicator">
-        <span
-          v-if="isUIUpdateAvailable"
-          class="indicator-item top-1 -right-1 flex"
-        >
-          <span class="bg-secondary absolute h-2 w-2 animate-ping rounded-full"></span>
-          <span class="bg-secondary h-2 w-2 rounded-full"></span>
-        </span>
+
         <a
-          href="https://github.com/Zephyruso/zashboard"
+          href="https://t.me/MerlinClashchat"
           target="_blank"
           class="text-lg font-semibold"
         >
@@ -33,9 +27,13 @@
       class="settings-grid my-3 gap-2 p-3 md:grid-cols-2!"
     >
       <button
-        :class="twMerge('btn btn-neutral btn-sm', isUIUpgrading ? 'animate-pulse' : '')"
+        class="btn btn-sm"
         @click="handlerClickUpgradeUI"
       >
+        <span
+          v-if="isUIUpgrading"
+          class="loading loading-spinner loading-md"
+        ></span>
         {{ $t('upgradeDashboard') }}
       </button>
       <DashboardSettings />

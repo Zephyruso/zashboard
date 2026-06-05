@@ -48,44 +48,6 @@
         <ThemeSelector v-model:value="darkTheme" />
       </div>
       <BackgroundSettings />
-      <div
-        v-if="isVisibleFonts"
-        class="setting-item"
-      >
-        <div class="setting-item-label">
-          {{ $t('fonts') }}
-        </div>
-        <select
-          class="select select-sm w-48"
-          v-model="font"
-        >
-          <option
-            v-for="opt in fontOptions"
-            :key="opt"
-            :value="opt"
-          >
-            {{ opt }}
-          </option>
-        </select>
-      </div>
-      <div
-        v-if="isVisibleEmoji"
-        class="setting-item"
-      >
-        <div class="setting-item-label">Emoji</div>
-        <select
-          class="select select-sm w-48"
-          v-model="emoji"
-        >
-          <option
-            v-for="opt in Object.values(EMOJIS)"
-            :key="opt"
-            :value="opt"
-          >
-            {{ opt }}
-          </option>
-        </select>
-      </div>
     </div>
   </template>
 </template>
@@ -93,8 +55,7 @@
 <script setup lang="ts">
 import { useIsSettingVisible } from '@/composables/settings'
 import { GENERAL_ITEM_KEYS } from '@/config/settingsItems'
-import { EMOJIS, FONTS } from '@/constant'
-import { autoTheme, darkTheme, defaultTheme, emoji, font } from '@/store/settings'
+import { autoTheme, darkTheme, defaultTheme } from '@/store/settings'
 import { PlusIcon } from '@heroicons/vue/24/outline'
 import { computed, ref } from 'vue'
 import BackgroundSettings from './BackgroundSettings.vue'
@@ -104,8 +65,6 @@ import ThemeSelector from './ThemeSelector.vue'
 const customThemeModal = ref(false)
 
 const k = GENERAL_ITEM_KEYS
-const isVisibleFonts = useIsSettingVisible(k.fonts)
-const isVisibleEmoji = useIsSettingVisible(k.emoji)
 const isVisibleCustomBackgroundURL = useIsSettingVisible(k.customBackgroundURL)
 const isVisibleDefaultTheme = useIsSettingVisible(k.defaultTheme)
 const isVisibleDarkTheme = useIsSettingVisible(k.darkTheme)
@@ -116,19 +75,7 @@ const hasVisibleStyleItems = computed(() => {
     isVisibleDefaultTheme.value ||
     isVisibleAutoSwitchTheme.value ||
     (autoTheme.value && isVisibleDarkTheme.value) ||
-    isVisibleCustomBackgroundURL.value ||
-    isVisibleFonts.value ||
-    isVisibleEmoji.value
+    isVisibleCustomBackgroundURL.value
   )
-})
-
-const fontOptions = computed(() => {
-  const mode = import.meta.env.MODE
-
-  if (Object.values(FONTS).includes(mode as FONTS)) {
-    return [mode]
-  }
-
-  return Object.values(FONTS)
 })
 </script>
