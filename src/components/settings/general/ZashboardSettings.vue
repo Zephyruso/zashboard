@@ -11,12 +11,6 @@
           zashboard
           <span class="text-sm font-normal opacity-50">
             {{ zashboardVersion }}
-            <span
-              v-if="commitId"
-              class="text-xs"
-            >
-              {{ commitId }}
-            </span>
           </span>
         </a>
       </div>
@@ -57,8 +51,6 @@ import StyleSettings from './StyleSettings.vue'
 
 const k = GENERAL_ITEM_KEYS
 const isVisibleActions = useIsSettingVisible(k.actions)
-
-const commitId = __COMMIT_ID__
 
 const { isUIUpdateAvailable } = useSettings()
 
