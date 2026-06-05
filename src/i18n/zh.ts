@@ -324,7 +324,7 @@ const zh: LANG_MESSAGE = {
   ports: '端口',
   actions: '操作',
   showAllPreset: '全部显示',
-  minimalPreset: '精简显示',
+  defaultPreset: '默认显示',
   settingsPageTwoColumns: '双列布局',
   aggregateBy: '聚合方式',
   aggregateBySourceIP: '按源IP',

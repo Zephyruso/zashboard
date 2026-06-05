@@ -324,7 +324,7 @@ const zhTW: LANG_MESSAGE = {
   ports: '端口',
   actions: '操作',
   showAllPreset: '全部顯示',
-  minimalPreset: '精簡顯示',
+  defaultPreset: '默認顯示',
   settingsPageTwoColumns: '雙列佈局',
   aggregateBy: '聚合方式',
   aggregateBySourceIP: '按源IP',

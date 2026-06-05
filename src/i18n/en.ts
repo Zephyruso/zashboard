@@ -330,7 +330,7 @@ const en = {
   ports: 'Ports',
   actions: 'Actions',
   showAllPreset: 'Show all',
-  minimalPreset: 'Minimal view',
+  defaultPreset: 'Default preset',
   settingsPageTwoColumns: 'Two column layout',
   aggregateBy: 'Aggregate by',
   aggregateBySourceIP: 'By source IP',
