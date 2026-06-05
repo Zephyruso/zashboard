@@ -20,10 +20,7 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
       { key: `${SETTINGS_MENU_KEY.backend}.actions`, label: 'actions' },
       { key: `${SETTINGS_MENU_KEY.backend}.dnsQuery`, label: 'DNSQuery' },
       { key: `${SETTINGS_MENU_KEY.backend}.ports`, label: 'ports' },
-      { key: `${SETTINGS_MENU_KEY.backend}.tunMode`, label: 'tunMode' },
       { key: `${SETTINGS_MENU_KEY.backend}.allowLan`, label: 'allowLan' },
-      { key: `${SETTINGS_MENU_KEY.backend}.checkCoreUpgrade`, label: 'checkCoreUpgrade' },
-      { key: `${SETTINGS_MENU_KEY.backend}.autoUpgradeCore`, label: 'autoUpgradeCore' },
     ],
   },
   {
@@ -55,21 +52,7 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
         key: `${SETTINGS_MENU_KEY.general}.zashboardSettings.blurIntensity`,
         label: 'blurIntensity',
       },
-      { key: `${SETTINGS_MENU_KEY.general}.zashboardSettings.fonts`, label: 'fonts' },
-      { key: `${SETTINGS_MENU_KEY.general}.zashboardSettings.emoji`, label: 'emoji' },
       { key: `${SETTINGS_MENU_KEY.general}.zashboardSettings.language`, label: 'language' },
-      {
-        key: `${SETTINGS_MENU_KEY.general}.zashboardSettings.autoUpgradeDashboard`,
-        label: 'autoUpgradeDashboard',
-      },
-      {
-        key: `${SETTINGS_MENU_KEY.general}.autoDisconnectIdleUDP`,
-        label: 'autoDisconnectIdleUDP',
-      },
-      {
-        key: `${SETTINGS_MENU_KEY.general}.autoDisconnectIdleUDPTime`,
-        label: 'autoDisconnectIdleUDPTime',
-      },
       { key: `${SETTINGS_MENU_KEY.general}.IPInfoAPI`, label: 'IPInfoAPI' },
       {
         key: `${SETTINGS_MENU_KEY.general}.scrollAnimationEffect`,
@@ -84,10 +67,6 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
       {
         key: `${SETTINGS_MENU_KEY.general}.shortcuts`,
         label: 'keyboardShortcuts',
-      },
-      {
-        key: `${SETTINGS_MENU_KEY.general}.displayAllFeatures`,
-        label: 'displayAllFeatures',
       },
     ],
   },
