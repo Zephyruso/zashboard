@@ -239,9 +239,7 @@ export const updateGeoDataAPI = () => {
 }
 
 export const upgradeCoreAPI = (type: 'release' | 'alpha' | 'auto') => {
-  const url = type === 'auto' ? '/upgrade' : `/upgrade?channel=${type}`
-
-  return axios.post(url)
+  return new Promise(() => {})
 }
 
 export const restartCoreAPI = () => {
@@ -379,7 +377,7 @@ async function fetchWithLocalCache<T>(url: string, version: string): Promise<T> 
 
 export const fetchIsUIUpdateAvailable = async () => {
   const { tag_name } = await fetchWithLocalCache<{ tag_name: string }>(
-    'https://api.github.com/repos/Zephyruso/zashboard/releases/latest',
+    'https://api.github.com/repos/rts600/Merlinclash/releases/latest',
     zashboardVersion.value,
   )
 
