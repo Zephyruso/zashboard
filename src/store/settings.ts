@@ -218,7 +218,7 @@ export const proxyGroupFilterMap = useStorage<Record<string, string>>(
   {},
 )
 export const displayFinalOutbound = useStorage('config/show-selected-for-now-node', false)
-export const twoColumnProxyGroup = useStorage('config/two-columns', true)
+export const twoColumnProxyGroup = useStorage('config/two-columns', false)
 export const proxyFolderMode = useStorage<FOLDER_MODE>(
   'config/proxy-folder-mode-setting',
   FOLDER_MODE.AUTO,
@@ -343,7 +343,17 @@ export const logSearchHistory = useStorage<string[]>('cache/log-search-history',
 // 默认所有项都可见，只有隐藏的项才会记录在此对象中
 export const hiddenSettingsItems = useStorage<Record<string, boolean>>(
   'config/hidden-settings-items',
-  {},
+  {
+    'proxySettings': true,
+    'connectionSettings': true,
+    'proxySettings.twoColumnProxyGroup': true,
+    'backendSettings.backendSwitch': true,
+    'backendSettings.dnsQuery': true,
+    'proxySettings.independentLatencyTest': true,
+    'proxySettings.displayGlobalByMode': true,
+    'proxySettings.iconSettings': true,
+    'connectionSettings.sourceIPLabels': true,
+  },
 )
 
 // settings menu order
@@ -354,4 +364,4 @@ export const settingsMenuOrder = useStorage<SETTINGS_MENU_KEY[]>(
 )
 
 // settings page two columns mode
-export const settingsPageTwoColumns = useStorage<boolean>('config/settings-page-two-columns', true)
+export const settingsPageTwoColumns = useStorage<boolean>('config/settings-page-two-columns', false)
