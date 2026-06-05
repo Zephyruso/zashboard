@@ -10,9 +10,6 @@ importers:
       '@eslint/plugin-kit':
         specifier: ^0.7.1
         version: 0.7.1
-      '@fontsource/fira-sans':
-        specifier: ^5.2.7
-        version: 5.2.7
       '@heroicons/vue':
         specifier: ^2.2.0
         version: 2.2.0(vue@3.5.33(typescript@6.0.3))
@@ -49,9 +46,6 @@ importers:
       lodash:
         specifier: ^4.18.1
         version: 4.18.1
-      misans:
-        specifier: ^4.1.0
-        version: 4.1.0
       p-limit:
         specifier: ^7.3.0
         version: 7.3.0
@@ -70,9 +64,6 @@ importers:
       sort-package-json:
         specifier: ^3.6.1
         version: 3.6.1
-      subsetted-fonts:
-        specifier: ^1.0.4
-        version: 1.0.4
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -1288,12 +1279,6 @@ packages:
         integrity: sha512-rZAP3aVgB9ds9KOeUSL+zZ21hPmo8dh6fnIFwRQj5EAZl9gzR7wxYbYXYysAM8CTqGmUGyp2S4kUdV17MnGuWQ==,
       }
     engines: { node: ^20.19.0 || ^22.13.0 || >=24 }
-
-  '@fontsource/fira-sans@5.2.7':
-    resolution:
-      {
-        integrity: sha512-5DE4AealD/VnbwdzMgnpWfCttMQBbteNiK9DCJE7cVwZEbDTPLUoFDMMvxNQ498nZc5in7Mta9c/s+3Ehh0BAg==,
-      }
 
   '@heroicons/vue@2.2.0':
     resolution:
@@ -3951,12 +3936,6 @@ packages:
       }
     engines: { node: '>=10' }
 
-  misans@4.1.0:
-    resolution:
-      {
-        integrity: sha512-CcIRrIVhnt+OpGXvw1Q8llGBVAy5P2mdov/kJ0gGa81sJ0RY7mZp2fNAt2ySTCeZos+wo7ZnzDZxl1In//7FdA==,
-      }
-
   mlly@1.8.2:
     resolution:
       {
@@ -4746,12 +4725,6 @@ packages:
         integrity: sha512-ZprKx+bBLXv067WTCALv8SSz5l2+XhpYCsVtSqlMnkAXMWDq+/ekVbl1ghqP9rUHTzv6sm/DwCOiYutU/yp1fw==,
       }
     engines: { node: '>=10' }
-
-  subsetted-fonts@1.0.4:
-    resolution:
-      {
-        integrity: sha512-d/z+2OruazabDwJ6mHCDQhOQ/8BJW7r1VXeVvw9xBP49DH1pSGPgpNbGcG7tQc6EMsZOfFQnXwFdEakwV4CuIw==,
-      }
 
   supports-color@2.0.0:
     resolution:
@@ -6214,8 +6187,6 @@ snapshots:
     dependencies:
       '@eslint/core': 1.2.1
       levn: 0.4.1
-
-  '@fontsource/fira-sans@5.2.7': {}
 
   '@heroicons/vue@2.2.0(vue@3.5.33(typescript@6.0.3))':
     dependencies:
@@ -7837,8 +7808,6 @@ snapshots:
     dependencies:
       brace-expansion: 2.1.0
 
-  misans@4.1.0: {}
-
   mlly@1.8.2:
     dependencies:
       acorn: 8.16.0
@@ -8310,8 +8279,6 @@ snapshots:
       ansi-regex: 6.2.2
 
   strip-comments@2.0.1: {}
-
-  subsetted-fonts@1.0.4: {}
 
   supports-color@2.0.0: {}
 
