@@ -3,7 +3,6 @@ import 'tippy.js/animations/scale.css'
 import 'tippy.js/dist/tippy.css'
 import { createApp } from 'vue'
 import App from './App.vue'
-import { loadFonts } from './assets/load-fonts'
 import './assets/main.css'
 import { applyCustomThemes, applyKsuTheme } from './helper'
 import { i18n } from './i18n'
@@ -21,7 +20,23 @@ if (isEdge) {
 
 applyCustomThemes()
 applyKsuTheme()
-loadFonts()
+
+if (!localStorage.getItem('config/hidden-settings-items')) {
+  localStorage.setItem(
+    'config/hidden-settings-items',
+    JSON.stringify({
+      proxySettings: true,
+      connectionSettings: true,
+      'proxySettings.twoColumnProxyGroup': true,
+      'backendSettings.backendSwitch': true,
+      'backendSettings.dnsQuery': true,
+      'proxySettings.independentLatencyTest': true,
+      'proxySettings.displayGlobalByMode': true,
+      'proxySettings.iconSettings': true,
+      'connectionSettings.sourceIPLabels': true,
+    }),
+  )
+}
 
 const app = createApp(App)
 

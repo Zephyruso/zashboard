@@ -34,15 +34,7 @@ const FONT_CLASS_MAP = {
     [FONTS.MI_SANS]: 'font-MiSans-Twemoji',
     [FONTS.SARASA_UI]: 'font-SarasaUI-Twemoji',
     [FONTS.PING_FANG]: 'font-PingFang-Twemoji',
-    [FONTS.FIRA_SANS]: 'font-FiraSans-Twemoji',
     [FONTS.SYSTEM_UI]: 'font-SystemUI-Twemoji',
-  },
-  [EMOJIS.NOTO_COLOR_EMOJI]: {
-    [FONTS.MI_SANS]: 'font-MiSans-NotoEmoji',
-    [FONTS.SARASA_UI]: 'font-SarasaUI-NotoEmoji',
-    [FONTS.PING_FANG]: 'font-PingFang-NotoEmoji',
-    [FONTS.FIRA_SANS]: 'font-FiraSans-NotoEmoji',
-    [FONTS.SYSTEM_UI]: 'font-SystemUI-NotoEmoji',
   },
 } as const
 
