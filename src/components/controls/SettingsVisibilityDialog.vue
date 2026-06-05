@@ -28,7 +28,7 @@
           class="btn btn-sm"
           @click="applyMinimalPreset"
         >
-          {{ $t('minimalPreset') }}
+          {{ $t('defaultPreset') }}
         </button>
       </div>
       <Draggable
@@ -136,48 +136,17 @@ const applyShowAllPreset = () => {
 
 // 应用"精简显示"预设
 const applyMinimalPreset = () => {
-  const allKeys = getAllSettingKeys()
-  const minimalHiddenKeys: string[] = [SETTINGS_MENU_KEY.proxies, SETTINGS_MENU_KEY.connections]
-
-  // 隐藏不常用/高级设置项
-  for (const key of allKeys) {
-    if (key.includes('emoji') || key.includes('language')) {
-      minimalHiddenKeys.push(key)
-    }
-    // UDP 相关设置
-    else if (key.includes('autoDisconnectIdleUDP') || key.includes('autoDisconnectIdleUDPTime')) {
-      minimalHiddenKeys.push(key)
-    }
-    // 滚动动画效果、滑动切换相关
-    else if (
-      key.includes('scrollAnimationEffect') ||
-      key.includes('swipeInPages') ||
-      key.includes('swipeInTabs') ||
-      key.includes('disablePullToRefresh')
-    ) {
-      minimalHiddenKeys.push(key)
-    }
-    // 其他不常用选项
-    else if (
-      key.includes('displayAllFeatures') ||
-      key.includes('IPInfoAPI') ||
-      key.includes('numberOfChartsInSidebar') ||
-      key.includes('proxyGroupIconSize') ||
-      key.includes('proxyGroupIconMargin') ||
-      key.includes('proxyPreviewType') ||
-      key.includes('proxyCardSize') ||
-      key.includes('twoColumnProxyGroup')
-    ) {
-      minimalHiddenKeys.push(key)
-    }
+  hiddenSettingsItems.value = {
+    'proxySettings': true,
+    'connectionSettings': true,
+    'proxySettings.twoColumnProxyGroup': true,
+    'backendSettings.backendSwitch': true,
+    'backendSettings.dnsQuery': true,
+    'proxySettings.independentLatencyTest': true,
+    'proxySettings.displayGlobalByMode': true,
+    'proxySettings.iconSettings': true,
+    'connectionSettings.sourceIPLabels': true,
   }
-
-  // 设置隐藏项
-  const newHiddenItems: Record<string, boolean> = {}
-  for (const key of minimalHiddenKeys) {
-    newHiddenItems[key] = true
-  }
-  hiddenSettingsItems.value = newHiddenItems
   settingsMenuOrder.value = [...SETTINGS_CATEGORIES].map((category) => category.key)
 }
 </script>
