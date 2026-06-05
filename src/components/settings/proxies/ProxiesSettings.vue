@@ -183,26 +183,6 @@
           />
         </div>
         <div
-          v-if="displayGlobalByMode && isSingBox && isVisibleCustomGlobalNode"
-          class="setting-item"
-        >
-          <div class="setting-item-label">
-            {{ $t('customGlobalNode') }}
-          </div>
-          <select
-            class="select select-sm min-w-24"
-            v-model="customGlobalNode"
-          >
-            <option
-              v-for="opt in Object.keys(proxyMap)"
-              :key="opt"
-              :value="opt"
-            >
-              {{ opt }}
-            </option>
-          </select>
-        </div>
-        <div
           v-if="isVisibleProxyPreviewType"
           class="setting-item"
         >
@@ -284,7 +264,6 @@ import { useTooltip } from '@/helper/tooltip'
 import { getMinCardWidth } from '@/helper/utils'
 import { proxyMap } from '@/store/proxies'
 import {
-  customGlobalNode,
   displayGlobalByMode,
   independentLatencyTest,
   IPv6test,
@@ -322,7 +301,6 @@ const isVisibleTwoColumnProxyGroup = useIsSettingVisible(k.twoColumnProxyGroup)
 const isVisibleProxyFolderMode = useIsSettingVisible(k.proxyFolderMode)
 const isVisibleTruncateProxyName = useIsSettingVisible(k.truncateProxyName)
 const isVisibleDisplayGlobalByMode = useIsSettingVisible(k.displayGlobalByMode)
-const isVisibleCustomGlobalNode = useIsSettingVisible(k.customGlobalNode)
 const isVisibleProxyPreviewType = useIsSettingVisible(k.proxyPreviewType)
 const isVisibleProxyCardSize = useIsSettingVisible(k.proxyCardSize)
 const isVisibleProxyGroupIconSize = useIsSettingVisible(k.proxyGroupIconSize)
@@ -361,7 +339,6 @@ const hasVisibleProxyStyleItems = computed(() => {
     isVisibleProxyFolderMode.value ||
     isVisibleTruncateProxyName.value ||
     isVisibleDisplayGlobalByMode.value ||
-    (displayGlobalByMode.value && isSingBox.value && isVisibleCustomGlobalNode.value) ||
     isVisibleProxyPreviewType.value ||
     isVisibleProxyCardSize.value ||
     isVisibleProxyGroupIconSize.value ||
