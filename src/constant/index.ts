@@ -17,20 +17,14 @@ export enum LANG {
   EN_US = 'en-US',
   ZH_CN = 'zh-CN',
   ZH_TW = 'zh-TW',
-  RU_RU = 'ru-RU',
 }
 
 export enum FONTS {
-  MI_SANS = 'MiSans',
-  SARASA_UI = 'SarasaUi',
-  PING_FANG = 'PingFang',
-  FIRA_SANS = 'FiraSans',
   SYSTEM_UI = 'SystemUI',
 }
 
 export enum EMOJIS {
   TWEMOJI = 'twemoji',
-  NOTO_COLOR_EMOJI = 'noto-color-emoji',
 }
 
 export enum CONNECTIONS_TABLE_ACCESSOR_KEY {
@@ -198,7 +192,7 @@ export enum PROXY_TYPE {
 }
 
 export const SIMPLE_CARD_STYLE = [
-  [CONNECTIONS_TABLE_ACCESSOR_KEY.Host, CONNECTIONS_TABLE_ACCESSOR_KEY.ConnectTime],
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.SourceIP, CONNECTIONS_TABLE_ACCESSOR_KEY.Host, CONNECTIONS_TABLE_ACCESSOR_KEY.ConnectTime],
   [
     CONNECTIONS_TABLE_ACCESSOR_KEY.Chains,
     CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed,
@@ -207,12 +201,7 @@ export const SIMPLE_CARD_STYLE = [
 ]
 
 export const DETAILED_CARD_STYLE = [
-  [CONNECTIONS_TABLE_ACCESSOR_KEY.Host, CONNECTIONS_TABLE_ACCESSOR_KEY.ConnectTime],
-  [
-    CONNECTIONS_TABLE_ACCESSOR_KEY.Type,
-    CONNECTIONS_TABLE_ACCESSOR_KEY.Download,
-    CONNECTIONS_TABLE_ACCESSOR_KEY.Upload,
-  ],
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.SourceIP, CONNECTIONS_TABLE_ACCESSOR_KEY.Host, CONNECTIONS_TABLE_ACCESSOR_KEY.ConnectTime],
   [
     CONNECTIONS_TABLE_ACCESSOR_KEY.Chains,
     CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed,
@@ -280,7 +269,6 @@ export type THEME = Record<string, string>
 
 export enum IP_INFO_API {
   IPSB = 'ip.sb',
-  IPWHOIS = 'ipwho.is',
   IPAPI = 'ipapi.is',
 }
 
@@ -309,11 +297,11 @@ export enum MIHOMO {
 
 export const MIHOMO_CHANNEL: Record<MIHOMO, { url: string; check_update_url: string }> = {
   [MIHOMO.Meta]: {
-    url: 'https://github.com/metacubex/mihomo',
+    url: 'https://t.me/MerlinClashchat',
     check_update_url: 'https://api.github.com/repos/MetaCubeX/mihomo/releases/latest',
   },
   [MIHOMO.Alpha]: {
-    url: 'https://github.com/metacubex/mihomo',
+    url: 'https://t.me/MerlinClashchat',
     check_update_url:
       'https://api.github.com/repos/MetaCubeX/mihomo/releases/tags/Prerelease-Alpha',
   },
