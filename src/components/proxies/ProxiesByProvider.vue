@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCalculateMaxProxies } from '@/composables/proxiesScroll'
-import { handlerProxySelect, proxyMap, proxyProviederList } from '@/store/proxies'
+import { handlerProxySelect, providerNameByProxy, proxyMap } from '@/store/proxies'
 import { computed } from 'vue'
 import ProxyNodeCard from './ProxyNodeCard.vue'
 import ProxyNodeGrid from './ProxyNodeGrid.vue'
@@ -15,18 +15,6 @@ const props = defineProps<{
   now: string
   renderProxies: string[]
 }>()
-
-const providerNameByProxy = computed(() => {
-  const nameByProxy = new Map<string, string>()
-
-  for (const provider of proxyProviederList.value) {
-    for (const proxy of provider.proxies) {
-      nameByProxy.set(proxy.name, provider.name)
-    }
-  }
-
-  return nameByProxy
-})
 
 const activeIndex = computed(() => props.renderProxies.indexOf(props.now))
 
