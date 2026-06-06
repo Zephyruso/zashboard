@@ -95,8 +95,14 @@ function Invoke-Gh {
         }
     }
 
-    $output = & $ghPath @Arguments 2>&1
-    $ok = $LASTEXITCODE -eq 0
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $output = & $ghPath @Arguments 2>&1
+        $ok = $LASTEXITCODE -eq 0
+    } finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
 
     return @{
         Ok = $ok
