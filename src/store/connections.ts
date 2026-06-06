@@ -1,21 +1,13 @@
 import { disconnectByIdAPI, fetchConnectionsAPI } from '@/api'
 import { CONNECTION_TAB_TYPE, SORT_DIRECTION, SORT_TYPE } from '@/constant'
 import { getChainsStringFromConnection, getInboundUserFromConnection } from '@/helper'
-import { getConnectionVisibleSearchValues } from '@/helper/connection'
 import { toSearchRegex } from '@/helper/search'
 import type { Connection, ConnectionRawMessage } from '@/types'
 import { useStorage } from '@vueuse/core'
 import { computed, ref, shallowRef, watch } from 'vue'
 import { initAggregatedDataMap, saveConnectionHistory } from './connHistory'
-import {
-  autoDisconnectIdleUDP,
-  autoDisconnectIdleUDPTime,
-  connectionCardLines,
-  connectionTableColumns,
-  isConnectionCard,
-  proxyChainDirection,
-  showFullProxyChain,
-} from './settings'
+import { autoDisconnectIdleUDP, autoDisconnectIdleUDPTime, isConnectionCard } from './settings'
+import { activeBackend } from './setup'
 
 export const connectionTabShow = ref(CONNECTION_TAB_TYPE.ACTIVE)
 export const connectionSortType = useStorage<SORT_TYPE>(
@@ -310,36 +302,28 @@ export const connections = computed(() => {
 export const renderConnections = computed(() => {
   const searchRegex = connectionFilter.value ? toSearchRegex(connectionFilter.value) : null
   const hideRegex = quickFilterEnabled.value ? toSearchRegex(quickFilterRegex.value) : null
-  const displayOptions = {
-    mode: isConnectionCard.value ? ('card' as const) : ('table' as const),
-    proxyChainDirection: proxyChainDirection.value,
-    showFullProxyChain: showFullProxyChain.value,
-  }
-  const visibleKeys = isConnectionCard.value
-    ? connectionCardLines.value.flat()
-    : connectionTableColumns.value
+  const sourceIPFilterSet = sourceIPFilter.value === null ? null : new Set(sourceIPFilter.value)
 
-  return connections.value
-    .filter((conn) => {
-      const visibleValues = getConnectionVisibleSearchValues(conn, visibleKeys, displayOptions)
-
-      if (
-        sourceIPFilter.value !== null &&
-        sourceIPFilter.value.every((i) => i !== conn.metadata.sourceIP)
-      ) {
-        return false
-      }
-
-      if (hideRegex) {
-        const quickFilterMatch = hideRegex.testAny(visibleValues)
-
-        if (hideRegex && hideRegex.testAny(metadatas)) {
+  const shouldFilter = sourceIPFilterSet !== null || searchRegex !== null || hideRegex !== null
+  const filteredConnections = shouldFilter
+    ? connections.value.filter((conn) => {
+        if (sourceIPFilterSet !== null && !sourceIPFilterSet.has(conn.metadata.sourceIP)) {
           return false
         }
 
-      if (searchRegex) {
-        return searchRegex.testAny(visibleValues)
-      }
+        if (hideRegex === null && searchRegex === null) {
+          return true
+        }
+
+        const searchFields = ensureConnectionDerivedData(conn).searchFields
+
+        if (hideRegex && hideRegex.testAny(searchFields)) {
+          return false
+        }
+
+        if (searchRegex) {
+          return searchRegex.testAny(searchFields)
+        }
 
         return true
       })

@@ -33,6 +33,15 @@ function Invoke-Git {
     }
 }
 
+function Test-GitRef {
+    param(
+        [string]$Ref
+    )
+
+    git rev-parse --verify --quiet $Ref 1>$null
+    return $LASTEXITCODE -eq 0
+}
+
 function Invoke-Pnpm {
     corepack pnpm @args
     if ($LASTEXITCODE -ne 0) {
@@ -244,6 +253,21 @@ if ($stagedCount -gt 0) {
     Write-Host ""
     Write-Host "==> Commit"
     Write-Host "No staged changes to commit."
+}
+
+if (-not $PushMain) {
+    Invoke-Step "Sync upload branch" {
+        git fetch origin "$Branch`:refs/remotes/origin/$Branch"
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "Remote upload branch does not exist yet or could not be fetched."
+            return
+        }
+
+        $remoteRef = "origin/$Branch"
+        if (Test-GitRef $remoteRef) {
+            Invoke-Git rebase $remoteRef
+        }
+    }
 }
 
 Invoke-Step "Push" {

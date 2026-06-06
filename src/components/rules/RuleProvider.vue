@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { updateRuleProviderAPI } from '@/api'
+import { isRequestCanceled, updateRuleProviderAPI } from '@/api'
 import HighlightText from '@/components/common/HighlightText.vue'
 import { useBounceOnVisible } from '@/composables/bouncein'
 import { fromNow } from '@/helper/utils'

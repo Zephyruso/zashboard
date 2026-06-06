@@ -44,7 +44,7 @@
               :name="chain"
               :filter="filter"
             />
-          </span>
+          </button>
         </template>
         <template
           v-if="
