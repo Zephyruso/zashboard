@@ -56,6 +56,17 @@ export const proxyProviderByName = computed(() => {
 
   return providersByName
 })
+export const providerNameByProxy = computed(() => {
+  const nameByProxy = new Map<string, string>()
+
+  for (const provider of proxyProviederList.value) {
+    for (const proxy of provider.proxies) {
+      nameByProxy.set(proxy.name, provider.name)
+    }
+  }
+
+  return nameByProxy
+})
 
 const speedtestUrlWithDefault = computed(() => {
   return speedtestUrl.value || TEST_URL

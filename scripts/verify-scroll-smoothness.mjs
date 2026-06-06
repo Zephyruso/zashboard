@@ -302,6 +302,16 @@ const assertSourceChecks = async () => {
   )
   assertIncludes(
     sources.settingsComposable,
+    'uiUpdateDelayHandle',
+    'UI update check scheduler no longer keeps a cancellable startup delay',
+  )
+  assertIncludes(
+    sources.settingsComposable,
+    '}, 8000)',
+    'UI update check scheduler no longer delays startup network work past scroll sampling',
+  )
+  assertIncludes(
+    sources.settingsComposable,
     'lowPowerMode.value',
     'UI update check scheduler no longer skips work in low power mode',
   )
@@ -364,9 +374,14 @@ const assertSourceChecks = async () => {
     'Virtual proxy grid virtualizer no longer uses rowCount directly',
   )
   assertIncludes(
-    sources.proxiesByProvider,
+    sources.proxiesStore,
     'const providerNameByProxy = computed(() => {',
-    'Provider-grouped Proxies no longer builds a provider-name lookup map',
+    'Proxies store no longer caches a provider-name lookup map',
+  )
+  assertIncludes(
+    sources.proxiesByProvider,
+    'import { handlerProxySelect, providerNameByProxy, proxyMap }',
+    'Provider-grouped Proxies no longer reuses the shared provider-name lookup map',
   )
   assertIncludes(
     sources.proxiesByProvider,
@@ -445,6 +460,9 @@ const assertSourceChecks = async () => {
   )
   if (sources.proxiesByProvider.includes('proxyProviederList.value.find')) {
     fail('Provider-grouped Proxies still scans providers for each rendered proxy')
+  }
+  if (sources.proxiesByProvider.includes('proxyProviederList.value')) {
+    fail('Provider-grouped Proxies still builds provider lookup state per component instance')
   }
   assertIncludes(
     sources.proxiesStore,
@@ -769,8 +787,28 @@ const assertSourceChecks = async () => {
   )
   assertIncludes(
     sources.proxyGroupForMobile,
-    'Math.max(160, innerHeight - verticalOffset - 112)',
-    'Mobile ProxyGroup expanded panel max-height no longer has a small-viewport floor',
+    'window.visualViewport',
+    'Mobile ProxyGroup expanded panel no longer tracks visual viewport changes',
+  )
+  assertIncludes(
+    sources.proxyGroupForMobile,
+    'dockTop.value + 32',
+    'Mobile ProxyGroup expanded panel no longer reserves space for the mobile dock',
+  )
+  assertIncludes(
+    sources.proxyGroupForMobile,
+    'attachViewportListeners()',
+    'Mobile ProxyGroup expanded panel no longer attaches viewport listeners while open',
+  )
+  assertIncludes(
+    sources.proxyGroupForMobile,
+    'clearViewportListeners()',
+    'Mobile ProxyGroup expanded panel no longer clears viewport listeners when closed',
+  )
+  assertIncludes(
+    sources.proxyGroupForMobile,
+    'viewportHeight - verticalOffset - getExpandedBottomReserve()',
+    'Mobile ProxyGroup expanded panel max-height no longer uses the dock-aware bottom reserve',
   )
   assertIncludes(
     sources.proxyGroupForMobile,

@@ -100,6 +100,7 @@
 <script setup lang="ts">
 import { lockProxiesPageScroll, unlockProxiesPageScroll } from '@/composables/proxies'
 import { useRenderProxyList } from '@/composables/renderProxies'
+import { dockTop } from '@/composables/paddingViews'
 import { useLongPress } from '@/composables/useIOSGestures'
 import { isHiddenGroup } from '@/helper'
 import { PROXIES_PARENT_CLASS } from '@/helper/utils'
@@ -160,6 +161,7 @@ let latencyTestSeq = 0
 let expandedReadyFrame: number | undefined
 let transitionFallbackTimer: ReturnType<typeof setTimeout> | undefined
 let pageScrollLockToken: symbol | undefined
+let viewportListenerCleanup: (() => void) | undefined
 
 const setProxiesPageScrollLocked = (locked: boolean) => {
   if (locked) {
@@ -199,6 +201,19 @@ const isCurrentLatencyTest = (controller: AbortController, seq: number) => {
   return latencyTestController === controller && latencyTestSeq === seq
 }
 
+const getViewportSize = () => {
+  const viewport = window.visualViewport
+
+  return {
+    height: viewport?.height ?? window.innerHeight,
+    width: viewport?.width ?? window.innerWidth,
+  }
+}
+
+const getExpandedBottomReserve = () => {
+  return Math.max(96, dockTop.value + 32)
+}
+
 const calcCardStyle = () => {
   if (calcStyleFrame !== undefined) cancelAnimationFrame(calcStyleFrame)
   calcStyleFrame = requestAnimationFrame(() => {
@@ -213,14 +228,14 @@ const calcCardStyle = () => {
 
     const manyProxies = renderProxies.value.length > 4
     const { left, top, bottom } = cardWrapperRef.value.getBoundingClientRect()
-    const { innerHeight, innerWidth } = window
+    const { height: viewportHeight, width: viewportWidth } = getViewportSize()
 
-    const minSafeArea = innerHeight * 0.15
-    const baseLine = innerHeight * 0.2
-    const maxSafeArea = innerHeight * 0.3
+    const minSafeArea = viewportHeight * 0.15
+    const baseLine = viewportHeight * 0.2
+    const maxSafeArea = viewportHeight * 0.3
 
-    const isLeft = left < innerWidth / 3
-    const isTop = (top + bottom) * 0.5 < innerHeight * (manyProxies ? 0.7 : 0.5)
+    const isLeft = left < viewportWidth / 3
+    const isTop = (top + bottom) * 0.5 < viewportHeight * (manyProxies ? 0.7 : 0.5)
     const transformOrigin = isLeft
       ? isTop
         ? 'top left'
@@ -240,17 +255,17 @@ const calcCardStyle = () => {
       }
       verticalOffset = top + transformValueY
     } else {
-      const minSafeBottom = innerHeight - minSafeArea
-      const maxSafeBottom = innerHeight - maxSafeArea
-      const baseLineBottom = innerHeight - baseLine
+      const minSafeBottom = viewportHeight - minSafeArea
+      const maxSafeBottom = viewportHeight - maxSafeArea
+      const baseLineBottom = viewportHeight - baseLine
 
       if (bottom > minSafeBottom || (bottom < maxSafeBottom && manyProxies)) {
         transformValueY = baseLineBottom - bottom
       }
-      verticalOffset = innerHeight - bottom - transformValueY
+      verticalOffset = viewportHeight - bottom - transformValueY
     }
 
-    const maxHeight = Math.max(160, innerHeight - verticalOffset - 112)
+    const maxHeight = Math.max(160, viewportHeight - verticalOffset - getExpandedBottomReserve())
 
     cardStyle.value = {
       width: WIDTH_STYLE,
@@ -262,6 +277,33 @@ const calcCardStyle = () => {
       [positionKeyX]: 0,
     }
   })
+}
+
+const clearViewportListeners = () => {
+  viewportListenerCleanup?.()
+  viewportListenerCleanup = undefined
+}
+
+const attachViewportListeners = () => {
+  if (viewportListenerCleanup) return
+
+  const viewport = window.visualViewport
+  const handler = () => {
+    if (!modalMode.value) return
+    calcCardStyle()
+  }
+
+  window.addEventListener('resize', handler, { passive: true })
+  window.addEventListener('orientationchange', handler, { passive: true })
+  viewport?.addEventListener('resize', handler, { passive: true })
+  viewport?.addEventListener('scroll', handler, { passive: true })
+
+  viewportListenerCleanup = () => {
+    window.removeEventListener('resize', handler)
+    window.removeEventListener('orientationchange', handler)
+    viewport?.removeEventListener('resize', handler)
+    viewport?.removeEventListener('scroll', handler)
+  }
 }
 
 const settleTransitionState = () => {
@@ -304,6 +346,11 @@ const handlerTransitionEnd = (e: TransitionEvent) => {
 const expandGroup = async () => {
   modalMode.value = !modalMode.value
   setProxiesPageScrollLocked(modalMode.value)
+  if (modalMode.value) {
+    attachViewportListeners()
+  } else {
+    clearViewportListeners()
+  }
   expandedContentReady.value = false
   clearExpandedReadyFrame()
 
@@ -372,6 +419,7 @@ onUnmounted(() => {
   if (calcStyleFrame !== undefined) cancelAnimationFrame(calcStyleFrame)
   clearExpandedReadyFrame()
   clearTransitionFallbackTimer()
+  clearViewportListeners()
   if (suppressClickTimer !== undefined) clearTimeout(suppressClickTimer)
   setProxiesPageScrollLocked(false)
 })
