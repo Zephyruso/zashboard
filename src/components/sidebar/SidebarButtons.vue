@@ -37,11 +37,21 @@ import { getLabelFromBackend } from '@/helper/utils'
 import { isSidebarCollapsed } from '@/store/settings'
 import { activeBackend } from '@/store/setup'
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon, ServerIcon } from '@heroicons/vue/24/outline'
-import { computed, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 const { showTip } = useTooltip()
 
 const showBackendSelectorDialog = ref(false)
+
+onMounted(() => {
+  window.addEventListener('open-backend-settings', () => {
+    showBackendSelectorDialog.value = !showBackendSelectorDialog.value
+  })
+})
+onUnmounted(() => {
+  window.removeEventListener('open-backend-settings', () => {})
+})
+
 const props = defineProps<{
   vertical?: boolean
 }>()

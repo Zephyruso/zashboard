@@ -10,6 +10,7 @@ export enum KEYBOARD_SHORTCUT_ACTION {
   TOGGLE_SIDEBAR = 'sidebar:toggle',
   BACKEND_PREVIOUS = 'backend:previous',
   BACKEND_NEXT = 'backend:next',
+  BACKEND_OPEN_SETTINGS = 'backend:open-settings',
   PAGE_1 = 'page:1',
   PAGE_2 = 'page:2',
   PAGE_3 = 'page:3',
@@ -50,6 +51,10 @@ export const KEYBOARD_SHORTCUTS = {
   [KEYBOARD_SHORTCUT_ACTION.BACKEND_NEXT]: {
     defaultKey: 'N',
     label: 'switchToNextBackend',
+  },
+  [KEYBOARD_SHORTCUT_ACTION.BACKEND_OPEN_SETTINGS]: {
+    defaultKey: 'S',
+    label: 'openBackendSettings',
   },
   [KEYBOARD_SHORTCUT_ACTION.PAGE_1]: {
     defaultKey: '1',
@@ -242,6 +247,12 @@ export const useKeyboard = () => {
           type: 'alert-success',
         })
       }
+      return
+    }
+
+    if (action === KEYBOARD_SHORTCUT_ACTION.BACKEND_OPEN_SETTINGS) {
+      event.preventDefault()
+      window.dispatchEvent(new CustomEvent('open-backend-settings'))
       return
     }
 

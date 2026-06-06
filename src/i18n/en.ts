@@ -249,6 +249,7 @@ const en = {
   toggleSidebar: 'Toggle sidebar',
   switchToPreviousBackend: 'Switch to previous backend',
   switchToNextBackend: 'Switch to next backend',
+  openBackendSettings: 'Open backend settings',
   keyboardShortcutsConflict:
     'Duplicate shortcuts detected: {keys}. Only the first one will take effect.',
   resetKeyboardShortcuts: 'Reset shortcuts',
