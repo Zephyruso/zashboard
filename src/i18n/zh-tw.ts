@@ -245,6 +245,7 @@ const zhTW: LANG_MESSAGE = {
   toggleSidebar: '展開/收起側邊欄',
   switchToPreviousBackend: '切換到上一個後端',
   switchToNextBackend: '切換到下一個後端',
+  openBackendSettings: '開啟後端設定',
   keyboardShortcutsConflict: '偵測到重複快捷鍵：{keys}。只有第一項會生效。',
   resetKeyboardShortcuts: '重設快捷鍵',
   pressAnyKey: '按下任意鍵',

@@ -102,6 +102,12 @@ const shortcuts = computed(() => {
       key: getShortcutKey(KEYBOARD_SHORTCUT_ACTION.BACKEND_NEXT),
       label: KEYBOARD_SHORTCUTS[KEYBOARD_SHORTCUT_ACTION.BACKEND_NEXT].label,
     },
+    {
+      action: KEYBOARD_SHORTCUT_ACTION.BACKEND_OPEN_SETTINGS,
+      defaultKey: getDefaultShortcutKey(KEYBOARD_SHORTCUT_ACTION.BACKEND_OPEN_SETTINGS),
+      key: getShortcutKey(KEYBOARD_SHORTCUT_ACTION.BACKEND_OPEN_SETTINGS),
+      label: KEYBOARD_SHORTCUTS[KEYBOARD_SHORTCUT_ACTION.BACKEND_OPEN_SETTINGS].label,
+    },
     ...PAGE_SHORTCUT_ACTIONS.filter(
       (action) => !!renderRoutes.value[PAGE_SHORTCUT_ACTION_INDEX_MAP[action]!],
     ).map((action) => ({
