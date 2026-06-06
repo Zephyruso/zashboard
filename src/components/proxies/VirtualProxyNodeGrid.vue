@@ -9,13 +9,13 @@
       :style="{ transform: `translate3d(0, ${virtualOffset}px, 0)` }"
     >
       <div
-        v-for="row in virtualRows"
+        v-for="row in visibleRows"
         :key="row.key.toString()"
         class="grid gap-2"
         :style="{ gridTemplateColumns }"
       >
         <ProxyNodeCard
-          v-for="node in getRowNodes(row.index)"
+          v-for="node in row.nodes"
           :key="node"
           :name="node"
           :group-name="name"
@@ -72,12 +72,6 @@ const columnCount = computed(() => {
 
 const gridTemplateColumns = computed(() => `repeat(${columnCount.value}, minmax(0, 1fr))`)
 const rowCount = computed(() => Math.ceil(props.nodes.length / columnCount.value))
-const getRowNodes = (rowIndex: number) => {
-  const start = rowIndex * columnCount.value
-
-  return props.nodes.slice(start, start + columnCount.value)
-}
-
 const estimatedRowSize = computed(() => (proxyCardSize.value === PROXY_CARD_SIZE.LARGE ? 92 : 68))
 const virtualOptions = computed(() => ({
   count: rowCount.value,
@@ -90,6 +84,18 @@ const rowVirtualizer = useVirtualizer(virtualOptions)
 const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 const totalSize = computed(() => rowVirtualizer.value.getTotalSize())
 const virtualOffset = computed(() => virtualRows.value[0]?.start ?? 0)
+const visibleRows = computed(() => {
+  const columns = columnCount.value
+
+  return virtualRows.value.map((row) => {
+    const start = row.index * columns
+
+    return {
+      ...row,
+      nodes: props.nodes.slice(start, start + columns),
+    }
+  })
+})
 const nodeIndexByName = computed(() => {
   const result = new Map<string, number>()
 

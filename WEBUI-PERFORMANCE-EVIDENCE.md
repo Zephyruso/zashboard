@@ -16,6 +16,9 @@ Date: 2026-06-06
 - Expanded panel max-height now reserves space from `dockTop` instead of relying on a fixed bottom constant.
 - UI update checks are delayed and then scheduled through idle time, with low-power and hidden-page skips.
 - Scroll verification injects settings that suppress unrelated update/IP/connection checks during app-browser sampling.
+- Provider-grouped Proxies reuse the shared `providerNameByProxy` computed map from the proxy store instead of rebuilding the provider lookup in every grouped component instance.
+- App-browser verification now actively checks the expanded mobile panel after viewport events and a real CDP compact-height resize from `390 x 844` to `390 x 700`, then restores the original viewport.
+- The mock verification backend now accepts quiet WebSocket upgrades for `/connections`, `/logs`, `/memory`, and `/traffic`, preventing realtime reconnect noise during scroll sampling.
 
 ## Dock Invariants Rechecked
 
@@ -37,13 +40,14 @@ Date: 2026-06-06
 
 ## Performance Notes
 
-- Normal Proxies page scroll stayed within the verifier budget. The latest run saw one headless RAF tail sample at `50ms`, with no new resources, long tasks, or layout changes.
-- Provider-grouped expanded nested scroll passed. The latest run saw headless RAF tail samples up to `83.3ms`, with no new resources, long tasks, or layout changes.
-- Mobile expanded nested scroll passed and kept dock hit targets hidden.
+- Normal Proxies page scroll stayed within the verifier budget. The latest app-browser run saw `p95: 16.7ms`, `max: 16.8ms`, with no new resources, long tasks, or layout changes during scroll sampling.
+- Mobile expanded nested scroll passed and kept dock hit targets hidden. The latest app-browser run saw one headless RAF tail sample at `50ms`, with no new resources, long tasks, or layout changes.
+- Provider-grouped expanded nested scroll passed. The latest provider app run saw one headless RAF tail sample at `50ms`, with no new resources, long tasks, or layout changes.
+- Expanded panel resize checks passed for both normal and provider-grouped mobile panels. In compact height, nested scroll height changed from `432px` to `360px`, remained scrollable, stayed above the dock, and restored to `432px`.
+- WebSocket realtime routes no longer appear as repeated ordinary HTTP request noise in the latest app-browser `servedRequests`.
 - Low-power verification from the previous iteration passed after rerun, with dock blur reduced to `blur(0px) saturate(1.5)`.
 
 ## Remaining Follow-ups
 
-- Mock or disable realtime WebSocket routes in app-browser verification to further reduce local request noise.
-- Cache provider-name lookup for provider-grouped Proxies to reduce repeated work when expanding mobile groups.
-- Consider a dedicated viewport-change browser check that actively resizes the mobile viewport while a proxy group is expanded.
+- Consider adding a landscape-orientation-specific expanded-panel pass after deciding the expected dock semantics for landscape mobile layouts.
+- Keep watching provider-grouped expanded scroll in headless runs; occasional `50ms` RAF tail samples are currently allowed only when uncoupled from resources, layout changes, and long tasks.

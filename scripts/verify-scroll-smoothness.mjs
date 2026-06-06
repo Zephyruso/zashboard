@@ -5,6 +5,7 @@ import { extname, join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 import { readFile } from 'node:fs/promises'
 import { spawn } from 'node:child_process'
+import { createHash } from 'node:crypto'
 
 const root = resolve(process.cwd(), 'dist')
 const sourceRoot = resolve(process.cwd(), 'src')
@@ -25,6 +26,8 @@ const screenshotRoot = resolve(
     join(process.cwd(), 'output', 'verify-scroll-smoothness'),
 )
 const servedRequests = []
+const realtimeWebSocketPaths = new Set(['/connections', '/logs', '/memory', '/traffic'])
+const realtimeWebSockets = new Set()
 
 const mimeTypes = {
   '.css': 'text/css; charset=utf-8',
@@ -365,9 +368,22 @@ const assertSourceChecks = async () => {
   )
   assertIncludes(
     sources.virtualProxyNodeGrid,
-    'const getRowNodes = (rowIndex: number) => {',
-    'Virtual proxy grid no longer slices only visible virtual rows',
+    'const visibleRows = computed(() => {',
+    'Virtual proxy grid no longer prepares visible row nodes outside the template',
   )
+  assertIncludes(
+    sources.virtualProxyNodeGrid,
+    'v-for="row in visibleRows"',
+    'Virtual proxy grid no longer renders from precomputed visible rows',
+  )
+  assertIncludes(
+    sources.virtualProxyNodeGrid,
+    'v-for="node in row.nodes"',
+    'Virtual proxy grid no longer reuses precomputed row node slices',
+  )
+  if (sources.virtualProxyNodeGrid.includes('getRowNodes(')) {
+    fail('Virtual proxy grid still slices row nodes through a template-called helper')
+  }
   assertIncludes(
     sources.virtualProxyNodeGrid,
     'count: rowCount.value',
@@ -633,8 +649,13 @@ const assertSourceChecks = async () => {
   )
   assertIncludes(
     sources.renderProxies,
-    'const available = countAvailableProxies(renderProxies, latencyMap)',
-    'Render proxies no longer reuses the latency map for visible availability counts',
+    'const getLatency: LatencyGetter = (name) => {',
+    'Render proxies no longer uses a lazy latency getter for derived list/count state',
+  )
+  assertIncludes(
+    sources.renderProxies,
+    'const available = countAvailableProxies(renderProxies, getLatency)',
+    'Render proxies no longer reuses the lazy latency getter for visible availability counts',
   )
   assertIncludes(
     sources.renderProxies,
@@ -646,6 +667,9 @@ const assertSourceChecks = async () => {
     'const proxiesCount = computed(() => `${renderProxyState.value.available}/${proxies.value.length}`)',
     'Render proxies count no longer reads availability from the shared derived state',
   )
+  if (sources.renderProxies.includes('proxies.map((name) => [name, getLatencyByName(name, groupName)]')) {
+    fail('Render proxies still builds the full latency map before filtering and sorting')
+  }
   assertIncludes(sources.swipe, 'const SWIPE_START_THRESHOLD = 10', 'Swipe start threshold drifted')
   assertIncludes(sources.swipe, 'const HORIZONTAL_LOCK_RATIO = 1.35', 'Horizontal swipe lock ratio drifted')
   assertIncludes(sources.swipe, 'passive: true', 'Swipe listener is no longer passive')
@@ -1198,6 +1222,40 @@ const serveFile = async (request, response) => {
   createReadStream(normalized).pipe(response)
 }
 
+const handleRealtimeWebSocketUpgrade = (request, socket) => {
+  const requestUrl = new URL(request.url || '/', baseUrl)
+  servedRequests.push(`${requestUrl.pathname}:ws`)
+
+  if (!realtimeWebSocketPaths.has(requestUrl.pathname)) {
+    socket.destroy()
+    return
+  }
+
+  const key = request.headers['sec-websocket-key']
+  if (!key) {
+    socket.destroy()
+    return
+  }
+
+  const acceptKey = createHash('sha1')
+    .update(`${key}258EAFA5-E914-47DA-95CA-C5AB0DC85B11`)
+    .digest('base64')
+
+  socket.write(
+    [
+      'HTTP/1.1 101 Switching Protocols',
+      'Upgrade: websocket',
+      'Connection: Upgrade',
+      `Sec-WebSocket-Accept: ${acceptKey}`,
+      '',
+      '',
+    ].join('\r\n'),
+  )
+  realtimeWebSockets.add(socket)
+  socket.once('close', () => realtimeWebSockets.delete(socket))
+  socket.once('error', () => realtimeWebSockets.delete(socket))
+}
+
 const startServer = () =>
   new Promise((resolveServer, rejectServer) => {
     const server = createServer((request, response) => {
@@ -1206,12 +1264,15 @@ const startServer = () =>
         response.end(error.stack || String(error))
       })
     })
+    server.on('upgrade', handleRealtimeWebSocketUpgrade)
     server.once('error', rejectServer)
     server.listen(port, () => resolveServer(server))
   })
 
 const closeServer = (server) =>
   new Promise((resolveClose) => {
+    for (const socket of realtimeWebSockets) socket.destroy()
+    realtimeWebSockets.clear()
     server.close(() => resolveClose())
   })
 
@@ -1941,6 +2002,54 @@ const runEdgeCdpAppCheck = async (
       };
       const waitForSettledFrames = () =>
         new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const readExpandedPanelMetrics = (nestedScroll) => {
+        const panel = nestedScroll.closest('.mobile-proxy-modal-panel');
+        const dockShell = document.querySelector('.dock-shell');
+        const panelRect = panel?.getBoundingClientRect();
+        const nestedRect = nestedScroll.getBoundingClientRect();
+        const dockRect = dockShell?.getBoundingClientRect();
+        const dockHidden = dockShell ? getComputedStyle(dockShell).pointerEvents === 'none' : false;
+
+        return {
+          panelTop: Number((panelRect?.top || 0).toFixed(2)),
+          panelBottom: Number((panelRect?.bottom || 0).toFixed(2)),
+          panelHeight: Number((panelRect?.height || 0).toFixed(2)),
+          nestedTop: Number(nestedRect.top.toFixed(2)),
+          nestedBottom: Number(nestedRect.bottom.toFixed(2)),
+          nestedHeight: Number(nestedRect.height.toFixed(2)),
+          nestedClientHeight: nestedScroll.clientHeight,
+          nestedScrollHeight: nestedScroll.scrollHeight,
+          nestedReady: nestedScroll.getAttribute('data-expanded-ready') === 'true',
+          dockTop: Number((dockRect?.top || window.innerHeight).toFixed(2)),
+          dockHidden,
+          viewportHeight: window.innerHeight,
+          viewportWidth: window.innerWidth,
+        };
+      };
+      const verifyExpandedViewportChange = async (nestedScroll) => {
+        const before = readExpandedPanelMetrics(nestedScroll);
+        window.dispatchEvent(new Event('resize'));
+        window.dispatchEvent(new Event('orientationchange'));
+        window.visualViewport?.dispatchEvent(new Event('resize'));
+        window.visualViewport?.dispatchEvent(new Event('scroll'));
+        await waitForSettledFrames();
+        const after = readExpandedPanelMetrics(nestedScroll);
+
+        return {
+          before,
+          after,
+          nestedStillScrollable: after.nestedScrollHeight > after.nestedClientHeight,
+          nestedStillReady: after.nestedReady,
+          dockStillHidden: after.dockHidden,
+          panelWithinViewport:
+            after.panelHeight >= 160 &&
+            after.panelTop >= -1 &&
+            after.panelBottom <= after.viewportHeight + 1,
+          nestedAboveDock: after.nestedBottom <= after.dockTop + 1,
+          nestedHeightDelta: Number((after.nestedHeight - before.nestedHeight).toFixed(2)),
+          panelHeightDelta: Number((after.panelHeight - before.panelHeight).toFixed(2)),
+        };
+      };
       const waitForStableScrollMetrics = async (scroll) => {
         let stableFrames = 0;
         let previousScrollHeight = scroll.scrollHeight;
@@ -2043,6 +2152,7 @@ const runEdgeCdpAppCheck = async (
         let providerDetails = null;
         let frameScroll = scroll;
         let frameTarget = 'proxies-page-scroll';
+        let expandedViewportChange = null;
 
         if (${JSON.stringify(expandedMobileGroup)}) {
           const firstGroup = document.querySelector('[data-group-name="Group 01"]');
@@ -2077,6 +2187,7 @@ const runEdgeCdpAppCheck = async (
             .map((item) => item.textContent?.trim() || '')
             .filter((text) => text.includes('Group 01 Node'));
           const nestedStyle = getComputedStyle(nestedScroll);
+          expandedViewportChange = await verifyExpandedViewportChange(nestedScroll);
           providerDetails = {
             firstHeading: providerHeading?.textContent.trim() || '',
             headingCount: providerHeadings.length,
@@ -2177,6 +2288,7 @@ const runEdgeCdpAppCheck = async (
           providerGrouped: ${JSON.stringify(providerGrouped)},
           expandedMobileGroup: ${JSON.stringify(expandedMobileGroup)},
           providerDetails,
+          expandedViewportChange,
           fontStatusBeforeReady,
           fontStatusAfterReady,
           stableScrollMetrics,
@@ -2296,6 +2408,24 @@ const runEdgeCdpAppCheck = async (
       if (!parsed.hitTargets.dockHidden) {
         fail('Expanded mobile group mode did not hide the mobile dock hit surface', parsed)
       }
+      if (!parsed.expandedViewportChange) {
+        fail('Expanded mobile group mode did not run viewport-change verification', parsed)
+      }
+      if (!parsed.expandedViewportChange.nestedStillReady) {
+        fail('Expanded mobile group nested scroll lost readiness after viewport change', parsed)
+      }
+      if (!parsed.expandedViewportChange.nestedStillScrollable) {
+        fail('Expanded mobile group nested scroll stopped being scrollable after viewport change', parsed)
+      }
+      if (!parsed.expandedViewportChange.dockStillHidden) {
+        fail('Expanded mobile group exposed dock hit surface after viewport change', parsed)
+      }
+      if (!parsed.expandedViewportChange.panelWithinViewport) {
+        fail('Expanded mobile group panel moved outside the viewport after viewport change', parsed)
+      }
+      if (!parsed.expandedViewportChange.nestedAboveDock) {
+        fail('Expanded mobile group nested scroll overlaps the dock after viewport change', parsed)
+      }
       const visibleDockHitFailures = parsed.hitTargets.dockButtons.filter(
         (button) => button.hitDockShell || button.hitDockButtonName,
       )
@@ -2399,6 +2529,9 @@ const runEdgeCdpAppCheck = async (
     if (parsed.focusOutlineStyle === 'none' || parsed.focusOutlineWidth === '0px') {
       fail('Dock focused button has no visible outline in configured app', parsed)
     }
+    const expandedViewportResize = expandedMobileGroup
+      ? await runConfiguredAppExpandedViewportResizeCheck(send)
+      : null
     const pageKeyboard = expandedMobileGroup ? null : await runConfiguredAppPageKeyboardTraversalCheck(send)
     const keyboard = expandedMobileGroup ? null : await runConfiguredAppDockKeyboardCheck(send)
     const accessibility = expandedMobileGroup ? null : await runConfiguredAppDockAccessibilityCheck(send)
@@ -2430,6 +2563,8 @@ const runEdgeCdpAppCheck = async (
       providerGrouped: parsed.providerGrouped,
       expandedMobileGroup: parsed.expandedMobileGroup,
       providerDetails: parsed.providerDetails,
+      expandedViewportChange: parsed.expandedViewportChange,
+      expandedViewportResize,
       fontStatusBeforeReady: parsed.fontStatusBeforeReady,
       fontStatusAfterReady: parsed.fontStatusAfterReady,
       stableScrollMetrics: parsed.stableScrollMetrics,
@@ -2512,6 +2647,94 @@ const waitForCdpValue = async (send, expression, label) => {
   }
 
   fail(`Timed out waiting for ${label}`, await evaluateCdpValue(send, expression, `${label} diagnostics`))
+}
+
+const runConfiguredAppExpandedViewportResizeCheck = async (send) => {
+  const readExpandedMetricsExpression = `(() => {
+    const nestedScroll = document.querySelector('.proxies-scrollable-parent[data-expanded-ready="true"]');
+    const panel = nestedScroll?.closest('.mobile-proxy-modal-panel') || null;
+    const dockShell = document.querySelector('.dock-shell');
+    const panelRect = panel?.getBoundingClientRect();
+    const nestedRect = nestedScroll?.getBoundingClientRect();
+    const dockRect = dockShell?.getBoundingClientRect();
+    const nestedStyle = nestedScroll ? getComputedStyle(nestedScroll) : null;
+    const dockHidden = dockShell ? getComputedStyle(dockShell).pointerEvents === 'none' : false;
+
+    return {
+      ok: Boolean(nestedScroll && panel && dockShell),
+      hash: location.hash,
+      panelTop: Number((panelRect?.top || 0).toFixed(2)),
+      panelBottom: Number((panelRect?.bottom || 0).toFixed(2)),
+      panelHeight: Number((panelRect?.height || 0).toFixed(2)),
+      nestedTop: Number((nestedRect?.top || 0).toFixed(2)),
+      nestedBottom: Number((nestedRect?.bottom || 0).toFixed(2)),
+      nestedHeight: Number((nestedRect?.height || 0).toFixed(2)),
+      nestedClientHeight: nestedScroll?.clientHeight || 0,
+      nestedScrollHeight: nestedScroll?.scrollHeight || 0,
+      nestedTouchAction: nestedStyle?.touchAction || '',
+      nestedOverscrollBehaviorY: nestedStyle?.overscrollBehaviorY || '',
+      dockTop: Number((dockRect?.top || window.innerHeight).toFixed(2)),
+      dockBottom: Number((dockRect?.bottom || 0).toFixed(2)),
+      dockHeight: Number((dockRect?.height || 0).toFixed(2)),
+      dockWidth: Number((dockRect?.width || 0).toFixed(2)),
+      dockHidden,
+      viewportHeight: window.innerHeight,
+      viewportWidth: window.innerWidth,
+    };
+  })()`
+  const readMetrics = (label) => evaluateCdpValue(send, readExpandedMetricsExpression, label)
+  const setMetrics = async (width, height, screenOrientation) => {
+    await send('Emulation.setDeviceMetricsOverride', {
+      width,
+      height,
+      deviceScaleFactor: 2,
+      mobile: true,
+      ...(screenOrientation ? { screenOrientation } : {}),
+    })
+    await delay(250)
+  }
+
+  const before = await readMetrics('expanded viewport resize check before')
+  await setMetrics(390, 700)
+  const compact = await readMetrics('expanded viewport resize check compact')
+  await setMetrics(390, 844, { angle: 0, type: 'portraitPrimary' })
+  const restored = await readMetrics('expanded viewport resize check restored')
+
+  const result = { before, compact, restored }
+  const assertExpandedMetrics = (metrics, label) => {
+    if (!metrics.ok) fail(`Expanded mobile group viewport ${label} could not read panel metrics`, result)
+    if (!metrics.hash.includes('#/proxies')) {
+      fail(`Expanded mobile group viewport ${label} left the Proxies route`, result)
+    }
+    if (metrics.nestedTouchAction !== 'pan-y') {
+      fail(`Expanded mobile group viewport ${label} nested touch-action changed`, result)
+    }
+    if (metrics.nestedOverscrollBehaviorY !== 'contain') {
+      fail(`Expanded mobile group viewport ${label} nested overscroll behavior changed`, result)
+    }
+    if (metrics.nestedScrollHeight <= metrics.nestedClientHeight) {
+      fail(`Expanded mobile group viewport ${label} nested scroll stopped being scrollable`, result)
+    }
+    if (!metrics.dockHidden) {
+      fail(`Expanded mobile group viewport ${label} exposed the dock hit surface`, result)
+    }
+    if (metrics.panelHeight < 160 || metrics.panelTop < -1 || metrics.panelBottom > metrics.viewportHeight + 1) {
+      fail(`Expanded mobile group viewport ${label} panel moved outside the viewport`, result)
+    }
+    if (metrics.nestedBottom > metrics.dockTop + 1) {
+      fail(`Expanded mobile group viewport ${label} nested scroll overlaps the dock`, result)
+    }
+  }
+
+  assertExpandedMetrics(before, 'before')
+  assertExpandedMetrics(compact, 'compact')
+  assertExpandedMetrics(restored, 'restored')
+
+  return {
+    ...result,
+    compactHeightDelta: Number((compact.nestedHeight - before.nestedHeight).toFixed(2)),
+    restoredHeightDelta: Number((restored.nestedHeight - before.nestedHeight).toFixed(2)),
+  }
 }
 
 const runConfiguredAppPageKeyboardTraversalCheck = async (send) => {
