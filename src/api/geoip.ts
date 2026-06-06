@@ -180,7 +180,7 @@ export const getIPInfo = async (ip = '', signal?: AbortSignal): Promise<IPInfo> 
         country: ipapi.location.country,
         region: ipapi.location.state,
         city: ipapi.location.city,
-        asn: ipapi.asn.asn.toString(),
+        asn: ipapi.asn.asn?.toString(),
         organization: ipapi.asn.org,
       }
     case IP_INFO_API.IPWHOIS:
@@ -191,7 +191,7 @@ export const getIPInfo = async (ip = '', signal?: AbortSignal): Promise<IPInfo> 
         region: ipwhois.region,
         country: ipwhois.country,
         city: ipwhois.city,
-        asn: ipwhois.connection.asn.toString(),
+        asn: ipwhois.connection.asn?.toString(),
         organization: ipwhois.connection.org,
       }
     case IP_INFO_API.IPSB:
@@ -203,7 +203,7 @@ export const getIPInfo = async (ip = '', signal?: AbortSignal): Promise<IPInfo> 
         country: ipsb.country,
         region: ipsb.region,
         city: ipsb.city,
-        asn: ipsb.asn.toString(),
+        asn: ipsb.asn?.toString(),
         organization: ipsb.organization,
       }
   }

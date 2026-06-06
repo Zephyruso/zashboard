@@ -7,12 +7,18 @@
     <div class="proxy-chain-path">
       <template v-if="collapsed">
         <span class="proxy-chain-node">
-          <ProxyName :name="proxy" />
+          <ProxyName
+            :name="proxy"
+            :filter="filter"
+          />
         </span>
         <template v-if="proxyNode?.now && showNowNode">
           <ChevronRightIcon class="proxy-chain-separator" />
           <span class="proxy-chain-node pointer-events-none">
-            <ProxyName :name="getNowProxyNodeName(proxy)" />
+            <ProxyName
+              :name="getNowProxyNodeName(proxy)"
+              :filter="filter"
+            />
           </span>
         </template>
       </template>
@@ -34,8 +40,11 @@
             type="button"
             @click.stop="handleSelect(chain)"
           >
-            <ProxyName :name="chain" />
-          </button>
+            <ProxyName
+              :name="chain"
+              :filter="filter"
+            />
+          </span>
         </template>
         <template
           v-if="
@@ -49,7 +58,10 @@
             class="proxy-chain-node proxy-chain-node-terminal"
             @click.stop
           >
-            <ProxyName :name="getNowProxyNodeName(proxy)" />
+            <ProxyName
+              :name="getNowProxyNodeName(proxy)"
+              :filter="filter"
+            />
           </span>
         </template>
       </template>
@@ -86,6 +98,7 @@ const props = withDefaults(
     showNowNode?: boolean
     showLatency?: boolean
     interactive?: boolean
+    filter?: string
   }>(),
   {
     selected: '',
@@ -93,6 +106,7 @@ const props = withDefaults(
     showNowNode: false,
     showLatency: false,
     interactive: true,
+    filter: '',
   },
 )
 

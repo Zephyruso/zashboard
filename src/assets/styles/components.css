@@ -6,6 +6,10 @@ div {
   @apply text-primary;
 }
 
+.search-highlight {
+  @apply rounded-xs bg-yellow-300 text-black;
+}
+
 [data-theme='dark'] .text-main {
   color: oklch(72% 0.233 277.117);
 }
