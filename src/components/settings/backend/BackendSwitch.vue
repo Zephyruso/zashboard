@@ -62,7 +62,7 @@ const opts = computed(() => {
 const showEditModal = ref(false)
 
 const addBackend = () => {
-  activeUuid.value = null
+  activeUuid.value = ''
   router.push({ name: ROUTE_NAME.setup })
 }
 

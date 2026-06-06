@@ -118,8 +118,8 @@ import {
   ServerIcon,
 } from '@heroicons/vue/24/outline'
 import * as ipaddr from 'ipaddr.js'
-import { last } from 'lodash'
-import { computed, ref, watch } from 'vue'
+import { last } from 'lodash-es'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
 import ProxyIcon from '../proxies/ProxyIcon.vue'
@@ -128,6 +128,8 @@ const { infoConn, connectionDetailModalShow } = useConnections()
 const details = ref<IPInfo | null>(null)
 const selectedProxy = ref('')
 const sourceIPDialogVisible = ref(false)
+let detailsController: AbortController | undefined
+let detailsSeq = 0
 
 const destinationIP = computed(() => infoConn.value?.metadata.destinationIP)
 const sourceIP = computed(() => infoConn.value?.metadata.sourceIP || '')
@@ -161,7 +163,12 @@ watch(
 watch(
   () => destinationIP.value,
   (newIP) => {
+    detailsController?.abort()
+    detailsSeq += 1
+    detailsController = undefined
+
     if (!newIP) {
+      details.value = null
       return
     }
 
@@ -175,9 +182,27 @@ watch(
     }
 
     details.value = null
-    getIPInfo(infoConn.value?.metadata.destinationIP).then((res) => {
-      details.value = res
-    })
+    const controller = new AbortController()
+    const currentSeq = detailsSeq
+    detailsController = controller
+
+    getIPInfo(newIP, controller.signal)
+      .then((res) => {
+        if (currentSeq !== detailsSeq || detailsController !== controller) return
+        details.value = res
+        detailsController = undefined
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return
+        if (currentSeq !== detailsSeq || detailsController !== controller) return
+        detailsController = undefined
+      })
   },
 )
+
+onBeforeUnmount(() => {
+  detailsController?.abort()
+  detailsSeq += 1
+  detailsController = undefined
+})
 </script>

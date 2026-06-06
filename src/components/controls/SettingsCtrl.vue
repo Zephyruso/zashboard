@@ -8,19 +8,23 @@
       @touchend.passive.stop
     >
       <div class="flex w-full gap-2">
-        <div class="relative mx-auto flex max-w-6xl flex-1 gap-2">
+        <div
+          ref="menuTrackRef"
+          class="relative mx-auto flex max-w-6xl flex-1 gap-2"
+        >
           <div
             v-if="showActiveIndicator"
             class="bg-neutral absolute top-1 left-0 -z-1 h-8 rounded-lg"
-            :class="[!isSwiping ? 'transition-transform duration-300 will-change-transform' : '']"
+            :class="[!isSwiping ? 'transition-transform duration-300' : '']"
             :style="activeStyle"
           ></div>
-          <div
+          <button
             v-for="item in menuItems"
+            :id="`menu-item-${item.key}`"
             :key="item.key"
+            type="button"
             ref="menuItemRefs"
             :data-key="item.key"
-            :id="`menu-item-${item.key}`"
             class="btn btn-ghost btn-sm my-1 flex-1"
             :class="[
               !showActiveIndicator
@@ -29,22 +33,31 @@
                   ? 'text-neutral-content bg-transparent'
                   : '',
             ]"
+            :aria-label="$t(item.label)"
+            :aria-current="activeMenuKey === item.key ? 'page' : undefined"
             @click="handleMenuClick(item.key)"
           >
             <component
               :is="item.icon"
               class="h-5 w-5"
+              aria-hidden="true"
             />
             <span class="hidden text-sm lg:block">
               {{ $t(item.label) }}
             </span>
-          </div>
+          </button>
         </div>
         <button
+          type="button"
           class="btn btn-circle btn-sm my-auto"
+          :aria-label="$t('settingsVisibility')"
+          :title="$t('settingsVisibility')"
           @click="showVisibilityDialog = true"
         >
-          <Cog6ToothIcon class="h-4 w-4" />
+          <Cog6ToothIcon
+            class="h-4 w-4"
+            aria-hidden="true"
+          />
         </button>
       </div>
       <SettingsVisibilityDialog
@@ -61,7 +74,7 @@ import { SETTINGS_MENU_KEY } from '@/constant'
 import { Cog6ToothIcon } from '@heroicons/vue/24/outline'
 import { useElementSize, useSwipe } from '@vueuse/core'
 import type { Component } from 'vue'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import CtrlsBar from '../common/CtrlsBar.vue'
 import SettingsVisibilityDialog from './SettingsVisibilityDialog.vue'
 
@@ -70,6 +83,12 @@ type MenuItem = {
   label: string
   icon: Component
   component: Component
+}
+
+type MenuItemRect = {
+  key: SETTINGS_MENU_KEY
+  left: number
+  width: number
 }
 
 const props = defineProps<{
@@ -86,10 +105,19 @@ const emit = defineEmits<{
 const showVisibilityDialog = ref(false)
 
 const menuRef = ref<HTMLDivElement>()
-const menuItemRefs = ref<HTMLLIElement[]>([])
-const { width } = useElementSize(menuRef)
+const menuTrackRef = ref<HTMLDivElement>()
+const menuItemRefs = ref<HTMLButtonElement[]>([])
+const { width } = useElementSize(menuTrackRef)
 const activeLeft = ref(0)
 const activeWidth = ref(0)
+const menuItemRects = ref<MenuItemRect[]>([])
+const menuTrackLeft = ref(0)
+const menuTrackWidth = ref(0)
+let pendingSwipeClientX = 0
+let swipeFrameId: number | undefined
+let lastSwipeTargetKey: SETTINGS_MENU_KEY | null = null
+let isAlive = true
+
 const activeStyle = computed(() => {
   return {
     transform: `translateX(${activeLeft.value}px)`,
@@ -99,43 +127,94 @@ const activeStyle = computed(() => {
 
 useCtrlsBar()
 
-const updateActiveMenuLeft = async () => {
+const cacheMenuItemRects = () => {
+  if (!menuTrackRef.value) {
+    menuItemRects.value = []
+    menuTrackLeft.value = 0
+    menuTrackWidth.value = 0
+    return
+  }
+
+  const trackRect = menuTrackRef.value.getBoundingClientRect()
+  menuTrackLeft.value = trackRect.left
+  menuTrackWidth.value = trackRect.width
+  menuItemRects.value = menuItemRefs.value.map((itemEl) => {
+    const itemRect = itemEl.getBoundingClientRect()
+    return {
+      key: itemEl.dataset.key as SETTINGS_MENU_KEY,
+      left: itemRect.left - trackRect.left,
+      width: itemRect.width,
+    }
+  })
+}
+
+const updateActiveMenuMetrics = async () => {
   await nextTick()
+  if (!isAlive) return
+
   const itemRef = menuItemRefs.value.find((el) => el.dataset.key === props.activeMenuKey)
   if (itemRef) {
     activeLeft.value = itemRef.offsetLeft
+    activeWidth.value = itemRef.offsetWidth
+  }
+
+  cacheMenuItemRects()
+}
+
+const getMenuItemAtPosition = (relativeX: number): SETTINGS_MENU_KEY | null => {
+  const item = menuItemRects.value.find((itemRect) => {
+    return relativeX >= itemRect.left && relativeX <= itemRect.left + itemRect.width
+  })
+
+  return item?.key ?? null
+}
+
+const updateSwipePosition = (clientX: number) => {
+  if (!menuTrackWidth.value) return
+
+  const relativeX = clientX - menuTrackLeft.value
+  const maxLeft = Math.max(0, menuTrackWidth.value - activeWidth.value)
+  activeLeft.value = Math.max(0, Math.min(relativeX - activeWidth.value / 2, maxLeft))
+
+  const targetKey = getMenuItemAtPosition(relativeX)
+  if (targetKey && targetKey !== props.activeMenuKey && targetKey !== lastSwipeTargetKey) {
+    lastSwipeTargetKey = targetKey
+    emit('menu-click', targetKey)
   }
 }
 
-const updateActiveMenuWidth = async () => {
-  await nextTick()
-  const itemRef = menuItemRefs.value.find((el) => el.dataset.key === props.activeMenuKey)
-  if (itemRef) {
-    activeWidth.value = itemRef.offsetWidth
-  }
+const scheduleSwipeUpdate = () => {
+  if (swipeFrameId !== undefined) return
+
+  swipeFrameId = requestAnimationFrame(() => {
+    swipeFrameId = undefined
+    updateSwipePosition(pendingSwipeClientX)
+  })
+}
+
+const flushSwipeUpdate = () => {
+  if (swipeFrameId === undefined) return
+
+  cancelAnimationFrame(swipeFrameId)
+  swipeFrameId = undefined
+  updateSwipePosition(pendingSwipeClientX)
 }
 
 const { isSwiping } = useSwipe(menuRef, {
   passive: false,
+  threshold: 8,
+  onSwipeStart() {
+    cacheMenuItemRects()
+    lastSwipeTargetKey = props.activeMenuKey
+  },
   onSwipe(e: TouchEvent) {
-    if (!menuRef.value) return
-    const menuRect = menuRef.value.getBoundingClientRect()
-    const relativeX = e.touches[0].clientX - menuRect.left
-
-    activeLeft.value = Math.max(
-      0,
-      Math.min(
-        relativeX - activeWidth.value / 2,
-        menuRef.value.offsetWidth - activeWidth.value - 16,
-      ),
-    )
-    const targetKey = getMenuItemAtPosition(e.touches[0].clientX)
-    if (targetKey && targetKey !== props.activeMenuKey) {
-      emit('menu-click', targetKey)
-    }
+    pendingSwipeClientX = e.touches[0].clientX
+    scheduleSwipeUpdate()
   },
   onSwipeEnd() {
-    updateActiveMenuLeft()
+    flushSwipeUpdate()
+    lastSwipeTargetKey = null
+    void updateActiveMenuMetrics()
   },
 })
 
@@ -144,31 +223,11 @@ const handleMenuClick = (key: SETTINGS_MENU_KEY) => {
   emit('menu-click', key)
 }
 
-const getMenuItemAtPosition = (x: number): SETTINGS_MENU_KEY | null => {
-  if (!menuRef.value) return null
-
-  const menuRect = menuRef.value.getBoundingClientRect()
-  const relativeX = x - menuRect.left
-
-  // 找到触摸位置对应的菜单项
-  for (const itemEl of menuItemRefs.value) {
-    const itemRect = itemEl.getBoundingClientRect()
-    const itemRelativeX = itemRect.left - menuRect.left
-    const itemWidth = itemRect.width
-
-    if (relativeX >= itemRelativeX && relativeX <= itemRelativeX + itemWidth) {
-      return itemEl.dataset.key as SETTINGS_MENU_KEY
-    }
-  }
-
-  return null
-}
-
 watch(
   () => props.activeMenuKey,
   () => {
     if (isSwiping.value) return
-    updateActiveMenuLeft()
+    void updateActiveMenuMetrics()
   },
   {
     immediate: true,
@@ -178,9 +237,16 @@ watch(
 watch(
   () => [width.value, props.menuItems],
   () => {
-    updateActiveMenuWidth()
-    updateActiveMenuLeft()
+    void updateActiveMenuMetrics()
   },
   { immediate: true },
 )
+
+onBeforeUnmount(() => {
+  if (swipeFrameId !== undefined) {
+    cancelAnimationFrame(swipeFrameId)
+    swipeFrameId = undefined
+  }
+  isAlive = false
+})
 </script>

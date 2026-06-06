@@ -6,6 +6,7 @@
     >
       <TextInput
         v-model="form.name"
+        class="join-item flex-1"
         placeholder="Domain Name"
         :clearable="true"
         :menus="dnsQueryNameHistory"
@@ -14,14 +15,20 @@
       />
       <TextInput
         v-model="form.type"
-        class="w-28"
+        class="join-item w-28"
         placeholder="Type"
         :menus="['A', 'AAAA', 'HTTPS']"
       />
       <button
         type="submit"
         class="btn join-item btn-sm"
+        :disabled="isQuerying || !form.name.trim()"
+        :aria-busy="isQuerying"
       >
+        <span
+          v-if="isQuerying"
+          class="loading loading-spinner loading-sm"
+        ></span>
         {{ $t('DNSQuery') }}
       </button>
     </form>
@@ -78,12 +85,12 @@
 </template>
 
 <script lang="ts" setup>
-import { queryDNSAPI } from '@/api'
+import { isRequestCanceled, queryDNSAPI } from '@/api'
 import { getIPInfo, type IPInfo } from '@/api/geoip'
 import type { DNSQuery } from '@/types'
 import { MapPinIcon, ServerIcon } from '@heroicons/vue/24/outline'
 import { useStorage } from '@vueuse/core'
-import { reactive, ref } from 'vue'
+import { onUnmounted, reactive, ref } from 'vue'
 import TextInput from '../../common/TextInput.vue'
 
 const DNS_TYPE_LABELS: Record<number, string> = {
@@ -100,6 +107,10 @@ const form = reactive({
 const details = ref<IPInfo | null>(null)
 const resultList = ref<DNSQuery['Answer']>([])
 const dnsQueryNameHistory = useStorage<string[]>('cache/dns-query-name-history', [])
+const isQuerying = ref(false)
+let querySequence = 0
+let queryAbortController: AbortController | undefined
+
 const getDnsTypeLabel = (type: number) => DNS_TYPE_LABELS[type] ?? `TYPE ${type}`
 const updateDnsQueryNameHistory = (history: string[]) => {
   dnsQueryNameHistory.value = history
@@ -119,18 +130,63 @@ const saveQueryName = (name: string) => {
 }
 
 const query = async () => {
-  saveQueryName(form.name)
+  const queryName = form.name.trim()
 
-  const { data } = await queryDNSAPI(form)
+  if (!queryName) return
 
-  resultList.value = data.Answer
+  const sequence = ++querySequence
+  const controller = new AbortController()
+  const queryForm = {
+    name: queryName,
+    type: form.type.trim() || 'A',
+  }
 
-  const ipAnswer = resultList.value?.find(({ type }) => type === 1 || type === 28)
+  queryAbortController?.abort()
+  queryAbortController = controller
+  isQuerying.value = true
+  details.value = null
+  saveQueryName(queryName)
 
-  if (ipAnswer) {
-    details.value = await getIPInfo(ipAnswer.data)
-  } else {
-    details.value = null
+  try {
+    const { data } = await queryDNSAPI(queryForm, controller.signal)
+
+    if (sequence !== querySequence) return
+
+    resultList.value = data.Answer ?? []
+
+    const ipAnswer = resultList.value.find(({ type }) => type === 1 || type === 28)
+
+    if (!ipAnswer) return
+
+    try {
+      const ipInfo = await getIPInfo(ipAnswer.data, controller.signal)
+
+      if (sequence === querySequence) {
+        details.value = ipInfo
+      }
+    } catch {
+      if (sequence === querySequence) {
+        details.value = null
+      }
+    }
+  } catch (error) {
+    if (!isRequestCanceled(error) && sequence === querySequence) {
+      resultList.value = []
+      details.value = null
+    }
+  } finally {
+    if (queryAbortController === controller) {
+      queryAbortController = undefined
+    }
+    if (sequence === querySequence) {
+      isQuerying.value = false
+    }
   }
 }
+
+onUnmounted(() => {
+  querySequence++
+  queryAbortController?.abort()
+  queryAbortController = undefined
+})
 </script>

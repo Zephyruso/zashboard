@@ -1,4 +1,4 @@
-import { updateRuleProviderAPI } from '@/api'
+import { isRequestCanceled, updateRuleProviderAPI } from '@/api'
 import { useCtrlsBar } from '@/composables/useCtrlsBar'
 import { RULE_TAB_TYPE } from '@/constant'
 import { showNotification } from '@/helper/notification'
@@ -9,7 +9,7 @@ import {
   displayNowNodeInRule,
 } from '@/store/settings'
 import { ArrowPathIcon, WrenchScrewdriverIcon } from '@heroicons/vue/24/outline'
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CtrlsBar from '../common/CtrlsBar.vue'
 import DialogWrapper from '../common/DialogWrapper.vue'
@@ -22,40 +22,67 @@ export default defineComponent({
     const settingsModel = ref(false)
     const isUpgrading = ref(false)
     const { isLargeCtrlsBar } = useCtrlsBar()
+    let updateAllProvidersController: AbortController | undefined
+    let updateAllProvidersSeq = 0
+
+    const isCurrentUpdateAllProviders = (controller: AbortController, seq: number) => {
+      return updateAllProvidersController === controller && updateAllProvidersSeq === seq
+    }
+
     const hasProviders = computed(() => {
       return ruleProviderList.value.length > 0
     })
 
     const handlerClickUpgradeAllProviders = async () => {
       if (isUpgrading.value) return
+
+      updateAllProvidersController?.abort()
+      const controller = new AbortController()
+      const seq = ++updateAllProvidersSeq
+      updateAllProvidersController = controller
       isUpgrading.value = true
       try {
+        const providers = [...ruleProviderList.value]
         let updateCount = 0
+        let failedCount = 0
 
-        await Promise.all(
-          ruleProviderList.value.map((provider) =>
-            updateRuleProviderAPI(provider.name).then(() => {
+        await Promise.allSettled(
+          providers.map(async (provider) => {
+            try {
+              await updateRuleProviderAPI(provider.name, controller.signal)
+            } catch (error) {
+              if (isRequestCanceled(error)) return
+              failedCount++
+            } finally {
+              if (!isCurrentUpdateAllProviders(controller, seq)) return
               updateCount++
 
-              const isFinished = updateCount === ruleProviderList.value.length
+              const isFinished = updateCount === providers.length
 
               showNotification({
                 key: 'updateFinishedTip',
                 content: 'updateFinishedTip',
                 params: {
-                  number: `${updateCount}/${ruleProviderList.value.length}`,
+                  number: `${updateCount}/${providers.length}`,
                 },
-                type: isFinished ? 'alert-success' : 'alert-info',
+                type: isFinished ? (failedCount ? 'alert-warning' : 'alert-success') : 'alert-info',
                 timeout: isFinished ? 2000 : 0,
               })
-            }),
-          ),
+            }
+          }),
         )
-        await fetchRules()
-        isUpgrading.value = false
+        if (isCurrentUpdateAllProviders(controller, seq)) await fetchRules()
       } catch {
-        await fetchRules()
-        isUpgrading.value = false
+        try {
+          if (isCurrentUpdateAllProviders(controller, seq)) await fetchRules()
+        } catch {
+          // The original provider update failure is already surfaced by the request interceptor.
+        }
+      } finally {
+        if (isCurrentUpdateAllProviders(controller, seq)) {
+          isUpgrading.value = false
+          updateAllProvidersController = undefined
+        }
       }
     }
 
@@ -68,6 +95,12 @@ export default defineComponent({
       })
     })
 
+    onBeforeUnmount(() => {
+      updateAllProvidersController?.abort()
+      updateAllProvidersSeq += 1
+      updateAllProvidersController = undefined
+    })
+
     return () => {
       const tabs = (
         <div
@@ -76,24 +109,33 @@ export default defineComponent({
         >
           {tabsWithNumbers.value.map(({ type, count }) => {
             return (
-              <a
+              <button
+                type="button"
                 role="tab"
                 key={type}
+                aria-selected={rulesTabShow.value === type}
                 class={['tab', rulesTabShow.value === type && 'tab-active']}
                 onClick={() => (rulesTabShow.value = type)}
               >
                 {t(type)} ({count})
-              </a>
+              </button>
             )
           })}
         </div>
       )
       const upgradeAllIcon = rulesTabShow.value === RULE_TAB_TYPE.PROVIDER && (
         <button
-          class="btn btn-circle btn-sm"
+          type="button"
+          class="btn btn-circle btn-sm shrink-0"
+          aria-label={t('updateAllProviders')}
+          disabled={isUpgrading.value}
+          aria-busy={isUpgrading.value}
           onClick={handlerClickUpgradeAllProviders}
         >
-          <ArrowPathIcon class={['h-4 w-4', isUpgrading.value && 'animate-spin']} />
+          <ArrowPathIcon
+            class={['h-4 w-4', isUpgrading.value && 'animate-spin']}
+            aria-hidden="true"
+          />
         </button>
       )
 
@@ -109,10 +151,15 @@ export default defineComponent({
       const settingsModal = (
         <>
           <button
-            class={'btn btn-circle btn-sm'}
+            type="button"
+            class="btn btn-circle btn-sm shrink-0"
+            aria-label={t('settings')}
             onClick={() => (settingsModel.value = true)}
           >
-            <WrenchScrewdriverIcon class="h-4 w-4" />
+            <WrenchScrewdriverIcon
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
           </button>
           <DialogWrapper
             v-model={settingsModel.value}
@@ -125,6 +172,7 @@ export default defineComponent({
                   <input
                     class="toggle toggle-sm"
                     type="checkbox"
+                    aria-label={t('displaySelectedNode')}
                     v-model={displayNowNodeInRule.value}
                   />
                 </div>
@@ -133,6 +181,7 @@ export default defineComponent({
                   <input
                     class="toggle toggle-sm"
                     type="checkbox"
+                    aria-label={t('displayLatencyNumber')}
                     v-model={displayLatencyInRule.value}
                   />
                 </div>
@@ -141,6 +190,7 @@ export default defineComponent({
                   <input
                     class="toggle toggle-sm"
                     type="checkbox"
+                    aria-label={t('disconnectOnRuleDisable')}
                     v-model={disconnectOnRuleDisable.value}
                   />
                 </div>

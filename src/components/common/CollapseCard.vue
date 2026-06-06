@@ -2,7 +2,12 @@
   <div :class="`group collapse ${showCollapse ? 'collapse-open' : 'collapse-close'}`">
     <div
       class="collapse-title cursor-pointer pr-4"
+      role="button"
+      tabindex="0"
+      :aria-expanded="showCollapse"
       @click="showCollapse = !showCollapse"
+      @keydown.enter.prevent="showCollapse = !showCollapse"
+      @keydown.space.prevent="showCollapse = !showCollapse"
     >
       <slot name="title" />
       <slot
@@ -16,7 +21,7 @@
     >
       <div
         v-if="showContent"
-        class="max-h-108 overflow-y-auto p-4 pt-0"
+        class="smooth-scroll-container max-h-108 overflow-y-auto p-4 pt-0"
         :class="[PROXIES_PARENT_CLASS, !showCollapse && 'opacity-0']"
       >
         <slot name="content" />

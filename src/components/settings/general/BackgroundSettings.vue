@@ -1,6 +1,9 @@
 <template>
-  <template v-if="isVisibleCustomBackgroundURL">
-    <div class="setting-item">
+  <template v-if="hasVisibleBackgroundItems">
+    <div
+      v-if="isVisibleCustomBackgroundURL"
+      class="setting-item"
+    >
       <div class="setting-item-label">
         {{ $t('customBackgroundURL') }}
       </div>
@@ -12,18 +15,31 @@
           @update:modelValue="handlerBackgroundURLChange"
         />
         <button
+          type="button"
           class="btn join-item btn-sm"
+          :aria-label="$t('upload')"
+          :title="$t('upload')"
           @click="handlerClickUpload"
         >
-          <ArrowUpTrayIcon class="h-4 w-4" />
+          <ArrowUpTrayIcon
+            class="h-4 w-4"
+            aria-hidden="true"
+          />
         </button>
       </div>
       <button
+        type="button"
         class="btn btn-circle join-item btn-sm"
         v-if="customBackgroundURL"
+        :aria-label="$t('backgroundOptions')"
+        :title="$t('backgroundOptions')"
+        :aria-expanded="displayBgProperty"
         @click="displayBgProperty = !displayBgProperty"
       >
-        <AdjustmentsHorizontalIcon class="h-4 w-4" />
+        <AdjustmentsHorizontalIcon
+          class="h-4 w-4"
+          aria-hidden="true"
+        />
       </button>
       <input
         ref="inputFileRef"
@@ -44,7 +60,7 @@
         type="range"
         min="0"
         max="100"
-        v-model="dashboardTransparent"
+        v-model.number="dashboardTransparent"
         class="range max-w-64"
         @touchstart.passive.stop
         @touchmove.passive.stop
@@ -52,7 +68,7 @@
       />
     </div>
     <div
-      v-if="customBackgroundURL && displayBgProperty && isVisibleBlurIntensity"
+      v-if="shouldShowBlurIntensity"
       class="setting-item"
     >
       <div class="setting-item-label">
@@ -62,7 +78,7 @@
         type="range"
         min="0"
         max="40"
-        v-model="blurIntensity"
+        v-model.number="blurIntensity"
         class="range max-w-64"
         @touchstart.stop
         @touchmove.stop
@@ -85,7 +101,7 @@ import {
   theme,
 } from '@/store/settings'
 import { AdjustmentsHorizontalIcon, ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import TextInput from '../../common/TextInput.vue'
 
@@ -100,6 +116,15 @@ const isVisibleBlurIntensity = useIsSettingVisible(k.blurIntensity)
 
 const displayBgProperty = ref(false)
 const inputFileRef = ref<HTMLInputElement>()
+const shouldShowBlurIntensity = computed(() => {
+  if (!isVisibleBlurIntensity.value) return false
+  return (
+    !customBackgroundURL.value || displayBgProperty.value || !isVisibleCustomBackgroundURL.value
+  )
+})
+const hasVisibleBackgroundItems = computed(() => {
+  return isVisibleCustomBackgroundURL.value || shouldShowBlurIntensity.value
+})
 
 watch(customBackgroundURL, (value) => {
   if (value) {

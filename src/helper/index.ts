@@ -12,7 +12,7 @@ import {
 import type { Connection } from '@/types'
 import dayjs from 'dayjs'
 import * as ipaddr from 'ipaddr.js'
-import { head } from 'lodash'
+import { head } from 'lodash-es'
 import { computed } from 'vue'
 import { prettyBytesHelper } from './utils'
 

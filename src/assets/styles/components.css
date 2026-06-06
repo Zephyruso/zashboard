@@ -16,26 +16,529 @@ div {
   @apply text-info;
 }
 
+/* iOS 26 / Material 3 floating pill dock — full-width minus 16px, liquid glass.
+   Rules are intentionally flat (no nesting) because Tailwind v4 CSS nesting
+   would otherwise turn them into `.dock .dock-*` descendant selectors that
+   silently fail to match the single dock element on the page. */
+.dock-shell {
+  position: absolute;
+  right: auto;
+  left: 50%;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  z-index: 30;
+  width: min(320px, calc(100vw - 48px));
+  translate: -50% 0;
+  isolation: isolate;
+}
+
+.dock-safe-area {
+  display: none;
+}
+
 .dock {
-  @apply absolute right-2 left-2 z-30 rounded-3xl;
+  /* Override daisyUI's full-width opaque defaults. !important is required
+     because daisyUI's @layer daisyui beats @layer components on cascade. */
+  position: relative !important;
+  border: none !important;
+  border-radius: 24px;
+  inset: auto !important;
+  width: 100% !important;
+  --dock-shadow-color: color-mix(in srgb, var(--color-primary) 72%, var(--color-base-content));
+  --dock-border-color: color-mix(in srgb, var(--color-primary) 42%, var(--color-base-content));
+  min-height: 52px !important;
+  padding: 6px 10px;
+  background: color-mix(
+    in srgb,
+    var(--color-base-100) var(--dock-bg-tint, 72%),
+    transparent
+  ) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 16px)))
+    saturate(var(--glass-saturation, 140%)) !important;
+  backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 16px)))
+    saturate(var(--glass-saturation, 140%)) !important;
+  box-shadow:
+    0 8px 24px color-mix(in srgb, var(--dock-shadow-color) 42%, transparent),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--dock-border-color) 14%, transparent);
+}
+
+/* Dark themes: swap the bar to a dark frosted plate so it lifts off dim
+   backgrounds without making light/white themes inherit a dark fallback. */
+[data-theme='dark'] .dock,
+[data-theme='dark-monet'] .dock,
+[data-theme='dark-daisyui5'] .dock,
+[data-theme='black'] .dock,
+[data-theme='business'] .dock,
+[data-theme='night'] .dock,
+[data-theme='dim'] .dock,
+[data-theme='dracula'] .dock,
+[data-theme='forest'] .dock,
+[data-theme='halloween'] .dock,
+[data-theme='abyss'] .dock,
+[data-theme='sunset'] .dock {
+  background: rgb(28 28 30 / var(--dock-bg-alpha, 0.32)) !important;
+  --dock-shadow-color: color-mix(in srgb, var(--color-primary) 78%, #000);
+  --dock-border-color: color-mix(in srgb, var(--color-primary) 36%, var(--color-base-content));
+  box-shadow:
+    0 8px 30px color-mix(in srgb, var(--dock-shadow-color) 46%, transparent),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--dock-border-color) 12%, transparent);
+}
+
+/* Active pill needs more saturation against the dark plate so the selected
+   tab still reads. 8% blue disappears on a near-black backdrop. */
+[data-theme='dark'] .dock-active,
+[data-theme='dark-monet'] .dock-active,
+[data-theme='dark-daisyui5'] .dock-active,
+[data-theme='black'] .dock-active,
+[data-theme='business'] .dock-active,
+[data-theme='night'] .dock-active,
+[data-theme='dim'] .dock-active,
+[data-theme='dracula'] .dock-active,
+[data-theme='forest'] .dock-active,
+[data-theme='halloween'] .dock-active,
+[data-theme='abyss'] .dock-active,
+[data-theme='sunset'] .dock-active {
+  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+
+/* daisyUI paints an `::after` underline on every dock child and a wider blue
+   bar on `.dock-active::after` (in @layer daisyui.l1.l2). The nested daisyUI
+   layer wins specificity ties against @layer components, so kill all three
+   selectors with both `content: none` and `display: none` for belt-and-braces. */
+.dock-button::after,
+.dock-active::after,
+.dock > *::after {
+  content: none !important;
+  display: none !important;
+}
+
+.dock-button {
+  position: relative;
+  min-width: 0 !important;
+  border-radius: 24px;
+  color: var(--ios-label-tertiary);
+  gap: 2px;
+  /* daisyUI 5 paints `margin-bottom: 0.5rem` on every `.dock > *`. Combined
+     with `align-items: center` that asymmetric margin pushes the button up,
+     so the active blue pill bleeds over the dock's top padding. Zero it. */
+  margin-bottom: 0 !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  transition:
+    background-color 0.25s var(--ios-ease),
+    color 0.25s var(--ios-ease),
+    transform 0.18s var(--ios-spring);
+}
+
+.dock-button:active {
+  transform: scale(0.95);
+}
+
+.dock-button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 72%, transparent);
+  outline-offset: -3px;
+}
+
+.dock-icon {
+  transition:
+    transform 0.28s var(--ios-spring),
+    color 0.25s var(--ios-ease);
+}
+
+.dock-active {
+  color: var(--color-primary);
+  /* 8% tint — quiet enough to read as "part of the bar", with selection
+     legibility carried by the bold blue label + icon. --ios-system-blue
+     auto-swaps to its dark variant on the 12 daisyUI dark themes. */
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.dock-active .dock-icon {
+  transform: scale(1.08);
+}
+
+.dock-active .dock-label {
+  font-weight: 600;
+}
+
+.dock-label {
+  @apply w-full max-w-full overflow-hidden text-center text-[9.5px] font-semibold text-ellipsis whitespace-nowrap;
+  line-height: 1.05;
+  letter-spacing: 0;
 }
 
 .settings-section-label {
   @apply px-1 pt-5 pb-1.5 text-xs font-semibold tracking-wider uppercase first:pt-2;
-  color: color-mix(in srgb, var(--color-base-content) 45%, transparent);
+  color: var(--ios-label-tertiary);
 }
 .settings-grid {
-  @apply bg-base-100 grid grid-cols-1 overflow-hidden rounded-xl;
+  @apply bg-base-100/90 grid grid-cols-1 overflow-hidden rounded-2xl;
+  border: 0.5px solid var(--color-base-border);
+  box-shadow: var(--ios-card-shadow);
 }
 .setting-item {
-  @apply border-base-border flex min-h-11 items-center gap-3 border-b px-4;
+  @apply flex min-h-12 items-center gap-3 px-4;
+  border-bottom: 0.5px solid var(--color-base-border);
+  transition: background-color 0.18s ease;
+  &:active {
+    background: var(--ios-fill-quaternary);
+  }
   &:last-child {
     border-bottom: none;
   }
   .setting-item-label {
-    @apply flex-1 text-sm font-medium;
+    @apply flex-1 text-[15px] font-medium;
     svg {
       @apply inline-block;
     }
   }
+}
+
+/* ============================================================================
+ * Typography — Material 3 type-scale shortcuts mapped onto existing iOS tokens.
+ *
+ *  Replaces ad-hoc text-xl/text-2xl combos with semantic classes so designers
+ *  and reviewers can talk about "title" vs "body" instead of pixel sizes.
+ *
+ *  Sizes come from --text-ios-* defined in ios-variables.css, so dark mode
+ *  and reduce-motion still flow through one source of truth.
+ * ========================================================================== */
+.text-display {
+  font-size: var(--text-ios-title1); /* 28px */
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ios-label-primary);
+}
+.text-title {
+  font-size: var(--text-ios-title3); /* 20px */
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ios-label-primary);
+}
+.text-body {
+  font-size: var(--text-ios-body); /* 17px */
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ios-label-primary);
+}
+.text-caption {
+  font-size: var(--text-ios-footnote); /* 13px */
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--ios-label-secondary);
+}
+
+/* ============================================================================
+ * Material 3 button variants — independent class names that do NOT touch
+ * daisyUI's `.btn`. Use these for new emphasis tiers (filled > tonal > text).
+ *
+ *  Usage:  <button class="btn-filled">Primary</button>
+ *          <button class="btn-tonal">Secondary</button>
+ *          <button class="btn-text">Tertiary</button>
+ * ========================================================================== */
+.btn-filled,
+.btn-tonal,
+.btn-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border: none;
+  border-radius: var(--ios-radius-pill, 999px);
+  font-size: var(--text-ios-callout, 16px);
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.2s var(--ios-ease),
+    color 0.2s var(--ios-ease),
+    box-shadow 0.2s var(--ios-ease),
+    transform 0.18s var(--ios-spring);
+}
+.btn-filled:active,
+.btn-tonal:active,
+.btn-text:active {
+  transform: scale(0.96);
+}
+.btn-filled:disabled,
+.btn-tonal:disabled,
+.btn-text:disabled {
+  pointer-events: none;
+  opacity: 0.42;
+}
+.btn-filled {
+  background: var(--ios-system-blue);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+.btn-filled:hover {
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--ios-system-blue) 32%, transparent);
+}
+.btn-tonal {
+  background: color-mix(in srgb, var(--ios-system-blue) 14%, transparent);
+  color: var(--ios-system-blue);
+}
+.btn-tonal:hover {
+  background: color-mix(in srgb, var(--ios-system-blue) 22%, transparent);
+}
+.btn-text {
+  background: transparent;
+  color: var(--ios-system-blue);
+  padding: 8px 12px;
+}
+.btn-text:hover {
+  background: color-mix(in srgb, var(--ios-system-blue) 8%, transparent);
+}
+
+#app-content.blur-intensity:not(.custom-background) {
+  background:
+    radial-gradient(
+      circle at 18% 12%,
+      color-mix(in srgb, var(--color-primary) 9%, transparent),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 82% 18%,
+      color-mix(in srgb, var(--color-info) 8%, transparent),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 50% 88%,
+      color-mix(in srgb, var(--color-secondary) 7%, transparent),
+      transparent 38%
+    ),
+    var(--color-base-200);
+}
+
+/* ============================================================================
+ * Optional liquid-glass modifier for the existing `.card` / `.base-container`
+ * utilities (defined in override.css). Add `glass` to any card to soften its
+ * solid base-100 background into a frosted surface.
+ *
+ *  Usage:  <div class="card glass">…</div>
+ * ========================================================================== */
+.card.glass,
+.base-container.glass,
+.ios-glass,
+.glass-panel,
+.glass-surface,
+.glass-control,
+.blur-intensity .card,
+.blur-intensity .base-container,
+.blur-intensity .collapse,
+.blur-intensity .sidebar,
+.blur-intensity .nav-bar,
+.blur-intensity .need-blur,
+.blur-intensity .modal-box,
+.blur-intensity .settings-grid,
+.blur-intensity .settings-menu,
+.blur-intensity .ctrls-bar,
+.blur-intensity .tabs,
+.blur-intensity .input,
+.blur-intensity .select,
+.blur-intensity .textarea,
+.blur-intensity .badge,
+.blur-intensity .toggle:not(:checked),
+.blur-intensity .btn:not(.btn-primary, .btn-neutral, .btn-ghost),
+.blur-intensity .table thead {
+  background: color-mix(
+    in srgb,
+    var(--color-base-100) var(--glass-tint, var(--bg-tint, 72%)),
+    transparent
+  ) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 20px)))
+    saturate(var(--glass-saturation, 180%)) !important;
+  backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 20px)))
+    saturate(var(--glass-saturation, 180%)) !important;
+  box-shadow:
+    0 0 0 0.5px var(--color-base-border),
+    0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.glass-backdrop,
+.blur-intensity .modal-backdrop {
+  background: color-mix(in srgb, var(--color-base-300) 38%, transparent) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 20px)))
+    saturate(var(--glass-saturation, 180%)) !important;
+  backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 20px)))
+    saturate(var(--glass-saturation, 180%)) !important;
+}
+
+.mobile-proxy-modal-panel {
+  -webkit-backdrop-filter: blur(8px) saturate(150%) !important;
+  backdrop-filter: blur(8px) saturate(150%) !important;
+}
+
+.mobile-proxy-modal-backdrop {
+  -webkit-backdrop-filter: blur(6px) saturate(140%) !important;
+  backdrop-filter: blur(6px) saturate(140%) !important;
+}
+
+.latency-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ios-radius-sm, 10px);
+  background-color: color-mix(in srgb, currentColor 14%, transparent);
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, currentColor 14%, transparent);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  user-select: none;
+  transition:
+    background-color 0.18s var(--ios-ease, cubic-bezier(0.4, 0, 0.2, 1)),
+    box-shadow 0.18s var(--ios-ease, cubic-bezier(0.4, 0, 0.2, 1)),
+    transform 0.18s var(--ios-spring, cubic-bezier(0.32, 0.72, 0, 1));
+}
+
+.latency-tag:disabled {
+  cursor: progress;
+}
+
+.latency-tag.no-latency {
+  color: var(--ios-label-secondary);
+  background-color: color-mix(in srgb, var(--color-base-content) 7%, transparent);
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--color-base-content) 6%, transparent);
+}
+
+.latency-tag:active {
+  transform: scale(0.95);
+}
+
+.bg-primary .latency-tag {
+  background-color: color-mix(in srgb, var(--color-base-100) 92%, transparent);
+}
+
+.log-level-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 8px;
+  border-radius: var(--ios-radius-pill, 999px);
+  background-color: color-mix(in srgb, currentColor 14%, transparent);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.connection-row {
+  transition:
+    background-color 0.18s var(--ios-ease, cubic-bezier(0.4, 0, 0.2, 1)),
+    transform 0.18s var(--ios-spring, cubic-bezier(0.32, 0.72, 0, 1));
+}
+
+.connection-row:active {
+  background-color: var(--ios-fill-quaternary) !important;
+}
+
+.empty-state-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border: 0.5px solid color-mix(in srgb, var(--color-base-content) 6%, transparent);
+  border-radius: var(--ios-radius-xl, 20px);
+  background-color: color-mix(in srgb, var(--color-base-content) 5%, transparent);
+  color: color-mix(in srgb, var(--color-base-content) 45%, transparent);
+}
+
+.overview-card {
+  contain: layout style;
+}
+
+.smooth-scroll-container {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+.virtual-scroller-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+.virtual-scroller {
+  contain: layout paint style;
+}
+
+.virtual-scroller-window {
+  will-change: transform;
+}
+
+.overview-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  border-radius: var(--ios-radius-xl);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-base-100) var(--glass-tint, var(--bg-tint, 72%)), transparent),
+      color-mix(
+        in srgb,
+        var(--color-base-200) var(--glass-inner-tint, var(--bg-tint, 62%)),
+        transparent
+      )
+    ),
+    color-mix(
+      in srgb,
+      var(--color-base-200) var(--glass-inner-tint, var(--bg-tint, 55%)),
+      transparent
+    );
+  box-shadow:
+    inset 0 0 0 0.5px color-mix(in srgb, var(--color-base-content) 7%, transparent),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 10px)))
+    saturate(var(--glass-saturation, 180%)) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 10px)))
+    saturate(var(--glass-saturation, 180%)) !important;
+  contain: layout style;
+}
+
+.blur-intensity
+  :is(
+    .rounded-field,
+    .rounded-md,
+    .rounded-lg,
+    .rounded-xl,
+    .rounded-2xl,
+    .rounded-box
+  )[class^='bg-base-'],
+.blur-intensity
+  :is(
+    .rounded-field,
+    .rounded-md,
+    .rounded-lg,
+    .rounded-xl,
+    .rounded-2xl,
+    .rounded-box
+  )[class*=' bg-base-'],
+.glass-surface,
+.glass-control,
+.blur-intensity .table tbody tr,
+.blur-intensity .need-blur > .rounded-xl,
+.blur-intensity .overview-stat-card {
+  background: color-mix(
+    in srgb,
+    var(--color-base-200) var(--glass-inner-tint, var(--bg-tint, 62%)),
+    transparent
+  ) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 20px)))
+    saturate(var(--glass-saturation, 180%)) !important;
+  backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 20px)))
+    saturate(var(--glass-saturation, 180%)) !important;
 }

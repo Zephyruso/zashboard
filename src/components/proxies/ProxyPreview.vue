@@ -61,6 +61,18 @@ import { lowLatency, mediumLatency, proxyPreviewType } from '@/store/settings'
 import { useElementSize } from '@vueuse/core'
 import { computed, ref } from 'vue'
 
+type ProxyPreviewNode = {
+  name: string
+  latency: number
+}
+
+type LatencyCounts = {
+  good: number
+  medium: number
+  bad: number
+  notConnected: number
+}
+
 const props = defineProps<{
   nodes: string[]
   now?: string
@@ -109,14 +121,35 @@ const showDots = computed(() => {
   )
 })
 
-const nodesLatency = computed(() =>
-  props.nodes.map((name) => {
-    return {
-      latency: getLatencyByName(name, props.groupName),
-      name: name,
+const previewLatencyState = computed(() => {
+  const nodes: ProxyPreviewNode[] = []
+  const counts: LatencyCounts = {
+    good: 0,
+    medium: 0,
+    bad: 0,
+    notConnected: 0,
+  }
+
+  for (const name of props.nodes) {
+    const latency = getLatencyByName(name, props.groupName)
+
+    nodes.push({ latency, name })
+
+    if (latency === NOT_CONNECTED) {
+      counts.notConnected += 1
+    } else if (latency < lowLatency.value) {
+      counts.good += 1
+    } else if (latency < mediumLatency.value) {
+      counts.medium += 1
+    } else {
+      counts.bad += 1
     }
-  }),
-)
+  }
+
+  return { nodes, counts }
+})
+const nodesLatency = computed(() => previewLatencyState.value.nodes)
+const latencyCounts = computed(() => previewLatencyState.value.counts)
 const getBgColor = (latency: number) => {
   if (latency === NOT_CONNECTED) {
     return 'bg-base-content/60'
@@ -129,22 +162,10 @@ const getBgColor = (latency: number) => {
   }
 }
 
-const goodsCounts = computed(() => {
-  return nodesLatency.value.filter(
-    (node) => node.latency < lowLatency.value && node.latency > NOT_CONNECTED,
-  ).length
-})
-const mediumCounts = computed(() => {
-  return nodesLatency.value.filter(
-    (node) => node.latency >= lowLatency.value && node.latency < mediumLatency.value,
-  ).length
-})
-const badCounts = computed(() => {
-  return nodesLatency.value.filter((node) => node.latency >= mediumLatency.value).length
-})
-const notConnectedCounts = computed(() => {
-  return nodesLatency.value.filter((node) => node.latency === NOT_CONNECTED).length
-})
+const goodsCounts = computed(() => latencyCounts.value.good)
+const mediumCounts = computed(() => latencyCounts.value.medium)
+const badCounts = computed(() => latencyCounts.value.bad)
+const notConnectedCounts = computed(() => latencyCounts.value.notConnected)
 </script>
 
 <style scoped>

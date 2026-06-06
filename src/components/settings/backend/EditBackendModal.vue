@@ -2,7 +2,7 @@
   <DialogWrapper
     v-model="isVisible"
     :title="t('editBackendTitle')"
-    @enter="!isSaving && handleSave()"
+    @enter="canSave && handleSave()"
   >
     <div class="flex flex-col gap-4">
       <!-- 后端选择器 -->
@@ -11,6 +11,7 @@
         <select
           class="select select-sm w-full"
           v-model="selectedBackendUuid"
+          :disabled="isSaving || backendList.length === 0"
         >
           <option
             v-for="backend in backendList"
@@ -95,7 +96,7 @@
         <button
           class="btn btn-primary btn-sm"
           @click="handleSave"
-          :disabled="isSaving"
+          :disabled="!canSave"
         >
           <span
             v-if="isSaving"
@@ -146,16 +147,18 @@ const isSaving = ref(false)
 const selectedBackend = computed(() => {
   return backendList.value.find((b) => b.uuid === selectedBackendUuid.value) || null
 })
+const canSave = computed(() => !!editForm.value && !!selectedBackend.value && !isSaving.value)
 
 watch(
   () => props.modelValue,
   (isOpen) => {
     if (isOpen) {
-      if (props.defaultBackendUuid) {
-        selectedBackendUuid.value = props.defaultBackendUuid
-      } else if (activeBackend.value) {
-        selectedBackendUuid.value = activeBackend.value.uuid
-      }
+      const defaultBackend = backendList.value.find(
+        (backend) => backend.uuid === props.defaultBackendUuid,
+      )
+
+      selectedBackendUuid.value =
+        defaultBackend?.uuid || activeBackend.value?.uuid || backendList.value[0]?.uuid || ''
     }
   },
 )
@@ -174,6 +177,8 @@ watch(
         disableUpgradeCore: backend.disableUpgradeCore || false,
         disableTunMode: backend.disableTunMode || false,
       }
+    } else {
+      editForm.value = null
     }
   },
   { immediate: true },

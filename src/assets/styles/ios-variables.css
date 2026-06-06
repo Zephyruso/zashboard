@@ -1,0 +1,175 @@
+/*
+ * iOS 17 design tokens — single source of truth.
+ * - Imported in src/assets/main.css before override.css.
+ * - Raw CSS variables are exposed as --ios-*.
+ * - Tailwind v4 utility tokens are exposed via @theme (text-ios-*, shadow-ios-*, font-ios-*, rounded-ios-*, color-ios-*).
+ */
+
+:root,
+[data-theme] {
+  /* iOS system colors (light) */
+  --ios-system-blue: #007aff;
+  --ios-system-green: #34c759;
+  --ios-system-red: #ff3b30;
+  --ios-system-orange: #ff9500;
+  --ios-system-yellow: #ffcc00;
+  --ios-system-purple: #af52de;
+  --ios-system-pink: #ff2d55;
+  --ios-system-teal: #5ac8fa;
+  --ios-system-indigo: #5856d6;
+
+  /* Semantic label colors */
+  --ios-label-primary: var(--color-base-content);
+  --ios-label-secondary: color-mix(in srgb, var(--color-base-content) 68%, transparent);
+  --ios-label-tertiary: color-mix(in srgb, var(--color-base-content) 48%, transparent);
+  --ios-label-quaternary: color-mix(in srgb, var(--color-base-content) 28%, transparent);
+
+  /* Fills */
+  --ios-fill-primary: color-mix(in srgb, var(--color-base-content) 16%, transparent);
+  --ios-fill-secondary: color-mix(in srgb, var(--color-base-content) 12%, transparent);
+  --ios-fill-tertiary: color-mix(in srgb, var(--color-base-content) 10%, transparent);
+  --ios-fill-quaternary: color-mix(in srgb, var(--color-base-content) 8%, transparent);
+
+  /* Separators */
+  --ios-separator: color-mix(in srgb, var(--color-base-content) 12%, transparent);
+  --ios-separator-opaque: color-mix(in srgb, var(--color-base-content) 18%, var(--color-base-100));
+
+  /* 8pt spacing grid */
+  --ios-space-1: 4px;
+  --ios-space-2: 8px;
+  --ios-space-3: 12px;
+  --ios-space-4: 16px;
+  --ios-space-5: 20px;
+  --ios-space-6: 24px;
+  --ios-space-8: 32px;
+  --ios-space-10: 40px;
+  --ios-space-12: 48px;
+
+  /* Radius */
+  --ios-radius-xs: 6px;
+  --ios-radius-sm: 10px;
+  --ios-radius-md: 12px;
+  --ios-radius-lg: 16px;
+  --ios-radius-xl: 20px;
+  --ios-radius-2xl: 28px;
+  --ios-radius-pill: 999px;
+
+  /* Shadow tiers (light) */
+  --ios-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+  --ios-shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.08), 0 16px 48px rgba(0, 0, 0, 0.12);
+  --ios-shadow-modal: 0 12px 32px rgba(0, 0, 0, 0.18), 0 32px 80px rgba(0, 0, 0, 0.22);
+  --ios-shadow-control: inset 0 0 0 0.5px
+    color-mix(in srgb, var(--color-base-content) 8%, transparent);
+
+  /* Motion */
+  --ios-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --ios-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ios-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ios-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ios-duration-fast: 0.18s;
+  --ios-duration-base: 0.3s;
+  --ios-duration-slow: 0.45s;
+
+  /* Safe area helpers */
+  --ios-safe-top: env(safe-area-inset-top);
+  --ios-safe-right: env(safe-area-inset-right);
+  --ios-safe-bottom: env(safe-area-inset-bottom);
+  --ios-safe-left: env(safe-area-inset-left);
+
+  /* Control surfaces — switch off-track follows the iOS HIG "tertiary fill" recipe. */
+  --ios-switch-off-track: #e9e9eb;
+
+  /* Legacy aliases retained for utilities/components written before the rename. */
+  --ios-card-shadow: var(--ios-shadow-card);
+  --ios-control-shadow: var(--ios-shadow-control);
+}
+
+/* Dark-side palette: iOS dark system colors override the defaults above. */
+[data-theme='dark'],
+[data-theme='dark-monet'],
+[data-theme='dark-daisyui5'],
+[data-theme='black'],
+[data-theme='business'],
+[data-theme='night'],
+[data-theme='dim'],
+[data-theme='dracula'],
+[data-theme='forest'],
+[data-theme='halloween'],
+[data-theme='abyss'],
+[data-theme='sunset'] {
+  --ios-system-blue: #0a84ff;
+  --ios-system-green: #30d158;
+  --ios-system-red: #ff453a;
+  --ios-system-orange: #ff9f0a;
+  --ios-system-yellow: #ffd60a;
+  --ios-system-purple: #bf5af2;
+  --ios-system-pink: #ff375f;
+  --ios-system-teal: #64d2ff;
+  --ios-system-indigo: #5e5ce6;
+
+  --ios-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.22), 0 12px 32px rgba(0, 0, 0, 0.28);
+  --ios-shadow-elevated: 0 6px 16px rgba(0, 0, 0, 0.36), 0 20px 56px rgba(0, 0, 0, 0.36);
+  --ios-shadow-modal: 0 16px 48px rgba(0, 0, 0, 0.5), 0 36px 96px rgba(0, 0, 0, 0.55);
+  --ios-switch-off-track: #3a3a3c;
+  --ios-card-shadow: var(--ios-shadow-card);
+}
+
+/* Honor the system reduce-motion preference globally. */
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-theme] {
+    --ios-duration-fast: 0.001ms;
+    --ios-duration-base: 0.001ms;
+    --ios-duration-slow: 0.001ms;
+  }
+}
+
+/*
+ * Tailwind v4 theme tokens.
+ * Each entry generates a utility class — e.g. --text-ios-headline → `text-ios-headline`,
+ * --shadow-ios-card → `shadow-ios-card`, --color-ios-blue → `bg-ios-blue` / `text-ios-blue`.
+ */
+@theme {
+  /* Type system: SF Pro stack with 8 size steps + 1 rounded fallback. */
+  --font-ios-system:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-ios-rounded:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Rounded', 'Helvetica Neue', Arial, sans-serif;
+
+  --text-ios-largetitle: 34px;
+  --text-ios-title1: 28px;
+  --text-ios-title2: 22px;
+  --text-ios-title3: 20px;
+  --text-ios-headline: 17px;
+  --text-ios-body: 17px;
+  --text-ios-callout: 16px;
+  --text-ios-subhead: 15px;
+  --text-ios-footnote: 13px;
+  --text-ios-caption1: 12px;
+  --text-ios-caption2: 11px;
+
+  /* 3-tier shadow exposed as Tailwind utilities. */
+  --shadow-ios-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-ios-elevated: 0 4px 12px rgba(0, 0, 0, 0.08), 0 16px 48px rgba(0, 0, 0, 0.12);
+  --shadow-ios-modal: 0 12px 32px rgba(0, 0, 0, 0.18), 0 32px 80px rgba(0, 0, 0, 0.22);
+
+  /* Radius utilities (rounded-ios-*). */
+  --radius-ios-sm: 10px;
+  --radius-ios-md: 12px;
+  --radius-ios-lg: 16px;
+  --radius-ios-xl: 20px;
+  --radius-ios-2xl: 28px;
+  --radius-ios-pill: 999px;
+
+  /* Color utilities (bg-ios-blue, text-ios-blue, ...). */
+  --color-ios-blue: #007aff;
+  --color-ios-green: #34c759;
+  --color-ios-red: #ff3b30;
+  --color-ios-orange: #ff9500;
+  --color-ios-yellow: #ffcc00;
+  --color-ios-purple: #af52de;
+  --color-ios-pink: #ff2d55;
+  --color-ios-teal: #5ac8fa;
+  --color-ios-indigo: #5856d6;
+}

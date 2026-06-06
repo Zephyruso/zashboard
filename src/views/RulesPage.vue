@@ -7,7 +7,20 @@
         :style="padding"
       >
         <template v-if="rulesTabShow === RULE_TAB_TYPE.PROVIDER">
-          <div class="base-container">
+          <div
+            v-if="renderRulesProvider.length === 0"
+            class="base-container glass"
+          >
+            <EmptyState
+              :icon="SwatchIcon"
+              :title="$t('noRules')"
+              :description="$t('noRulesDesc')"
+            />
+          </div>
+          <div
+            v-else
+            class="base-container glass"
+          >
             <RuleProvider
               v-for="(ruleProvider, index) in renderRulesProvider"
               :key="ruleProvider.name"
@@ -17,12 +30,25 @@
           </div>
         </template>
         <template v-else>
-          <div class="base-container">
+          <div
+            v-if="renderRules.length === 0"
+            class="base-container glass"
+          >
+            <EmptyState
+              :icon="SwatchIcon"
+              :title="$t('noRules')"
+              :description="$t('noRulesDesc')"
+            />
+          </div>
+          <div
+            v-else
+            class="base-container glass"
+          >
             <RuleCard
-              v-for="rule in renderRules"
+              v-for="(rule, index) in renderRules"
               :key="rule.payload"
               :rule="rule"
-              :index="rules.indexOf(rule) + 1"
+              :index="index + 1"
             />
           </div>
         </template>
@@ -36,11 +62,11 @@
       <template v-slot:before>
         <RulesCtrl />
       </template>
-      <template v-slot="{ item: rule }: { item: Rule }">
+      <template v-slot="{ item: rule, index }: { item: Rule; index: number }">
         <RuleCard
           :key="rule.payload"
           :rule="rule"
-          :index="rules.indexOf(rule) + 1"
+          :index="index + 1"
         />
       </template>
     </VirtualScroller>
@@ -48,13 +74,15 @@
 </template>
 
 <script setup lang="ts">
+import EmptyState from '@/components/common/EmptyState.vue'
 import VirtualScroller from '@/components/common/VirtualScroller.vue'
 import RulesCtrl from '@/components/controls/RulesCtrl'
 import RuleCard from '@/components/rules/RuleCard.vue'
 import RuleProvider from '@/components/rules/RuleProvider.vue'
 import { usePaddingForViews } from '@/composables/paddingViews'
 import { RULE_TAB_TYPE } from '@/constant'
-import { fetchRules, renderRules, renderRulesProvider, rules, rulesTabShow } from '@/store/rules'
+import { SwatchIcon } from '@heroicons/vue/24/outline'
+import { fetchRules, renderRules, renderRulesProvider, rulesTabShow } from '@/store/rules'
 import type { Rule } from '@/types'
 import { computed, provide, ref } from 'vue'
 

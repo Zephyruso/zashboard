@@ -24,10 +24,19 @@
       >
         <div class="setting-item-label">
           {{ $t('autoDisconnectIdleUDP') }}
-          <QuestionMarkCircleIcon
-            class="h-4 w-4 cursor-pointer"
+          <button
+            type="button"
+            class="btn btn-ghost btn-xs btn-circle h-6 min-h-6 w-6"
+            :aria-label="$t('autoDisconnectIdleUDPTip')"
+            :title="$t('autoDisconnectIdleUDPTip')"
             @mouseenter="showTip($event, $t('autoDisconnectIdleUDPTip'))"
-          />
+            @focus="showTip($event, $t('autoDisconnectIdleUDPTip'))"
+          >
+            <QuestionMarkCircleIcon
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
+          </button>
         </div>
         <input
           type="checkbox"
@@ -55,10 +64,19 @@
       >
         <div class="setting-item-label">
           {{ $t('IPInfoAPI') }}
-          <QuestionMarkCircleIcon
-            class="h-4 w-4 cursor-pointer"
+          <button
+            type="button"
+            class="btn btn-ghost btn-xs btn-circle h-6 min-h-6 w-6"
+            :aria-label="$t('IPInfoAPITip')"
+            :title="$t('IPInfoAPITip')"
             @mouseenter="showTip($event, $t('IPInfoAPITip'))"
-          />
+            @focus="showTip($event, $t('IPInfoAPITip'))"
+          >
+            <QuestionMarkCircleIcon
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
+          </button>
         </div>
         <select
           class="select select-sm min-w-24"
@@ -72,6 +90,32 @@
             {{ opt }}
           </option>
         </select>
+      </div>
+      <div
+        v-if="isVisibleLowPowerMode"
+        class="setting-item"
+      >
+        <div class="setting-item-label">
+          {{ $t('lowPowerMode') }}
+          <button
+            type="button"
+            class="btn btn-ghost btn-xs btn-circle h-6 min-h-6 w-6"
+            :aria-label="$t('lowPowerModeTip')"
+            :title="$t('lowPowerModeTip')"
+            @mouseenter="showTip($event, $t('lowPowerModeTip'))"
+            @focus="showTip($event, $t('lowPowerModeTip'))"
+          >
+            <QuestionMarkCircleIcon
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+        <input
+          type="checkbox"
+          v-model="lowPowerMode"
+          class="toggle"
+        />
       </div>
       <div
         v-if="isVisibleScrollAnimationEffect"
@@ -118,10 +162,19 @@
       >
         <div class="setting-item-label">
           {{ $t('disablePullToRefresh') }}
-          <QuestionMarkCircleIcon
-            class="h-4 w-4 cursor-pointer"
+          <button
+            type="button"
+            class="btn btn-ghost btn-xs btn-circle h-6 min-h-6 w-6"
+            :aria-label="$t('disablePullToRefreshTip')"
+            :title="$t('disablePullToRefreshTip')"
             @mouseenter="showTip($event, $t('disablePullToRefreshTip'))"
-          />
+            @focus="showTip($event, $t('disablePullToRefreshTip'))"
+          >
+            <QuestionMarkCircleIcon
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
+          </button>
         </div>
         <input
           type="checkbox"
@@ -136,10 +189,19 @@
       >
         <div class="setting-item-label">
           {{ $t('displayAllFeatures') }}
-          <QuestionMarkCircleIcon
-            class="h-4 w-4 cursor-pointer"
+          <button
+            type="button"
+            class="btn btn-ghost btn-xs btn-circle h-6 min-h-6 w-6"
+            :aria-label="$t('displayAllFeaturesTip')"
+            :title="$t('displayAllFeaturesTip')"
             @mouseenter="showTip($event, $t('displayAllFeaturesTip'))"
-          />
+            @focus="showTip($event, $t('displayAllFeaturesTip'))"
+          >
+            <QuestionMarkCircleIcon
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
+          </button>
         </div>
         <input
           type="checkbox"
@@ -170,6 +232,7 @@ import {
   scrollAnimationEffect,
   swipeInPages,
   swipeInTabs,
+  lowPowerMode,
 } from '@/store/settings'
 import { QuestionMarkCircleIcon } from '@heroicons/vue/24/outline'
 import { computed } from 'vue'
@@ -184,6 +247,7 @@ const isVisibleAutoUpgrade = useIsSettingVisible(k.autoUpgradeDashboard)
 const isVisibleAutoDisconnectIdleUDP = useIsSettingVisible(k.autoDisconnectIdleUDP)
 const isVisibleAutoDisconnectIdleUDPTime = useIsSettingVisible(k.autoDisconnectIdleUDPTime)
 const isVisibleIPInfoAPI = useIsSettingVisible(k.IPInfoAPI)
+const isVisibleLowPowerMode = useIsSettingVisible(k.lowPowerMode)
 const isVisibleScrollAnimationEffect = useIsSettingVisible(k.scrollAnimationEffect)
 const isVisibleSwipeInPages = useIsSettingVisible(k.swipeInPages)
 const isVisibleSwipeInTabs = useIsSettingVisible(k.swipeInTabs)
@@ -198,6 +262,7 @@ const hasVisibleGeneralItems = computed(() => {
     isVisibleAutoDisconnectIdleUDP.value ||
     (autoDisconnectIdleUDP.value && isVisibleAutoDisconnectIdleUDPTime.value) ||
     isVisibleIPInfoAPI.value ||
+    isVisibleLowPowerMode.value ||
     isVisibleScrollAnimationEffect.value ||
     isVisibleSwipeInPages.value ||
     (swipeInPages.value && isVisibleSwipeInTabs.value) ||

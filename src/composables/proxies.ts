@@ -11,7 +11,7 @@ import {
 } from '@/store/proxies'
 import { groupsInActiveFolder, isProxyFolderModeActive } from '@/store/proxyFolders'
 import { customGlobalNode, displayGlobalByMode, manageHiddenGroup } from '@/store/settings'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { computed, ref } from 'vue'
 import {
   isProxyNodeSearchMode,
@@ -79,13 +79,34 @@ const limitInitialRender = (names: string[]) => {
 }
 
 export const disableProxiesPageScroll = ref(false)
+const proxiesPageScrollLockTokens = new Set<symbol>()
+
+const syncProxiesPageScrollLock = () => {
+  disableProxiesPageScroll.value = proxiesPageScrollLockTokens.size > 0
+}
+
+export const lockProxiesPageScroll = () => {
+  const token = Symbol('proxies-page-scroll-lock')
+  proxiesPageScrollLockTokens.add(token)
+  syncProxiesPageScrollLock()
+
+  return token
+}
+
+export const unlockProxiesPageScroll = (token: symbol | undefined) => {
+  if (token === undefined) return
+
+  proxiesPageScrollLockTokens.delete(token)
+  syncProxiesPageScrollLock()
+}
+
 export const isProxiesPageMounted = ref(false)
 
-export const renderProxyGroups = computed(() => {
+const renderProxyGroups = computed(() => {
   return limitInitialRender(getRenderProxyGroups())
 })
 
-export const renderProxyProviders = computed(() => {
+const renderProxyProviders = computed(() => {
   return limitInitialRender(getRenderProxyProviders())
 })
 

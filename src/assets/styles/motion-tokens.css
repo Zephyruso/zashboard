@@ -1,0 +1,224 @@
+/*
+ * Motion Design Tokens
+ *
+ * Extends the iOS motion tokens (--ios-duration-*, --ios-spring, --ios-ease)
+ * with semantic duration tiers, easing presets, stagger limits, and
+ * ready-to-use transition utility classes.
+ *
+ * All durations respect prefers-reduced-motion (ios-variables.css pins
+ * --ios-duration-* to ~0ms when reduce is active). The utility classes
+ * below also include an explicit reduced-motion fallback.
+ */
+
+:root,
+[data-theme] {
+  /* ── Duration Tiers ─────────────────────────────────────────────────── */
+  --motion-instant: 0.08s;
+  --motion-fast: 0.15s;
+  --motion-normal: 0.25s;
+  --motion-slow: 0.4s;
+  --motion-enter: 0.3s;
+  --motion-exit: 0.2s;
+
+  /* ── Stagger ────────────────────────────────────────────────────────── */
+  --motion-stagger-step: 0.04s;
+  --motion-stagger-limit: 0.6s;
+
+  /* ── Distance Tokens ────────────────────────────────────────────────── */
+  --motion-distance-sm: 4px;
+  --motion-distance-md: 8px;
+  --motion-distance-lg: 16px;
+}
+
+/* ── Transition Utility Classes ──────────────────────────────────────── */
+
+.transition-instant {
+  transition-duration: var(--motion-instant);
+  transition-timing-function: var(--ios-ease);
+}
+
+.transition-fast {
+  transition-duration: var(--motion-fast);
+  transition-timing-function: var(--ios-ease);
+}
+
+.transition-normal {
+  transition-duration: var(--motion-normal);
+  transition-timing-function: var(--ios-ease);
+}
+
+.transition-slow {
+  transition-duration: var(--motion-slow);
+  transition-timing-function: var(--ios-ease);
+}
+
+.transition-enter {
+  transition-duration: var(--motion-enter);
+  transition-timing-function: var(--ios-spring);
+}
+
+.transition-exit {
+  transition-duration: var(--motion-exit);
+  transition-timing-function: var(--ios-ease-out);
+}
+
+/* ── Vue Transition Presets ──────────────────────────────────────────── */
+
+/* Fade */
+.v-fade-enter-active,
+.v-fade-leave-active {
+  transition: opacity var(--motion-normal) var(--ios-ease);
+}
+.v-fade-enter-from,
+.v-fade-leave-to {
+  opacity: 0;
+}
+
+/* Slide Up */
+.v-slide-up-enter-active {
+  transition:
+    transform var(--motion-enter) var(--ios-spring),
+    opacity var(--motion-fast) var(--ios-ease);
+}
+.v-slide-up-leave-active {
+  transition:
+    transform var(--motion-exit) var(--ios-ease-out),
+    opacity var(--motion-exit) var(--ios-ease);
+}
+.v-slide-up-enter-from {
+  transform: translateY(var(--motion-distance-lg));
+  opacity: 0;
+}
+.v-slide-up-leave-to {
+  transform: translateY(var(--motion-distance-sm));
+  opacity: 0;
+}
+
+/* Scale */
+.v-scale-enter-active {
+  transition:
+    transform var(--motion-enter) var(--ios-spring),
+    opacity var(--motion-fast) var(--ios-ease);
+}
+.v-scale-leave-active {
+  transition:
+    transform var(--motion-exit) var(--ios-ease-out),
+    opacity var(--motion-exit) var(--ios-ease);
+}
+.v-scale-enter-from {
+  transform: scale(0.95);
+  opacity: 0;
+}
+.v-scale-leave-to {
+  transform: scale(0.97);
+  opacity: 0;
+}
+
+/* Collapse (height + opacity) */
+.v-collapse-enter-active,
+.v-collapse-leave-active {
+  transition:
+    max-height var(--motion-normal) var(--ios-ease),
+    opacity var(--motion-fast) var(--ios-ease);
+  overflow: hidden;
+}
+.v-collapse-enter-from,
+.v-collapse-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
+/* ── Stagger Utility ───────────────────────────────────────────────────
+ * Apply to a parent; each direct child gets a cumulative animation-delay
+ * capped at --motion-stagger-limit. Works with CSS animations or Vue
+ * transition appear hooks. */
+.stagger-children > * {
+  animation-delay: calc(
+    min(var(--stagger-index, 0) * var(--motion-stagger-step), var(--motion-stagger-limit))
+  );
+}
+
+/* ── Keyframe: Fade In ───────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in-item {
+  animation: fadeIn var(--motion-fast, 0.15s) var(--ios-ease, cubic-bezier(0.4, 0, 0.2, 1)) both;
+}
+
+/* ── Reduced Motion Overrides ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .transition-instant,
+  .transition-fast,
+  .transition-normal,
+  .transition-slow,
+  .transition-enter,
+  .transition-exit {
+    transition-duration: 0.001ms;
+  }
+
+  .v-fade-enter-active,
+  .v-fade-leave-active,
+  .v-slide-up-enter-active,
+  .v-slide-up-leave-active,
+  .v-scale-enter-active,
+  .v-scale-leave-active,
+  .v-collapse-enter-active,
+  .v-collapse-leave-active {
+    transition-duration: 0.001ms;
+  }
+
+  .v-slide-up-enter-from,
+  .v-slide-up-leave-to {
+    transform: none;
+  }
+
+  .v-scale-enter-from,
+  .v-scale-leave-to {
+    transform: none;
+  }
+
+  .stagger-children > * {
+    animation-delay: 0s;
+  }
+}
+
+.low-power-mode .transition-instant,
+.low-power-mode .transition-fast,
+.low-power-mode .transition-normal,
+.low-power-mode .transition-slow,
+.low-power-mode .transition-enter,
+.low-power-mode .transition-exit {
+  transition-duration: 0.001ms;
+}
+
+.low-power-mode .v-fade-enter-active,
+.low-power-mode .v-fade-leave-active,
+.low-power-mode .v-slide-up-enter-active,
+.low-power-mode .v-slide-up-leave-active,
+.low-power-mode .v-scale-enter-active,
+.low-power-mode .v-scale-leave-active,
+.low-power-mode .v-collapse-enter-active,
+.low-power-mode .v-collapse-leave-active {
+  transition-duration: 0.001ms;
+}
+
+.low-power-mode .v-slide-up-enter-from,
+.low-power-mode .v-slide-up-leave-to {
+  transform: none;
+}
+
+.low-power-mode .v-scale-enter-from,
+.low-power-mode .v-scale-leave-to {
+  transform: none;
+}
+
+.low-power-mode .stagger-children > * {
+  animation-delay: 0s;
+}

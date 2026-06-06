@@ -33,7 +33,10 @@
       class="settings-grid my-3 gap-2 p-3 md:grid-cols-2!"
     >
       <button
+        type="button"
         :class="twMerge('btn btn-neutral btn-sm', isUIUpgrading ? 'animate-pulse' : '')"
+        :disabled="isUIUpgrading"
+        :aria-busy="isUIUpgrading"
         @click="handlerClickUpgradeUI"
       >
         {{ $t('upgradeDashboard') }}
@@ -47,12 +50,12 @@
 </template>
 
 <script setup lang="ts">
-import { upgradeUIAPI, zashboardVersion } from '@/api'
+import { isRequestCanceled, upgradeUIAPI, zashboardVersion } from '@/api'
 import { useIsSettingVisible, useSettings } from '@/composables/settings'
 import { GENERAL_ITEM_KEYS } from '@/config/settingsItems'
 import { handlerUpgradeSuccess } from '@/helper'
 import { twMerge } from 'tailwind-merge'
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import DashboardSettings from '../../common/DashboardSettings.vue'
 import GeneralSettings from './GeneralSettings.vue'
 import StyleSettings from './StyleSettings.vue'
@@ -65,19 +68,52 @@ const commitId = __COMMIT_ID__
 const { isUIUpdateAvailable } = useSettings()
 
 const isUIUpgrading = ref(false)
+let isUnmounted = false
+let upgradeSequence = 0
+let upgradeAbortController: AbortController | undefined
+let reloadTimer: ReturnType<typeof setTimeout> | undefined
 
 const handlerClickUpgradeUI = async () => {
   if (isUIUpgrading.value) return
+
+  const sequence = ++upgradeSequence
+  const controller = new AbortController()
+
+  upgradeAbortController?.abort()
+  upgradeAbortController = controller
   isUIUpgrading.value = true
   try {
-    await upgradeUIAPI()
-    isUIUpgrading.value = false
+    await upgradeUIAPI(controller.signal)
+
+    if (isUnmounted || sequence !== upgradeSequence || controller.signal.aborted) return
+
     handlerUpgradeSuccess()
-    setTimeout(() => {
+    reloadTimer = setTimeout(() => {
+      if (isUnmounted || sequence !== upgradeSequence) return
       window.location.reload()
     }, 1000)
-  } catch {
-    isUIUpgrading.value = false
+  } catch (error) {
+    if (isRequestCanceled(error)) return
+    // handled by current UI state
+  } finally {
+    if (upgradeAbortController === controller) {
+      upgradeAbortController = undefined
+    }
+    if (!isUnmounted && sequence === upgradeSequence) {
+      isUIUpgrading.value = false
+    }
   }
 }
+
+onBeforeUnmount(() => {
+  isUnmounted = true
+  upgradeSequence++
+  upgradeAbortController?.abort()
+  upgradeAbortController = undefined
+
+  if (reloadTimer) {
+    clearTimeout(reloadTimer)
+    reloadTimer = undefined
+  }
+})
 </script>

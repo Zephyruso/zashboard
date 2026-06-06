@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import SkipLink from '@/accessibility/SkipLink.vue'
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { RouterView } from 'vue-router'
+import { glassStyleVariables, useDocumentGlassVariables } from './composables/glass'
 import { useKeyboard } from './composables/keyboard'
 import { EMOJIS, FONTS } from './constant'
 import {
@@ -12,14 +14,7 @@ import {
 import { backgroundImage } from './helper/indexeddb'
 import { initNotification } from './helper/notification'
 import { getBackendFromUrl, isPreferredDark } from './helper/utils'
-import {
-  blurIntensity,
-  dashboardTransparent,
-  disablePullToRefresh,
-  emoji,
-  font,
-  theme,
-} from './store/settings'
+import { disablePullToRefresh, emoji, font, theme, lowPowerMode } from './store/settings'
 import { activeUuid, backendList } from './store/setup'
 import type { Backend } from './types'
 
@@ -131,14 +126,7 @@ onMounted(async () => {
   )
 })
 
-const blurClass = computed(() => {
-  if (!backgroundImage.value || blurIntensity.value === 0) {
-    return ''
-  }
-
-  return `blur-intensity-${blurIntensity.value}`
-})
-
+useDocumentGlassVariables()
 useKeyboard()
 </script>
 
@@ -147,18 +135,28 @@ useKeyboard()
     ref="app"
     id="app-content"
     :class="[
-      'bg-base-100 flex h-dvh w-screen overflow-hidden',
+      'app-root bg-base-200 relative flex w-screen overflow-hidden',
       fontClassName,
-      backgroundImage &&
-        `custom-background-${dashboardTransparent} custom-background bg-cover bg-center`,
-      blurClass,
+      backgroundImage && 'custom-background',
+      lowPowerMode && 'low-power-mode',
+      'blur-intensity',
     ]"
-    :style="backgroundImage"
+    :style="[glassStyleVariables, backgroundImage]"
   >
-    <RouterView />
-    <div
-      ref="toast"
-      class="toast-sm toast toast-end toast-top z-[100000] max-w-80 text-sm md:max-w-96 md:translate-y-8"
-    />
+    <SkipLink />
+    <main
+      id="main-content"
+      class="contents"
+    >
+      <RouterView />
+    </main>
+    <Teleport to="body">
+      <div
+        ref="toast"
+        role="status"
+        aria-live="polite"
+        class="toast-sm toast toast-end toast-top z-[100000] max-w-80 text-sm md:max-w-96 md:translate-y-8"
+      />
+    </Teleport>
   </div>
 </template>

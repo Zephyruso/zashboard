@@ -1,6 +1,9 @@
 <template>
   <div
     class="bg-base-100 scrollbar-hidden border-base-300/50 sticky top-3 z-10 m-3 mb-0 flex items-center gap-1 overflow-x-auto rounded-xl p-1 shadow"
+    @touchstart="disableSwipe = true"
+    @touchend="disableSwipe = false"
+    @touchcancel="disableSwipe = false"
   >
     <FolderItem
       :id="VIRTUAL_ALL"
@@ -33,16 +36,22 @@
       @activate="activeFolderId = VIRTUAL_UNCAT"
     />
     <button
+      type="button"
       class="btn btn-ghost btn-sm ml-auto shrink-0"
       @click="folderManagerOpen = !folderManagerOpen"
+      :aria-label="$t('folder_manage')"
       :title="$t('folder_manage')"
     >
-      <Cog6ToothIcon class="h-4 w-4" />
+      <Cog6ToothIcon
+        class="h-4 w-4"
+        aria-hidden="true"
+      />
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
+import { disableSwipe } from '@/composables/swipe'
 import { proxyGroupList } from '@/store/proxies'
 import {
   activeFolderId,

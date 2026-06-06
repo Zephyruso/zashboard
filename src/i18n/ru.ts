@@ -36,6 +36,8 @@ const ru: LANG_MESSAGE = {
   chains: 'Цепочки',
   outbound: 'Исходящий',
   sortBy: 'Сортировать по',
+  sortAscending: 'Сортировать по возрастанию',
+  sortDescending: 'Сортировать по убыванию',
   rule: 'Правило',
   sourceIP: 'Исходный IP',
   activeConnections: 'Активные',
@@ -106,6 +108,9 @@ const ru: LANG_MESSAGE = {
   truncateProxyName: 'Усечение имени прокси',
   disableProxiesPageTextSelect: 'Запретить выделение текста на странице прокси',
   sourceIPLabels: 'Метки исходного IP',
+  addSourceIPLabel: 'Добавить метку исходного IP',
+  deleteSourceIPLabel: 'Удалить метку исходного IP',
+  sourceIPLabelScope: 'Область действия метки исходного IP',
   proxyPreviewType: 'Тип предварительного просмотра прокси',
   auto: 'Авто',
   dots: 'Точки',
@@ -150,6 +155,7 @@ const ru: LANG_MESSAGE = {
     'Текущий бэкенд недоступен. Попробуйте переключиться на другой бэкенд?',
   confirm: 'Подтвердить',
   backendSwitchTo: 'Бэкенд переключен на {backend}',
+  backendSwitchFailed: 'Доступный бэкенд не найден.',
 
   // Backend settings
   ipv6Test: 'IPv6-тест',
@@ -233,6 +239,13 @@ const ru: LANG_MESSAGE = {
   displaySelectedNode: 'Отображать выбранный узел',
   displayLatencyNumber: 'Отображать задержку',
   disconnectOnRuleDisable: 'Разрывать соединения при отключении правила',
+  disconnectConnection: 'Отключить соединение',
+  blockConnection: 'Заблокировать соединение',
+  backgroundOptions: 'Параметры фона',
+  groupByColumn: 'Группировать по {name}',
+  ungroupColumn: 'Разгруппировать {name}',
+  pinColumn: 'Закрепить {name}',
+  unpinColumn: 'Открепить {name}',
   tipForFixed:
     'Текущая стратегическая группа закреплена за текущим узлом. Нажмите «Тест скорости», чтобы восстановить поведение {type}.',
   remoteAddress: 'удалённый адрес',
@@ -240,6 +253,9 @@ const ru: LANG_MESSAGE = {
   moreDetails: 'Подробнее',
   moreSettings: 'Дополнительные настройки',
   customIcon: 'Пользовательская иконка',
+  addCustomIcon: 'Добавить пользовательскую иконку',
+  editCustomIcon: 'Редактировать пользовательские иконки',
+  deleteCustomIcon: 'Удалить пользовательскую иконку',
   dropOrClickUpload: 'Перетащите изображение или вставьте URL',
   disablePullToRefresh: 'Отключить свойство обновления',
   disablePullToRefreshTip:
@@ -248,6 +264,8 @@ const ru: LANG_MESSAGE = {
   keyboardShortcutsTip:
     'Нажмите на поле и затем нужную клавишу или сочетание клавиш. Для очистки используйте Backspace или Delete.',
   keyboardShortcutPageName: 'Страница {name}',
+  resetShortcut: 'Сбросить горячую клавишу {name}',
+  editKeyboardShortcuts: 'Редактировать горячие клавиши',
   toggleSidebar: 'Переключить боковую панель',
   switchToPreviousBackend: 'Переключиться на предыдущий бэкенд',
   switchToNextBackend: 'Переключиться на следующий бэкенд',
@@ -259,6 +277,8 @@ const ru: LANG_MESSAGE = {
   displayAllFeaturesTip:
     'Показать все функции, включая те, которые не поддерживаются официальной версией sing-box. Если вы используете форк sing-box, поддерживающий некоторые из этих функций, вы можете попробовать их включить.',
   blurIntensity: 'Интенсивность размытия',
+  lowPowerMode: 'Режим энергосбережения',
+  lowPowerModeTip: 'Снижает визуальные эффекты, анимации и частоту опроса для экономии заряда.',
   scrollAnimationEffect: 'Эффект анимации прокрутки',
 
   // Import, export, and upgrade
@@ -305,6 +325,9 @@ const ru: LANG_MESSAGE = {
   mmdbSizeTip: 'Если вы используете mmdb-формат файлов geo, то количество будет равно 0',
   displayFinalOutbound: 'Показать конечный исходящий узел',
   groupTestUrls: 'Группа тестовых URL',
+  addGroupTestUrl: 'Добавить тестовый URL группы',
+  editGroupTestUrls: 'Редактировать тестовые URL групп',
+  deleteGroupTestUrl: 'Удалить тестовый URL группы',
   groupTestUrlsTip:
     'Для ручных тестов, запущенных из панели, установите тестовые URL > URL в конфигурации > Глобальные тестовые URL, но для групп с UrlTest/Fallback и т.д., URL в конфигурации все равно нужно изменить, поэтому это рекомендуется только для Selector и т.д. ',
   groupName: 'Группа имени',
@@ -355,6 +378,42 @@ const ru: LANG_MESSAGE = {
   ruleLastHit: 'Последнее попадание: {time}',
   ruleMissCount: 'Промах: {count} раз',
   ruleLastMiss: 'Последний промах: {time}',
+
+  // iOS context actions
+  copy: 'Копировать',
+  copyFailed: 'Не удалось скопировать',
+  details: 'Подробнее',
+  speedtest: 'Тест скорости',
+  switchProxy: 'Быстрое переключение',
+  switchedTo: 'Переключено на {name}',
+  enable: 'Включить',
+  disable: 'Отключить',
+
+  // Accessibility & ARIA
+  mainNavigation: 'Основная навигация',
+  skipToContent: 'Перейти к основному содержимому',
+  backendSelector: 'Выбор бэкенда',
+  testAllLatency: 'Тестировать задержку всех',
+  updateAllProviders: 'Обновить все провайдеры',
+  collapseAll: 'Свернуть все',
+  pauseStream: 'Приостановить поток',
+  resumeStream: 'Возобновить поток',
+  closeAllConnections: 'Закрыть все соединения',
+  clearLogs: 'Очистить логи',
+  downloadLogs: 'Скачать логи',
+  noProxyGroups: 'Нет групп прокси',
+  noProxyGroupsDesc: 'Группы прокси недоступны. Проверьте конфигурацию бэкенда.',
+  noLogs: 'Нет логов',
+  noLogsDesc: 'Логи будут отображаться здесь по мере прохождения трафика через прокси.',
+  noRules: 'Нет правил',
+  noRulesDesc: 'На текущем бэкенде нет настроенных правил.',
+  noConnections: 'Нет активных соединений',
+  noConnectionsDesc: 'Активные соединения будут отображаться здесь, когда трафик начнёт проходить.',
+  noClosedConnections: 'Нет закрытых соединений',
+  noClosedConnectionsDesc: 'Закрытые соединения будут отображаться здесь.',
+  errorOccurred: 'Произошла ошибка',
+  retry: 'Повторить',
+  loading: 'Загрузка',
 
   // Smart Core
   RarelyUsed: 'Редко используется',

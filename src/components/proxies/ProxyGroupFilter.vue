@@ -5,10 +5,16 @@
   >
     <button
       v-if="!showInput"
+      type="button"
       class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-base-content opacity-0 transition-all duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
+      :aria-label="t('searchProxyGroup')"
+      :title="t('searchProxyGroup')"
       @click.stop="handlerShowInput"
     >
-      <MagnifyingGlassIcon class="h-3.5 w-3.5" />
+      <MagnifyingGlassIcon
+        class="h-3.5 w-3.5"
+        aria-hidden="true"
+      />
     </button>
     <div
       class="relative min-w-0 flex-1 overflow-hidden transition-all duration-200 ease-out"
@@ -24,10 +30,16 @@
         @keydown.escape="handlerReset"
       />
       <button
+        type="button"
         class="btn btn-ghost btn-circle btn-xs absolute top-1/2 right-0 h-5 min-h-5 w-5 -translate-y-1/2 p-0"
+        :aria-label="t('reset')"
+        :title="t('reset')"
         @click.stop="handlerReset"
       >
-        <XMarkIcon class="h-3 w-3" />
+        <XMarkIcon
+          class="h-3 w-3"
+          aria-hidden="true"
+        />
       </button>
     </div>
   </div>

@@ -9,6 +9,7 @@
         <input
           class="input input-bordered input-sm w-full"
           type="text"
+          :aria-label="$t('configFilePath')"
           v-model="configPath"
           :placeholder="$t('configFilePathPlaceholder')"
         />
@@ -21,6 +22,7 @@
         <textarea
           class="textarea textarea-bordered w-full font-mono text-xs"
           rows="10"
+          :aria-label="$t('configPayload')"
           v-model="configPayload"
           :placeholder="$t('configPayloadPlaceholder')"
         ></textarea>
@@ -32,14 +34,17 @@
           <input
             class="toggle toggle-sm"
             type="checkbox"
+            :aria-label="$t('forceUpdate')"
             v-model="forceUpdate"
           />
         </label>
       </div>
 
       <button
+        type="button"
         class="btn btn-primary btn-sm"
         :disabled="isUpdating || (!configPath && !configPayload)"
+        :aria-busy="isUpdating"
         @click="handleUpdateConfigs"
       >
         <span
@@ -58,7 +63,7 @@ import { showNotification } from '@/helper/notification'
 import { fetchConfigs } from '@/store/config'
 import { fetchProxies } from '@/store/proxies'
 import { fetchRules } from '@/store/rules'
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import DialogWrapper from '../../common/DialogWrapper.vue'
 
 const modalValue = defineModel<boolean>()
@@ -66,6 +71,8 @@ const configPath = ref('')
 const configPayload = ref('')
 const forceUpdate = ref(false)
 const isUpdating = ref(false)
+let updateConfigsController: AbortController | undefined
+let updateConfigsSeq = 0
 
 const reloadAll = () => {
   fetchConfigs()
@@ -75,22 +82,40 @@ const reloadAll = () => {
 
 const handleUpdateConfigs = async () => {
   if (isUpdating.value) return
+  updateConfigsController?.abort()
+  const controller = new AbortController()
+  const currentSeq = ++updateConfigsSeq
+  updateConfigsController = controller
   isUpdating.value = true
   try {
     await updateConfigsAPI(
       { path: configPath.value, payload: configPayload.value },
       forceUpdate.value,
+      controller.signal,
     )
+    if (currentSeq !== updateConfigsSeq || updateConfigsController !== controller) return
     reloadAll()
     modalValue.value = false
     showNotification({
       content: 'updateConfigsSuccess',
       type: 'alert-success',
     })
-  } catch {
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      return
+    }
     // error handled by axios interceptor
   } finally {
-    isUpdating.value = false
+    if (updateConfigsController === controller) {
+      isUpdating.value = false
+      updateConfigsController = undefined
+    }
   }
 }
+
+onBeforeUnmount(() => {
+  updateConfigsController?.abort()
+  updateConfigsController = undefined
+  updateConfigsSeq += 1
+})
 </script>

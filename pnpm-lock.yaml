@@ -7,9 +7,6 @@ settings:
 importers:
   .:
     dependencies:
-      '@eslint/plugin-kit':
-        specifier: ^0.7.1
-        version: 0.7.1
       '@fontsource/fira-sans':
         specifier: ^5.2.7
         version: 5.2.7
@@ -46,12 +43,9 @@ importers:
       ipaddr.js:
         specifier: ^2.4.0
         version: 2.4.0
-      lodash:
-        specifier: ^4.18.1
+      lodash-es:
+        specifier: ^4.17.21
         version: 4.18.1
-      misans:
-        specifier: ^4.1.0
-        version: 4.1.0
       p-limit:
         specifier: ^7.3.0
         version: 7.3.0
@@ -104,9 +98,9 @@ importers:
       '@tsconfig/node22':
         specifier: ^22.0.5
         version: 22.0.5
-      '@types/lodash':
-        specifier: ^4.17.24
-        version: 4.17.24
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -1874,6 +1868,12 @@ packages:
     resolution:
       {
         integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==,
+      }
+
+  '@types/lodash-es@4.17.12':
+    resolution:
+      {
+        integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==,
       }
 
   '@types/lodash@4.17.24':
@@ -3839,6 +3839,12 @@ packages:
       }
     engines: { node: '>=10' }
 
+  lodash-es@4.18.1:
+    resolution:
+      {
+        integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==,
+      }
+
   lodash.debounce@4.0.8:
     resolution:
       {
@@ -3950,12 +3956,6 @@ packages:
         integrity: sha512-7o1wEA2RyMP7Iu7GNba9vc0RWWGACJOCZBJX2GJWip0ikV+wcOsgVuY9uE8CPiyQhkGFSlhuSkZPavN7u1c2Fw==,
       }
     engines: { node: '>=10' }
-
-  misans@4.1.0:
-    resolution:
-      {
-        integrity: sha512-CcIRrIVhnt+OpGXvw1Q8llGBVAy5P2mdov/kJ0gGa81sJ0RY7mZp2fNAt2ySTCeZos+wo7ZnzDZxl1In//7FdA==,
-      }
 
   mlly@1.8.2:
     resolution:
@@ -6512,6 +6512,10 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
+  '@types/lodash-es@4.17.12':
+    dependencies:
+      '@types/lodash': 4.17.24
+
   '@types/lodash@4.17.24': {}
 
   '@types/node@25.6.0':
@@ -7778,6 +7782,8 @@ snapshots:
     dependencies:
       p-locate: 5.0.0
 
+  lodash-es@4.18.1: {}
+
   lodash.debounce@4.0.8: {}
 
   lodash.sortby@4.7.0: {}
@@ -7836,8 +7842,6 @@ snapshots:
   minimatch@5.1.9:
     dependencies:
       brace-expansion: 2.1.0
-
-  misans@4.1.0: {}
 
   mlly@1.8.2:
     dependencies:

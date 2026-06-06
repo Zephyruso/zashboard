@@ -1,19 +1,25 @@
 <template>
   <div :class="wrapperClass">
     <button
-      class="btn btn-circle btn-sm"
+      class="btn btn-circle btn-sm touch-target"
+      :aria-label="$t('backendSelector')"
       @click="showBackendSelectorDialog = true"
       @mouseenter="handlerMouseenterBackendSelector"
     >
-      <ServerIcon class="h-5 w-5" />
+      <ServerIcon
+        class="h-5 w-5"
+        aria-hidden="true"
+      />
     </button>
     <button
-      class="btn btn-circle btn-sm"
+      class="btn btn-circle btn-sm touch-target"
+      :aria-label="$t('toggleSidebar')"
       @click="isSidebarCollapsed = !isSidebarCollapsed"
     >
       <component
         :is="isSidebarCollapsed ? ArrowRightCircleIcon : ArrowLeftCircleIcon"
         class="h-5 w-5"
+        aria-hidden="true"
       />
     </button>
   </div>
@@ -53,6 +59,8 @@ const wrapperClass = computed(() => {
 })
 
 const handlerMouseenterBackendSelector = (e: MouseEvent) => {
-  showTip(e, getLabelFromBackend(activeBackend.value!), { placement: 'right' })
+  if (!activeBackend.value) return
+
+  showTip(e, getLabelFromBackend(activeBackend.value), { placement: 'right' })
 }
 </script>

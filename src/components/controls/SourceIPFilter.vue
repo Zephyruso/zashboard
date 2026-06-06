@@ -18,7 +18,7 @@
 import { getIPLabelFromMap } from '@/helper/sourceip'
 import { connections, sourceIPFilter } from '@/store/connections'
 import * as ipaddr from 'ipaddr.js'
-import { isEqual, uniq } from 'lodash'
+import { isEqual, uniq } from 'lodash-es'
 import { computed, ref, watch } from 'vue'
 
 const sourceIPs = computed(() => {

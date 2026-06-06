@@ -2,7 +2,7 @@ import { getStorageAPI } from '@/api'
 import { showNotification } from '@/helper/notification'
 import { applyDashboardSettingsToStorage } from '@/helper/utils'
 import { useStorage } from '@vueuse/core'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 const IMPORT_SETTINGS_URL_KEY = 'config/import-settings-url'
 
 export const DEFAULT_SETTINGS_URL = './zashboard-settings.json'
@@ -12,6 +12,19 @@ export const autoSyncSettings = useStorage('config/auto-sync-settings', false)
 
 const autoImportSettingsHash = useStorage('cache/auto-import-settings-hash', '')
 const autoSyncSettingsHash = useStorage('cache/auto-sync-settings-hash', '')
+
+const getImportableDashboardSettings = (settings: Record<string, unknown>) => {
+  return Object.fromEntries(
+    Object.entries(settings).filter(([key, value]) => {
+      if (!key.startsWith('config/') || typeof value !== 'string') {
+        return false
+      }
+
+      return key !== IMPORT_SETTINGS_URL_KEY || Boolean(value)
+    }),
+  )
+}
+
 const calculateSettingsHash = async (settings: Record<string, unknown>) => {
   const sortedKeys = Object.keys(settings).sort()
   const hashString = sortedKeys.map((key) => `${key}:${settings[key]}`).join('|')
@@ -28,12 +41,14 @@ const calculateSettingsHash = async (settings: Record<string, unknown>) => {
 export const syncSettingsFromCore = async ({
   force = false,
   notify = false,
+  signal,
 }: {
   force?: boolean
   notify?: boolean
   preserveAutoSyncSetting?: boolean
+  signal?: AbortSignal
 } = {}) => {
-  const { data } = await getStorageAPI()
+  const { data } = await getStorageAPI(signal)
 
   if (!data || isEmpty(data)) {
     return false
@@ -60,12 +75,30 @@ export const syncSettingsFromCore = async ({
   location.reload()
   return true
 }
-export const importSettingsFromUrl = async (force = false) => {
-  const res = await fetch(importSettingsUrl.value)
+export const importSettingsFromUrl = async (
+  force = false,
+  options: { url?: string; signal?: AbortSignal } = {},
+) => {
+  const targetUrl = options.url || importSettingsUrl.value
+  let res: Response
+  try {
+    res = await fetch(targetUrl, { signal: options.signal })
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      return false
+    }
+    showNotification({
+      content: 'importFailed',
+      params: { url: targetUrl },
+      type: 'alert-error',
+    })
+    return false
+  }
+
   const errorHandler = () => {
     showNotification({
       content: 'importFailed',
-      params: { url: res.url },
+      params: { url: targetUrl },
       type: 'alert-error',
     })
   }
@@ -86,7 +119,14 @@ export const importSettingsFromUrl = async (force = false) => {
     return false
   }
 
-  const newHash = await calculateSettingsHash(settings)
+  const importableSettings = getImportableDashboardSettings(settings)
+
+  if (isEmpty(importableSettings)) {
+    errorHandler()
+    return false
+  }
+
+  const newHash = await calculateSettingsHash(importableSettings)
 
   if (newHash === autoImportSettingsHash.value && !force) {
     return false
@@ -97,12 +137,7 @@ export const importSettingsFromUrl = async (force = false) => {
   })
   autoImportSettingsHash.value = newHash
 
-  for (const key in settings) {
-    if (key === IMPORT_SETTINGS_URL_KEY && !settings[key]) {
-      continue
-    }
-    localStorage.setItem(key, settings[key] as string)
-  }
+  applyDashboardSettingsToStorage(importableSettings)
   location.reload()
   return true
 }

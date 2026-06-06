@@ -74,7 +74,7 @@
 <script setup lang="ts">
 import { prettyBytesHelper } from '@/helper/utils'
 import { proxyProviederList } from '@/store/proxies'
-import { toFinite } from 'lodash'
+import { toFinite } from 'lodash-es'
 import { computed } from 'vue'
 
 interface ProviderTrafficInfo {

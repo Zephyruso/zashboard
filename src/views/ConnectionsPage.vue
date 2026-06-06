@@ -4,17 +4,22 @@
     :style="!isConnectionCard && padding"
   >
     <template v-if="isConnectionCard">
-      <ConnectionCardList />
+      <ErrorBoundary @retry="() => {}">
+        <ConnectionCardList />
+      </ErrorBoundary>
     </template>
     <template v-else>
       <ConnectionCtrl />
-      <ConnectionTable />
+      <ErrorBoundary @retry="() => {}">
+        <ConnectionTable />
+      </ErrorBoundary>
     </template>
     <ConnectionDetails />
   </div>
 </template>
 
 <script setup lang="ts">
+import ErrorBoundary from '@/components/common/ErrorBoundary.vue'
 import ConnectionCardList from '@/components/connections/ConnectionCardList.vue'
 import ConnectionDetails from '@/components/connections/ConnectionDetails.vue'
 import ConnectionTable from '@/components/connections/ConnectionTable.vue'

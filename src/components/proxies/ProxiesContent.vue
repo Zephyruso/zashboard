@@ -4,6 +4,7 @@ import { handlerProxySelect } from '@/store/proxies'
 import { computed } from 'vue'
 import ProxyNodeCard from './ProxyNodeCard.vue'
 import ProxyNodeGrid from './ProxyNodeGrid.vue'
+import VirtualProxyNodeGrid from './VirtualProxyNodeGrid.vue'
 
 const props = defineProps<{
   name: string
@@ -11,15 +12,24 @@ const props = defineProps<{
   renderProxies: string[]
 }>()
 
+const activeIndex = computed(() => props.renderProxies.indexOf(props.now ?? ''))
+const isVirtualGrid = computed(() => props.renderProxies.length > 200)
 const { maxProxies } = useCalculateMaxProxies(
-  props.renderProxies.length,
-  props.renderProxies.indexOf(props.now ?? ''),
+  () => props.renderProxies.length,
+  activeIndex,
+  () => !isVirtualGrid.value,
 )
 const proxies = computed(() => props.renderProxies.slice(0, maxProxies.value))
 </script>
 
 <template>
-  <ProxyNodeGrid>
+  <VirtualProxyNodeGrid
+    v-if="isVirtualGrid"
+    :name="name"
+    :now="now"
+    :nodes="renderProxies"
+  />
+  <ProxyNodeGrid v-else>
     <ProxyNodeCard
       v-for="node in proxies"
       :key="node"

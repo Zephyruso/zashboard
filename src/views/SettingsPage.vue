@@ -1,7 +1,6 @@
 <template>
   <div
-    class="relative h-full overflow-y-auto"
-    @scroll.passive="handleScroll"
+    class="smooth-scroll-container relative h-full overflow-y-auto"
     ref="scrollContainerRef"
   >
     <SettingsMenu
@@ -14,6 +13,7 @@
 
     <button
       v-if="isPWA"
+      type="button"
       class="btn btn-ghost btn-sm absolute top-14 right-2 z-10"
       @click="refreshPages"
     >
@@ -37,10 +37,10 @@
             :key="item.key"
             :id="`item-${item.key}`"
             :data-key="item.key"
-            class="mb-4 rounded-lg p-2 md:mb-6"
+            class="mb-4 rounded-2xl p-2 md:mb-6"
           >
             <div
-              class="mt-1 mb-3 px-1 text-lg font-semibold"
+              class="text-base-content/55 mt-1 mb-2 px-3 text-[13px] font-semibold tracking-[0.05em] uppercase"
               v-if="![SETTINGS_MENU_KEY.general, SETTINGS_MENU_KEY.backend].includes(item.key)"
             >
               {{ $t(item.label) }}
@@ -63,7 +63,7 @@
         class="mb-4 md:mb-6"
       >
         <div
-          class="mt-1 mb-3 px-1 text-lg font-semibold"
+          class="text-base-content/55 mt-1 mb-2 px-3 text-[13px] font-semibold tracking-[0.05em] uppercase"
           v-if="![SETTINGS_MENU_KEY.general, SETTINGS_MENU_KEY.backend].includes(item.key)"
         >
           {{ $t(item.label) }}
@@ -95,9 +95,8 @@ import {
   ServerIcon,
 } from '@heroicons/vue/24/outline'
 import { useElementSize } from '@vueuse/core'
-import { throttle } from 'lodash'
 import type { Component } from 'vue'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 type MenuItem = {
@@ -172,9 +171,13 @@ const menuItems = computed<MenuItem[]>(() => {
 const activeMenuKey = ref<SETTINGS_MENU_KEY>(menuItems.value[0]?.key || SETTINGS_MENU_KEY.general)
 
 const columnAssignment = ref<number[]>(menuItems.value.map((_, i) => i % 2))
+let rebalanceColumnsId = 0
 
 const rebalanceColumns = async () => {
+  const rebalanceId = ++rebalanceColumnsId
   await new Promise((resolve) => setTimeout(resolve, 0)) // 等待 DOM 更新
+  if (rebalanceId !== rebalanceColumnsId) return
+
   const colHeights = [0, 0]
   columnAssignment.value = menuItems.value.map((item) => {
     const el = document.getElementById(`item-${item.key}`)
@@ -188,9 +191,13 @@ const rebalanceColumns = async () => {
 watch(menuItems, () => {
   columnAssignment.value = menuItems.value.map((_, i) => i % 2)
   rebalanceColumns()
+  setupActiveMenuObserver()
 })
 
-watch(isTwoColumns, rebalanceColumns)
+watch(isTwoColumns, () => {
+  rebalanceColumns()
+  setupActiveMenuObserver()
+})
 
 // 当 menuItems 变化时，如果当前激活的项被隐藏，则切换到第一个可见项
 watch(
@@ -209,7 +216,12 @@ const getItemRef = (key: SETTINGS_MENU_KEY) => {
 }
 
 const isTriggerByClick = ref(false)
-const timeoutId = ref<number>()
+const timeoutId = ref<ReturnType<typeof setTimeout>>()
+let flashTimer: ReturnType<typeof setTimeout> | undefined
+let initialScrollFrame: number | undefined
+let activeMenuObserver: IntersectionObserver | undefined
+let activeMenuObserverSetupId = 0
+const visibleMenuItems = new Map<SETTINGS_MENU_KEY, { ratio: number; top: number }>()
 
 const flashElement = (el: HTMLElement) => {
   el.classList.remove('highlight-flash')
@@ -240,82 +252,108 @@ const handleMenuClick = (key: SETTINGS_MENU_KEY) => {
       })
 
       if (isTwoColumns.value) {
-        setTimeout(() => flashElement(element), 300)
+        if (flashTimer !== undefined) clearTimeout(flashTimer)
+        flashTimer = setTimeout(() => {
+          flashTimer = undefined
+          flashElement(element)
+        }, 300)
       }
     }
   }
 }
 
-const scrollTop = ref(0)
-const updateActiveMenuByScroll = () => {
-  if (!scrollContainerRef.value || isTriggerByClick.value || isTwoColumns.value) return
-
-  const containerRect = scrollContainerRef.value.getBoundingClientRect()
-  const newScrollTop = scrollContainerRef.value.scrollTop
-  const scrollingDown = newScrollTop > scrollTop.value
-  const containerTop = containerRect.top
-  const containerBottom = containerRect.bottom
-  const containerHeight = containerRect.height
+const updateActiveMenuFromIntersections = () => {
+  if (isTriggerByClick.value || isTwoColumns.value) return
 
   let bestKey: SETTINGS_MENU_KEY | null = null
   let bestScore = -Infinity
 
-  menuItems.value.forEach((item) => {
-    const element = getItemRef(item.key)
-    if (!element) return
-
-    const elementRect = element.getBoundingClientRect()
-    const visibleTop = Math.max(elementRect.top, containerTop)
-    const visibleBottom = Math.min(elementRect.bottom, containerBottom)
-    const visibleHeight = Math.max(0, visibleBottom - visibleTop)
-
-    if (visibleHeight <= 0) return
-
-    // 元素自身的可见比例（对小元素更友好）
-    const selfRatio = visibleHeight / elementRect.height
-    // 元素占容器可见区域的比例
-    const containerRatio = visibleHeight / containerHeight
-    // 综合得分：优先考虑自身可见比例高的元素，其次考虑占容器比例
-    // 当小元素完全可见时 selfRatio=1，得分会很高
-    let score = selfRatio + containerRatio * 0.4
-
-    // 滚动方向偏好：偏向即将进入视口的元素
-    const elementCenter = (visibleTop + visibleBottom) / 2
-    const referencePoint = containerTop + containerHeight * (scrollingDown ? 0.6 : 0.4)
-    const normalizedDistance = Math.abs(elementCenter - referencePoint) / containerHeight
-    score -= normalizedDistance * 0.2
+  for (const [key, item] of visibleMenuItems) {
+    const score = item.ratio * 1000 - Math.abs(item.top - 54)
 
     if (score > bestScore) {
       bestScore = score
-      bestKey = item.key
+      bestKey = key
     }
-  })
+  }
 
   if (bestKey && bestKey !== activeMenuKey.value) {
     activeMenuKey.value = bestKey
   }
-
-  scrollTop.value = newScrollTop
 }
 
-const handleScroll = throttle(updateActiveMenuByScroll, 100)
+const disconnectActiveMenuObserver = () => {
+  activeMenuObserver?.disconnect()
+  activeMenuObserver = undefined
+  visibleMenuItems.clear()
+}
+
+const setupActiveMenuObserver = async () => {
+  const setupId = ++activeMenuObserverSetupId
+  disconnectActiveMenuObserver()
+  await nextTick()
+
+  if (setupId !== activeMenuObserverSetupId) return
+  if (!scrollContainerRef.value || isTwoColumns.value) return
+
+  activeMenuObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const key = (entry.target as HTMLElement).dataset.key as SETTINGS_MENU_KEY | undefined
+        if (!key) continue
+
+        if (entry.isIntersecting) {
+          visibleMenuItems.set(key, {
+            ratio: entry.intersectionRatio,
+            top: entry.boundingClientRect.top,
+          })
+        } else {
+          visibleMenuItems.delete(key)
+        }
+      }
+
+      updateActiveMenuFromIntersections()
+    },
+    {
+      root: scrollContainerRef.value,
+      rootMargin: '-54px 0px -35% 0px',
+      threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
+    },
+  )
+
+  for (const item of menuItems.value) {
+    const element = getItemRef(item.key)
+    if (element) {
+      activeMenuObserver.observe(element)
+    }
+  }
+}
 
 const refreshPages = async () => {
   const registrations = await navigator.serviceWorker.getRegistrations()
 
-  for (const registration of registrations) {
-    registration.unregister()
-  }
+  await Promise.allSettled(registrations.map((registration) => registration.unregister()))
   window.location.reload()
 }
 
 onMounted(() => {
   rebalanceColumns()
-  requestAnimationFrame(async () => {
+  setupActiveMenuObserver()
+  initialScrollFrame = requestAnimationFrame(() => {
+    initialScrollFrame = undefined
     const scrollTo = route.query.scrollTo as SETTINGS_MENU_KEY
     if (scrollTo) {
       handleMenuClick(scrollTo)
     }
   })
+})
+
+onUnmounted(() => {
+  rebalanceColumnsId += 1
+  activeMenuObserverSetupId += 1
+  if (timeoutId.value !== undefined) clearTimeout(timeoutId.value)
+  if (flashTimer !== undefined) clearTimeout(flashTimer)
+  if (initialScrollFrame !== undefined) cancelAnimationFrame(initialScrollFrame)
+  disconnectActiveMenuObserver()
 })
 </script>

@@ -8,10 +8,16 @@
       <template v-if="sourceIPLabelList.length"> ({{ sourceIPLabelList.length }}) </template>
     </div>
     <button
+      type="button"
       class="btn btn-sm"
+      :aria-label="$t('sourceIPLabels')"
+      :title="$t('sourceIPLabels')"
       @click="dialogVisible = true"
     >
-      <PencilSquareIcon class="h-4 w-4" />
+      <PencilSquareIcon
+        class="h-4 w-4"
+        aria-hidden="true"
+      />
     </button>
   </div>
 
@@ -26,14 +32,23 @@
           @keydown.enter="() => handlerLabelAdd()"
         >
           <template #prefix>
-            <TagIcon class="h-4 w-4 shrink-0" />
+            <TagIcon
+              class="h-4 w-4 shrink-0"
+              aria-hidden="true"
+            />
           </template>
           <template #default>
             <button
+              type="button"
               class="btn btn-circle btn-sm"
+              :aria-label="$t('addSourceIPLabel')"
+              :title="$t('addSourceIPLabel')"
               @click="() => handlerLabelAdd()"
             >
-              <PlusIcon class="h-4 w-4" />
+              <PlusIcon
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
             </button>
           </template>
         </SourceIPInput>
@@ -56,14 +71,23 @@
               @update:model-value="handlerLabelUpdate"
             >
               <template #prefix>
-                <ChevronUpDownIcon class="drag-handle h-4 w-4 shrink-0 cursor-grab" />
+                <ChevronUpDownIcon
+                  class="drag-handle h-4 w-4 shrink-0 cursor-grab"
+                  aria-hidden="true"
+                />
               </template>
               <template #default>
                 <button
+                  type="button"
                   class="btn btn-circle btn-ghost btn-sm"
+                  :aria-label="$t('deleteSourceIPLabel')"
+                  :title="$t('deleteSourceIPLabel')"
                   @click="() => handlerLabelRemove(sourceIP.id)"
                 >
-                  <TrashIcon class="h-4 w-4" />
+                  <TrashIcon
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
                 </button>
               </template>
             </SourceIPInput>

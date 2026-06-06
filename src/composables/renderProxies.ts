@@ -14,24 +14,23 @@ import { isProxyNodeSearchMode, matchProxySearchKeyword, proxySearchKeyword } fr
 type LatencyMap = Map<string, number>
 
 export function useRenderProxyList(proxies: ComputedRef<string[]>, groupName?: string) {
-  const renderProxies = computed(() => getRenderProxies(proxies.value, groupName))
+  const renderProxyState = computed(() => getRenderProxyState(proxies.value, groupName))
+  const renderProxies = computed(() => renderProxyState.value.renderProxies)
 
-  const proxiesCount = computed(() => {
-    const available = renderProxies.value.filter(
-      (proxy) => getLatencyByName(proxy, groupName) !== NOT_CONNECTED,
-    ).length
-    return `${available}/${proxies.value.length}`
-  })
+  const proxiesCount = computed(() => `${renderProxyState.value.available}/${proxies.value.length}`)
 
   return { renderProxies, proxiesCount }
 }
 
-const getRenderProxies = (proxies: string[], groupName: string | undefined) => {
+const getRenderProxyState = (proxies: string[], groupName: string | undefined) => {
   const latencyMap: LatencyMap = new Map(
     proxies.map((name) => [name, getLatencyByName(name, groupName)]),
   )
   const filtered = filterProxies(proxies, groupName, latencyMap)
-  return sortProxies(filtered, groupName, latencyMap)
+  const renderProxies = sortProxies(filtered, groupName, latencyMap)
+  const available = countAvailableProxies(renderProxies, latencyMap)
+
+  return { renderProxies, available }
 }
 
 const filterProxies = (
@@ -39,23 +38,41 @@ const filterProxies = (
   groupName: string | undefined,
   latencyMap: LatencyMap,
 ) => {
-  let result = proxies
-
-  if (hideUnavailableProxies.value) {
-    result = result.filter((name) => isProxyGroup(name) || latencyMap.get(name)! > NOT_CONNECTED)
-  }
-
-  if (isProxyNodeSearchMode.value && proxySearchKeyword.value) {
-    const keyword = proxySearchKeyword.value
-    result = result.filter((name) => matchProxySearchKeyword(name, keyword))
-  }
-
+  const keyword = isProxyNodeSearchMode.value ? proxySearchKeyword.value : ''
   const groupKeyword = groupName ? proxyGroupFilterMap.value[groupName] : ''
-  if (groupKeyword) {
-    result = result.filter((name) => matchProxySearchKeyword(name, groupKeyword))
+
+  if (!hideUnavailableProxies.value && !keyword && !groupKeyword) {
+    return proxies
   }
 
-  return result
+  return proxies.filter((name) => {
+    if (
+      hideUnavailableProxies.value &&
+      !isProxyGroup(name) &&
+      latencyMap.get(name)! <= NOT_CONNECTED
+    ) {
+      return false
+    }
+    if (keyword && !matchProxySearchKeyword(name, keyword)) {
+      return false
+    }
+    if (groupKeyword && !matchProxySearchKeyword(name, groupKeyword)) {
+      return false
+    }
+    return true
+  })
+}
+
+const countAvailableProxies = (proxies: string[], latencyMap: LatencyMap) => {
+  let available = 0
+
+  for (const proxy of proxies) {
+    if (latencyMap.get(proxy)! !== NOT_CONNECTED) {
+      available += 1
+    }
+  }
+
+  return available
 }
 
 const sortProxies = (proxies: string[], groupName: string | undefined, latencyMap: LatencyMap) => {

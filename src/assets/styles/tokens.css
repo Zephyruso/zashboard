@@ -1,0 +1,75 @@
+/*
+ * Semantic Design Token Layer
+ *
+ * Three-layer architecture:
+ *   Layer 1 (Primitive): --ios-system-*, DaisyUI --color-* (already in ios-variables.css / framework.css)
+ *   Layer 2 (Semantic):  --surface-*, --text-*, --border-*, --state-*, --data-* (this file)
+ *   Layer 3 (Component): per-component overrides (added locally as needed)
+ *
+ * All semantic tokens derive from Layer 1 via color-mix() so they auto-adapt
+ * across every DaisyUI theme without per-theme overrides.
+ */
+
+:root,
+[data-theme] {
+  /* ── Surface Tokens ─────────────────────────────────────────────────── */
+  --surface-primary: var(--color-base-100);
+  --surface-secondary: var(--color-base-200);
+  --surface-tertiary: var(--color-base-300);
+  --surface-elevated: var(--color-base-100);
+
+  /* ── Text Tokens ────────────────────────────────────────────────────── */
+  --text-primary: var(--ios-label-primary);
+  --text-secondary: var(--ios-label-secondary);
+  --text-tertiary: var(--ios-label-tertiary);
+  --text-disabled: var(--ios-label-quaternary);
+  --text-on-primary: var(--color-primary-content);
+  --text-on-success: var(--color-success-content);
+  --text-on-warning: var(--color-warning-content);
+  --text-on-danger: var(--color-error-content);
+
+  /* ── Border Tokens ──────────────────────────────────────────────────── */
+  --border-default: var(--color-base-border);
+  --border-focus: var(--ios-system-blue);
+  --border-success: var(--color-success);
+  --border-warning: var(--color-warning);
+  --border-danger: var(--color-error);
+
+  /* ── State Color Tokens ─────────────────────────────────────────────── */
+  --state-success: var(--color-success);
+  --state-success-soft: color-mix(in srgb, var(--color-success) 14%, transparent);
+  --state-success-muted: color-mix(in srgb, var(--color-success) 8%, transparent);
+
+  --state-warning: var(--color-warning);
+  --state-warning-soft: color-mix(in srgb, var(--color-warning) 14%, transparent);
+  --state-warning-muted: color-mix(in srgb, var(--color-warning) 8%, transparent);
+
+  --state-danger: var(--color-error);
+  --state-danger-soft: color-mix(in srgb, var(--color-error) 14%, transparent);
+  --state-danger-muted: color-mix(in srgb, var(--color-error) 8%, transparent);
+
+  --state-info: var(--color-info);
+  --state-info-soft: color-mix(in srgb, var(--color-info) 14%, transparent);
+  --state-info-muted: color-mix(in srgb, var(--color-info) 8%, transparent);
+
+  /* ── Data Visualization Colors ────────────────────────────────────────
+   * Colorblind-safe oklch palette designed for deuteranopia/protanopia.
+   * Each pair (N, N-soft) provides a solid and 14%-alpha variant. */
+  --data-1: oklch(0.65 0.19 265);
+  --data-1-soft: oklch(0.65 0.19 265 / 0.14);
+  --data-2: oklch(0.72 0.17 155);
+  --data-2-soft: oklch(0.72 0.17 155 / 0.14);
+  --data-3: oklch(0.75 0.16 80);
+  --data-3-soft: oklch(0.75 0.16 80 / 0.14);
+  --data-4: oklch(0.68 0.19 340);
+  --data-4-soft: oklch(0.68 0.19 340 / 0.14);
+  --data-5: oklch(0.7 0.15 30);
+  --data-5-soft: oklch(0.7 0.15 30 / 0.14);
+  --data-6: oklch(0.62 0.2 300);
+  --data-6-soft: oklch(0.62 0.2 300 / 0.14);
+
+  /* ── Latency Colors (semantic aliases) ──────────────────────────────── */
+  --latency-low: var(--ios-system-green);
+  --latency-medium: var(--ios-system-orange);
+  --latency-high: var(--ios-system-red);
+}

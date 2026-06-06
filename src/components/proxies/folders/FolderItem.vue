@@ -1,16 +1,19 @@
 <template>
   <button
+    type="button"
     class="group flex items-center gap-2 rounded-lg p-2 py-1 text-sm transition-colors"
     :class="[
       orientation === 'horizontal' ? 'shrink-0' : 'w-full text-left',
       isActive ? 'bg-primary/15 text-primary' : 'hover:bg-base-200',
     ]"
+    :aria-label="accessibleLabel"
     @click="$emit('activate')"
   >
     <component
       v-if="iconComponent"
       :is="iconComponent"
       class="h-4 w-4 shrink-0"
+      aria-hidden="true"
     />
     <span class="truncate">{{ label }}</span>
     <span
@@ -44,4 +47,8 @@ const iconComponent = computed(() => {
   if (props.icon === 'folder') return props.isActive ? FolderOpenIcon : FolderIcon
   return null
 })
+
+const accessibleLabel = computed(() =>
+  props.count === undefined ? props.label : `${props.label} ${props.count}`,
+)
 </script>

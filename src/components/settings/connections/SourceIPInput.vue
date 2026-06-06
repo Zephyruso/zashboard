@@ -12,7 +12,10 @@
       <slot></slot>
     </div>
     <div class="flex w-full items-center gap-2">
-      <ArrowRightCircleIcon class="text-base-content/40 h-4 w-4 shrink-0" />
+      <ArrowRightCircleIcon
+        class="text-base-content/40 h-4 w-4 shrink-0"
+        aria-hidden="true"
+      />
       <TextInput
         class="flex-1"
         v-model="sourceIPLabel.label"
@@ -30,20 +33,26 @@
             .join(', ')
         }}
       </span>
-      <div
+      <button
         v-if="backendList.length > 1"
+        type="button"
         class="rounded-field bg-base-200 flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center"
+        :aria-label="$t('sourceIPLabelScope')"
+        :title="$t('sourceIPLabelScope')"
+        :aria-pressed="isLocked"
         @click="bindBackendMenu"
       >
         <LockClosedIcon
           v-if="isLocked"
           class="h-4 w-4"
+          aria-hidden="true"
         />
         <LockOpenIcon
           v-else
           class="h-4 w-4"
+          aria-hidden="true"
         />
-      </div>
+      </button>
     </div>
   </div>
 </template>
@@ -56,7 +65,7 @@ import { sourceIPLabelList } from '@/store/settings'
 import { backendList } from '@/store/setup'
 import type { SourceIPLabel } from '@/types'
 import { ArrowRightCircleIcon, LockClosedIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
-import { uniq } from 'lodash'
+import { uniq } from 'lodash-es'
 import { computed } from 'vue'
 import TextInput from '../../common/TextInput.vue'
 
@@ -99,8 +108,9 @@ const setScopeValueFromSouceIPByBackendID = (
 }
 
 const isLocked = computed(() => {
-  return (
-    sourceIPLabel.value.scope?.length && sourceIPLabel.value.scope.length < backendList.value.length
+  return Boolean(
+    sourceIPLabel.value.scope?.length &&
+    sourceIPLabel.value.scope.length < backendList.value.length,
   )
 })
 

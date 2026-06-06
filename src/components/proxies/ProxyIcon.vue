@@ -17,6 +17,9 @@
 import DOMPurify from 'dompurify'
 import { computed } from 'vue'
 
+const DOM_STARTS_WITH = 'data:image/svg+xml,'
+const purifiedSvgCache = new Map<string, string>()
+
 const props = withDefaults(
   defineProps<{
     icon: string
@@ -37,13 +40,19 @@ const style = computed(() => {
     marginRight: `${props.margin}px`,
   }
 })
-const DOM_STARTS_WITH = 'data:image/svg+xml,'
 const isDom = computed(() => {
   return props.icon.startsWith(DOM_STARTS_WITH)
 })
 
 const pureDom = computed(() => {
-  if (!isDom.value) return
-  return DOMPurify.sanitize(props.icon.replace(DOM_STARTS_WITH, ''))
+  if (!isDom.value) return ''
+
+  const cached = purifiedSvgCache.get(props.icon)
+  if (cached !== undefined) return cached
+
+  const sanitized = DOMPurify.sanitize(props.icon.replace(DOM_STARTS_WITH, ''))
+
+  purifiedSvgCache.set(props.icon, sanitized)
+  return sanitized
 })
 </script>

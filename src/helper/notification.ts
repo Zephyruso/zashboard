@@ -1,3 +1,4 @@
+import { announce } from '@/accessibility/ariaLive'
 import { i18n } from '@/i18n'
 import { type Ref } from 'vue'
 
@@ -13,6 +14,7 @@ const alertMap = new Map<
     isPaused: boolean
   }
 >()
+const alertHoverHandlers = new WeakSet<HTMLElement>()
 let toastRef: Ref<HTMLElement> | null = null
 
 export const initNotification = (toast: Ref<HTMLElement>) => {
@@ -124,10 +126,15 @@ const setAlert = (
   alert.appendChild(closeButton)
   alert.appendChild(progressContainer)
 
+  return progressBar
+}
+
+const bindAlertHoverHandlers = (alert: HTMLElement, alertKey: string) => {
+  if (alertHoverHandlers.has(alert)) return
+
   alert.addEventListener('mouseenter', () => pauseTimer(alertKey))
   alert.addEventListener('mouseleave', () => resumeTimer(alertKey))
-
-  return progressBar
+  alertHoverHandlers.add(alert)
 }
 
 export const showNotification = ({
@@ -157,6 +164,8 @@ export const showNotification = ({
   const alert = document.createElement('div')
 
   const progressBar = setAlert(alert, content, params, type, alertKey)
+  bindAlertHoverHandlers(alert, alertKey)
   toastRef?.value?.insertBefore(alert, toastRef?.value?.firstChild)
   setTimer(alert, timeout, alertKey, progressBar)
+  announce(t(content, params), type === 'alert-error' ? 'assertive' : 'polite')
 }

@@ -15,6 +15,10 @@ export const useTooltip = () => {
     }
 
     tippyInstance?.destroy()
+    // Chain caller-provided onHidden with our internal cleanup so callers can
+    // safely tear down resources (e.g. unmount Vue apps) without losing the
+    // built-in destroy/reset behaviour.
+    const callerOnHidden = config.onHidden
     tippyInstance = tippy(event.currentTarget as HTMLElement, {
       content,
       placement: 'top',
@@ -22,11 +26,6 @@ export const useTooltip = () => {
       appendTo: appContent,
       allowHTML: true,
       showOnCreate: true,
-      onHidden: () => {
-        tippyInstance?.destroy()
-        tippyInstance = null
-        currentTarget = null
-      },
       popperOptions: {
         modifiers: [
           {
@@ -45,6 +44,15 @@ export const useTooltip = () => {
         ],
       },
       ...config,
+      onHidden: (instance) => {
+        try {
+          callerOnHidden?.(instance)
+        } finally {
+          tippyInstance?.destroy()
+          tippyInstance = null
+          currentTarget = null
+        }
+      },
     })
 
     currentTarget = event.currentTarget as HTMLElement

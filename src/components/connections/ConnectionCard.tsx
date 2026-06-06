@@ -28,8 +28,9 @@ import {
   NoSymbolIcon,
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
-import { first, last } from 'lodash'
+import { first, last } from 'lodash-es'
 import { defineComponent } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { JSX } from 'vue/jsx-runtime'
 import ProxyName from '../proxies/ProxyName.vue'
 
@@ -42,6 +43,7 @@ export default defineComponent<{
   name: 'ConnectionCard',
   setup(props) {
     const { handlerInfo } = useConnections()
+    const { t } = useI18n()
 
     useBounceOnVisible()
 
@@ -136,12 +138,17 @@ export default defineComponent<{
           const closeButton = (
             <button
               class="btn btn-circle btn-xs"
+              aria-label={t('disconnectConnection')}
+              title={t('disconnectConnection')}
               onClick={(e) => {
                 e.stopPropagation()
-                disconnectByIdAPI(conn.id)
+                void disconnectByIdAPI(conn.id).catch(() => {})
               }}
             >
-              <XMarkIcon class="h-4 w-4" />
+              <XMarkIcon
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
             </button>
           )
 
@@ -149,12 +156,17 @@ export default defineComponent<{
             const degradeButton = (
               <button
                 class="btn btn-circle btn-xs"
+                aria-label={t('blockConnection')}
+                title={t('blockConnection')}
                 onClick={(e) => {
                   e.stopPropagation()
-                  blockConnectionByIdAPI(conn.id)
+                  void blockConnectionByIdAPI(conn.id).catch(() => {})
                 }}
               >
-                <NoSymbolIcon class="h-4 w-4" />
+                <NoSymbolIcon
+                  class="h-4 w-4"
+                  aria-hidden="true"
+                />
               </button>
             )
             return (
@@ -169,7 +181,9 @@ export default defineComponent<{
       }
       return (
         <div
-          class={['scroller-item flex cursor-pointer flex-col gap-1 px-3 py-2']}
+          class={[
+            'scroller-item connection-row hover:bg-base-content/[0.04] flex cursor-pointer flex-col gap-1 px-3 py-2',
+          ]}
           onClick={() => handlerInfo(conn)}
         >
           {connectionCardLines.value.map((line) => (

@@ -11,8 +11,8 @@ export interface IPInfo {
 }
 
 // china
-export const getIPFromIpipnetAPI = async () => {
-  const response = await fetch('https://myip.ipip.net/json?t=' + Date.now())
+export const getIPFromIpipnetAPI = async (signal?: AbortSignal) => {
+  const response = await fetch('https://myip.ipip.net/json?t=' + Date.now(), { signal })
 
   return (await response.json()) as {
     data: {
@@ -23,9 +23,10 @@ export const getIPFromIpipnetAPI = async () => {
 }
 
 // global
-const getIPFromIpsbAPI = async (ip = '') => {
+const getIPFromIpsbAPI = async (ip = '', signal?: AbortSignal) => {
   const response = await fetch(
     'https://api.ip.sb/geoip' + (ip ? `/${ip}` : '') + '?t=' + Date.now(),
+    { signal },
   )
 
   return (await response.json()) as {
@@ -48,8 +49,10 @@ const getIPFromIpsbAPI = async (ip = '') => {
   }
 }
 
-const getIPFromIPWhoisAPI = async (ip = '') => {
-  const response = await fetch('https://ipwho.is' + (ip ? `/${ip}` : '') + '?t=' + Date.now())
+const getIPFromIPWhoisAPI = async (ip = '', signal?: AbortSignal) => {
+  const response = await fetch('https://ipwho.is' + (ip ? `/${ip}` : '') + '?t=' + Date.now(), {
+    signal,
+  })
 
   return (await response.json()) as {
     ip: string
@@ -91,9 +94,10 @@ const getIPFromIPWhoisAPI = async (ip = '') => {
   }
 }
 
-const getIPFromIPapiisAPI = async (ip = '') => {
+const getIPFromIPapiisAPI = async (ip = '', signal?: AbortSignal) => {
   const response = await fetch(
     'https://api.ipapi.is' + (ip ? `/?q=${ip}` : '') + (ip ? '&' : '?') + 't=' + Date.now(),
+    { signal },
   )
 
   return (await response.json()) as {
@@ -166,10 +170,10 @@ const getIPFromIPapiisAPI = async (ip = '') => {
   }
 }
 
-export const getIPInfo = async (ip = ''): Promise<IPInfo> => {
+export const getIPInfo = async (ip = '', signal?: AbortSignal): Promise<IPInfo> => {
   switch (IPInfoAPI.value) {
     case IP_INFO_API.IPAPI:
-      const ipapi = await getIPFromIPapiisAPI(ip)
+      const ipapi = await getIPFromIPapiisAPI(ip, signal)
 
       return {
         ip: ipapi.ip,
@@ -180,7 +184,7 @@ export const getIPInfo = async (ip = ''): Promise<IPInfo> => {
         organization: ipapi.asn.org,
       }
     case IP_INFO_API.IPWHOIS:
-      const ipwhois = await getIPFromIPWhoisAPI(ip)
+      const ipwhois = await getIPFromIPWhoisAPI(ip, signal)
 
       return {
         ip: ipwhois.ip,
@@ -192,7 +196,7 @@ export const getIPInfo = async (ip = ''): Promise<IPInfo> => {
       }
     case IP_INFO_API.IPSB:
     default:
-      const ipsb = await getIPFromIpsbAPI(ip)
+      const ipsb = await getIPFromIpsbAPI(ip, signal)
 
       return {
         ip: ipsb.ip,

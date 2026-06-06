@@ -46,13 +46,17 @@
         <template v-if="!isSingBox || displayAllFeatures">
           <button
             v-if="!activeBackend?.disableUpgradeCore"
+            type="button"
             class="btn btn-neutral btn-sm"
             @click="showUpgradeCoreModal = true"
           >
             {{ $t('upgradeCore') }}
           </button>
           <button
+            type="button"
             class="btn btn-sm"
+            :disabled="isCoreRestarting"
+            :aria-busy="isCoreRestarting"
             @click="handlerClickRestartCore"
           >
             <span
@@ -62,7 +66,10 @@
             {{ $t('restartCore') }}
           </button>
           <button
+            type="button"
             class="btn btn-sm"
+            :disabled="isConfigReloading"
+            :aria-busy="isConfigReloading"
             @click="handlerClickReloadConfigs"
           >
             <span
@@ -73,13 +80,17 @@
           </button>
           <button
             v-if="!isSingBox"
+            type="button"
             class="btn btn-sm"
             @click="showUpdateConfigModal = true"
           >
             {{ $t('updateConfigs') }}
           </button>
           <button
+            type="button"
             class="btn btn-sm"
+            :disabled="isGeoUpdating"
+            :aria-busy="isGeoUpdating"
             @click="handlerClickUpdateGeo"
           >
             <span
@@ -90,20 +101,29 @@
           </button>
         </template>
         <button
+          type="button"
           class="btn btn-sm"
+          :disabled="isFlushingDNSCache"
+          :aria-busy="isFlushingDNSCache"
           @click="handleFlushDNSCache"
         >
           {{ $t('flushDNSCache') }}
         </button>
         <button
+          type="button"
           class="btn btn-sm"
+          :disabled="isFlushingFakeIP"
+          :aria-busy="isFlushingFakeIP"
           @click="handleFlushFakeIP"
         >
           {{ $t('flushFakeIP') }}
         </button>
         <button
           v-if="hasSmartGroup"
+          type="button"
           class="btn btn-sm"
+          :disabled="isFlushingSmartWeights"
+          :aria-busy="isFlushingSmartWeights"
           @click="handleFlushSmartWeights"
         >
           {{ $t('flushSmartWeights') }}
@@ -142,6 +162,9 @@
           <input
             class="toggle"
             type="checkbox"
+            :aria-label="$t('tunMode')"
+            :disabled="isTunModeUpdating"
+            :aria-busy="isTunModeUpdating"
             v-model="configs.tun.enable"
             @change="hanlderTunModeChange"
           />
@@ -156,6 +179,9 @@
           <input
             class="toggle"
             type="checkbox"
+            :aria-label="$t('allowLan')"
+            :disabled="isAllowLanUpdating"
+            :aria-busy="isAllowLanUpdating"
             v-model="configs['allow-lan']"
             @change="handlerAllowLanChange"
           />
@@ -171,6 +197,7 @@
             <input
               class="toggle"
               type="checkbox"
+              :aria-label="$t('checkCoreUpgrade')"
               v-model="checkUpgradeCore"
               @change="handlerCheckUpgradeCoreChange"
             />
@@ -185,6 +212,7 @@
             <input
               class="toggle"
               type="checkbox"
+              :aria-label="$t('autoUpgradeCore')"
               v-model="autoUpgradeCore"
             />
           </div>
@@ -203,6 +231,7 @@ import {
   flushFakeIPAPI,
   flushSmartGroupWeightsAPI,
   isCoreUpdateAvailable,
+  isRequestCanceled,
   isSingBox,
   mihomo,
   reloadConfigsAPI,
@@ -221,8 +250,8 @@ import { configs, fetchConfigs, updateConfigs } from '@/store/config'
 import { fetchProxies, hasSmartGroup } from '@/store/proxies'
 import { fetchRules } from '@/store/rules'
 import { autoUpgradeCore, checkUpgradeCore, displayAllFeatures } from '@/store/settings'
-import { activeBackend } from '@/store/setup'
-import { computed, ref } from 'vue'
+import { activeBackend, activeUuid } from '@/store/setup'
+import { computed, onBeforeUnmount, ref, type Ref } from 'vue'
 import UpdateConfigModal from './UpdateConfigModal.vue'
 import UpgradeCoreModal from './UpgradeCoreModal.vue'
 
@@ -269,57 +298,122 @@ const reloadAll = () => {
 const showUpgradeCoreModal = ref(false)
 const showUpdateConfigModal = ref(false)
 
+type BackendActionKey =
+  | 'restartCore'
+  | 'reloadConfigs'
+  | 'updateGeo'
+  | 'flushDNSCache'
+  | 'flushFakeIP'
+  | 'flushSmartWeights'
+  | 'tunMode'
+  | 'allowLan'
+
+const actionControllers = new Map<BackendActionKey, AbortController>()
+const actionSequences = new Map<BackendActionKey, number>()
+let isUnmounted = false
+let restartCoreReloadTimer: ReturnType<typeof setTimeout> | undefined
+
+const startAction = (key: BackendActionKey) => {
+  const sequence = (actionSequences.get(key) ?? 0) + 1
+  const controller = new AbortController()
+
+  actionControllers.get(key)?.abort()
+  actionControllers.set(key, controller)
+  actionSequences.set(key, sequence)
+
+  return { controller, sequence }
+}
+
+const isCurrentAction = (key: BackendActionKey, sequence: number, controller: AbortController) => {
+  return (
+    !isUnmounted &&
+    actionControllers.get(key) === controller &&
+    actionSequences.get(key) === sequence &&
+    !controller.signal.aborted
+  )
+}
+
+const finishAction = (
+  key: BackendActionKey,
+  sequence: number,
+  controller: AbortController,
+  loading: Ref<boolean>,
+) => {
+  const shouldReset = isCurrentAction(key, sequence, controller)
+
+  if (actionControllers.get(key) === controller) {
+    actionControllers.delete(key)
+  }
+
+  if (shouldReset) {
+    loading.value = false
+  }
+}
+
+const runBackendAction = async (
+  key: BackendActionKey,
+  loading: Ref<boolean>,
+  request: (signal: AbortSignal) => Promise<unknown>,
+  onSuccess?: () => void,
+) => {
+  if (loading.value) return
+
+  const { controller, sequence } = startAction(key)
+
+  loading.value = true
+  try {
+    await request(controller.signal)
+
+    if (!isCurrentAction(key, sequence, controller)) return
+
+    onSuccess?.()
+  } catch (error) {
+    if (isRequestCanceled(error)) return
+    // error handled by axios interceptor
+  } finally {
+    finishAction(key, sequence, controller, loading)
+  }
+}
+
 const isCoreRestarting = ref(false)
 const handlerClickRestartCore = async () => {
-  if (isCoreRestarting.value) return
-  isCoreRestarting.value = true
-  try {
-    await restartCoreAPI()
-    setTimeout(() => {
+  await runBackendAction('restartCore', isCoreRestarting, restartCoreAPI, () => {
+    if (restartCoreReloadTimer) {
+      clearTimeout(restartCoreReloadTimer)
+    }
+
+    restartCoreReloadTimer = setTimeout(() => {
+      if (isUnmounted) return
       reloadAll()
     }, 500)
-    isCoreRestarting.value = false
+
     showNotification({
       content: 'restartCoreSuccess',
       type: 'alert-success',
     })
-  } catch {
-    isCoreRestarting.value = false
-  }
+  })
 }
 
 const isConfigReloading = ref(false)
 const handlerClickReloadConfigs = async () => {
-  if (isConfigReloading.value) return
-  isConfigReloading.value = true
-  try {
-    await reloadConfigsAPI()
+  await runBackendAction('reloadConfigs', isConfigReloading, reloadConfigsAPI, () => {
     reloadAll()
-    isConfigReloading.value = false
     showNotification({
       content: 'reloadConfigsSuccess',
       type: 'alert-success',
     })
-  } catch {
-    isConfigReloading.value = false
-  }
+  })
 }
 
 const isGeoUpdating = ref(false)
 const handlerClickUpdateGeo = async () => {
-  if (isGeoUpdating.value) return
-  isGeoUpdating.value = true
-  try {
-    await updateGeoDataAPI()
+  await runBackendAction('updateGeo', isGeoUpdating, updateGeoDataAPI, () => {
     reloadAll()
-    isGeoUpdating.value = false
     showNotification({
       content: 'updateGeoSuccess',
       type: 'alert-success',
     })
-  } catch {
-    isGeoUpdating.value = false
-  }
+  })
 }
 
 const handlerCheckUpgradeCoreChange = () => {
@@ -329,34 +423,101 @@ const handlerCheckUpgradeCoreChange = () => {
   }
 }
 
+const isTunModeUpdating = ref(false)
 const hanlderTunModeChange = async () => {
-  await updateConfigs({ tun: { enable: configs.value?.tun.enable } })
+  if (isTunModeUpdating.value) return
+
+  const backendUuid = activeUuid.value
+  const nextValue = !!configs.value?.tun.enable
+  const previousValue = !nextValue
+
+  const { controller, sequence } = startAction('tunMode')
+
+  isTunModeUpdating.value = true
+  try {
+    await updateConfigs({ tun: { enable: nextValue } }, controller.signal)
+  } catch (error) {
+    if (isRequestCanceled(error)) return
+    if (
+      isCurrentAction('tunMode', sequence, controller) &&
+      activeUuid.value === backendUuid &&
+      configs.value?.tun
+    ) {
+      configs.value.tun.enable = previousValue
+    }
+  } finally {
+    finishAction('tunMode', sequence, controller, isTunModeUpdating)
+  }
 }
+const isAllowLanUpdating = ref(false)
 const handlerAllowLanChange = async () => {
-  await updateConfigs({ ['allow-lan']: configs.value?.['allow-lan'] })
+  if (isAllowLanUpdating.value) return
+
+  const backendUuid = activeUuid.value
+  const nextValue = !!configs.value?.['allow-lan']
+  const previousValue = !nextValue
+
+  const { controller, sequence } = startAction('allowLan')
+
+  isAllowLanUpdating.value = true
+  try {
+    await updateConfigs({ ['allow-lan']: nextValue }, controller.signal)
+  } catch (error) {
+    if (isRequestCanceled(error)) return
+    if (isCurrentAction('allowLan', sequence, controller) && activeUuid.value === backendUuid) {
+      configs.value['allow-lan'] = previousValue
+    }
+  } finally {
+    finishAction('allowLan', sequence, controller, isAllowLanUpdating)
+  }
 }
 
+const isFlushingDNSCache = ref(false)
 const handleFlushDNSCache = async () => {
-  await flushDNSCacheAPI()
-  showNotification({
-    content: 'flushDNSCacheSuccess',
-    type: 'alert-success',
+  await runBackendAction('flushDNSCache', isFlushingDNSCache, flushDNSCacheAPI, () => {
+    showNotification({
+      content: 'flushDNSCacheSuccess',
+      type: 'alert-success',
+    })
   })
 }
 
+const isFlushingFakeIP = ref(false)
 const handleFlushFakeIP = async () => {
-  await flushFakeIPAPI()
-  showNotification({
-    content: 'flushFakeIPSuccess',
-    type: 'alert-success',
+  await runBackendAction('flushFakeIP', isFlushingFakeIP, flushFakeIPAPI, () => {
+    showNotification({
+      content: 'flushFakeIPSuccess',
+      type: 'alert-success',
+    })
   })
 }
 
+const isFlushingSmartWeights = ref(false)
 const handleFlushSmartWeights = async () => {
-  await flushSmartGroupWeightsAPI()
-  showNotification({
-    content: 'flushSmartWeightsSuccess',
-    type: 'alert-success',
-  })
+  await runBackendAction(
+    'flushSmartWeights',
+    isFlushingSmartWeights,
+    flushSmartGroupWeightsAPI,
+    () => {
+      showNotification({
+        content: 'flushSmartWeightsSuccess',
+        type: 'alert-success',
+      })
+    },
+  )
 }
+
+onBeforeUnmount(() => {
+  isUnmounted = true
+  actionSequences.forEach((sequence, key) => {
+    actionSequences.set(key, sequence + 1)
+  })
+  actionControllers.forEach((controller) => controller.abort())
+  actionControllers.clear()
+
+  if (restartCoreReloadTimer) {
+    clearTimeout(restartCoreReloadTimer)
+    restartCoreReloadTimer = undefined
+  }
+})
 </script>

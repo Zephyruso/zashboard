@@ -10,13 +10,17 @@
   --font-SarasaUI-NotoEmoji: 'SarasaUiSC-Regular', 'NotoEmoji', system-ui;
   --font-PingFang-NotoEmoji: 'PingFangSC-Regular', 'NotoEmoji', system-ui;
   --font-FiraSans-NotoEmoji: 'Fira Sans', 'NotoEmoji', system-ui;
-  --font-SystemUI-NotoEmoji: 'NotoEmoji', system-ui;
+  --font-SystemUI-NotoEmoji:
+    'NotoEmoji', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
+    'Helvetica Neue', Arial, system-ui;
 
   --font-MiSans-Twemoji: 'MiSans-VF', 'Twemoji', system-ui;
   --font-SarasaUI-Twemoji: 'SarasaUiSC-Regular', 'Twemoji', system-ui;
   --font-PingFang-Twemoji: 'PingFangSC-Regular', 'Twemoji', system-ui;
   --font-FiraSans-Twemoji: 'Fira Sans', 'Twemoji', system-ui;
-  --font-SystemUI-Twemoji: 'Twemoji', system-ui;
+  --font-SystemUI-Twemoji:
+    'Twemoji', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue',
+    Arial, system-ui;
 }
 
 @layer utilities {
@@ -84,18 +88,18 @@
 
 @plugin 'daisyui/theme' {
   name: 'light';
-  --color-primary: #5e5adb;
+  --color-primary: #007aff;
   --color-primary-content: #ffffff;
-  --color-secondary: #0071e3;
+  --color-secondary: #5856d6;
   --color-secondary-content: #ffffff;
   --color-accent: #34c759;
   --color-accent-content: #ffffff;
-  --color-neutral: #1d1d1f;
-  --color-neutral-content: #f5f5f7;
+  --color-neutral: #1c1c1e;
+  --color-neutral-content: #f2f2f7;
   --color-base-100: #ffffff;
-  --color-base-200: #f5f5f7;
-  --color-base-300: #d2d2d7;
-  --color-base-content: #1d1d1f;
+  --color-base-200: #f2f2f7;
+  --color-base-300: #e5e5ea;
+  --color-base-content: #1c1c1e;
   --color-info: #5ac8fa;
   --color-info-content: #ffffff;
   --color-success: #34c759;
@@ -104,9 +108,9 @@
   --color-warning-content: #ffffff;
   --color-error: #ff3b30;
   --color-error-content: #ffffff;
-  --radius-selector: 0.625rem;
-  --radius-field: 0.5rem;
-  --radius-box: 0.75rem;
+  --radius-selector: 1rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
@@ -116,18 +120,18 @@
 
 @plugin 'daisyui/theme' {
   name: 'dark';
-  --color-primary: #7a77ff;
+  --color-primary: #0a84ff;
   --color-primary-content: #ffffff;
-  --color-secondary: #2997ff;
+  --color-secondary: #5e5ce6;
   --color-secondary-content: #ffffff;
   --color-accent: #30d158;
   --color-accent-content: #ffffff;
-  --color-neutral: #48484a;
-  --color-neutral-content: #f5f5f7;
-  --color-base-100: #1d1d1f;
+  --color-neutral: #2c2c2e;
+  --color-neutral-content: #f2f2f7;
+  --color-base-100: #1c1c1e;
   --color-base-200: #000000;
-  --color-base-300: #424245;
-  --color-base-content: #f5f5f7;
+  --color-base-300: #2c2c2e;
+  --color-base-content: #f2f2f7;
   --color-info: #64d2ff;
   --color-info-content: #ffffff;
   --color-success: #30d158;
@@ -136,9 +140,9 @@
   --color-warning-content: #1c1c1e;
   --color-error: #ff453a;
   --color-error-content: #ffffff;
-  --radius-selector: 0.625rem;
-  --radius-field: 0.5rem;
-  --radius-box: 0.75rem;
+  --radius-selector: 1rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;

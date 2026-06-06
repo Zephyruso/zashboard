@@ -6,15 +6,18 @@
     <div class="flex flex-col gap-2 overflow-hidden text-sm">
       <!-- Add new: drop zone + inputs -->
       <div
-        class="border-base-300 mt-2 flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed p-3 transition-colors"
+        class="border-base-300 mt-2 flex items-center gap-3 rounded-lg border-2 border-dashed p-3 transition-colors"
         :class="{ 'border-primary bg-primary/5': isDraggingNew }"
         @dragover.prevent="isDraggingNew = true"
         @dragleave="isDraggingNew = false"
         @drop.prevent="handleDropNew"
       >
-        <div
-          class="bg-base-200 flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md"
-          @click="fileInputRef?.click()"
+        <button
+          type="button"
+          class="bg-base-200 flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md border-0 p-0"
+          :aria-label="$t('dropOrClickUpload')"
+          :title="$t('dropOrClickUpload')"
+          @click.stop="fileInputRef?.click()"
         >
           <ProxyIcon
             v-if="newIconReflect.icon"
@@ -25,8 +28,9 @@
           <ArrowUpTrayIcon
             v-else
             class="h-5 w-5 opacity-40"
+            aria-hidden="true"
           />
-        </div>
+        </button>
         <div class="flex min-w-0 flex-1 flex-col gap-1">
           <TextInput
             v-model="newIconReflect.name"
@@ -47,10 +51,16 @@
           />
         </div>
         <button
-          class="btn btn-sm btn-circle"
+          type="button"
+          class="btn btn-sm btn-circle touch-target"
+          :aria-label="$t('addCustomIcon')"
+          :title="$t('addCustomIcon')"
           @click.stop="() => addIconReflect()"
         >
-          <PlusIcon class="h-4 w-4 shrink-0" />
+          <PlusIcon
+            class="h-4 w-4 shrink-0"
+            aria-hidden="true"
+          />
         </button>
       </div>
       <div class="grid flex-1 grid-cols-1 gap-2">
@@ -64,9 +74,12 @@
             @dragleave="dragOverId = ''"
             @drop.prevent="handleDropOnItem($event, iconReflect)"
           >
-            <div
-              class="bg-base-200 flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md"
-              @click="triggerUploadForItem(iconReflect)"
+            <button
+              type="button"
+              class="bg-base-200 flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border-0 p-0"
+              :aria-label="$t('dropOrClickUpload')"
+              :title="$t('dropOrClickUpload')"
+              @click.stop="triggerUploadForItem(iconReflect)"
             >
               <ProxyIcon
                 v-if="iconReflect.icon"
@@ -77,8 +90,9 @@
               <PhotoIcon
                 v-else
                 class="h-5 w-5 opacity-30"
+                aria-hidden="true"
               />
-            </div>
+            </button>
             <div class="flex min-w-0 flex-1 flex-col gap-1">
               <TextInput
                 v-model="iconReflect.name"
@@ -92,10 +106,16 @@
               />
             </div>
             <button
-              class="btn btn-sm btn-circle"
+              type="button"
+              class="btn btn-sm btn-circle touch-target"
+              :aria-label="$t('deleteCustomIcon')"
+              :title="$t('deleteCustomIcon')"
               @click="removeIconReflect(iconReflect.uuid)"
             >
-              <TrashIcon class="h-4 w-4 shrink-0" />
+              <TrashIcon
+                class="h-4 w-4 shrink-0"
+                aria-hidden="true"
+              />
             </button>
           </div>
         </template>
@@ -116,16 +136,23 @@
       <template v-if="iconReflectList.length"> ({{ iconReflectList.length }}) </template>
     </div>
     <button
+      type="button"
       class="btn btn-sm"
+      :aria-label="$t('editCustomIcon')"
+      :title="$t('editCustomIcon')"
       @click="dialogVisible = true"
     >
-      <PencilSquareIcon class="h-4 w-4" />
+      <PencilSquareIcon
+        class="h-4 w-4"
+        aria-hidden="true"
+      />
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
 import ProxyIcon from '@/components/proxies/ProxyIcon.vue'
+import { showNotification } from '@/helper/notification'
 import { proxyGroupList } from '@/store/proxies'
 import { iconReflectList } from '@/store/settings'
 import {
@@ -183,11 +210,30 @@ const getImageFileFromEvent = (e: DragEvent): File | undefined => {
   return Array.from(e.dataTransfer?.files || []).find((f) => f.type.startsWith('image/'))
 }
 
+const resetFileInput = () => {
+  if (fileInputRef.value) {
+    fileInputRef.value.value = ''
+  }
+}
+
+const notifyIconUploadFailed = (file?: File) => {
+  showNotification({
+    content: 'importFailed',
+    params: { url: file?.name || 'image' },
+    type: 'alert-error',
+  })
+}
+
 const handleDropNew = async (e: DragEvent) => {
   isDraggingNew.value = false
   const file = getImageFileFromEvent(e)
   if (!file) return
-  newIconReflect.icon = await readFileAsIcon(file)
+
+  try {
+    newIconReflect.icon = await readFileAsIcon(file)
+  } catch {
+    notifyIconUploadFailed(file)
+  }
 }
 
 const handleDropOnItem = async (
@@ -197,7 +243,12 @@ const handleDropOnItem = async (
   dragOverId.value = ''
   const file = getImageFileFromEvent(e)
   if (!file) return
-  item.icon = await readFileAsIcon(file)
+
+  try {
+    item.icon = await readFileAsIcon(file)
+  } catch {
+    notifyIconUploadFailed(file)
+  }
 }
 
 const triggerUploadForItem = (item: { icon: string; name: string; uuid: string }) => {
@@ -207,20 +258,25 @@ const triggerUploadForItem = (item: { icon: string; name: string; uuid: string }
 
 const handleFileSelect = async (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-
-  const iconData = await readFileAsIcon(file)
-
-  if (uploadTargetItem) {
-    uploadTargetItem.icon = iconData
+  if (!file) {
     uploadTargetItem = null
-  } else {
-    newIconReflect.icon = iconData
+    resetFileInput()
+    return
   }
 
-  // Reset file input so the same file can be selected again
-  if (fileInputRef.value) {
-    fileInputRef.value.value = ''
+  try {
+    const iconData = await readFileAsIcon(file)
+
+    if (uploadTargetItem) {
+      uploadTargetItem.icon = iconData
+    } else {
+      newIconReflect.icon = iconData
+    }
+  } catch {
+    notifyIconUploadFailed(file)
+  } finally {
+    uploadTargetItem = null
+    resetFileInput()
   }
 }
 
@@ -238,6 +294,7 @@ const addIconReflect = (keepDialogOpen = true) => {
 
 const removeIconReflect = (uuid: string) => {
   const index = iconReflectList.value.findIndex((item) => item.uuid === uuid)
+  if (index === -1) return
   iconReflectList.value.splice(index, 1)
 }
 

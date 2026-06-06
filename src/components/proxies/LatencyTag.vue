@@ -1,28 +1,27 @@
 <template>
-  <div
-    :class="
-      twMerge(
-        'latency-tag bg-base-100 flex h-5 w-10 items-center justify-center rounded-xl text-xs select-none md:hover:shadow-sm',
-        color,
-      )
-    "
+  <button
+    type="button"
+    :class="latencyClass"
+    :aria-label="ariaLabel"
+    :aria-busy="loading"
+    :disabled="loading"
     @mouseenter="handlerHistoryTip"
   >
     <span
       v-if="loading"
-      class="loading loading-dots loading-xs text-base-content/80"
+      class="loading loading-dots loading-xs"
     ></span>
     <BoltIcon
-      v-else-if="latency === NOT_CONNECTED || !latency"
-      class="text-base-content h-3 w-3"
+      v-else-if="isNoLatency"
+      class="h-3 w-3"
     />
     <div
-      v-show="latency !== NOT_CONNECTED && !loading"
+      v-show="!isNoLatency && !loading"
       ref="latencyRef"
     >
       {{ latency }}
     </div>
-  </div>
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -35,10 +34,12 @@ import { CountUp } from 'countup.js'
 import dayjs from 'dayjs'
 import { twMerge } from 'tailwind-merge'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { showTip } = useTooltip()
+const { t } = useI18n()
 const handlerHistoryTip = (e: Event) => {
-  const history = getHistoryByName(props.name ?? '', props.groupName)
+  const history = getHistoryByName(props.name ?? '', props.groupName, false)
 
   if (!history.length) return
 
@@ -73,6 +74,17 @@ const props = defineProps<{
 }>()
 const latencyRef = ref()
 const latency = computed(() => getLatencyByName(props.name ?? '', props.groupName))
+const isNoLatency = computed(() => latency.value === NOT_CONNECTED || !latency.value)
+const color = computed(() => {
+  return getColorForLatency(latency.value)
+})
+const latencyClass = computed(() =>
+  twMerge('latency-tag md:hover:shadow-sm', isNoLatency.value ? 'no-latency' : color.value),
+)
+const ariaLabel = computed(() => {
+  const target = props.name ? ` ${props.name}` : ''
+  return `${t('speedtest')}${target}`
+})
 let countUp: CountUp | null = null
 
 onMounted(() => {
@@ -95,9 +107,5 @@ onMounted(() => {
 
 onUnmounted(() => {
   countUp = null
-})
-
-const color = computed(() => {
-  return getColorForLatency(latency.value)
 })
 </script>

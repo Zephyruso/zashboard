@@ -25,7 +25,10 @@
           @keydown="captureShortcut($event, item.action)"
         />
         <button
+          type="button"
           class="btn btn-ghost btn-sm"
+          :aria-label="$t('resetShortcut', { name: getShortcutLabel(item) })"
+          :title="$t('resetShortcut', { name: getShortcutLabel(item) })"
           @click="resetShortcut(item.action)"
         >
           {{ $t('reset') }}
@@ -39,6 +42,7 @@
       </div>
       <div class="flex justify-end">
         <button
+          type="button"
           class="btn btn-sm"
           @click="resetAllShortcuts"
         >
@@ -53,10 +57,16 @@
       {{ $t('keyboardShortcuts') }}
     </div>
     <button
+      type="button"
       class="btn btn-sm"
+      :aria-label="$t('editKeyboardShortcuts')"
+      :title="$t('editKeyboardShortcuts')"
       @click="dialogVisible = true"
     >
-      <PencilSquareIcon class="h-4 w-4" />
+      <PencilSquareIcon
+        class="h-4 w-4"
+        aria-hidden="true"
+      />
     </button>
   </div>
 </template>

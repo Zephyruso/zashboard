@@ -102,7 +102,7 @@ const backgroundDB = useIndexedDB('base64')
 const backgroundImageKey = 'background-image'
 
 export const saveBase64ToIndexedDB = (val: string) => backgroundDB.put(backgroundImageKey, val)
-export const getBase64FromIndexedDB = () => backgroundDB.get(backgroundImageKey)
+const getBase64FromIndexedDB = () => backgroundDB.get(backgroundImageKey)
 export const deleteBase64FromIndexedDB = () => backgroundDB.clear()
 export const LOCAL_IMAGE = 'local-image'
 

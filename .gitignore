@@ -15,6 +15,14 @@ coverage
 .claude
 .codex
 
+# Generated verification artifacts
+.playwright-cli/
+output/
+dist-*.zip
+*.err
+*.err.log
+*.out.log
+
 /cypress/videos/
 /cypress/screenshots/
 

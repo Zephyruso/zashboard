@@ -22,7 +22,11 @@ const preprocessSourceIPList = () => {
     }
 
     if (key.startsWith('/')) {
-      sourceIPRegexList.push({ regex: new RegExp(key.slice(1), 'i'), label })
+      try {
+        sourceIPRegexList.push({ regex: new RegExp(key.slice(1), 'i'), label })
+      } catch {
+        // Ignore invalid custom regex labels instead of breaking all labels.
+      }
       continue
     }
 

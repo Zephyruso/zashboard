@@ -3,6 +3,8 @@
     <button
       v-if="beforeClose && clearable"
       class="btn btn-ghost btn-circle btn-xs absolute top-1/2 right-1 z-10 h-5 min-h-5 w-5 -translate-y-1/2 p-0"
+      :aria-label="$t('reset')"
+      type="button"
       @click="clearInput"
     >
       <XMarkIcon class="h-3 w-3" />
@@ -11,7 +13,7 @@
       v-model="inputValue"
       ref="inputRef"
       type="text"
-      :class="['input input-sm join-item w-full', inputClass, { 'pr-6': clearable }]"
+      :class="['input input-sm w-full', inputClass, { 'pr-6': clearable }]"
       :placeholder="placeholder || ''"
       :name="name || ''"
       :autocomplete="autocomplete || ''"
@@ -22,6 +24,8 @@
     <button
       v-if="!beforeClose && clearable"
       class="btn btn-ghost btn-circle btn-xs absolute top-1/2 right-1 h-5 min-h-5 w-5 -translate-y-1/2 p-0"
+      :aria-label="$t('reset')"
+      type="button"
       @click="clearInput"
     >
       <XMarkIcon class="h-3 w-3" />
@@ -132,6 +136,10 @@ const handlerSearchInputClick = (e: Event) => {
     interactive: true,
     appendTo: document.body,
     arrow: false,
+    // Mirror RuleCard: dispose the inline Vue app when tippy closes the menu.
+    onHidden: () => {
+      app.unmount()
+    },
   })
 }
 </script>

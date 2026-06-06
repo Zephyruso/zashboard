@@ -4,7 +4,7 @@ import { getLabelFromBackend } from '@/helper/utils'
 import { isSidebarCollapsed, keyboardShortcuts } from '@/store/settings'
 import { activeBackend, switchActiveBackend } from '@/store/setup'
 import { computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 export enum KEYBOARD_SHORTCUT_ACTION {
   TOGGLE_SIDEBAR = 'sidebar:toggle',
@@ -77,7 +77,7 @@ export const KEYBOARD_SHORTCUTS = {
   },
 } as const
 
-export const normalizeShortcutKey = (key: string) => {
+const normalizeShortcutKey = (key: string) => {
   if (key === ' ') {
     return 'Space'
   }
@@ -95,11 +95,11 @@ export const normalizeShortcutKey = (key: string) => {
   return normalizedKey
 }
 
-export const isModifierOnlyKey = (key: string) => {
+const isModifierOnlyKey = (key: string) => {
   return ['Control', 'Meta', 'Alt', 'Shift'].includes(key)
 }
 
-export const normalizeShortcut = (shortcut: string) => {
+const normalizeShortcut = (shortcut: string) => {
   if (!shortcut) {
     return ''
   }
@@ -166,6 +166,7 @@ export const useKeyboardShortcuts = () => {
 
 export const useKeyboard = () => {
   const router = useRouter()
+  const currentRoute = useRoute()
   const { getShortcutKey } = useKeyboardShortcuts()
 
   const shortcutActionMap = computed(() => {
@@ -254,13 +255,17 @@ export const useKeyboard = () => {
       return
     }
 
-    const route = renderRoutes.value[pageIndex]
-    if (!route) {
+    const targetRoute = renderRoutes.value[pageIndex]
+    if (!targetRoute) {
       return
     }
 
     event.preventDefault()
-    router.push({ name: route })
+    if (currentRoute.name === targetRoute) {
+      return
+    }
+
+    router.push({ name: targetRoute })
   }
 
   onMounted(() => {

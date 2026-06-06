@@ -1,5 +1,6 @@
 <template>
   <button
+    type="button"
     class="btn btn-sm"
     @click="dashboardSettingsDialogShow = true"
   >
@@ -11,6 +12,7 @@
   >
     <template #title-right>
       <button
+        type="button"
         class="btn btn-xs absolute top-2 right-10"
         @click="handlerClickResetSettings"
       >
@@ -27,8 +29,10 @@
             {{ $t('uploadSettings') }}
           </div>
           <button
+            type="button"
             :class="twMerge('btn btn-sm', isStorageSubmitting ? 'btn-disabled' : '')"
             :disabled="isStorageSubmitting"
+            :aria-busy="isStorageSubmitting"
             @click="handlerClickUploadSettings"
           >
             {{ $t('uploadSettings') }}
@@ -39,8 +43,10 @@
             {{ $t('syncSettings') }}
           </div>
           <button
+            type="button"
             :class="twMerge('btn btn-sm', isStorageSubmitting ? 'btn-disabled' : '')"
             :disabled="isStorageSubmitting"
+            :aria-busy="isStorageSubmitting"
             @click="handlerClickSyncSettings"
           >
             {{ $t('syncSettings') }}
@@ -51,10 +57,12 @@
             {{ $t('deleteUploadedSettings') }}
           </div>
           <button
+            type="button"
             :class="
               twMerge('btn btn-sm btn-error btn-soft', isStorageSubmitting ? 'btn-disabled' : '')
             "
             :disabled="isStorageSubmitting"
+            :aria-busy="isStorageSubmitting"
             @click="handlerClickDeleteUploadedSettings"
           >
             {{ $t('delete') }}
@@ -68,6 +76,7 @@
             v-model="autoSyncSettings"
             type="checkbox"
             class="toggle"
+            :aria-label="$t('autoSyncSettings')"
           />
         </div>
       </div>
@@ -82,11 +91,15 @@
           {{ $t('exportSettings') }}
         </div>
         <button
+          type="button"
           class="btn btn-sm"
           @click="exportSettings"
         >
           {{ $t('exportSettings') }}
-          <ArrowDownCircleIcon class="h-4 w-4" />
+          <ArrowDownCircleIcon
+            class="h-4 w-4"
+            aria-hidden="true"
+          />
         </button>
       </div>
       <div class="setting-item">
@@ -94,11 +107,15 @@
           {{ $t('importFromFile') }}
         </div>
         <button
+          type="button"
           class="btn btn-sm"
           @click="importSettingsFromFile"
         >
           {{ $t('importFromFile') }}
-          <ArrowUpCircleIcon class="h-4 w-4" />
+          <ArrowUpCircleIcon
+            class="h-4 w-4"
+            aria-hidden="true"
+          />
         </button>
       </div>
     </div>
@@ -118,10 +135,18 @@
               class="max-w-none flex-1"
             />
             <button
+              type="button"
               class="btn btn-sm join-item"
+              :aria-label="$t('importFromUrl')"
+              :title="$t('importFromUrl')"
+              :disabled="isUrlImporting"
+              :aria-busy="isUrlImporting"
               @click="importSettingsFromUrlHandler()"
             >
-              <ArrowDownTrayIcon class="h-4 w-4" />
+              <ArrowDownTrayIcon
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
             </button>
           </div>
           <QuestionMarkCircleIcon
@@ -135,6 +160,7 @@
           />
           <button
             v-else
+            type="button"
             class="btn btn-sm"
             @click="importSettingsUrl = DEFAULT_SETTINGS_URL"
           >
@@ -158,6 +184,7 @@
           v-model="autoImportSettings"
           type="checkbox"
           class="toggle"
+          :aria-label="$t('autoImportFromUrl')"
         />
       </div>
     </div>
@@ -198,7 +225,7 @@ import {
   QuestionMarkCircleIcon,
 } from '@heroicons/vue/24/outline'
 import { twMerge } from 'tailwind-merge'
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import DialogWrapper from './DialogWrapper.vue'
 import TextInput from './TextInput.vue'
@@ -206,7 +233,10 @@ import TextInput from './TextInput.vue'
 const inputRef = ref<HTMLInputElement>()
 const dashboardSettingsDialogShow = ref(false)
 const isStorageSubmitting = ref(false)
+const isUrlImporting = ref(false)
 const showSyncSettings = computed(() => !isSingBox.value || displayAllFeatures.value)
+let importSettingsFromUrlController: AbortController | undefined
+let storageSubmittingController: AbortController | undefined
 
 const { showTip } = useTooltip()
 const { t } = useI18n()
@@ -217,17 +247,49 @@ const handlerClickResetSettings = () => {
   resetSettings()
 }
 
+const resetFileInput = () => {
+  if (inputRef.value) {
+    inputRef.value.value = ''
+  }
+}
+
 const handlerJsonUpload = () => {
+  const file = inputRef.value?.files?.[0]
+  if (!file) {
+    resetFileInput()
+    return
+  }
+
   showNotification({
     content: 'importing',
   })
-  const file = inputRef.value?.files?.[0]
-  if (!file) return
+
   const reader = new FileReader()
-  reader.onload = async () => {
-    const settings = JSON.parse(reader.result as string)
-    applyDashboardSettingsToStorage(settings)
-    location.reload()
+  reader.onload = () => {
+    try {
+      const settings = JSON.parse(reader.result as string)
+      applyDashboardSettingsToStorage(settings)
+      location.reload()
+    } catch {
+      showNotification({
+        content: 'importFailed',
+        params: {
+          url: file.name,
+        },
+        type: 'alert-error',
+      })
+      resetFileInput()
+    }
+  }
+  reader.onerror = () => {
+    showNotification({
+      content: 'importFailed',
+      params: {
+        url: file.name,
+      },
+      type: 'alert-error',
+    })
+    resetFileInput()
   }
   reader.readAsText(file)
 }
@@ -236,13 +298,44 @@ const importSettingsFromFile = () => {
   inputRef.value?.click()
 }
 const importSettingsFromUrlHandler = async () => {
-  dashboardSettingsDialogShow.value = false
-  await importSettingsFromUrl(true)
+  if (isUrlImporting.value) return
+
+  importSettingsFromUrlController?.abort()
+  const controller = new AbortController()
+  const targetUrl = importSettingsUrl.value
+  importSettingsFromUrlController = controller
+  isUrlImporting.value = true
+  try {
+    dashboardSettingsDialogShow.value = false
+    await importSettingsFromUrl(true, {
+      signal: controller.signal,
+      url: targetUrl,
+    })
+  } finally {
+    if (importSettingsFromUrlController === controller) {
+      isUrlImporting.value = false
+      importSettingsFromUrlController = undefined
+    }
+  }
+}
+
+const createStorageSubmittingController = () => {
+  storageSubmittingController?.abort()
+  const controller = new AbortController()
+  storageSubmittingController = controller
+  return controller
+}
+
+const finishStorageSubmitting = (controller: AbortController) => {
+  if (storageSubmittingController !== controller) return
+  isStorageSubmitting.value = false
+  storageSubmittingController = undefined
 }
 
 const handlerClickUploadSettings = async () => {
   if (isStorageSubmitting.value) return
 
+  const controller = createStorageSubmittingController()
   isStorageSubmitting.value = true
   try {
     dashboardSettingsDialogShow.value = false
@@ -258,7 +351,8 @@ const handlerClickUploadSettings = async () => {
       delete settings['config/icon-reflect-list']
     }
 
-    await setStorageAPI(settings)
+    await setStorageAPI(settings, controller.signal)
+    if (storageSubmittingController !== controller) return
     showNotification({
       content: 'uploadSettingsSuccess',
       type: 'alert-success',
@@ -270,22 +364,24 @@ const handlerClickUploadSettings = async () => {
       })
     }
   } finally {
-    isStorageSubmitting.value = false
+    finishStorageSubmitting(controller)
   }
 }
 
 const handlerClickSyncSettings = async () => {
   if (isStorageSubmitting.value) return
 
+  const controller = createStorageSubmittingController()
   isStorageSubmitting.value = true
   try {
     dashboardSettingsDialogShow.value = false
     await syncSettingsFromCore({
       force: true,
       notify: true,
+      signal: controller.signal,
     })
   } finally {
-    isStorageSubmitting.value = false
+    finishStorageSubmitting(controller)
   }
 }
 
@@ -293,28 +389,38 @@ const handlerClickDeleteUploadedSettings = async () => {
   if (isStorageSubmitting.value) return
   if (!window.confirm(t('deleteUploadedSettingsConfirm'))) return
 
+  const controller = createStorageSubmittingController()
   isStorageSubmitting.value = true
   try {
-    await deleteStorageAPI()
+    await deleteStorageAPI(controller.signal)
+    if (storageSubmittingController !== controller) return
     dashboardSettingsDialogShow.value = false
     showNotification({
       content: 'deleteUploadedSettingsSuccess',
       type: 'alert-success',
     })
   } finally {
-    isStorageSubmitting.value = false
+    finishStorageSubmitting(controller)
   }
 }
 
 watch(autoSyncSettings, async (value, oldValue) => {
   if (!value || oldValue || isStorageSubmitting.value) return
 
+  const controller = createStorageSubmittingController()
   isStorageSubmitting.value = true
   try {
     dashboardSettingsDialogShow.value = false
-    await syncSettingsFromCore()
+    await syncSettingsFromCore({ signal: controller.signal })
   } finally {
-    isStorageSubmitting.value = false
+    finishStorageSubmitting(controller)
   }
+})
+
+onBeforeUnmount(() => {
+  importSettingsFromUrlController?.abort()
+  importSettingsFromUrlController = undefined
+  storageSubmittingController?.abort()
+  storageSubmittingController = undefined
 })
 </script>

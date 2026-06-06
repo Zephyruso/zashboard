@@ -1,5 +1,5 @@
 <template>
-  <div class="base-container w-full backdrop-blur-none!">
+  <div class="base-container w-full">
     <!-- Header -->
     <div
       class="need-blur flex items-center justify-between p-4 max-sm:flex-col max-sm:items-start max-sm:gap-2"
@@ -9,7 +9,9 @@
       >
         {{ $t('totalConnections') }}
         <button
+          type="button"
           class="btn btn-ghost btn-xs btn-circle"
+          :aria-label="$t('clearConnectionHistory')"
           @click="showClearDialog = true"
         >
           <TrashIcon class="h-3.5 w-3.5" />
@@ -25,6 +27,7 @@
           <select
             v-model="aggregationType"
             class="select select-bordered select-sm w-32"
+            :aria-label="$t('aggregateBy')"
           >
             <option :value="ConnectionHistoryType.SourceIP">
               {{ $t('aggregateBySourceIP') }}
@@ -43,6 +46,7 @@
           <select
             v-model="autoCleanupInterval"
             class="select select-bordered select-sm w-28"
+            :aria-label="$t('autoCleanupInterval')"
           >
             <option :value="AutoCleanupInterval.Never">
               {{ $t('autoCleanupIntervalNever') }}
@@ -114,7 +118,17 @@
                 v-for="header in tanstackTable.getHeaderGroups()[0]?.headers"
                 :key="header.id"
                 class="cursor-pointer select-none"
+                tabindex="0"
+                :aria-sort="
+                  header.column.getIsSorted() === 'asc'
+                    ? 'ascending'
+                    : header.column.getIsSorted() === 'desc'
+                      ? 'descending'
+                      : 'none'
+                "
                 @click="header.column.getToggleSortingHandler()?.($event)"
+                @keydown.enter.prevent="header.column.getToggleSortingHandler()?.($event)"
+                @keydown.space.prevent="header.column.getToggleSortingHandler()?.($event)"
               >
                 <div class="flex items-center gap-1">
                   <FlexRender
@@ -125,10 +139,12 @@
                   <ArrowUpCircleIcon
                     v-if="header.column.getIsSorted() === 'asc'"
                     class="h-4 w-4"
+                    aria-hidden="true"
                   />
                   <ArrowDownCircleIcon
                     v-if="header.column.getIsSorted() === 'desc'"
                     class="h-4 w-4"
+                    aria-hidden="true"
                   />
                 </div>
               </th>
@@ -170,13 +186,17 @@
         </p>
         <div class="flex justify-end gap-2">
           <button
+            type="button"
             class="btn btn-sm"
             @click="showClearDialog = false"
           >
             {{ $t('cancel') }}
           </button>
           <button
+            type="button"
             class="btn btn-error btn-sm"
+            :disabled="isClearingHistory"
+            :aria-busy="isClearingHistory"
             @click="handleClearHistory"
           >
             {{ $t('confirm') }}
@@ -380,6 +400,7 @@ const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 const totalSize = computed(() => rowVirtualizer.value.getTotalSize() + 24)
 
 const showClearDialog = ref(false)
+const isClearingHistory = ref(false)
 const autoCleanupInterval = useStorage<AutoCleanupInterval>(
   'config/connection-history-auto-cleanup-interval',
   AutoCleanupInterval.Month,
@@ -427,6 +448,8 @@ const checkAndPerformAutoCleanup = async () => {
 }
 
 const handleClearHistory = async () => {
+  if (isClearingHistory.value) return
+  isClearingHistory.value = true
   try {
     await clearConnectionHistoryFromIndexedDB()
     await initAggregatedDataMap()
@@ -442,6 +465,8 @@ const handleClearHistory = async () => {
       content: `${t('saveFailed')}: ${error}`,
       type: 'alert-error',
     })
+  } finally {
+    isClearingHistory.value = false
   }
 }
 

@@ -1,6 +1,6 @@
 import { SETTINGS_MENU_KEY } from '@/constant'
 
-export type SettingsCategoryItem = {
+type SettingsCategoryItem = {
   key: string
   label: string
 }
@@ -71,6 +71,10 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
         label: 'autoDisconnectIdleUDPTime',
       },
       { key: `${SETTINGS_MENU_KEY.general}.IPInfoAPI`, label: 'IPInfoAPI' },
+      {
+        key: `${SETTINGS_MENU_KEY.general}.zashboardSettings.lowPowerMode`,
+        label: 'lowPowerMode',
+      },
       {
         key: `${SETTINGS_MENU_KEY.general}.scrollAnimationEffect`,
         label: 'scrollAnimationEffect',
@@ -190,7 +194,7 @@ export function getItemKeysByCategory(categoryKey: SETTINGS_MENU_KEY): string[] 
  * Returns the category key plus all item keys for that category.
  * Use when you need both the top-level menu key and all sub-item keys (e.g. getAllSettingKeys).
  */
-export function getAllKeysForCategory(categoryKey: SETTINGS_MENU_KEY): string[] {
+function getAllKeysForCategory(categoryKey: SETTINGS_MENU_KEY): string[] {
   const category = SETTINGS_CATEGORIES.find((c) => c.key === categoryKey)
   if (!category) return []
   return [category.key, ...category.items.map((item) => item.key)]

@@ -1,7 +1,52 @@
 :root,
 [data-theme] {
+  /* Base layer extensions kept here; iOS design tokens live in ios-variables.css. */
   --color-base-150: color-mix(in oklch, var(--color-base-100) 50%, var(--color-base-200));
-  --color-base-border: color-mix(in srgb, var(--color-base-content) 8%, transparent);
+  --color-base-border: color-mix(in srgb, var(--color-base-content) 10%, transparent);
+}
+
+html {
+  background: var(--color-base-200);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--color-base-200);
+  color: var(--color-base-content);
+  font-feature-settings: 'tnum';
+  text-rendering: optimizeLegibility;
+}
+
+#app {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.app-root {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@supports (height: 100lvh) {
+  .app-root.custom-background {
+    height: 100lvh;
+    min-height: 100lvh;
+  }
+}
+
+.custom-background {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 
 @theme inline {
@@ -10,18 +55,24 @@
 }
 
 @utility base-container {
-  @apply bg-base-100 overflow-hidden rounded-xl shadow-xs;
+  @apply bg-base-100/90 overflow-hidden rounded-2xl;
+  border: 0.5px solid var(--color-base-border);
+  box-shadow: var(--ios-card-shadow);
 }
 
 @utility card {
-  @apply bg-base-100 rounded-xl shadow-xs;
+  @apply bg-base-100/90 rounded-2xl;
+  border: 0.5px solid var(--color-base-border);
+  box-shadow: var(--ios-card-shadow);
   .card-body {
     @apply p-4;
   }
 }
 
 @utility collapse {
-  @apply bg-base-100 rounded-xl shadow-xs;
+  @apply bg-base-100/90 rounded-2xl;
+  border: 0.5px solid var(--color-base-border);
+  box-shadow: var(--ios-card-shadow);
 }
 
 .collapse.transparent-collapse {
@@ -33,23 +84,59 @@
 }
 
 @utility badge {
-  @apply bg-base-200/80;
+  @apply bg-base-200/80 border-transparent text-xs font-medium;
+  border-radius: 999px;
 }
 
 @utility select {
-  @apply w-auto;
+  @apply bg-base-200/70 w-auto border-none;
+  border-radius: 12px;
+  box-shadow: var(--ios-control-shadow);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s var(--ios-spring);
 }
 
 @utility btn {
-  @apply border-none;
+  @apply border-none font-semibold;
+  border-radius: 999px;
+  box-shadow: none;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    opacity 0.18s ease,
+    transform 0.18s var(--ios-spring);
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  &.btn-primary {
+    background: var(--ios-system-blue);
+    color: #fff;
+  }
+  &.btn-ghost:hover,
+  &:not(.btn-primary, .btn-neutral, .btn-ghost):hover {
+    background: var(--ios-fill-quaternary);
+  }
+  &:disabled {
+    opacity: 0.42;
+  }
 }
 
 @utility tabs {
+  @apply bg-base-200/70 rounded-full p-1;
+  box-shadow: var(--ios-control-shadow);
   .tab {
-    @apply px-2;
+    @apply rounded-full px-3 font-semibold;
+    color: var(--ios-label-secondary);
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s var(--ios-spring);
   }
   .tab.tab-active {
-    @apply bg-primary text-primary-content;
+    @apply bg-base-100 text-base-content;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   }
 }
 
@@ -64,10 +151,79 @@
     @apply border-0;
   }
   @apply border-separate border-spacing-0;
+  thead {
+    color: var(--ios-label-secondary);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  tbody tr {
+    transition:
+      background-color 0.18s ease,
+      color 0.18s ease;
+  }
+  td,
+  th {
+    border-bottom: 0.5px solid var(--color-base-border);
+  }
 }
 
 @utility modal {
-  @apply max-md:bg-transparent! max-md:backdrop-blur-sm max-md:transition-[backdrop-filter];
+  @apply max-md:bg-transparent!;
+}
+
+@utility input {
+  @apply bg-base-200/70 border-none;
+  border-radius: 12px;
+  box-shadow: var(--ios-control-shadow);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  &:focus,
+  &:focus-within {
+    outline: none;
+    box-shadow:
+      var(--ios-control-shadow),
+      0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  }
+}
+
+@utility textarea {
+  @apply bg-base-200/70 border-none;
+  border-radius: 12px;
+  box-shadow: var(--ios-control-shadow);
+}
+
+@utility toggle {
+  border: none;
+  /* iOS-style off-track: light neutral in light mode, deep gray in dark mode. */
+  background-color: var(--ios-switch-off-track, #e5e5ea);
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.05);
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease;
+  /* daisyUI 5 paints the knob via `::before { background-color: currentColor }`,
+     which inherits `--input-color` (a base-content tint that's gray in light,
+     near-white in dark). Force a pure-white knob with a soft iOS shadow so it
+     reads correctly on both the green on-track and the gray off-track. */
+  &::before {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+  }
+  &:checked,
+  &[aria-checked='true'] {
+    /* iOS system green (#34C759 light / #30D158 dark) — token already
+       switches automatically across the 12 daisyUI dark themes. */
+    background-color: var(--ios-system-green);
+  }
+  &:disabled {
+    background-color: var(--ios-switch-off-track, #e5e5ea);
+    opacity: 0.55;
+  }
+  &:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--ios-system-green) 24%, transparent);
+    outline-offset: 2px;
+  }
 }
 
 .select.select-sm,
@@ -77,102 +233,182 @@
   @apply text-sm;
 }
 
-@for $i from 0 to 100 {
-  .custom-background.custom-background-$(i) {
-    .bg-base-100,
-    .bg-primary,
-    .card,
-    .collapse,
-    .input,
-    .select,
-    .toggle,
-    .settings-menu,
-    .ctrls-bar,
-    .settings-grid,
-    .base-container,
-    .btn:not(.btn-ghost, .btn-neutral, .btn-primary),
-    .tabs {
-      @apply bg-base-100/$(i);
-    }
+/* ============================================================================
+ * Global accessibility — focus rings and touch targets.
+ *
+ *  - `:focus-visible` paints an iOS-blue ring only on keyboard / a11y focus,
+ *    never on mouse clicks. Excludes daisyUI controls that already manage
+ *    their own focus styling (`.toggle`, `.input`, `.checkbox`, `.radio`).
+ *  - `.touch-target` opt-in utility — caller adds it to any element that
+ *    needs to meet the 44 × 44 px HIG / WCAG 2.5.5 hit-area minimum.
+ * ========================================================================== */
+:focus-visible {
+  outline: 2px solid var(--ios-system-blue);
+  outline-offset: 2px;
+  border-radius: var(--ios-radius-sm);
+}
+.toggle:focus-visible,
+.input:focus-visible,
+.textarea:focus-visible,
+.select:focus-visible,
+.checkbox:focus-visible,
+.radio:focus-visible {
+  /* These components define their own focus ring (see .toggle / .input above). */
+  outline: none;
+}
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
 
-    .btn.btn-neutral {
-      @apply bg-neutral/$(i);
-    }
+/* ============================================================================
+ * Custom background tint system — single rule set driven by CSS variables.
+ *
+ * Previous implementation used `@for $i from 0 to 100 { ... }` postcss-for
+ * loops, which expanded into ~4,800 duplicate `.custom-background-N { ... }`
+ * blocks in the built stylesheet (≈400 KB of dead rules: only one matches
+ * at a time). We now emit a single block and let the application drive
+ * intensity through two custom properties set inline on the root element:
+ *
+ *   --bg-tint     — base tint opacity (default 90%, range 0–100%)
+ *   --blur-radius — backdrop blur radius (default 0px, e.g. 10px)
+ *
+ * The two `max(...)` floors below preserve the previous behaviour where
+ * `.modal-box`, `.bg-primary` (non-tab) and `.latency-tag` would never go
+ * below 70%, 60% and 90% opacity respectively, regardless of the user's
+ * transparency slider — those elements need legibility floors.
+ * ========================================================================== */
+.custom-background {
+  /* Keep this root layer untransformed so descendant `backdrop-filter`
+     surfaces can sample the wallpaper painted by the same element.
+     Teleported controls own their composition, and route transition
+     opacity now avoids the Chromium flicker this layer promotion masked.
 
-    .badge {
-      @apply bg-base-200/$(i) border-transparent;
-    }
+     We deliberately do NOT use `background-attachment: fixed` here:
+     the element itself has `overflow: hidden` and never scrolls, so the
+     attachment value is visually a no-op, and iOS WebKit has historic
+     bugs with `fixed` attachment that can drop the wallpaper entirely. */
+  transform: none;
+  /* Smoother subsampling when the wallpaper is upscaled to fit the viewport. */
+  image-rendering: -webkit-optimize-contrast;
 
-    option,
-    optgroup {
-      @apply backdrop-blur-sm;
-    }
+  .bg-base-100,
+  .bg-primary,
+  .card,
+  .collapse,
+  .input,
+  .select,
+  .toggle:not(:checked),
+  .settings-menu,
+  .ctrls-bar,
+  .settings-grid,
+  .base-container,
+  .tabs {
+    background-color: color-mix(in oklab, var(--color-base-100) var(--bg-tint, 90%), transparent);
+  }
 
-    .bg-base-150,
-    .bg-base-200,
-    .dock {
-      @apply bg-base-200/$(i);
-    }
+  /* Plain `.btn` (no colour modifier — e.g. 面板配置) defaults to
+     `bg-base-200` in daisyUI 5. Forcing it to `bg-base-100/$i` flattens
+     the button into the same shade as the surrounding card, killing the
+     grey contrast that lets it read as a button. Use base-200 instead. */
+  .btn:not(.btn-ghost, .btn-neutral, .btn-primary) {
+    background-color: color-mix(in oklab, var(--color-base-200) var(--bg-tint, 90%), transparent);
+  }
 
-    .modal-box {
-      @if $i > 70 {
-        @apply bg-base-100/$(i);
-      } @else  {
-        @apply bg-base-100/70;
-      }
-    }
+  .btn.btn-neutral {
+    background-color: color-mix(in oklab, var(--color-neutral) var(--bg-tint, 90%), transparent);
+  }
 
-    .bg-primary:not(.tab.tab-active) {
-      @if $i > 60 {
-        @apply bg-primary/$(i);
-      } @else  {
-        @apply bg-primary/60;
-      }
-    }
+  /* Checked toggles keep their primary fill — without this the
+     `.toggle:not(:checked)` blanket rule above would leave the on-state
+     unstyled and it would inherit base-100, becoming visually identical
+     to the off-state. */
+  .toggle:checked {
+    background-color: color-mix(in oklab, var(--color-primary) var(--bg-tint, 90%), transparent);
+  }
 
-    .bg-primary .latency-tag {
-      @if $i > 90 {
-        @apply bg-base-100/$(i);
-      } @else  {
-        @apply bg-base-100/90;
-      }
-    }
+  /* Range slider's filled track defaults to `var(--color-base-content)`
+     (near-black in light themes, near-white in dark). Either way it
+     disappears against a busy wallpaper. Pin it to the theme's primary
+     colour so the chosen value remains legible at a glance. */
+  .range {
+    --range-fill: 1;
+    color: var(--color-primary);
+  }
 
-    .home-page.bg-base-200 {
-      background-color: transparent;
-    }
+  .badge {
+    background-color: color-mix(in oklab, var(--color-base-200) var(--bg-tint, 90%), transparent);
+    border-color: transparent;
+  }
+
+  option,
+  optgroup {
+    backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 20px)))
+      saturate(var(--glass-saturation, 180%));
+    -webkit-backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 20px)))
+      saturate(var(--glass-saturation, 180%));
+  }
+
+  /* `.dock` is intentionally absent — HomePage.vue `<Teleport to="body">`
+     moves it outside this ancestor, so listing it here would be dead code.
+     The dock keeps its own iOS-frosted plate from components.css. */
+  .bg-base-150,
+  .bg-base-200 {
+    background-color: color-mix(in oklab, var(--color-base-200) var(--bg-tint, 90%), transparent);
+  }
+
+  /* Legibility floors: these surfaces stay readable even when the user
+     pushes the transparency slider to extreme values. */
+  .modal-box {
+    background-color: color-mix(
+      in oklab,
+      var(--color-base-100) max(70%, var(--bg-tint, 90%)),
+      transparent
+    );
+  }
+
+  .bg-primary:not(.tab.tab-active) {
+    background-color: color-mix(
+      in oklab,
+      var(--color-primary) max(60%, var(--bg-tint, 90%)),
+      transparent
+    );
+  }
+
+  .bg-primary .latency-tag {
+    background-color: color-mix(
+      in oklab,
+      var(--color-base-100) max(90%, var(--bg-tint, 90%)),
+      transparent
+    );
+  }
+
+  .home-page.bg-base-200 {
+    background-color: transparent;
   }
 }
 
-@for $i from 0 to 40 {
-  .blur-intensity-$(i) {
-    .card,
-    .collapse,
-    .sidebar,
-    .nav-bar,
-    .modal-box,
-    .need-blur,
-    .settings-grid,
-    .base-container,
-    .btn,
-    .table thead {
-      /* prettier-ignore */
-      backdrop-filter: blur($(i)px);
-    }
+/* ============================================================================
+ * Blur intensity — same treatment. Driven by `--blur-radius` set inline.
+ * Previous `@for $i from 0 to 40` generated ~500 duplicate rules; now one.
+ * ========================================================================== */
+.blur-intensity .pinned-td {
+  @apply bg-transparent!;
+  backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 0px)))
+    saturate(var(--glass-saturation, 180%)) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 0px)))
+    saturate(var(--glass-saturation, 180%)) !important;
+}
 
-    .pinned-td {
-      @apply bg-transparent! backdrop-blur-xl;
-    }
-
-    .table tbody::before {
-      position: absolute;
-      content: '';
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      /* prettier-ignore */
-      backdrop-filter: blur($(i)px);
-    }
-  }
+.blur-intensity .table tbody::before {
+  position: absolute;
+  content: '';
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 0px)))
+    saturate(var(--glass-saturation, 180%));
+  -webkit-backdrop-filter: blur(var(--glass-blur-radius, var(--blur-radius, 0px)))
+    saturate(var(--glass-saturation, 180%));
 }

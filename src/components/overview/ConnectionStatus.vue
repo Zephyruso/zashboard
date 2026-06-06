@@ -5,10 +5,21 @@
         {{ $t('latency') }}
       </div>
       <button
-        class="btn btn-ghost btn-xs btn-circle"
+        class="btn btn-ghost btn-xs btn-circle touch-target"
+        :aria-label="$t('testAllLatency')"
+        :disabled="isTestingLatency"
+        :aria-busy="isTestingLatency"
         @click="getLatency"
       >
-        <BoltIcon class="h-3.5 w-3.5" />
+        <span
+          v-if="isTestingLatency"
+          class="loading loading-spinner loading-xs"
+        ></span>
+        <BoltIcon
+          v-else
+          class="h-3.5 w-3.5"
+          aria-hidden="true"
+        />
       </button>
     </div>
 
@@ -20,22 +31,26 @@
       >
         <span class="text-base-content/70 text-sm">{{ item.name }}</span>
         <span
+          v-if="item.value"
           class="flex items-center gap-1.5 text-sm font-medium"
-          :class="item.value ? getColorForLatency(Number(item.value)) : 'text-base-content/20'"
+          :class="getColorForLatency(Number(item.value))"
         >
-          <template v-if="item.value">{{ item.value }}ms</template>
-          <template v-else>--</template>
-          <SignalStrength
-            v-if="item.value"
-            :latency="Number(item.value)"
-          />
+          {{ item.value }}ms
+          <SignalStrength :latency="Number(item.value)" />
         </span>
+        <SkeletonLoader
+          v-else
+          width="3rem"
+          height="0.875rem"
+          border-radius="var(--ios-radius-sm, 10px)"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import SkeletonLoader from '@/components/common/SkeletonLoader.vue'
 import {
   getBaiduLatencyAPI,
   getCloudflareLatencyAPI,
@@ -51,7 +66,7 @@ import {
 import { getColorForLatency } from '@/helper'
 import { autoConnectionCheck } from '@/store/settings'
 import { BoltIcon } from '@heroicons/vue/24/outline'
-import { computed, onMounted } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import SignalStrength from './SignalStrength.vue'
 
 const latencyItems = computed(() => [
@@ -61,22 +76,50 @@ const latencyItems = computed(() => [
   { name: 'YouTube', value: youtubeLatency.value },
 ])
 
+const isTestingLatency = ref(false)
+let latencyController: AbortController | undefined
+let latencySeq = 0
+
 const getLatency = async () => {
-  getBaiduLatencyAPI().then((res) => {
-    baiduLatency.value = res.toFixed(0)
-  })
+  latencyController?.abort()
+  const controller = new AbortController()
+  const currentSeq = ++latencySeq
+  latencyController = controller
+  isTestingLatency.value = true
 
-  getCloudflareLatencyAPI().then((res) => {
-    cloudflareLatency.value = res.toFixed(0)
-  })
+  baiduLatency.value = ''
+  cloudflareLatency.value = ''
+  githubLatency.value = ''
+  youtubeLatency.value = ''
 
-  getGithubLatencyAPI().then((res) => {
-    githubLatency.value = res.toFixed(0)
-  })
+  const isCurrentLatencyTest = () => {
+    return currentSeq === latencySeq && latencyController === controller
+  }
 
-  getYouTubeLatencyAPI().then((res) => {
-    youtubeLatency.value = res.toFixed(0)
-  })
+  const latencyTasks = [
+    getBaiduLatencyAPI(controller.signal).then((res) => {
+      if (!isCurrentLatencyTest()) return
+      baiduLatency.value = res.toFixed(0)
+    }),
+    getCloudflareLatencyAPI(controller.signal).then((res) => {
+      if (!isCurrentLatencyTest()) return
+      cloudflareLatency.value = res.toFixed(0)
+    }),
+    getGithubLatencyAPI(controller.signal).then((res) => {
+      if (!isCurrentLatencyTest()) return
+      githubLatency.value = res.toFixed(0)
+    }),
+    getYouTubeLatencyAPI(controller.signal).then((res) => {
+      if (!isCurrentLatencyTest()) return
+      youtubeLatency.value = res.toFixed(0)
+    }),
+  ]
+
+  await Promise.allSettled(latencyTasks)
+  if (!isCurrentLatencyTest()) return
+
+  isTestingLatency.value = false
+  latencyController = undefined
 }
 
 onMounted(() => {
@@ -88,5 +131,11 @@ onMounted(() => {
   ) {
     getLatency()
   }
+})
+
+onBeforeUnmount(() => {
+  latencyController?.abort()
+  latencySeq += 1
+  latencyController = undefined
 })
 </script>

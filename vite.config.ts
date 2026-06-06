@@ -73,4 +73,30 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    // Lift the chunk-size warning slightly so the per-route chunks below don't
+    // trigger noise — the real budget is enforced via manualChunks.
+    chunkSizeWarningLimit: 700,
+    rollupOptions: {
+      output: {
+        // Rolldown (Vite 8) only accepts the function form of manualChunks.
+        // Group heavy third-party libraries into their own vendor chunks so
+        // they are downloaded lazily alongside the route that needs them.
+        manualChunks(id: string) {
+          if (!id.includes('node_modules')) return
+          if (id.includes('/echarts/') || id.includes('/zrender/')) return 'echarts'
+          if (id.includes('@tanstack/vue-table') || id.includes('@tanstack/vue-virtual')) {
+            return 'tanstack'
+          }
+          if (id.includes('/vue-json-pretty/')) return 'vue-json-pretty'
+          if (id.includes('/tippy.js/') || id.includes('/dompurify/')) return 'tooltip'
+          // NOTE: Tried isolating @vueuse/core and @heroicons/vue into their own
+          // chunks but both are reachable from the eager HomePage shell, so the
+          // cold first paint ended up downloading ~50 KB more gzip. Leave them
+          // in the main bundle — Rolldown will still de-duplicate across the
+          // lazy route chunks.
+        },
+      },
+    },
+  },
 })

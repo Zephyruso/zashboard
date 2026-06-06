@@ -10,12 +10,11 @@ import ipaddr from 'ipaddr.js'
 import { ref } from 'vue'
 import { activeBackend } from './setup'
 
-const isInitializedPromise = ref(
-  new Promise((resolve) => {
-    resolve(false)
-  }),
-)
+const isInitializedPromise = ref<Promise<boolean>>(Promise.resolve(false))
 const uuid = () => activeBackend.value?.uuid || ''
+const HISTORY_COMPACT_THRESHOLD = 2000
+const HISTORY_COMPACT_LIMIT = 1500
+let initAggregatedDataMapSeq = 0
 const allHistoryTypes = [
   ConnectionHistoryType.SourceIP,
   ConnectionHistoryType.Destination,
@@ -30,27 +29,54 @@ export const aggregatedDataMap = ref<Record<ConnectionHistoryType, ConnectionHis
   [ConnectionHistoryType.Outbound]: [],
 })
 
-export const initAggregatedDataMap = () => {
-  aggregatedDataMap.value = {
-    [ConnectionHistoryType.SourceIP]: [],
-    [ConnectionHistoryType.Destination]: [],
-    [ConnectionHistoryType.Process]: [],
-    [ConnectionHistoryType.Outbound]: [],
-  }
-  isInitializedPromise.value = new Promise(async (resolve) => {
-    for (const type of allHistoryTypes) {
-      const historicalData = await getConnectionHistoryFromIndexedDB(uuid(), type)
+const createEmptyAggregatedDataMap = (): Record<
+  ConnectionHistoryType,
+  ConnectionHistoryData[]
+> => ({
+  [ConnectionHistoryType.SourceIP]: [],
+  [ConnectionHistoryType.Destination]: [],
+  [ConnectionHistoryType.Process]: [],
+  [ConnectionHistoryType.Outbound]: [],
+})
 
-      let finalData = historicalData
-      if (historicalData.length > 2000) {
-        finalData = historicalData.sort((a, b) => b.download - a.download).slice(0, 1500)
-        await saveConnectionHistoryToIndexedDB(uuid(), type, finalData)
+const compactConnectionHistoryData = (data: ConnectionHistoryData[]) => {
+  if (data.length <= HISTORY_COMPACT_THRESHOLD) {
+    return data
+  }
+
+  return data.sort((a, b) => b.download - a.download).slice(0, HISTORY_COMPACT_LIMIT)
+}
+
+export const initAggregatedDataMap = () => {
+  const backendUuid = uuid()
+  const initSeq = ++initAggregatedDataMapSeq
+
+  aggregatedDataMap.value = createEmptyAggregatedDataMap()
+  isInitializedPromise.value = (async () => {
+    const nextAggregatedDataMap = createEmptyAggregatedDataMap()
+
+    for (const type of allHistoryTypes) {
+      const historicalData = await getConnectionHistoryFromIndexedDB(backendUuid, type)
+
+      if (initSeq !== initAggregatedDataMapSeq || backendUuid !== uuid()) {
+        return false
       }
 
-      aggregatedDataMap.value[type] = finalData
+      const finalData = compactConnectionHistoryData(historicalData)
+      if (finalData.length !== historicalData.length) {
+        await saveConnectionHistoryToIndexedDB(backendUuid, type, finalData)
+      }
+
+      if (initSeq !== initAggregatedDataMapSeq || backendUuid !== uuid()) {
+        return false
+      }
+
+      nextAggregatedDataMap[type] = finalData
     }
-    resolve(true)
-  })
+
+    aggregatedDataMap.value = nextAggregatedDataMap
+    return true
+  })()
 }
 
 export const aggregateConnections = (
@@ -127,16 +153,21 @@ export const saveConnectionHistory = async (newClosedConnections: Connection[]) 
     return
   }
 
-  await isInitializedPromise.value
+  const backendUuid = uuid()
+  if (!backendUuid) return
+
+  const isInitialized = await isInitializedPromise.value
+  if (!isInitialized || backendUuid !== uuid()) return
 
   for (const type of allHistoryTypes) {
     try {
       const newAggregatedData = aggregateConnections(newClosedConnections, type)
       const historicalData = aggregatedDataMap.value[type]
       const mergedData = mergeAggregatedData(historicalData, newAggregatedData)
+      const finalData = compactConnectionHistoryData(mergedData)
 
-      aggregatedDataMap.value[type] = mergedData
-      await saveConnectionHistoryToIndexedDB(uuid(), type, mergedData)
+      aggregatedDataMap.value[type] = finalData
+      await saveConnectionHistoryToIndexedDB(backendUuid, type, finalData)
     } catch (error) {
       console.error(`Failed to save connection history for ${type}:`, error)
     }

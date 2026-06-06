@@ -1,27 +1,30 @@
 import { fetchMemoryAPI, fetchTrafficAPI } from '@/api'
-import { ref, watch } from 'vue'
+import { ref, shallowRef, watch } from 'vue'
 import { activeConnections } from './connections'
+import { activeBackend } from './setup'
 
 export const timeSaved = 60
 const initValue = new Array(timeSaved).fill(0).map((v, i) => ({ name: i, value: v }))
 
 export const memory = ref<number>(0)
-export const memoryHistory = ref([...initValue])
-export const connectionsHistory = ref([...initValue])
+// shallowRef: every WS tick we push then immediately reassign via slice(),
+// so per-item Proxy wrapping would cost 60×4 = 240 reactive wrappers per second
+// for sparkline data we only ever read in bulk. The reassignment alone is
+// enough to trigger downstream computeds/charts.
+export const memoryHistory = shallowRef([...initValue])
+export const connectionsHistory = shallowRef([...initValue])
 
 export const downloadSpeed = ref<number>(0)
 export const uploadSpeed = ref<number>(0)
-export const downloadSpeedHistory = ref([...initValue])
-export const uploadSpeedHistory = ref([...initValue])
+export const downloadSpeedHistory = shallowRef([...initValue])
+export const uploadSpeedHistory = shallowRef([...initValue])
 
-let cancel: () => void
+let cancel: (() => void) | undefined
 
-export const initSatistic = () => {
+const connectOverviewStreams = () => {
+  if (!activeBackend.value) return
+
   cancel?.()
-
-  downloadSpeedHistory.value = [...initValue]
-  uploadSpeedHistory.value = [...initValue]
-  memoryHistory.value = [...initValue]
 
   const { data: memoryWsData, close: memoryWsClose } = fetchMemoryAPI<{
     inuse: number
@@ -84,5 +87,26 @@ export const initSatistic = () => {
     trafficWsClose()
     unwatchMemory()
     unwatchTraffic()
+    cancel = undefined
   }
+}
+
+export const pauseSatistic = () => {
+  cancel?.()
+}
+
+export const resumeSatistic = () => {
+  if (cancel) return
+  connectOverviewStreams()
+}
+
+export const initSatistic = () => {
+  pauseSatistic()
+
+  downloadSpeedHistory.value = [...initValue]
+  uploadSpeedHistory.value = [...initValue]
+  memoryHistory.value = [...initValue]
+  connectionsHistory.value = [...initValue]
+
+  connectOverviewStreams()
 }

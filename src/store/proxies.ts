@@ -5,6 +5,7 @@ import {
   fetchProxyGroupLatencyAPI,
   fetchProxyLatencyAPI,
   fetchProxyProviderAPI,
+  isRequestCanceled,
   isSingBox,
   selectProxyAPI,
 } from '@/api'
@@ -21,7 +22,7 @@ import { isProxyGroup } from '@/helper'
 import { showNotification } from '@/helper/notification'
 import type { Proxy, ProxyProvider } from '@/types'
 import { useStorage } from '@vueuse/core'
-import { last } from 'lodash'
+import { last } from 'lodash-es'
 import pLimit from 'p-limit'
 import { computed, ref } from 'vue'
 import { activeConnections } from './connections'
@@ -35,16 +36,26 @@ import {
   speedtestTimeout,
   speedtestUrl,
 } from './settings'
-import { initSmartWeights } from './smart'
+import { activeUuid } from './setup'
+import { clearSmartWeights, initSmartWeights } from './smart'
 
 export const proxiesFilter = ref('')
 export const proxiesTabShow = ref(PROXY_TAB_TYPE.PROXIES)
 
 export const proxyGroupList = ref<string[]>([])
 export const proxyMap = ref<Record<string, Proxy>>({})
-export const IPv6Map = useStorage<Record<string, boolean>>('cache/ipv6-map', {})
+const IPv6Map = useStorage<Record<string, boolean>>('cache/ipv6-map', {})
 export const hiddenGroupMap = useStorage<Record<string, boolean>>('config/hidden-group-map', {})
 export const proxyProviederList = ref<ProxyProvider[]>([])
+export const proxyProviderByName = computed(() => {
+  const providersByName = new Map<string, ProxyProvider>()
+
+  for (const provider of proxyProviederList.value) {
+    providersByName.set(provider.name, provider)
+  }
+
+  return providersByName
+})
 
 const speedtestUrlWithDefault = computed(() => {
   return speedtestUrl.value || TEST_URL
@@ -61,19 +72,22 @@ export const getTestUrl = (groupName?: string) => {
     return groupTestUrl.url
   }
 
-  const proxyNode =
-    proxyMap.value[groupName] || proxyProviederList.value.find((p) => p.name === groupName)
+  const proxyNode = proxyMap.value[groupName] || proxyProviderByName.value.get(groupName)
 
   return proxyNode?.testUrl || speedtestUrlWithDefault.value
 }
 
 export const getLatencyByName = (proxyName: string, groupName?: string) => {
-  const history = getHistoryByName(proxyName, groupName)
+  const history = getHistoryByName(proxyName, groupName, false)
 
   return getLatencyFromHistory(history)
 }
 
-export const getHistoryByName = (proxyName: string, groupName?: string) => {
+export const getHistoryByName = (
+  proxyName: string,
+  groupName?: string,
+  ensureIndependentHistory = true,
+) => {
   if (independentLatencyTest.value && !isSingBox.value) {
     const proxyNode = proxyMap.value[proxyName]
     const url = getTestUrl(groupName)
@@ -82,7 +96,11 @@ export const getHistoryByName = (proxyName: string, groupName?: string) => {
       return []
     }
 
-    if (!proxyNode?.extra) {
+    if (!ensureIndependentHistory && !proxyNode.extra?.[url]) {
+      return []
+    }
+
+    if (!proxyNode.extra) {
       proxyNode.extra = {}
     }
 
@@ -105,18 +123,45 @@ export const getIPv6ByName = (proxyName: string) => {
   return IPv6Map.value[getNowProxyNodeName(proxyName)]
 }
 
-let fetchTime = 0
+let fetchSequence = 0
+let fetchAbortController: AbortController | undefined
+
+const isBackendCurrent = (backendUuid: string) => activeUuid.value === backendUuid
 
 export const fetchProxies = async () => {
-  const nowTime = Date.now()
+  const sequence = ++fetchSequence
+  const backendUuid = activeUuid.value
 
-  fetchTime = nowTime
+  if (!backendUuid) {
+    return
+  }
 
-  const [proxyRes, providerRes] = await Promise.all([fetchProxiesAPI(), fetchProxyProviderAPI()])
+  const controller = new AbortController()
+
+  fetchAbortController?.abort()
+  fetchAbortController = controller
+
+  let proxyRes: Awaited<ReturnType<typeof fetchProxiesAPI>>
+  let providerRes: Awaited<ReturnType<typeof fetchProxyProviderAPI>>
+
+  try {
+    ;[proxyRes, providerRes] = await Promise.all([
+      fetchProxiesAPI(controller.signal),
+      fetchProxyProviderAPI(controller.signal),
+    ])
+  } catch (error) {
+    if (isRequestCanceled(error)) return
+    throw error
+  } finally {
+    if (fetchAbortController === controller) {
+      fetchAbortController = undefined
+    }
+  }
+
   const proxyData = proxyRes.data
   const providerData = providerRes.data
 
-  if (fetchTime !== nowTime) {
+  if (fetchSequence !== sequence || activeUuid.value !== backendUuid) {
     return
   }
 
@@ -177,43 +222,81 @@ export const fetchProxies = async () => {
 
   if (smartGroups.length > 0) {
     initSmartWeights(smartGroups)
+  } else {
+    clearSmartWeights()
   }
 }
 
 export const handlerProxySelect = async (proxyGroupName: string, proxyName: string) => {
   const proxyGroup = proxyMap.value[proxyGroupName]
+  const backendUuid = activeUuid.value
 
+  if (!backendUuid) return
+  if (!proxyGroup) return
   if (proxyGroup.type.toLowerCase() === PROXY_TYPE.LoadBalance) return
   if (proxyGroup.now === proxyName) {
     await fetchProxies()
-    if (proxyGroup.now === proxyName) return
+    if (!isBackendCurrent(backendUuid)) return
+    if (proxyMap.value[proxyGroupName]?.now === proxyName) return
   }
 
   await selectProxyAPI(proxyGroupName, proxyName)
+  if (activeUuid.value !== backendUuid || !proxyMap.value[proxyGroupName]) return
+
   proxyMap.value[proxyGroupName].now = proxyName
 
   if (automaticDisconnection.value) {
-    activeConnections.value
-      .filter((c) => c.chains.includes(proxyGroupName))
-      .forEach((c) => disconnectByIdAPI(c.id))
+    await Promise.allSettled(
+      activeConnections.value
+        .filter((c) => c.chains.includes(proxyGroupName))
+        .map((c) => disconnectByIdAPI(c.id)),
+    )
   }
   fetchProxies()
 }
 
-const latencyTestForSingle = async (proxyName: string, url: string, timeout: number) => {
+const latencyTestForSingle = async (
+  proxyName: string,
+  url: string,
+  timeout: number,
+  backendUuid = activeUuid.value,
+  signal?: AbortSignal,
+) => {
+  if (signal?.aborted || !isBackendCurrent(backendUuid)) return null
+
   const now = getNowProxyNodeName(proxyName)
 
   if (IPv6test.value) {
     try {
-      const { data: ipv6LatencyResult } = await fetchProxyLatencyAPI(now, IPV6_TEST_URL, 2000)
+      const { data: ipv6LatencyResult } = await fetchProxyLatencyAPI(
+        now,
+        IPV6_TEST_URL,
+        2000,
+        signal,
+      )
+
+      if (signal?.aborted || !isBackendCurrent(backendUuid)) return null
 
       IPv6Map.value[now] = ipv6LatencyResult.delay > NOT_CONNECTED
-    } catch {
+    } catch (error) {
+      if (isRequestCanceled(error) || signal?.aborted || !isBackendCurrent(backendUuid)) return null
+
       IPv6Map.value[now] = false
     }
   }
 
-  return await fetchProxyLatencyAPI(independentLatencyTest.value ? proxyName : now, url, timeout)
+  if (signal?.aborted || !isBackendCurrent(backendUuid)) return null
+
+  const res = await fetchProxyLatencyAPI(
+    independentLatencyTest.value ? proxyName : now,
+    url,
+    timeout,
+    signal,
+  )
+
+  if (signal?.aborted || !isBackendCurrent(backendUuid)) return null
+
+  return res
 }
 
 const getNameForNotification = (name: string, url: string) => {
@@ -228,9 +311,16 @@ export const proxyLatencyTest = async (
   proxyName: string,
   url = speedtestUrlWithDefault.value,
   timeout = speedtestTimeout.value,
+  signal?: AbortSignal,
 ) => {
-  const res = await latencyTestForSingle(proxyName, url, timeout)
+  const backendUuid = activeUuid.value
+  const res = await latencyTestForSingle(proxyName, url, timeout, backendUuid, signal)
+
+  if (!res || signal?.aborted || !isBackendCurrent(backendUuid)) return
+
   await fetchProxies()
+
+  if (signal?.aborted || !isBackendCurrent(backendUuid)) return
 
   if (res.status !== 200) {
     showNotification({
@@ -243,9 +333,13 @@ export const proxyLatencyTest = async (
   }
 }
 
-const setHistory = (proxyName: string, delay: number) => {
+const setHistory = (proxyName: string, delay: number, backendUuid = activeUuid.value) => {
+  if (!isBackendCurrent(backendUuid)) return
+
   const history = getHistoryByName(proxyName)
   const now = new Date()
+
+  if (!history) return
 
   history.push({
     time: now.toISOString(),
@@ -259,6 +353,8 @@ const testLatencyOneByOneWithTip = async (
   proxyGroupName: string,
   nodes: string[],
   url = speedtestUrlWithDefault.value,
+  backendUuid = activeUuid.value,
+  signal?: AbortSignal,
 ) => {
   const total = nodes.length
   let testDone = 0
@@ -267,13 +363,23 @@ const testLatencyOneByOneWithTip = async (
   await Promise.allSettled(
     nodes.map((name) =>
       limiter(async () => {
-        const res = await latencyTestForSingle(name, url, Math.min(2000, speedtestTimeout.value))
+        if (signal?.aborted || !isBackendCurrent(backendUuid)) return
+
+        const res = await latencyTestForSingle(
+          name,
+          url,
+          Math.min(2000, speedtestTimeout.value),
+          backendUuid,
+          signal,
+        )
+
+        if (!res || signal?.aborted || !isBackendCurrent(backendUuid)) return
 
         if (res.status !== 200) {
           testFailed++
-          setHistory(name, NOT_CONNECTED)
+          setHistory(name, NOT_CONNECTED, backendUuid)
         } else {
-          setHistory(name, res.data.delay)
+          setHistory(name, res.data.delay, backendUuid)
         }
         testDone++
         showNotification({
@@ -290,6 +396,9 @@ const testLatencyOneByOneWithTip = async (
       }),
     ),
   )
+
+  if (signal?.aborted || !isBackendCurrent(backendUuid)) return
+
   showNotification({
     content: 'testFinishedResultTip',
     key: TIP_KEY + proxyGroupName,
@@ -305,8 +414,17 @@ const testLatencyOneByOneWithTip = async (
   await fetchProxies()
 }
 
-export const proxyGroupLatencyTest = async (proxyGroupName: string) => {
+export const proxyGroupLatencyTest = async (
+  proxyGroupName: string,
+  backendUuid = activeUuid.value,
+  signal?: AbortSignal,
+) => {
+  if (signal?.aborted || !isBackendCurrent(backendUuid)) return
+
   const proxyNode = proxyMap.value[proxyGroupName]
+
+  if (!proxyNode) return
+
   const all = proxyNode.all ?? []
   const url = getTestUrl(proxyGroupName)
 
@@ -317,9 +435,10 @@ export const proxyGroupLatencyTest = async (proxyGroupName: string) => {
     )
   ) {
     if (proxyNode.fixed) {
-      deleteFixedProxyAPI(proxyGroupName)
+      await deleteFixedProxyAPI(proxyGroupName)
+      if (signal?.aborted || !isBackendCurrent(backendUuid)) return
     }
-    return testLatencyOneByOneWithTip(proxyGroupName, all, url)
+    return testLatencyOneByOneWithTip(proxyGroupName, all, url, backendUuid, signal)
   }
 
   const timeout = Math.max(5000, speedtestTimeout.value)
@@ -330,19 +449,29 @@ export const proxyGroupLatencyTest = async (proxyGroupName: string) => {
         proxyGroupName,
         IPV6_TEST_URL,
         timeout,
+        signal,
       )
+
+      if (signal?.aborted || !isBackendCurrent(backendUuid)) return
 
       all?.forEach((name) => {
         IPv6Map.value[getNowProxyNodeName(name)] = ipv6LatencyResult[name] > NOT_CONNECTED
       })
-    } catch {
+    } catch (error) {
+      if (isRequestCanceled(error) || signal?.aborted || !isBackendCurrent(backendUuid)) return
+
       all?.forEach((name) => {
         IPv6Map.value[getNowProxyNodeName(name)] = false
       })
     }
   }
-  await fetchProxyGroupLatencyAPI(proxyGroupName, url, timeout)
+  await fetchProxyGroupLatencyAPI(proxyGroupName, url, timeout, signal)
+
+  if (signal?.aborted || !isBackendCurrent(backendUuid)) return
+
   await fetchProxies()
+
+  if (signal?.aborted || !isBackendCurrent(backendUuid)) return
 
   const total = all.length
   const testFailed = all.filter(
@@ -363,22 +492,32 @@ export const proxyGroupLatencyTest = async (proxyGroupName: string) => {
   })
 }
 
-export const allProxiesLatencyTest = async () => {
+export const allProxiesLatencyTest = async (signal?: AbortSignal) => {
+  const backendUuid = activeUuid.value
+
   if (independentLatencyTest.value) {
     const limit = pLimit(3)
 
-    return await Promise.all(
+    await Promise.allSettled(
       proxyGroupList.value.map((proxyGroupName) =>
         limit(async () => {
-          await proxyGroupLatencyTest(proxyGroupName)
+          if (signal?.aborted) return
+          await proxyGroupLatencyTest(proxyGroupName, backendUuid, signal)
         }),
       ),
     )
+    return
   }
 
   const proxyNode = Object.keys(proxyMap.value).filter((proxy) => !isProxyGroup(proxy))
 
-  return testLatencyOneByOneWithTip('all', proxyNode)
+  return testLatencyOneByOneWithTip(
+    'all',
+    proxyNode,
+    speedtestUrlWithDefault.value,
+    backendUuid,
+    signal,
+  )
 }
 
 const getLatencyFromHistory = (history: Proxy['history']) => {

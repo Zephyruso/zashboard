@@ -34,6 +34,8 @@ const en = {
   chains: 'Chains',
   outbound: 'Outbound',
   sortBy: 'Sort by',
+  sortAscending: 'Sort ascending',
+  sortDescending: 'Sort descending',
   rule: 'Rule',
   sourceIP: 'Source IP',
   activeConnections: 'Active',
@@ -104,6 +106,9 @@ const en = {
   truncateProxyName: 'Truncate proxy name',
   disableProxiesPageTextSelect: 'Disable text selection on proxies page',
   sourceIPLabels: 'Source IP labels',
+  addSourceIPLabel: 'Add source IP label',
+  deleteSourceIPLabel: 'Delete source IP label',
+  sourceIPLabelScope: 'Source IP label scope',
   proxyPreviewType: 'Proxy preview type',
   auto: 'Auto',
   dots: 'Dots',
@@ -148,6 +153,7 @@ const en = {
     'The current backend is unavailable. Would you like to switch to another backend?',
   confirm: 'Confirm',
   backendSwitchTo: 'Switched backend to {backend}',
+  backendSwitchFailed: 'No available backend was found.',
 
   // Backend settings
   ipv6Test: 'IPv6 test',
@@ -231,6 +237,13 @@ const en = {
   displaySelectedNode: 'Show selected node',
   displayLatencyNumber: 'Show latency numbers',
   disconnectOnRuleDisable: 'Disconnect matching connections when a rule is disabled',
+  disconnectConnection: 'Disconnect connection',
+  blockConnection: 'Block connection',
+  backgroundOptions: 'Background options',
+  groupByColumn: 'Group by {name}',
+  ungroupColumn: 'Ungroup {name}',
+  pinColumn: 'Pin {name}',
+  unpinColumn: 'Unpin {name}',
   tipForFixed:
     'The current policy group is locked to the current node. Run a speed test to restore {type} behavior.',
   remoteAddress: 'Remote address',
@@ -238,6 +251,9 @@ const en = {
   moreDetails: 'More details',
   moreSettings: 'More settings',
   customIcon: 'Custom icon',
+  addCustomIcon: 'Add custom icon',
+  editCustomIcon: 'Edit custom icons',
+  deleteCustomIcon: 'Delete custom icon',
   dropOrClickUpload: 'Drop an image or paste a URL',
   disablePullToRefresh: 'Disable pull to refresh',
   disablePullToRefreshTip:
@@ -246,6 +262,8 @@ const en = {
   keyboardShortcutsTip:
     'Click the input and press a key or key combination to set a shortcut. Press Backspace or Delete to clear it.',
   keyboardShortcutPageName: '{name} page',
+  resetShortcut: 'Reset {name} shortcut',
+  editKeyboardShortcuts: 'Edit keyboard shortcuts',
   toggleSidebar: 'Toggle sidebar',
   switchToPreviousBackend: 'Switch to previous backend',
   switchToNextBackend: 'Switch to next backend',
@@ -257,6 +275,8 @@ const en = {
   displayAllFeaturesTip:
     "Show all features, including those not supported by the official sing-box version. If you're using a forked version of sing-box that supports some of these features, you can try enabling them.",
   blurIntensity: 'Blur intensity',
+  lowPowerMode: 'Low Power Mode',
+  lowPowerModeTip: 'Reduces visual effects, animations, and polling rates to save power.',
   scrollAnimationEffect: 'Scroll animation effect',
 
   // Import, export, and upgrade
@@ -303,6 +323,9 @@ const en = {
   mmdbSizeTip: 'If you are using MMDB-format GEO files, this number will be 0.',
   displayFinalOutbound: 'Show final outbound node',
   groupTestUrls: 'Group test URLs',
+  addGroupTestUrl: 'Add group test URL',
+  editGroupTestUrls: 'Edit group test URLs',
+  deleteGroupTestUrl: 'Delete group test URL',
   groupTestUrlsTip:
     'For manual tests triggered from the dashboard, URL priority is: URLs set here > URLs in configuration > global test URLs. For groups like UrlTest/Fallback, you still need to modify URLs in the configuration, so this is mainly recommended for Selector scenarios.',
   groupName: 'Group name',
@@ -353,6 +376,42 @@ const en = {
   ruleLastHit: 'Last hit: {time}',
   ruleMissCount: 'Miss: {count} times',
   ruleLastMiss: 'Last miss: {time}',
+
+  // iOS context actions
+  copy: 'Copy',
+  copyFailed: 'Copy failed',
+  details: 'Details',
+  speedtest: 'Speed test',
+  switchProxy: 'Quick switch',
+  switchedTo: 'Switched to {name}',
+  enable: 'Enable',
+  disable: 'Disable',
+
+  // Accessibility & ARIA
+  mainNavigation: 'Main navigation',
+  skipToContent: 'Skip to main content',
+  backendSelector: 'Backend selector',
+  testAllLatency: 'Test all latency',
+  updateAllProviders: 'Update all providers',
+  collapseAll: 'Collapse all',
+  pauseStream: 'Pause stream',
+  resumeStream: 'Resume stream',
+  closeAllConnections: 'Close all connections',
+  clearLogs: 'Clear logs',
+  downloadLogs: 'Download logs',
+  noProxyGroups: 'No proxy groups',
+  noProxyGroupsDesc: 'No proxy groups are available. Check your backend configuration.',
+  noLogs: 'No logs',
+  noLogsDesc: 'Logs will appear here as traffic flows through the proxy.',
+  noRules: 'No rules',
+  noRulesDesc: 'No rules are configured on the current backend.',
+  noConnections: 'No active connections',
+  noConnectionsDesc: 'Active connections will appear here once traffic starts flowing.',
+  noClosedConnections: 'No closed connections',
+  noClosedConnectionsDesc: 'Closed connections will appear here.',
+  errorOccurred: 'Something went wrong',
+  retry: 'Retry',
+  loading: 'Loading',
 
   // Smart Core
   RarelyUsed: 'Rarely used',

@@ -35,8 +35,10 @@ export const getDashboardSettingsFromStorage = () => {
 
 export const applyDashboardSettingsToStorage = (settings: Record<string, unknown>) => {
   for (const key in settings) {
-    if (key.startsWith('config/')) {
-      localStorage.setItem(key, settings[key] as string)
+    const value = settings[key]
+
+    if (key.startsWith('config/') && typeof value === 'string') {
+      localStorage.setItem(key, value)
     }
   }
 }
@@ -75,7 +77,7 @@ export const getMinCardWidth = (size: PROXY_CARD_SIZE) => {
 
 export const PROXIES_PARENT_CLASS = 'proxies-scrollable-parent'
 
-export const scrollIntoCenter = (el: HTMLElement) => {
+export const scrollIntoCenter = (el: HTMLElement, behavior: ScrollBehavior = 'smooth') => {
   const scrollableParent = findScrollableParent(el)
 
   if (!scrollableParent) return
@@ -93,7 +95,7 @@ export const scrollIntoCenter = (el: HTMLElement) => {
 
   scrollableParent.scrollTo({
     top: centerOffset,
-    behavior: 'smooth',
+    behavior,
   })
 }
 

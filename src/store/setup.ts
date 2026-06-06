@@ -1,6 +1,6 @@
 import type { Backend } from '@/types'
 import { useStorage } from '@vueuse/core'
-import { isEqual, omit } from 'lodash'
+import { isEqual, omit } from 'lodash-es'
 import { v4 as uuid } from 'uuid'
 import { computed } from 'vue'
 import { sourceIPLabelList } from './settings'
@@ -61,6 +61,11 @@ export const updateBackend = (uuid: string, backend: Omit<Backend, 'uuid'>) => {
 
 export const removeBackend = (uuid: string) => {
   backendList.value = backendList.value.filter((end) => end.uuid !== uuid)
+
+  if (activeUuid.value === uuid) {
+    activeUuid.value = backendList.value[0]?.uuid || ''
+  }
+
   sourceIPLabelList.value.forEach((label) => {
     if (label.scope && label.scope.includes(uuid)) {
       label.scope = label.scope.filter((scope) => scope !== uuid)

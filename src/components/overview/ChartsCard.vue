@@ -1,14 +1,26 @@
 <template>
-  <div class="base-container w-full p-4">
+  <div class="base-container glass overview-card w-full p-4">
+    <div
+      v-if="!isReady"
+      class="grid grid-cols-2 gap-4 lg:grid-cols-3"
+    >
+      <SkeletonCard
+        v-for="i in 3"
+        :key="i"
+      />
+    </div>
     <!-- Surge-style stat cards -->
-    <div class="grid grid-cols-2 gap-3 lg:grid-cols-3">
+    <div
+      v-else
+      class="grid grid-cols-2 gap-4 lg:grid-cols-3"
+    >
       <!-- Upload Speed -->
-      <div class="bg-base-200/30 flex flex-col gap-1.5 rounded-xl p-4">
-        <div class="text-base-content/60 text-xs font-semibold tracking-wider uppercase">
+      <div class="overview-stat-card">
+        <div class="text-base-content/60 text-xs font-bold tracking-wider uppercase">
           {{ $t('upload') }}
         </div>
         <div class="flex items-baseline gap-1.5">
-          <span class="text-3xl font-extralight tabular-nums">{{ ulSpeedParts.value }}</span>
+          <span class="text-3xl font-light tabular-nums">{{ ulSpeedParts.value }}</span>
           <span class="text-base-content/60 text-sm">{{ ulSpeedParts.unit }}/s</span>
         </div>
         <div class="mt-1 h-14">
@@ -25,12 +37,12 @@
       </div>
 
       <!-- Download Speed -->
-      <div class="bg-base-200/30 flex flex-col gap-1.5 rounded-xl p-4">
-        <div class="text-base-content/60 text-xs font-semibold tracking-wider uppercase">
+      <div class="overview-stat-card">
+        <div class="text-base-content/60 text-xs font-bold tracking-wider uppercase">
           {{ $t('download') }}
         </div>
         <div class="flex items-baseline gap-1.5">
-          <span class="text-3xl font-extralight tabular-nums">{{ dlSpeedParts.value }}</span>
+          <span class="text-3xl font-light tabular-nums">{{ dlSpeedParts.value }}</span>
           <span class="text-base-content/60 text-sm">{{ dlSpeedParts.unit }}/s</span>
         </div>
         <div class="mt-1 h-14">
@@ -46,14 +58,14 @@
       </div>
 
       <!-- Active Connections -->
-      <div class="bg-base-200/30 col-span-2 flex flex-col gap-1.5 rounded-xl p-4 lg:col-span-1">
+      <div class="overview-stat-card col-span-2 lg:col-span-1">
         <div
-          class="text-base-content/60 flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
+          class="text-base-content/60 flex items-center gap-2 text-xs font-bold tracking-wider uppercase"
         >
           {{ $t('connections') }}
           <span class="bg-success inline-block h-1.5 w-1.5 rounded-full" />
         </div>
-        <div class="text-3xl font-extralight tabular-nums">
+        <div class="text-3xl font-light tabular-nums">
           {{ connectionCount }}
         </div>
         <div class="mt-1 h-14">
@@ -72,6 +84,7 @@
 </template>
 
 <script setup lang="ts">
+import SkeletonCard from '@/components/common/SkeletonCard.vue'
 import MiniSparkline from '@/components/overview/MiniSparkline.vue'
 import { getToolTipForParams } from '@/helper'
 import { prettyBytesHelper } from '@/helper/utils'
@@ -90,6 +103,15 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+
+const isReady = computed(() => {
+  return (
+    uploadSpeed.value > 0 ||
+    downloadSpeed.value > 0 ||
+    activeConnections.value.length > 0 ||
+    memory.value > 0
+  )
+})
 
 const splitBytes = (bytes: number) => {
   const str = prettyBytesHelper(bytes, { binary: false })

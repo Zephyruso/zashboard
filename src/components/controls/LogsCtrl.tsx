@@ -3,6 +3,7 @@ import { useCtrlsBar } from '@/composables/useCtrlsBar'
 import { LOG_LEVEL } from '@/constant'
 import { useTooltip } from '@/helper/tooltip'
 import {
+  clearLogs,
   initLogs,
   isPaused,
   logFilter,
@@ -24,8 +25,8 @@ import {
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
 import dayjs from 'dayjs'
-import { debounce } from 'lodash'
-import { computed, defineComponent, ref, watch } from 'vue'
+import { debounce } from 'lodash-es'
+import { computed, defineComponent, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CtrlsBar from '../common/CtrlsBar.vue'
 import DialogWrapper from '../common/DialogWrapper.vue'
@@ -55,6 +56,9 @@ export default defineComponent({
     }, 1500)
 
     watch(logFilter, insertLogSearchHistory)
+    onBeforeUnmount(() => {
+      insertLogSearchHistory.cancel()
+    })
 
     const logLevels = computed(() => {
       if (isSingBox.value) {
@@ -64,8 +68,8 @@ export default defineComponent({
     })
 
     const logFilterOptions = computed(() => {
-      const types: string[] = []
-      const levels: string[] = []
+      const types = new Set<string>()
+      const levels = new Set<string>()
 
       if (isSingBox.value) {
         for (const log of logs.value) {
@@ -73,36 +77,26 @@ export default defineComponent({
           const endIndex = log.payload.indexOf(':', startIndex)
           const type = log.payload.slice(startIndex, endIndex + 1)
 
-          if (!types.includes(type)) {
-            types.push(type)
-          }
-
-          if (!levels.includes(log.type)) {
-            levels.push(log.type)
-          }
+          types.add(type)
+          levels.add(log.type)
         }
       } else {
         for (const log of logs.value) {
           const index = log.payload.indexOf(' ')
           const type = index === -1 ? log.payload : log.payload.slice(0, index)
 
-          if (!types.includes(type)) {
-            types.push(type)
-          }
-
-          if (!levels.includes(log.type)) {
-            levels.push(log.type)
-          }
+          types.add(type)
+          levels.add(log.type)
         }
       }
 
       return {
-        levels: levels.sort((a, b) => {
+        levels: [...levels].sort((a, b) => {
           const aIdx = logLevels.value.indexOf(a as LOG_LEVEL)
           const bIdx = logLevels.value.indexOf(b as LOG_LEVEL)
           return aIdx - bIdx
         }),
-        types: types.sort(),
+        types: [...types].sort(),
       }
     })
 
@@ -136,6 +130,7 @@ export default defineComponent({
       const levelSelect = (
         <select
           class={['join-item select select-sm min-w-30']}
+          aria-label={t('logLevel')}
           v-model={logLevel.value}
           onChange={initLogs}
         >
@@ -168,6 +163,7 @@ export default defineComponent({
             'join-item select select-sm',
             isLargeCtrlsBar.value ? 'w-36' : 'w-24 max-w-40 flex-1',
           ]}
+          aria-label={t('logType')}
           v-model={logTypeFilter.value}
         >
           <option value="">{t('all')}</option>
@@ -197,10 +193,15 @@ export default defineComponent({
       const settingsModal = (
         <>
           <button
-            class={'btn btn-circle btn-sm'}
+            type="button"
+            class="btn btn-circle btn-sm shrink-0"
+            aria-label={t('settings')}
             onClick={() => (settingsModel.value = true)}
           >
-            <WrenchScrewdriverIcon class="h-4 w-4" />
+            <WrenchScrewdriverIcon
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
           </button>
           <DialogWrapper
             v-model={settingsModel.value}
@@ -214,6 +215,7 @@ export default defineComponent({
                     class="input input-sm w-20"
                     type="number"
                     max="9999"
+                    aria-label={t('logRetentionLimit')}
                     v-model={logRetentionLimit.value}
                   />
                 </div>
@@ -227,19 +229,32 @@ export default defineComponent({
                 <div class="setting-item">
                   <div class="setting-item-label flex items-center gap-2">
                     <span>{t('hideLog')}</span>
-                    <div
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-xs btn-circle h-6 min-h-6 w-6"
+                      aria-label={t('hideLogTip')}
+                      title={t('hideLogTip')}
                       onMouseenter={(e) =>
                         showTip(e, t('hideLogTip'), {
                           appendTo: 'parent',
                         })
                       }
+                      onFocus={(e) =>
+                        showTip(e, t('hideLogTip'), {
+                          appendTo: 'parent',
+                        })
+                      }
                     >
-                      <QuestionMarkCircleIcon class="h-4 w-4" />
-                    </div>
+                      <QuestionMarkCircleIcon
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                      />
+                    </button>
                   </div>
                   <input
                     type="checkbox"
                     class="toggle toggle-sm"
+                    aria-label={t('hideLog')}
                     v-model={logFilterEnabled.value}
                   />
                 </div>
@@ -253,13 +268,20 @@ export default defineComponent({
         <div class="flex items-center gap-2">
           {settingsModal}
           <button
-            class="btn btn-circle btn-sm"
+            type="button"
+            class="btn btn-circle btn-sm shrink-0"
+            aria-label={t('downloadLogs')}
             onClick={downloadAllLogs}
           >
-            <ArrowDownTrayIcon class="h-4 w-4" />
+            <ArrowDownTrayIcon
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
           </button>
           <button
-            class="btn btn-circle btn-sm"
+            type="button"
+            class="btn btn-circle btn-sm shrink-0"
+            aria-label={logFilterEnabled.value ? t('showLog') : t('hideLog')}
             onClick={() => {
               logFilterEnabled.value = !logFilterEnabled.value
               updateTip(logFilterEnabled.value ? t('showLog') : t('hideLog'))
@@ -271,22 +293,45 @@ export default defineComponent({
             }
           >
             {logFilterEnabled.value ? (
-              <LinkSlashIcon class="h-4 w-4" />
+              <LinkSlashIcon
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
             ) : (
-              <LinkIcon class="h-4 w-4" />
+              <LinkIcon
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
             )}
           </button>
           <button
-            class="btn btn-circle btn-sm"
+            type="button"
+            class="btn btn-circle btn-sm shrink-0"
+            aria-label={isPaused.value ? t('resumeStream') : t('pauseStream')}
             onClick={() => (isPaused.value = !isPaused.value)}
           >
-            {isPaused.value ? <PlayIcon class="h-4 w-4" /> : <PauseIcon class="h-4 w-4" />}
+            {isPaused.value ? (
+              <PlayIcon
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+            ) : (
+              <PauseIcon
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+            )}
           </button>
           <button
-            class="btn btn-circle btn-sm"
-            onClick={() => (logs.value = [])}
+            type="button"
+            class="btn btn-circle btn-sm shrink-0"
+            aria-label={t('clearLogs')}
+            onClick={clearLogs}
           >
-            <XMarkIcon class="h-4 w-4" />
+            <XMarkIcon
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
           </button>
         </div>
       )

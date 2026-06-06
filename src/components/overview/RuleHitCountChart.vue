@@ -10,6 +10,7 @@
           ? 'border-b-primary/30 border-t-primary/60 border-l-primary/30 border-r-primary/60 text-base-content/10 bg-base-100/70 hidden'
           : 'border-b-info/30 border-t-info/60 border-l-info/30 border-r-info/60 text-base-content/10 bg-base-100/70 hidden'
       "
+      style="outline-color: var(--color-base-content)"
       ref="colorRef"
     />
     <div
@@ -21,7 +22,9 @@
       </div>
     </div>
     <button
+      type="button"
       class="btn btn-ghost btn-xs absolute right-1 bottom-0"
+      :aria-label="isPaused ? t('resumeStream') : t('pauseStream')"
       @click="isPaused = !isPaused"
     >
       <component
@@ -33,18 +36,17 @@
 </template>
 
 <script setup lang="ts">
+import { useEChart } from '@/composables/echarts'
 import { isMiddleScreen } from '@/helper/utils'
 import { rules } from '@/store/rules'
-import { font, theme } from '@/store/settings'
+import { font, lowPowerMode, theme } from '@/store/settings'
 import type { Rule } from '@/types'
 import { PauseCircleIcon, PlayCircleIcon } from '@heroicons/vue/24/outline'
-import { useElementSize } from '@vueuse/core'
 import { BarChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { debounce } from 'lodash'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 echarts.use([BarChart, GridComponent, TooltipComponent, CanvasRenderer])
@@ -54,10 +56,12 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const colorRef = ref()
-const chart = ref()
+const colorRef = ref<HTMLElement | null>(null)
+const chart = ref<HTMLElement | null>(null)
 const isPaused = ref(false)
-const colorSet = {
+// Reactive: theme switches mutate this map and we want every downstream
+// `computed` (options) to recompute automatically.
+const colorSet = reactive({
   primary30: '',
   primary60: '',
   info30: '',
@@ -65,14 +69,15 @@ const colorSet = {
   baseContent10: '',
   baseContent: '',
   base70: '',
-}
+})
 
-let fontFamily = ''
+const fontFamily = ref('')
 
 const updateColorSet = () => {
+  if (!colorRef.value) return
   const colorStyle = getComputedStyle(colorRef.value)
 
-  colorSet.baseContent = colorStyle.getPropertyValue('--color-base-content').trim()
+  colorSet.baseContent = colorStyle.outlineColor
   colorSet.base70 = colorStyle.backgroundColor
   colorSet.baseContent10 = colorStyle.color
   if (props.type === 'hit') {
@@ -85,8 +90,9 @@ const updateColorSet = () => {
 }
 
 const updateFontFamily = () => {
+  if (!colorRef.value) return
   const baseColorStyle = getComputedStyle(colorRef.value)
-  fontFamily = baseColorStyle.fontFamily
+  fontFamily.value = baseColorStyle.fontFamily
 }
 
 const barData = computed(() => {
@@ -94,7 +100,7 @@ const barData = computed(() => {
   const getValue = (rule: Rule) => {
     return props.type === 'hit' ? rule.extra?.hitCount || 0 : rule.extra?.missCount || 0
   }
-  const rulesWithCount = rules.value
+  const rulesWithCount = [...rules.value]
     .filter((rule) => rule.extra)
     .sort((a, b) => getValue(b) - getValue(a))
     .slice(0, maxItems)
@@ -107,7 +113,7 @@ const barData = computed(() => {
   return rulesWithCount
 })
 
-const options = computed(() => {
+const chartOptions = () => {
   if (barData.value.length === 0) {
     return {}
   }
@@ -127,7 +133,7 @@ const options = computed(() => {
       padding: [8, 12],
       textStyle: {
         color: colorSet.baseContent,
-        fontFamily,
+        fontFamily: fontFamily.value,
       },
       formatter: (params: { name: string; value: number }) => {
         const param = Array.isArray(params) ? params[0] : params
@@ -154,7 +160,7 @@ const options = computed(() => {
       axisTick: { show: false },
       axisLabel: {
         color: colorSet.baseContent,
-        fontFamily,
+        fontFamily: fontFamily.value,
       },
     },
     yAxis: {
@@ -170,7 +176,7 @@ const options = computed(() => {
       },
       axisLabel: {
         color: colorSet.baseContent,
-        fontFamily,
+        fontFamily: fontFamily.value,
       },
     },
     series: [
@@ -198,7 +204,7 @@ const options = computed(() => {
             return params.value
           },
           color: colorSet.baseContent,
-          fontFamily,
+          fontFamily: fontFamily.value,
         },
         emphasis: {
           itemStyle: {
@@ -208,75 +214,47 @@ const options = computed(() => {
       },
     ],
   }
-})
+}
 
-let myChart: echarts.ECharts | null = null
-let touchEndHandler: ((e: TouchEvent) => void) | null = null
+const { chartInstance } = useEChart(chart, (element) =>
+  echarts.init(element, undefined, { renderer: 'canvas', useDirtyRect: true }),
+)
+
+const setChartOptions = () => {
+  if (isPaused.value || lowPowerMode.value) return
+  if (!chartInstance.value) return
+  if (barData.value.length === 0) {
+    chartInstance.value.clear()
+    return
+  }
+  chartInstance.value.setOption(chartOptions(), { notMerge: false, lazyUpdate: true })
+}
+
+watch(theme, () => {
+  updateColorSet()
+  setChartOptions()
+})
+watch(font, () => {
+  updateFontFamily()
+  setChartOptions()
+})
+watch(
+  () => props.type,
+  () => {
+    updateColorSet()
+    setChartOptions()
+  },
+)
+watch(barData, setChartOptions)
+watch(isMiddleScreen, setChartOptions)
+watch(lowPowerMode, (enabled) => {
+  if (enabled) return
+  setChartOptions()
+})
 
 onMounted(() => {
   updateColorSet()
   updateFontFamily()
-
-  watch(theme, updateColorSet)
-  watch(font, updateFontFamily)
-  watch(() => props.type, updateColorSet)
-
-  myChart = echarts.init(chart.value)
-
-  myChart.setOption(options.value)
-
-  watch(options, () => {
-    if (isPaused.value) {
-      return
-    }
-    myChart?.setOption(options.value)
-  })
-
-  watch(barData, () => {
-    if (isPaused.value) {
-      return
-    }
-    if (myChart && barData.value.length > 0) {
-      myChart.setOption(options.value)
-    } else if (myChart && barData.value.length === 0) {
-      myChart.clear()
-    }
-  })
-
-  watch(isMiddleScreen, () => {
-    if (isPaused.value) {
-      return
-    }
-    if (myChart && barData.value.length > 0) {
-      myChart.setOption(options.value)
-    }
-  })
-
-  const { width } = useElementSize(chart)
-  const resize = debounce(() => {
-    myChart?.resize()
-  }, 100)
-
-  watch(width, resize)
-
-  // 移动端：松手后自动隐藏 tooltip
-  if (isMiddleScreen.value && chart.value) {
-    touchEndHandler = () => {
-      if (myChart) {
-        myChart.dispatchAction({ type: 'hideTip' })
-      }
-    }
-    chart.value.addEventListener('touchend', touchEndHandler)
-  }
-})
-
-onUnmounted(() => {
-  if (chart.value && touchEndHandler) {
-    chart.value.removeEventListener('touchend', touchEndHandler)
-  }
-  if (myChart) {
-    myChart.dispose()
-    myChart = null
-  }
+  setChartOptions()
 })
 </script>

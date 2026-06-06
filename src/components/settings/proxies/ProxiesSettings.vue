@@ -11,10 +11,19 @@
         >
           <div class="setting-item-label">
             {{ $t('speedtestMode') }}
-            <QuestionMarkCircleIcon
-              class="h-4 w-4"
+            <button
+              type="button"
+              class="btn btn-ghost btn-xs btn-circle h-6 min-h-6 w-6"
+              :aria-label="$t('speedtestModeTip')"
+              :title="$t('speedtestModeTip')"
               @mouseenter="speedtestModeTip"
-            />
+              @focus="speedtestModeTip"
+            >
+              <QuestionMarkCircleIcon
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+            </button>
           </div>
           <select
             class="select select-sm min-w-24"
@@ -102,10 +111,19 @@
         >
           <div class="setting-item-label">
             {{ $t('independentLatencyTest') }}
-            <QuestionMarkCircleIcon
-              class="h-4 w-4"
+            <button
+              type="button"
+              class="btn btn-ghost btn-xs btn-circle h-6 min-h-6 w-6"
+              :aria-label="$t('independentLatencyTestTip')"
+              :title="$t('independentLatencyTestTip')"
               @mouseenter="independentLatencyTestTip"
-            />
+              @focus="independentLatencyTestTip"
+            >
+              <QuestionMarkCircleIcon
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+            </button>
           </div>
           <input
             class="toggle"

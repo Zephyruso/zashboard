@@ -1,0 +1,97 @@
+/*
+ * Responsive utilities & accessibility helpers for the iOS-style redesign.
+ *
+ * Imported via main.css after motion.css; relies on the iOS tokens declared
+ * in ios-variables.css.
+ */
+
+/* Safe-area helper utilities — handy on docks, dialogs and full-bleed pages. */
+.ios-safe-top {
+  padding-top: var(--ios-safe-top);
+}
+.ios-safe-bottom {
+  padding-bottom: var(--ios-safe-bottom);
+}
+.ios-safe-left {
+  padding-left: var(--ios-safe-left);
+}
+.ios-safe-right {
+  padding-right: var(--ios-safe-right);
+}
+.ios-safe-y {
+  padding-top: var(--ios-safe-top);
+  padding-bottom: var(--ios-safe-bottom);
+}
+
+/* Touch target floor — keeps interactive surfaces ≥ 44px per HIG. */
+.ios-touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Honor system high-contrast preference: thicken separators and outlines. */
+@media (prefers-contrast: more) {
+  :root,
+  [data-theme] {
+    --color-base-border: color-mix(in srgb, var(--color-base-content) 24%, transparent);
+    --ios-separator: color-mix(in srgb, var(--color-base-content) 28%, transparent);
+  }
+
+  .base-container,
+  .card,
+  .collapse,
+  .settings-grid {
+    border-width: 1px !important;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--ios-system-blue) !important;
+    outline-offset: 3px !important;
+  }
+}
+
+/*
+ * Reduced-motion: remove non-essential transitions/animations so the UI
+ * behaves predictably for users who opted out.
+ *
+ * The motion tokens (--ios-duration-*) are already pinned to ~0ms in
+ * ios-variables.css, but this rule covers third-party utilities that hard-code
+ * transition durations.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.low-power-mode *,
+.low-power-mode *::before,
+.low-power-mode *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+.low-power-mode :not(:focus-visible) {
+  box-shadow: none !important;
+}
+
+/* Phone-only stacking adjustments. */
+@media (max-width: 480px) {
+  .ios-phone-hidden {
+    display: none !important;
+  }
+}
+
+/* Desktop-only conveniences — used by sidebar/dock related layouts. */
+@media (min-width: 1025px) {
+  .ios-desktop-only {
+    display: revert;
+  }
+}

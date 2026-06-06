@@ -7,10 +7,15 @@
       <span class="mx-1">|</span>
       <BackendVersion />
       <button
-        class="btn btn-circle btn-sm absolute top-2 right-2"
+        class="btn btn-circle btn-ghost btn-sm touch-target text-ios-blue absolute top-2 right-2"
+        :aria-label="$t('settings')"
+        :title="$t('settings')"
         @click="showCardSettingsDialog = true"
       >
-        <Cog6ToothIcon class="h-4 w-4" />
+        <Cog6ToothIcon
+          class="h-4 w-4"
+          aria-hidden="true"
+        />
       </button>
     </div>
     <OverviewCardSettingsDialog v-model="showCardSettingsDialog" />

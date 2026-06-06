@@ -3,16 +3,31 @@
     <div class="setting-item-label">
       {{ $t('groupTestUrls') }}
       <template v-if="groupTestUrls.length"> ({{ groupTestUrls.length }}) </template>
-      <QuestionMarkCircleIcon
-        class="h-4 w-4"
+      <button
+        type="button"
+        class="btn btn-ghost btn-xs btn-circle h-6 min-h-6 w-6"
+        :aria-label="$t('groupTestUrlsTip')"
+        :title="$t('groupTestUrlsTip')"
         @mouseenter="groupTestUrlsTip"
-      />
+        @focus="groupTestUrlsTip"
+      >
+        <QuestionMarkCircleIcon
+          class="h-4 w-4"
+          aria-hidden="true"
+        />
+      </button>
     </div>
     <button
+      type="button"
       class="btn btn-sm"
+      :aria-label="$t('editGroupTestUrls')"
+      :title="$t('editGroupTestUrls')"
       @click="dialogVisible = true"
     >
-      <PencilSquareIcon class="h-4 w-4" />
+      <PencilSquareIcon
+        class="h-4 w-4"
+        aria-hidden="true"
+      />
     </button>
   </div>
 
@@ -34,7 +49,10 @@
               :clearable="true"
               :placeholder="$t('groupName')"
             />
-            <ArrowRightCircleIcon class="h-4 w-4 shrink-0" />
+            <ArrowRightCircleIcon
+              class="h-4 w-4 shrink-0"
+              aria-hidden="true"
+            />
             <TextInput
               class="max-w-96 flex-1"
               v-model="groupTestUrl.url"
@@ -42,10 +60,16 @@
               :placeholder="$t('speedtestUrl')"
             />
             <button
-              class="btn btn-sm btn-circle"
+              type="button"
+              class="btn btn-sm btn-circle touch-target"
+              :aria-label="$t('deleteGroupTestUrl')"
+              :title="$t('deleteGroupTestUrl')"
               @click="removeGroupTestUrl(groupTestUrl.uuid)"
             >
-              <TrashIcon class="h-4 w-4 shrink-0" />
+              <TrashIcon
+                class="h-4 w-4 shrink-0"
+                aria-hidden="true"
+              />
             </button>
           </div>
         </template>
@@ -60,7 +84,10 @@
           "
           @keydown.enter="() => addGroupTestUrl()"
         />
-        <ArrowRightCircleIcon class="h-4 w-4 shrink-0" />
+        <ArrowRightCircleIcon
+          class="h-4 w-4 shrink-0"
+          aria-hidden="true"
+        />
         <TextInput
           class="max-w-96 flex-1"
           v-model="newGroupTestUrl.url"
@@ -69,10 +96,16 @@
           @keydown.enter="() => addGroupTestUrl()"
         />
         <button
-          class="btn btn-sm btn-circle"
+          type="button"
+          class="btn btn-sm btn-circle touch-target"
+          :aria-label="$t('addGroupTestUrl')"
+          :title="$t('addGroupTestUrl')"
           @click="() => addGroupTestUrl()"
         >
-          <PlusIcon class="h-4 w-4 shrink-0" />
+          <PlusIcon
+            class="h-4 w-4 shrink-0"
+            aria-hidden="true"
+          />
         </button>
       </div>
     </div>

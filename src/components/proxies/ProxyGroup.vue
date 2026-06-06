@@ -21,7 +21,10 @@
         <ProxyGroupFilter :group-name="name" />
         <button
           v-if="manageHiddenGroup"
+          type="button"
           class="btn btn-circle btn-xs"
+          :aria-label="hiddenGroup ? t('showConnection') : t('hideConnection')"
+          :title="hiddenGroup ? t('showConnection') : t('hideConnection')"
           @click.stop="handlerGroupToggle"
         >
           <EyeIcon
@@ -34,7 +37,7 @@
           />
         </button>
         <LatencyTag
-          :class="twMerge('bg-base-200/50 hover:bg-base-200')"
+          :class="LATENCY_TAG_CLASS"
           :loading="isLatencyTesting"
           :name="proxyGroup.now"
           :group-name="proxyGroup.name"
@@ -75,7 +78,7 @@ import { useRenderProxyList } from '@/composables/renderProxies'
 import { isHiddenGroup } from '@/helper'
 import { checkTruncation } from '@/helper/tooltip'
 import { prettyBytesHelper } from '@/helper/utils'
-import { activeConnections } from '@/store/connections'
+import { activeConnectionChainStats } from '@/store/connections'
 import {
   handlerProxySelect,
   hiddenGroupMap,
@@ -89,8 +92,8 @@ import {
   proxyGroupIconSize,
 } from '@/store/settings'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
-import { twMerge } from 'tailwind-merge'
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import CollapseCard from '../common/CollapseCard.vue'
 import LatencyTag from './LatencyTag.vue'
 import ProxiesByProvider from './ProxiesByProvider.vue'
@@ -104,27 +107,40 @@ const props = defineProps<{
   name: string
   forceOpen?: boolean
 }>()
+const LATENCY_TAG_CLASS = 'bg-base-200/50 hover:bg-base-200'
+const { t } = useI18n()
 const proxyGroup = computed(() => proxyMap.value[props.name])
 const allProxies = computed(() => proxyGroup.value.all ?? [])
 const { proxiesCount, renderProxies } = useRenderProxyList(allProxies, props.name)
 const isLatencyTesting = ref(false)
+let latencyTestController: AbortController | undefined
+let latencyTestSeq = 0
+
+const isCurrentLatencyTest = (controller: AbortController, seq: number) => {
+  return latencyTestController === controller && latencyTestSeq === seq
+}
+
 const handlerLatencyTest = async () => {
   if (isLatencyTesting.value) return
 
+  latencyTestController?.abort()
+  const controller = new AbortController()
+  const seq = ++latencyTestSeq
+  latencyTestController = controller
   isLatencyTesting.value = true
   try {
-    await proxyGroupLatencyTest(props.name)
-    isLatencyTesting.value = false
+    await proxyGroupLatencyTest(props.name, undefined, controller.signal)
   } catch {
-    isLatencyTesting.value = false
+    // Request interceptor surfaces API failures; keep this click handler settled.
+  } finally {
+    if (isCurrentLatencyTest(controller, seq)) {
+      isLatencyTesting.value = false
+      latencyTestController = undefined
+    }
   }
 }
 const downloadTotal = computed(() => {
-  const speed = activeConnections.value
-    .filter((conn) => conn.chains.includes(props.name))
-    .reduce((total, conn) => total + conn.downloadSpeed, 0)
-
-  return speed
+  return activeConnectionChainStats.value.get(props.name)?.downloadSpeed ?? 0
 })
 
 const hiddenGroup = computed({
@@ -139,4 +155,10 @@ const handlerGroupToggle = () => {
 }
 
 useBounceOnVisible()
+
+onBeforeUnmount(() => {
+  latencyTestController?.abort()
+  latencyTestSeq += 1
+  latencyTestController = undefined
+})
 </script>

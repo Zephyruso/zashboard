@@ -17,14 +17,24 @@
       <div
         class="relative flex-1 overflow-hidden"
         ref="swiperRef"
+        style="touch-action: pan-y"
       >
-        <div class="absolute flex h-full w-full flex-col overflow-y-auto">
-          <Transition
-            :name="(route.meta.transition as string) || 'fade'"
+        <div
+          class="smooth-scroll-container absolute inset-0 flex h-full w-full flex-col overflow-x-hidden overflow-y-auto"
+        >
+          <div
             v-if="isMiddleScreen"
+            :key="route.fullPath"
+            ref="routePageRef"
+            class="route-page"
+            :class="[
+              getRouteEnterClass(route.meta.transition as string),
+              isRouteDragging && 'route-page-dragging',
+              !shouldAnimateRouteTransition && 'route-page-transition-disabled',
+            ]"
           >
             <Component :is="Component" />
-          </Transition>
+          </div>
           <Component
             v-else
             :is="Component"
@@ -32,44 +42,41 @@
         </div>
 
         <template v-if="isMiddleScreen">
-          <div
-            class="bg-base-100/20 dock dock-xs z-10 h-14 w-auto shadow-sm backdrop-blur-sm"
-            :style="{
-              padding: '0',
-              bottom: 'calc(var(--spacing) * 2 + env(safe-area-inset-bottom))',
-            }"
-            ref="dockRef"
+          <Transition
+            name="v-slide-up"
+            appear
           >
-            <button
-              v-for="r in renderRoutes"
-              :key="r"
-              @click="router.push({ name: r, replace: true })"
-              class="h-14 flex-col items-center justify-center pt-2"
-              :class="r === route.name && 'dock-active'"
+            <nav
+              class="dock-shell transition-opacity duration-200 ease-out"
+              :class="dockHidden && 'pointer-events-none opacity-0'"
+              :style="dockStyle"
+              :aria-label="$t('mainNavigation')"
+              ref="dockRef"
             >
-              <component
-                :is="ROUTE_ICON_MAP[r]"
-                class="h-5 w-5 flex-shrink-0"
-              />
-              <span class="dock-label">
-                {{ $t(r) }}
-              </span>
-            </button>
-          </div>
-          <div
-            class="fixed bottom-0 z-10 w-full"
-            style="
-              background: linear-gradient(
-                to top,
-                rgba(0, 0, 0, 0.3),
-                rgba(0, 0, 0, 0.16),
-                rgba(0, 0, 0, 0.08),
-                rgba(0, 0, 0, 0.02),
-                rgba(0, 0, 0, 0)
-              );
-              height: env(safe-area-inset-bottom);
-            "
-          ></div>
+              <div class="dock dock-xs h-[52px]">
+                <button
+                  v-for="r in renderRoutes"
+                  :key="r"
+                  type="button"
+                  @click="navigateDockRoute(r)"
+                  class="dock-button h-[52px] flex-col items-center justify-center pt-1.5"
+                  :class="r === route.name && 'dock-active'"
+                  :aria-label="$t(r)"
+                  :aria-current="r === route.name ? 'page' : undefined"
+                >
+                  <component
+                    :is="ROUTE_ICON_MAP[r]"
+                    class="dock-icon h-5 w-5 flex-shrink-0"
+                    aria-hidden="true"
+                    focusable="false"
+                  />
+                  <span class="dock-label">
+                    {{ $t(r) }}
+                  </span>
+                </button>
+              </div>
+            </nav>
+          </Transition>
         </template>
       </div>
     </RouterView>
@@ -88,8 +95,13 @@
         <button
           class="btn btn-primary btn-sm"
           @click="autoSwitchBackend"
+          :disabled="isAutoSwitchingBackend"
         >
-          {{ $t('confirm') }}
+          <span
+            v-if="isAutoSwitchingBackend"
+            class="loading loading-spinner loading-xs"
+          ></span>
+          {{ isAutoSwitchingBackend ? $t('checking') : $t('confirm') }}
         </button>
       </div>
     </DialogWrapper>
@@ -100,32 +112,72 @@
 import { isBackendAvailable } from '@/api'
 import DialogWrapper from '@/components/common/DialogWrapper.vue'
 import SideBar from '@/components/sidebar/SideBar.vue'
-import { dockTop } from '@/composables/paddingViews'
+import { MOBILE_DOCK_RESERVED_BOTTOM, dockTop } from '@/composables/paddingViews'
+import { disableProxiesPageScroll } from '@/composables/proxies'
 import { useSettings } from '@/composables/settings'
 import { useSwipeRouter } from '@/composables/swipe'
-import { PROXY_TAB_TYPE, ROUTE_ICON_MAP, RULE_TAB_TYPE } from '@/constant'
+import { PROXY_TAB_TYPE, ROUTE_ICON_MAP, ROUTE_NAME, RULE_TAB_TYPE } from '@/constant'
 import { renderRoutes } from '@/helper'
 import { showNotification } from '@/helper/notification'
 import { getLabelFromBackend, isMiddleScreen } from '@/helper/utils'
 import { fetchConfigs } from '@/store/config'
-import { initConnections } from '@/store/connections'
-import { initLogs } from '@/store/logs'
-import { initSatistic } from '@/store/overview'
+import { initConnections, pauseConnections, resumeConnections } from '@/store/connections'
+import { initLogs, pauseLogs, resumeLogs } from '@/store/logs'
+import { initSatistic, pauseSatistic, resumeSatistic } from '@/store/overview'
 import { fetchProxies, proxiesTabShow } from '@/store/proxies'
 import { fetchRules, rulesTabShow } from '@/store/rules'
-import { isSidebarCollapsed } from '@/store/settings'
+import { isSidebarCollapsed, lowPowerMode, scrollAnimationEffect } from '@/store/settings'
 import { activeBackend, activeUuid, backendList } from '@/store/setup'
 import type { Backend } from '@/types'
 import { useDocumentVisibility, useElementBounding } from '@vueuse/core'
-import { ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
 
 const router = useRouter()
-const { swiperRef } = useSwipeRouter()
+const routePageRef = ref<HTMLElement>()
+const { isDragging: isRouteDragging, swiperRef } = useSwipeRouter(routePageRef)
 const sidebarLayoutCollapsed = ref(isSidebarCollapsed.value)
 
-const dockRef = ref<HTMLDivElement>()
+const navigateDockRoute = (name: ROUTE_NAME) => {
+  if (router.currentRoute.value.name === name) return
+  void router.push({ name, replace: true })
+}
+
+const getRouteEnterClass = (transition?: string) => {
+  if (transition === 'slide-right') return 'route-enter-right'
+  if (transition === 'slide-left') return 'route-enter-left'
+  return 'route-enter-fade'
+}
+
+const dockRef = ref<HTMLElement>()
 const { top: dockRefTop } = useElementBounding(dockRef)
+const dockHidden = computed(() => disableProxiesPageScroll.value)
+const dockStyle = computed(() => {
+  return {
+    bottom: 'calc(14px + env(safe-area-inset-bottom))',
+  }
+})
+
+const documentVisible = useDocumentVisibility()
+const shouldRunRealtimeStreams = computed(() => {
+  return documentVisible.value === 'visible' && !lowPowerMode.value
+})
+const shouldAnimateRouteTransition = computed(() => {
+  return !lowPowerMode.value && scrollAnimationEffect.value
+})
+
+const pauseRealtimeStreams = () => {
+  pauseConnections()
+  pauseLogs()
+  pauseSatistic()
+}
+
+const resumeRealtimeStreams = () => {
+  if (!activeBackend.value || !shouldRunRealtimeStreams.value) return
+  resumeConnections()
+  resumeLogs()
+  resumeSatistic()
+}
 
 const syncSidebarLayoutState = () => {
   sidebarLayoutCollapsed.value = isSidebarCollapsed.value
@@ -150,7 +202,17 @@ watch(
 watch(
   dockRefTop,
   () => {
-    dockTop.value = window.innerHeight - dockRefTop.value
+    const measuredDockTop = window.innerHeight - dockRefTop.value
+    if (
+      !Number.isFinite(measuredDockTop) ||
+      measuredDockTop <= 0 ||
+      measuredDockTop >= window.innerHeight
+    ) {
+      dockTop.value = MOBILE_DOCK_RESERVED_BOTTOM
+      return
+    }
+
+    dockTop.value = Math.max(MOBILE_DOCK_RESERVED_BOTTOM, measuredDockTop)
   },
   { immediate: true },
 )
@@ -158,7 +220,10 @@ watch(
 watch(
   activeUuid,
   () => {
-    if (!activeUuid.value) return
+    if (!activeBackend.value) {
+      pauseRealtimeStreams()
+      return
+    }
     rulesTabShow.value = RULE_TAB_TYPE.RULES
     proxiesTabShow.value = PROXY_TAB_TYPE.PROXIES
     fetchConfigs()
@@ -167,6 +232,10 @@ watch(
     initConnections()
     initLogs()
     initSatistic()
+
+    if (!shouldRunRealtimeStreams.value) {
+      pauseRealtimeStreams()
+    }
   },
   {
     immediate: true,
@@ -174,55 +243,73 @@ watch(
 )
 
 const autoSwitchBackendDialog = ref(false)
+const isAutoSwitchingBackend = ref(false)
+const BACKEND_CHECK_TIMEOUT = 10000
+let backendAvailabilityCheckSeq = 0
+
+const checkBackendWithTimeout = async (backend: Backend, timeoutMs = BACKEND_CHECK_TIMEOUT) => {
+  const isAvailable = await isBackendAvailable(backend, timeoutMs)
+  if (!isAvailable) {
+    throw new Error('Backend unavailable')
+  }
+
+  return backend
+}
 
 const autoSwitchBackend = async () => {
+  if (isAutoSwitchingBackend.value) return
+
+  const unavailableBackendUuid = activeUuid.value
   const otherEnds = backendList.value.filter((end) => end.uuid !== activeUuid.value)
 
-  autoSwitchBackendDialog.value = false
-  const avaliable = await Promise.race<Backend>(
-    otherEnds.map((end) => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          reject()
-        }, 10000)
-        isBackendAvailable(end).then((res) => {
-          if (res) {
-            resolve(end)
-          }
-        })
-      })
-    }),
-  )
+  isAutoSwitchingBackend.value = true
 
-  if (avaliable) {
-    activeUuid.value = avaliable.uuid
+  try {
+    const available = await Promise.any(otherEnds.map((end) => checkBackendWithTimeout(end))).catch(
+      () => null,
+    )
+
+    if (unavailableBackendUuid !== activeUuid.value) return
+
+    autoSwitchBackendDialog.value = false
+
+    if (!available) {
+      showNotification({
+        content: 'backendSwitchFailed',
+        type: 'alert-error',
+      })
+      return
+    }
+
+    activeUuid.value = available.uuid
     showNotification({
       content: 'backendSwitchTo',
       params: {
-        backend: getLabelFromBackend(avaliable),
+        backend: getLabelFromBackend(available),
       },
       type: 'alert-success',
     })
+  } finally {
+    isAutoSwitchingBackend.value = false
   }
 }
-
-const documentVisible = useDocumentVisibility()
 
 watch(
   documentVisible,
   async () => {
-    if (
-      !activeBackend.value ||
-      backendList.value.length < 2 ||
-      documentVisible.value !== 'visible'
-    ) {
+    const checkSeq = ++backendAvailabilityCheckSeq
+    if (!activeBackend.value || backendList.value.length < 2 || !shouldRunRealtimeStreams.value) {
       return
     }
     try {
       const activeBackendUuid = activeBackend.value.uuid
       const isAvailable = await isBackendAvailable(activeBackend.value)
 
-      if (activeBackendUuid !== activeUuid.value) {
+      if (
+        checkSeq !== backendAvailabilityCheckSeq ||
+        activeBackendUuid !== activeUuid.value ||
+        !shouldRunRealtimeStreams.value
+      ) {
         return
       }
 
@@ -230,6 +317,9 @@ watch(
         autoSwitchBackendDialog.value = true
       }
     } catch {
+      if (checkSeq !== backendAvailabilityCheckSeq || !shouldRunRealtimeStreams.value) {
+        return
+      }
       autoSwitchBackendDialog.value = true
     }
   },
@@ -238,12 +328,21 @@ watch(
   },
 )
 
-watch(documentVisible, () => {
-  if (documentVisible.value !== 'visible') return
+watch(shouldRunRealtimeStreams, (shouldRun) => {
+  if (!shouldRun) {
+    pauseRealtimeStreams()
+    return
+  }
+
+  resumeRealtimeStreams()
   fetchProxies()
 })
 
-const { checkUIUpdate } = useSettings()
+const { cancelUIUpdateCheck, scheduleUIUpdateCheck } = useSettings()
 
-checkUIUpdate()
+scheduleUIUpdateCheck()
+
+onBeforeUnmount(() => {
+  cancelUIUpdateCheck()
+})
 </script>

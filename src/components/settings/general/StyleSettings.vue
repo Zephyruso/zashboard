@@ -30,10 +30,16 @@
             v-model:value="defaultTheme"
           />
           <button
+            type="button"
             class="btn btn-sm join-item"
+            :aria-label="$t('customTheme')"
+            :title="$t('customTheme')"
             @click="customThemeModal = !customThemeModal"
           >
-            <PlusIcon class="h-4 w-4" />
+            <PlusIcon
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
           </button>
         </div>
         <CustomTheme v-model:value="customThemeModal" />
@@ -107,6 +113,7 @@ const k = GENERAL_ITEM_KEYS
 const isVisibleFonts = useIsSettingVisible(k.fonts)
 const isVisibleEmoji = useIsSettingVisible(k.emoji)
 const isVisibleCustomBackgroundURL = useIsSettingVisible(k.customBackgroundURL)
+const isVisibleBlurIntensity = useIsSettingVisible(k.blurIntensity)
 const isVisibleDefaultTheme = useIsSettingVisible(k.defaultTheme)
 const isVisibleDarkTheme = useIsSettingVisible(k.darkTheme)
 const isVisibleAutoSwitchTheme = useIsSettingVisible(k.autoSwitchTheme)
@@ -117,6 +124,7 @@ const hasVisibleStyleItems = computed(() => {
     isVisibleAutoSwitchTheme.value ||
     (autoTheme.value && isVisibleDarkTheme.value) ||
     isVisibleCustomBackgroundURL.value ||
+    isVisibleBlurIntensity.value ||
     isVisibleFonts.value ||
     isVisibleEmoji.value
   )

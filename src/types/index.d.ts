@@ -28,7 +28,7 @@ export type Config = {
   }
 }
 
-export type History = {
+type History = {
   time: string
   delay: number
 }[]
@@ -56,7 +56,7 @@ export type Proxy = {
   'provider-name'?: string
 }
 
-export type SubscriptionInfo = {
+type SubscriptionInfo = {
   Download?: number
   Upload?: number
   Total?: number

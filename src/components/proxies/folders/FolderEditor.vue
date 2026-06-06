@@ -5,10 +5,16 @@
   >
     <div class="flex items-center gap-2">
       <button
+        type="button"
         class="btn btn-circle btn-ghost btn-xs"
+        :aria-label="$t('close')"
+        :title="$t('close')"
         @click="$emit('close')"
       >
-        <ArrowLeftIcon class="h-4 w-4" />
+        <ArrowLeftIcon
+          class="h-4 w-4"
+          aria-hidden="true"
+        />
       </button>
       <input
         class="input input-sm input-bordered flex-1"
@@ -17,11 +23,16 @@
         :placeholder="$t('folder_name')"
       />
       <button
+        type="button"
         class="btn btn-circle btn-ghost btn-xs text-error"
+        :aria-label="$t('delete')"
         @click="onDelete"
         :title="$t('delete')"
       >
-        <TrashIcon class="h-4 w-4" />
+        <TrashIcon
+          class="h-4 w-4"
+          aria-hidden="true"
+        />
       </button>
     </div>
 
@@ -72,17 +83,27 @@
             "
           />
           <button
+            type="button"
             class="btn btn-circle btn-ghost btn-xs"
+            aria-label="Remove rule"
+            title="Remove rule"
             @click="removeRule(idx)"
           >
-            <XMarkIcon class="h-3.5 w-3.5" />
+            <XMarkIcon
+              class="h-3.5 w-3.5"
+              aria-hidden="true"
+            />
           </button>
         </div>
         <button
+          type="button"
           class="btn btn-ghost btn-xs justify-start gap-1"
           @click="addRule"
         >
-          <PlusIcon class="h-3.5 w-3.5" />
+          <PlusIcon
+            class="h-3.5 w-3.5"
+            aria-hidden="true"
+          />
           {{ $t('folder_add_rule') }}
         </button>
       </div>

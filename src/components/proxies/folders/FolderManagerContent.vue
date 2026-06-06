@@ -8,10 +8,16 @@
       <h3 class="flex-1 text-sm font-medium">{{ $t('folder_manage') }}</h3>
       <button
         v-if="!isMiddleScreen"
+        type="button"
         class="btn btn-circle btn-ghost btn-xs"
+        :aria-label="$t('close')"
+        :title="$t('close')"
         @click="folderManagerOpen = false"
       >
-        <XMarkIcon class="h-4 w-4" />
+        <XMarkIcon
+          class="h-4 w-4"
+          aria-hidden="true"
+        />
       </button>
     </header>
 
@@ -38,10 +44,16 @@
                 {{ folderCount(f.id) }}
               </span>
               <button
+                type="button"
                 class="btn btn-circle btn-ghost btn-xs"
+                aria-label="Edit folder"
+                title="Edit folder"
                 @click="onEdit(f.id)"
               >
-                <PencilSquareIcon class="h-3.5 w-3.5" />
+                <PencilSquareIcon
+                  class="h-3.5 w-3.5"
+                  aria-hidden="true"
+                />
               </button>
             </div>
           </template>
@@ -56,11 +68,17 @@
             @keydown.enter="onCreate"
           />
           <button
+            type="button"
             class="btn btn-sm btn-primary"
+            aria-label="Create folder"
+            title="Create folder"
             :disabled="!newName.trim()"
             @click="onCreate"
           >
-            <PlusIcon class="h-4 w-4" />
+            <PlusIcon
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
           </button>
         </div>
       </footer>

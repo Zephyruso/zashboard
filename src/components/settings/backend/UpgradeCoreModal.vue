@@ -6,7 +6,8 @@
     <div class="flex flex-col gap-2 p-2">
       <button
         class="btn btn-primary"
-        :disabled="isCoreUpgrading && upgradingType !== 'auto'"
+        :disabled="isCoreUpgrading"
+        :aria-busy="isCoreUpgrading && upgradingType === 'auto'"
         @click="handlerClickUpgradeCore('auto')"
       >
         <span
@@ -17,7 +18,8 @@
       </button>
       <button
         class="btn"
-        :disabled="isCoreUpgrading && upgradingType !== 'release'"
+        :disabled="isCoreUpgrading"
+        :aria-busy="isCoreUpgrading && upgradingType === 'release'"
         @click="handlerClickUpgradeCore('release')"
       >
         <span
@@ -29,7 +31,8 @@
       </button>
       <button
         class="btn"
-        :disabled="isCoreUpgrading && upgradingType !== 'alpha'"
+        :disabled="isCoreUpgrading"
+        :aria-busy="isCoreUpgrading && upgradingType === 'alpha'"
         @click="handlerClickUpgradeCore('alpha')"
       >
         <span
@@ -43,12 +46,12 @@
 </template>
 
 <script setup lang="ts">
-import { upgradeCoreAPI } from '@/api'
+import { isRequestCanceled, upgradeCoreAPI } from '@/api'
 import { handlerUpgradeSuccess } from '@/helper'
 import { fetchConfigs } from '@/store/config'
 import { fetchProxies } from '@/store/proxies'
 import { fetchRules } from '@/store/rules'
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import DialogWrapper from '../../common/DialogWrapper.vue'
 
 const reloadAll = () => {
@@ -60,20 +63,45 @@ const reloadAll = () => {
 const upgradingType = ref<'release' | 'alpha' | 'auto'>('auto')
 const modalValue = defineModel<boolean>()
 const isCoreUpgrading = ref(false)
+let isUnmounted = false
+let upgradeSequence = 0
+let upgradeAbortController: AbortController | undefined
+
 const handlerClickUpgradeCore = async (type: 'release' | 'alpha' | 'auto') => {
   if (isCoreUpgrading.value) return
 
+  const sequence = ++upgradeSequence
+  const controller = new AbortController()
+
+  upgradeAbortController?.abort()
+  upgradeAbortController = controller
   upgradingType.value = type
   isCoreUpgrading.value = true
   try {
-    await upgradeCoreAPI(type)
+    await upgradeCoreAPI(type, controller.signal)
+
+    if (isUnmounted || sequence !== upgradeSequence || controller.signal.aborted) return
+
     reloadAll()
     modalValue.value = false
     handlerUpgradeSuccess()
-    isCoreUpgrading.value = false
-  } catch (e) {
-    console.error(e)
-    isCoreUpgrading.value = false
+  } catch (error) {
+    if (isRequestCanceled(error)) return
+    console.error(error)
+  } finally {
+    if (upgradeAbortController === controller) {
+      upgradeAbortController = undefined
+    }
+    if (!isUnmounted && sequence === upgradeSequence) {
+      isCoreUpgrading.value = false
+    }
   }
 }
+
+onBeforeUnmount(() => {
+  isUnmounted = true
+  upgradeSequence++
+  upgradeAbortController?.abort()
+  upgradeAbortController = undefined
+})
 </script>

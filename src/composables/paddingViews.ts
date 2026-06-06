@@ -2,7 +2,8 @@ import { isMiddleScreen } from '@/helper/utils'
 import { computed, ref } from 'vue'
 
 export const ctrlsBottom = ref(0)
-export const dockTop = ref(0)
+export const MOBILE_DOCK_RESERVED_BOTTOM = 66
+export const dockTop = ref(MOBILE_DOCK_RESERVED_BOTTOM)
 export const usePaddingForViews = (
   config = {
     offsetTop: 8,
@@ -17,10 +18,7 @@ export const usePaddingForViews = (
     return 0
   })
   const paddingBottom = computed(() => {
-    if (isMiddleScreen.value) {
-      return dockTop.value + offsetBottom
-    }
-    return 0
+    return isMiddleScreen.value ? dockTop.value + offsetBottom : 0
   })
 
   const padding = computed(() => {

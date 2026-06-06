@@ -1,14 +1,20 @@
 <template>
-  <div class="tabs-box tabs tabs-xs">
-    <a
+  <div
+    class="tabs-box tabs tabs-xs"
+    role="tablist"
+  >
+    <button
       v-for="tab in Object.values(CONNECTION_TAB_TYPE)"
       :key="tab"
+      type="button"
       role="tab"
+      :aria-selected="connectionTabShow === tab"
       :class="twMerge('tab', connectionTabShow === tab && 'tab-active', !horizental && 'flex-1')"
       @click="() => (connectionTabShow = tab)"
-      >{{ $t(tab) }}
+    >
+      {{ $t(tab) }}
       <template v-if="connectionTabShow === tab"> ({{ connectionsCount }}) </template>
-    </a>
+    </button>
   </div>
 </template>
 

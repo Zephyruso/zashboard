@@ -108,7 +108,7 @@ export const language = useStorage<LANG>(
     ? (navigator.language as LANG)
     : LANG.EN_US,
 )
-export const isSidebarCollapsedConfig = useStorage('config/is-sidebar-collapsed', true)
+const isSidebarCollapsedConfig = useStorage('config/is-sidebar-collapsed', true)
 export const isSidebarCollapsed = computed({
   get: () => {
     if (isMiddleScreen.value) {
@@ -148,6 +148,7 @@ export const swipeInTabs = useStorage('config/swipe-in-tabs', false)
 export const disablePullToRefresh = useStorage('config/disable-pull-to-refresh', true)
 export const displayAllFeatures = useStorage('config/display-all-features', false)
 export const blurIntensity = useStorage('config/blur-intensity', 10)
+export const lowPowerMode = useStorage('config/low-power-mode', false)
 export const scrollAnimationEffect = useStorage('config/scroll-animation-effect', true)
 export const IPInfoAPI = useStorage('config/geoip-info-api', IP_INFO_API.IPSB)
 export const autoDisconnectIdleUDP = useStorage('config/auto-disconnect-idle-udp', false)
