@@ -281,6 +281,16 @@ const assertSourceChecks = async () => {
     'Proxies page scroll lock no longer exposes tokenized unlock',
   )
   assertIncludes(
+    sources.homePage,
+    ':aria-hidden="dockHidden ? \'true\' : undefined"',
+    'Mobile dock no longer leaves hidden expanded state out of aria-hidden',
+  )
+  assertIncludes(
+    sources.homePage,
+    ':inert="dockHidden ? true : undefined"',
+    'Mobile dock no longer removes hidden expanded state from sequential focus',
+  )
+  assertIncludes(
     sources.proxyGroupForMobile,
     'setProxiesPageScrollLocked(modalMode.value)',
     'Mobile proxy modal no longer updates page scroll lock from its modal state',
@@ -644,7 +654,12 @@ const assertSourceChecks = async () => {
   }
   assertIncludes(
     sources.renderProxies,
-    'const renderProxyState = computed(() => getRenderProxyState(proxies.value, groupName))',
+    'renderListEnabled: MaybeRefOrGetter<boolean> = true',
+    'Render proxies no longer accepts a render-list enable switch',
+  )
+  assertIncludes(
+    sources.renderProxies,
+    'getRenderProxyState(proxies.value, groupName, toValue(renderListEnabled))',
     'Render proxies no longer derives list/count from a single computed state',
   )
   assertIncludes(
@@ -654,8 +669,28 @@ const assertSourceChecks = async () => {
   )
   assertIncludes(
     sources.renderProxies,
-    'const available = countAvailableProxies(renderProxies, getLatency)',
+    'const renderProxies = renderListEnabled ? sortProxies(filtered, groupName, getLatency) : []',
+    'Render proxies no longer skips full list sorting while render-list output is disabled',
+  )
+  assertIncludes(
+    sources.renderProxies,
+    'const available = countAvailableProxies(filtered, getLatency)',
     'Render proxies no longer reuses the lazy latency getter for visible availability counts',
+  )
+  assertIncludes(
+    sources.proxyGroupForMobile,
+    'useRenderProxyList(allProxies, props.name, displayContent)',
+    'Mobile ProxyGroup no longer delays full renderProxies calculation until expanded content is displayed',
+  )
+  assertIncludes(
+    sources.proxyGroup,
+    'useRenderProxyList(allProxies, props.name)',
+    'Desktop ProxyGroup no longer keeps full renderProxies output enabled by default',
+  )
+  assertIncludes(
+    sources.proxyGroupForMobile,
+    'const manyProxies = allProxies.value.length > 4',
+    'Mobile ProxyGroup expansion positioning still depends on the full sorted render list',
   )
   assertIncludes(
     sources.renderProxies,
@@ -793,6 +828,21 @@ const assertSourceChecks = async () => {
     sources.proxyGroupForMobile,
     'transition-[width,transform]',
     'Mobile ProxyGroup no longer limits expansion transition to width and transform',
+  )
+  assertIncludes(
+    sources.proxyGroupForMobile,
+    'const getTransitionFallbackDelay = () => {',
+    'Mobile ProxyGroup no longer derives the transition fallback delay from computed style',
+  )
+  assertIncludes(
+    sources.proxyGroupForMobile,
+    'getComputedStyle(element)',
+    'Mobile ProxyGroup transition fallback no longer reads the active element style',
+  )
+  assertIncludes(
+    sources.proxyGroupForMobile,
+    'getTransitionFallbackDelay()',
+    'Mobile ProxyGroup transition fallback returned to a hard-coded timeout',
   )
   assertIncludes(
     sources.proxyGroupForMobile,
@@ -1625,7 +1675,7 @@ const runEdgeCdpAppCheck = async (
           };
           tick();
         });
-      const frameStats = (samples) => {
+      const frameStats = (samples, sampleScrollTops = []) => {
         const sorted = samples.slice().sort((a, b) => a - b);
         const sampleDeltas = samples.map((sample) => Number(sample.toFixed(2)));
         const max = sorted.at(-1) || 0;
@@ -1639,7 +1689,11 @@ const runEdgeCdpAppCheck = async (
           maxSampleIndex,
           sampleDeltas,
           longSamples: sampleDeltas
-            .map((delta, index) => ({ index, delta }))
+            .map((delta, index) => ({
+              index,
+              delta,
+              ...(sampleScrollTops[index] || {}),
+            }))
             .filter(({ delta }) => delta >= 50),
         };
       };
@@ -1819,6 +1873,7 @@ const runEdgeCdpAppCheck = async (
       };
       const stepScrollToEnd = async (scroll) => {
         const samples = [];
+        const sampleScrollTops = [];
         const layoutDeltaEpsilon = 0.5;
         const longTasks = [];
         const sampleStartedAt = performance.now();
@@ -1912,14 +1967,26 @@ const runEdgeCdpAppCheck = async (
 
         for (let step = 1; step <= steps; step += 1) {
           await new Promise((resolve) => requestAnimationFrame((now) => {
+            const nextScrollTop = (maxScrollTop * step) / steps;
+
             samples.push(now - previous);
+            sampleScrollTops.push({
+              scrollTopBefore: Number(scroll.scrollTop.toFixed(2)),
+              scrollTopAfter: Number(nextScrollTop.toFixed(2)),
+              remainingAfter: Number((maxScrollTop - nextScrollTop).toFixed(2)),
+            });
             previous = now;
-            scroll.scrollTop = (maxScrollTop * step) / steps;
+            scroll.scrollTop = nextScrollTop;
             resolve();
           }));
         }
         await new Promise((resolve) => requestAnimationFrame((now) => {
           samples.push(now - previous);
+          sampleScrollTops.push({
+            scrollTopBefore: Number(scroll.scrollTop.toFixed(2)),
+            scrollTopAfter: Number(scroll.scrollTop.toFixed(2)),
+            remainingAfter: Number((maxScrollTop - scroll.scrollTop).toFixed(2)),
+          });
           resolve();
         }));
         await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -1986,7 +2053,7 @@ const runEdgeCdpAppCheck = async (
           })
           .slice(0, 30);
         return {
-          ...frameStats(samples),
+          ...frameStats(samples, sampleScrollTops),
           scrollHeightBefore,
           scrollHeightAfter: scroll.scrollHeight,
           clientHeightBefore,
@@ -2525,12 +2592,20 @@ const runEdgeCdpAppCheck = async (
     if (parsed.activeName !== 'Proxies' || parsed.activeAriaCurrent !== 'page') {
       fail('Dock active route semantics changed in configured app', parsed)
     }
-    if (parsed.focusedName !== 'Proxies') fail('Dock active button did not receive focus in configured app', parsed)
-    if (parsed.focusOutlineStyle === 'none' || parsed.focusOutlineWidth === '0px') {
+    if (!expandedMobileGroup && parsed.focusedName !== 'Proxies') {
+      fail('Dock active button did not receive focus in configured app', parsed)
+    }
+    if (
+      !expandedMobileGroup &&
+      (parsed.focusOutlineStyle === 'none' || parsed.focusOutlineWidth === '0px')
+    ) {
       fail('Dock focused button has no visible outline in configured app', parsed)
     }
     const expandedViewportResize = expandedMobileGroup
       ? await runConfiguredAppExpandedViewportResizeCheck(send)
+      : null
+    const expandedDockAccessibility = expandedMobileGroup
+      ? await runConfiguredAppExpandedDockAccessibilityCheck(send)
       : null
     const pageKeyboard = expandedMobileGroup ? null : await runConfiguredAppPageKeyboardTraversalCheck(send)
     const keyboard = expandedMobileGroup ? null : await runConfiguredAppDockKeyboardCheck(send)
@@ -2543,6 +2618,9 @@ const runEdgeCdpAppCheck = async (
           ? 'configured-app-mobile-expanded-proxies'
           : 'configured-app-proxies',
     )
+    const expandedDockRestore = expandedMobileGroup
+      ? await runConfiguredAppExpandedDockRestoreCheck(send)
+      : null
 
     return {
       pass: true,
@@ -2565,6 +2643,8 @@ const runEdgeCdpAppCheck = async (
       providerDetails: parsed.providerDetails,
       expandedViewportChange: parsed.expandedViewportChange,
       expandedViewportResize,
+      expandedDockAccessibility,
+      expandedDockRestore,
       fontStatusBeforeReady: parsed.fontStatusBeforeReady,
       fontStatusAfterReady: parsed.fontStatusAfterReady,
       stableScrollMetrics: parsed.stableScrollMetrics,
@@ -2735,6 +2815,197 @@ const runConfiguredAppExpandedViewportResizeCheck = async (send) => {
     compactHeightDelta: Number((compact.nestedHeight - before.nestedHeight).toFixed(2)),
     restoredHeightDelta: Number((restored.nestedHeight - before.nestedHeight).toFixed(2)),
   }
+}
+
+const runConfiguredAppExpandedDockAccessibilityCheck = async (send) => {
+  const dom = await evaluateCdpValue(
+    send,
+    `(() => {
+      const dock = document.querySelector('.dock-shell');
+      const buttons = Array.from(document.querySelectorAll('.dock-button'));
+      const dockStyle = dock ? getComputedStyle(dock) : null;
+      const focusableSelector = [
+        'button',
+        'input',
+        'select',
+        'textarea',
+        'a[href]',
+        '[tabindex]:not([tabindex="-1"])',
+      ].join(',');
+      const isVisible = (element) => {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          style.visibility !== 'hidden' &&
+          style.display !== 'none'
+        );
+      };
+      const modalFocusTarget = Array.from(document.querySelectorAll(focusableSelector)).find(
+        (element) =>
+          element.closest('.mobile-proxy-modal-panel') &&
+          !element.closest('.dock-shell') &&
+          !element.disabled &&
+          element.getAttribute('aria-disabled') !== 'true' &&
+          isVisible(element),
+      );
+
+      modalFocusTarget?.focus();
+      buttons[0]?.focus();
+
+      return {
+        ok: Boolean(dock && buttons.length),
+        ariaHidden: dock?.getAttribute('aria-hidden') || '',
+        inert: Boolean(dock?.inert),
+        pointerEvents: dockStyle?.pointerEvents || '',
+        opacity: dockStyle?.opacity || '',
+        buttonNames: buttons.map((button) => button.getAttribute('aria-label') || ''),
+        focusedDockName: document.activeElement?.closest('.dock-button')?.getAttribute('aria-label') || '',
+        focusedInsideModal: Boolean(document.activeElement?.closest('.mobile-proxy-modal-panel')),
+      };
+    })()`,
+    'configured app expanded dock accessibility DOM state',
+  )
+
+  const tabFocusOrder = []
+  for (let index = 0; index < 12; index += 1) {
+    await dispatchKeyboardKey(send, 'Tab', { code: 'Tab', windowsVirtualKeyCode: 9 })
+    tabFocusOrder.push(
+      await evaluateCdpValue(
+        send,
+        `(() => {
+          const element = document.activeElement;
+          const dockButton = element?.closest?.('.dock-button') || null;
+          const text = element?.textContent?.replace(/\\s+/g, ' ').trim() || '';
+
+          return {
+            dockName: dockButton?.getAttribute('aria-label') || '',
+            inDock: Boolean(dockButton),
+            label:
+              element?.getAttribute?.('aria-label') ||
+              element?.getAttribute?.('title') ||
+              (text.length <= 80 ? text : text.slice(0, 80)) ||
+              element?.tagName ||
+              '',
+          };
+        })()`,
+        `configured app expanded dock Tab ${index + 1}`,
+      ),
+    )
+  }
+
+  await send('Accessibility.enable')
+  const tree = await send('Accessibility.getFullAXTree')
+  const navigationNodes = (tree.nodes || [])
+    .map(readAxNode)
+    .filter((node) => !node.ignored && node.role === 'navigation' && node.name === 'Main navigation')
+  const tabDockEntries = tabFocusOrder.filter((focus) => focus.inDock)
+  const result = {
+    dom,
+    tabFocusOrder,
+    navigationNodes,
+  }
+
+  if (!dom.ok) fail('Expanded mobile dock accessibility check could not read dock DOM', result)
+  if (dom.ariaHidden !== 'true' || !dom.inert) {
+    fail('Expanded mobile dock is not hidden from accessibility and sequential focus', result)
+  }
+  if (dom.pointerEvents !== 'none' || Number(dom.opacity) !== 0) {
+    fail('Expanded mobile dock visual hit-surface state changed unexpectedly', result)
+  }
+  if (dom.focusedDockName) {
+    fail('Expanded mobile dock accepted programmatic focus while inert', result)
+  }
+  if (tabDockEntries.length) {
+    fail('Expanded mobile dock appeared in sequential keyboard focus order', result)
+  }
+  if (navigationNodes.length) {
+    fail('Expanded mobile dock navigation leaked into the accessibility tree', result)
+  }
+
+  return result
+}
+
+const runConfiguredAppExpandedDockRestoreCheck = async (send) => {
+  const close = await evaluateCdpValue(
+    send,
+    `(() => {
+      const group = document.querySelector('[data-group-name="Group 01"]');
+      group?.click();
+
+      return {
+        ok: Boolean(group),
+        hash: location.hash,
+      };
+    })()`,
+    'configured app expanded dock restore close action',
+  )
+  if (!close.ok || !close.hash.includes('#/proxies')) {
+    fail('Expanded mobile dock restore could not close the expanded proxy group', close)
+  }
+
+  const dom = await waitForCdpValue(
+    send,
+    `(() => {
+      const dock = document.querySelector('.dock-shell');
+      const firstDockButton = document.querySelector('.dock-button');
+      const nestedScroll = document.querySelector('.proxies-scrollable-parent[data-expanded-ready="true"]');
+      const dockStyle = dock ? getComputedStyle(dock) : null;
+      firstDockButton?.focus();
+
+      const focusedDockName = document.activeElement
+        ?.closest?.('.dock-button')
+        ?.getAttribute('aria-label') || '';
+      const opacity = Number(dockStyle?.opacity || '0');
+
+      return {
+        ok:
+          Boolean(dock && firstDockButton) &&
+          !nestedScroll &&
+          dock?.getAttribute('aria-hidden') !== 'true' &&
+          !dock?.inert &&
+          dockStyle?.pointerEvents !== 'none' &&
+          opacity > 0.95 &&
+          focusedDockName === 'Proxies',
+        ariaHidden: dock?.getAttribute('aria-hidden') || '',
+        inert: Boolean(dock?.inert),
+        pointerEvents: dockStyle?.pointerEvents || '',
+        opacity: dockStyle?.opacity || '',
+        focusedDockName,
+        activeName: document.querySelector('.dock-active')?.getAttribute('aria-label') || '',
+        nestedReady: Boolean(nestedScroll),
+      };
+    })()`,
+    'configured app expanded dock restore DOM state',
+  )
+
+  await send('Accessibility.enable')
+  const tree = await send('Accessibility.getFullAXTree')
+  const navigationNodes = (tree.nodes || [])
+    .map(readAxNode)
+    .filter((node) => !node.ignored && node.role === 'navigation' && node.name === 'Main navigation')
+  const result = {
+    close,
+    dom,
+    navigationNodes,
+  }
+
+  if (dom.ariaHidden || dom.inert) {
+    fail('Expanded mobile dock hidden accessibility state persisted after closing', result)
+  }
+  if (dom.pointerEvents === 'none' || Number(dom.opacity) <= 0.95) {
+    fail('Expanded mobile dock visual hit-surface state did not restore after closing', result)
+  }
+  if (dom.focusedDockName !== 'Proxies' || dom.activeName !== 'Proxies') {
+    fail('Expanded mobile dock focus and active route state did not restore after closing', result)
+  }
+  if (!navigationNodes.length) {
+    fail('Expanded mobile dock navigation did not return to the accessibility tree after closing', result)
+  }
+
+  return result
 }
 
 const runConfiguredAppPageKeyboardTraversalCheck = async (send) => {

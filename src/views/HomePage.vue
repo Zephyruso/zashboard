@@ -51,6 +51,8 @@
               :class="dockHidden && 'pointer-events-none opacity-0'"
               :style="dockStyle"
               :aria-label="$t('mainNavigation')"
+              :aria-hidden="dockHidden ? 'true' : undefined"
+              :inert="dockHidden ? true : undefined"
               ref="dockRef"
             >
               <div class="dock dock-xs h-[52px]">

@@ -8,14 +8,20 @@ import {
   useSmartGroupSort,
 } from '@/store/settings'
 import { smartOrderMap } from '@/store/smart'
-import { computed, type ComputedRef } from 'vue'
+import { computed, toValue, type ComputedRef, type MaybeRefOrGetter } from 'vue'
 import { isProxyNodeSearchMode, matchProxySearchKeyword, proxySearchKeyword } from './proxySearch'
 
 type LatencyMap = Map<string, number>
 type LatencyGetter = (name: string) => number
 
-export function useRenderProxyList(proxies: ComputedRef<string[]>, groupName?: string) {
-  const renderProxyState = computed(() => getRenderProxyState(proxies.value, groupName))
+export function useRenderProxyList(
+  proxies: ComputedRef<string[]>,
+  groupName?: string,
+  renderListEnabled: MaybeRefOrGetter<boolean> = true,
+) {
+  const renderProxyState = computed(() =>
+    getRenderProxyState(proxies.value, groupName, toValue(renderListEnabled)),
+  )
   const renderProxies = computed(() => renderProxyState.value.renderProxies)
 
   const proxiesCount = computed(() => `${renderProxyState.value.available}/${proxies.value.length}`)
@@ -23,7 +29,11 @@ export function useRenderProxyList(proxies: ComputedRef<string[]>, groupName?: s
   return { renderProxies, proxiesCount }
 }
 
-const getRenderProxyState = (proxies: string[], groupName: string | undefined) => {
+const getRenderProxyState = (
+  proxies: string[],
+  groupName: string | undefined,
+  renderListEnabled: boolean,
+) => {
   const latencyMap: LatencyMap = new Map()
   const getLatency: LatencyGetter = (name) => {
     const cached = latencyMap.get(name)
@@ -35,8 +45,8 @@ const getRenderProxyState = (proxies: string[], groupName: string | undefined) =
     return latency
   }
   const filtered = filterProxies(proxies, groupName, getLatency)
-  const renderProxies = sortProxies(filtered, groupName, getLatency)
-  const available = countAvailableProxies(renderProxies, getLatency)
+  const renderProxies = renderListEnabled ? sortProxies(filtered, groupName, getLatency) : []
+  const available = countAvailableProxies(filtered, getLatency)
 
   return { renderProxies, available }
 }

@@ -124,11 +124,11 @@ const props = defineProps<{
 }>()
 const proxyGroup = computed(() => proxyMap.value[props.name])
 const allProxies = computed(() => proxyGroup.value.all ?? [])
-const { proxiesCount, renderProxies } = useRenderProxyList(allProxies, props.name)
+const displayContent = ref(false)
+const { proxiesCount, renderProxies } = useRenderProxyList(allProxies, props.name, displayContent)
 const isLatencyTesting = ref(false)
 
 const modalMode = ref(false)
-const displayContent = ref(false)
 const expandedContentReady = ref(false)
 
 const cardWrapperRef = ref()
@@ -162,6 +162,31 @@ let expandedReadyFrame: number | undefined
 let transitionFallbackTimer: ReturnType<typeof setTimeout> | undefined
 let pageScrollLockToken: symbol | undefined
 let viewportListenerCleanup: (() => void) | undefined
+
+const parseCssTimeMs = (value: string) => {
+  const trimmed = value.trim()
+  if (!trimmed) return 0
+  if (trimmed.endsWith('ms')) return Number.parseFloat(trimmed)
+  if (trimmed.endsWith('s')) return Number.parseFloat(trimmed) * 1000
+
+  return Number.parseFloat(trimmed) || 0
+}
+
+const getTransitionFallbackDelay = () => {
+  const element = cardRef.value as HTMLElement | undefined
+  if (!element) return 260
+
+  const style = getComputedStyle(element)
+  const durations = style.transitionDuration.split(',').map(parseCssTimeMs)
+  const delays = style.transitionDelay.split(',').map(parseCssTimeMs)
+  const transitionTotal = durations.reduce((max, duration, index) => {
+    const delay = delays[index] ?? delays.at(-1) ?? 0
+
+    return Math.max(max, duration + delay)
+  }, 0)
+
+  return Math.max(260, transitionTotal + 60)
+}
 
 const setProxiesPageScrollLocked = (locked: boolean) => {
   if (locked) {
@@ -226,7 +251,7 @@ const calcCardStyle = () => {
       return
     }
 
-    const manyProxies = renderProxies.value.length > 4
+    const manyProxies = allProxies.value.length > 4
     const { left, top, bottom } = cardWrapperRef.value.getBoundingClientRect()
     const { height: viewportHeight, width: viewportWidth } = getViewportSize()
 
@@ -335,7 +360,7 @@ const queueTransitionFallback = () => {
   transitionFallbackTimer = setTimeout(() => {
     transitionFallbackTimer = undefined
     settleTransitionState()
-  }, 260)
+  }, getTransitionFallbackDelay())
 }
 
 const handlerTransitionEnd = (e: TransitionEvent) => {
