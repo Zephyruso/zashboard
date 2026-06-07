@@ -2,7 +2,7 @@ import { renderRoutes } from '@/helper'
 import { showNotification } from '@/helper/notification'
 import { getLabelFromBackend } from '@/helper/utils'
 import { isSidebarCollapsed, keyboardShortcuts } from '@/store/settings'
-import { activeBackend, switchActiveBackend } from '@/store/setup'
+import { activeBackend, switchActiveBackend, toggleBackendSettingsDialog } from '@/store/setup'
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -193,7 +193,6 @@ export const useKeyboard = () => {
     const target = event.target as HTMLElement | null
     if (
       target instanceof HTMLInputElement ||
-      target instanceof HTMLSelectElement ||
       target instanceof HTMLTextAreaElement ||
       target?.isContentEditable
     ) {
@@ -212,32 +211,17 @@ export const useKeyboard = () => {
       return
     }
 
-    if (action === KEYBOARD_SHORTCUT_ACTION.BACKEND_PREVIOUS) {
+    if (
+      action === KEYBOARD_SHORTCUT_ACTION.BACKEND_PREVIOUS ||
+      action === KEYBOARD_SHORTCUT_ACTION.BACKEND_NEXT
+    ) {
       if (!activeBackend.value) {
         return
       }
 
       event.preventDefault()
-      const backend = switchActiveBackend(-1)
-      if (backend) {
-        showNotification({
-          content: 'backendSwitchTo',
-          params: {
-            backend: getLabelFromBackend(backend),
-          },
-          type: 'alert-success',
-        })
-      }
-      return
-    }
-
-    if (action === KEYBOARD_SHORTCUT_ACTION.BACKEND_NEXT) {
-      if (!activeBackend.value) {
-        return
-      }
-
-      event.preventDefault()
-      const backend = switchActiveBackend(1)
+      const direction = action === KEYBOARD_SHORTCUT_ACTION.BACKEND_NEXT ? 1 : -1
+      const backend = switchActiveBackend(direction)
       if (backend) {
         showNotification({
           content: 'backendSwitchTo',
@@ -252,7 +236,7 @@ export const useKeyboard = () => {
 
     if (action === KEYBOARD_SHORTCUT_ACTION.BACKEND_OPEN_SETTINGS) {
       event.preventDefault()
-      window.dispatchEvent(new CustomEvent('open-backend-settings'))
+      toggleBackendSettingsDialog()
       return
     }
 

@@ -2,7 +2,7 @@
   <div :class="wrapperClass">
     <button
       class="btn btn-circle btn-sm"
-      @click="showBackendSelectorDialog = true"
+      @click="showBackendSettingsDialog = true"
       @mouseenter="handlerMouseenterBackendSelector"
     >
       <ServerIcon class="h-5 w-5" />
@@ -19,7 +19,7 @@
   </div>
 
   <DialogWrapper
-    v-model="showBackendSelectorDialog"
+    v-model="showBackendSettingsDialog"
     box-class="max-w-173"
     no-padding
   >
@@ -35,22 +35,11 @@ import BackendSettings from '@/components/settings/backend/BackendSettings.vue'
 import { useTooltip } from '@/helper/tooltip'
 import { getLabelFromBackend } from '@/helper/utils'
 import { isSidebarCollapsed } from '@/store/settings'
-import { activeBackend } from '@/store/setup'
+import { activeBackend, showBackendSettingsDialog } from '@/store/setup'
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon, ServerIcon } from '@heroicons/vue/24/outline'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed } from 'vue'
 
 const { showTip } = useTooltip()
-
-const showBackendSelectorDialog = ref(false)
-
-onMounted(() => {
-  window.addEventListener('open-backend-settings', () => {
-    showBackendSelectorDialog.value = !showBackendSelectorDialog.value
-  })
-})
-onUnmounted(() => {
-  window.removeEventListener('open-backend-settings', () => {})
-})
 
 const props = defineProps<{
   vertical?: boolean

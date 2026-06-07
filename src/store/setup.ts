@@ -2,10 +2,16 @@ import type { Backend } from '@/types'
 import { useStorage } from '@vueuse/core'
 import { isEqual, omit } from 'lodash'
 import { v4 as uuid } from 'uuid'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { sourceIPLabelList } from './settings'
 
 export const backendList = useStorage<Backend[]>('setup/api-list', [])
+
+export const showBackendSettingsDialog = ref(false)
+
+export const toggleBackendSettingsDialog = () => {
+  showBackendSettingsDialog.value = !showBackendSettingsDialog.value
+}
 export const activeUuid = useStorage<string>('setup/active-uuid', '')
 export const activeBackend = computed(() =>
   backendList.value.find((backend) => backend.uuid === activeUuid.value),
