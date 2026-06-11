@@ -1,17 +1,17 @@
 <template>
   <div :class="{ 'opacity-50': isDisabled, 'scroller-item': 1 }">
     <div
-      class="hover:bg-base-200/40 flex flex-col gap-3 overflow-hidden px-3 py-2 text-sm transition-colors"
+      class="hover:bg-base-200/40 flex items-center gap-2 overflow-hidden px-3 py-2 text-sm transition-colors"
       :class="{
         'cursor-pointer': isSelectable,
       }"
       @click="clickHandler"
     >
-      <div class="min-h-5 leading-5">
+      <div class="min-w-0 flex-1 truncate">
         <span class="text-base-content/50 text-xs tabular-nums">
           {{ index }}
         </span>
-        <span class="text-base-content/80 ml-4 text-xs">
+        <span class="text-base-content/80 ml-3 text-xs">
           <HighlightText
             :text="rule.type"
             :filter="rulesFilter"
@@ -19,8 +19,8 @@
           <template v-if="rule.payload"> : </template>
         </span>
         <span
-          class="ml-2"
           v-if="rule.payload"
+          class="ml-1"
         >
           <HighlightText
             :text="rule.payload"
@@ -38,18 +38,6 @@
             @mouseenter="showMMDBSizeTip"
           />
         </span>
-        <button
-          v-if="isUpdateableRuleSet"
-          :class="
-            twMerge(
-              'btn btn-circle btn-ghost btn-xs -mt-[2px] ml-1',
-              isUpdating ? 'animate-spin' : '',
-            )
-          "
-          @click.stop="updateRuleProviderClickHandler"
-        >
-          <ArrowPathIcon class="h-3.5 w-3.5 opacity-60" />
-        </button>
         <InformationCircleIcon
           v-if="rule.extra"
           class="-mt-[2px] ml-1 inline-block h-4 w-4 opacity-60"
@@ -57,36 +45,56 @@
           @click.stop
         />
       </div>
-      <div class="flex items-center gap-2">
-        <input
-          v-if="rule.uuid || rule.extra"
-          type="checkbox"
-          class="toggle toggle-sm"
-          :checked="!isDisabled"
-          @change="toggleRuleDisabledHandler"
-          @click.stop
-        />
+      <div class="max-w-[50%] min-w-0 shrink">
         <ProxyChainPath
           :proxy="rule.proxy"
           :selected="selected"
-          :collapsed="isCollapsed"
           :show-now-node="displayNowNodeInRule"
           :show-latency="displayLatencyInRule"
           :filter="rulesFilter"
-          :interactive="!isCollapsed"
           @update:selected="selected = $event"
         />
       </div>
+      <input
+        v-if="rule.uuid || rule.extra"
+        type="checkbox"
+        class="toggle toggle-sm shrink-0"
+        :checked="!isDisabled"
+        @change="toggleRuleDisabledHandler"
+        @click.stop
+      />
+      <button
+        :class="
+          twMerge(
+            'btn btn-circle btn-ghost btn-xs shrink-0',
+            isUpdating ? 'animate-spin' : '',
+            isUpdateableRuleSet ? '' : 'pointer-events-none invisible',
+          )
+        "
+        :aria-hidden="!isUpdateableRuleSet"
+        :tabindex="isUpdateableRuleSet ? 0 : -1"
+        @click.stop="updateRuleProviderClickHandler"
+      >
+        <ArrowPathIcon class="h-3.5 w-3.5 opacity-60" />
+      </button>
     </div>
 
-    <template v-if="isSelectable && !isCollapsed">
-      <div class="border-base-content/3 border-b"></div>
-      <ProxyGroup
-        :name="selected"
-        :force-open="true"
-        class="transparent-collapse bg-base-200/40! rounded-none!"
-      />
-    </template>
+    <div
+      class="transparent-collapse bg-base-200/40! collapse rounded-none!"
+      :class="isSelectable && !isCollapsed ? 'collapse-open' : 'collapse-close'"
+    >
+      <div
+        v-if="isSelectable"
+        class="collapse-content p-0!"
+      >
+        <div class="border-base-content/3 border-b"></div>
+        <ProxyGroup
+          :name="selected"
+          :force-open="true"
+          class="transparent-collapse bg-base-200/40! rounded-none!"
+        />
+      </div>
+    </div>
   </div>
 </template>
 

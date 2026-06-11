@@ -2,7 +2,7 @@
   <div class="relative size-full overflow-x-hidden">
     <VirtualScroller
       :data="renderLogs"
-      :size="44"
+      :size="38"
     >
       <template v-slot:before>
         <LogsCtrl />
