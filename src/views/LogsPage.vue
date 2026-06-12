@@ -2,7 +2,7 @@
   <div class="relative size-full overflow-x-hidden">
     <VirtualScroller
       :data="renderLogs"
-      :size="44"
+      :size="38"
     >
       <template v-slot:before>
         <LogsCtrl />
@@ -11,17 +11,30 @@
         <LogsCard :log="item" />
       </template>
     </VirtualScroller>
+    <LogDetailModal
+      v-model="isDetailOpen"
+      :log="selectedLog"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import VirtualScroller from '@/components/common/VirtualScroller.vue'
 import LogsCtrl from '@/components/controls/LogsCtrl.tsx'
+import LogDetailModal from '@/components/logs/LogDetailModal.vue'
 import LogsCard from '@/components/logs/LogsCard.vue'
 import { toSearchRegex } from '@/helper/search'
 import { logFilter, logFilterEnabled, logFilterRegex, logTypeFilter, logs } from '@/store/logs'
 import type { LogWithSeq } from '@/types'
-import { computed } from 'vue'
+import { computed, provide, ref } from 'vue'
+
+const selectedLog = ref<LogWithSeq | null>(null)
+const isDetailOpen = ref(false)
+const showLogDetail = (log: LogWithSeq) => {
+  selectedLog.value = log
+  isDetailOpen.value = true
+}
+provide('showLogDetail', showLogDetail)
 
 const renderLogs = computed(() => {
   let renderLogs = logs.value
