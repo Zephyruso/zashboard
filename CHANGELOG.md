@@ -2,6 +2,22 @@
 
 # Changelog
 
+## [3.9.0](https://github.com/Zephyruso/zashboard/compare/v3.8.0...v3.9.0) (2026-06-12)
+
+
+### Features
+
+* add blur mask effect to proxies folder top bar when stuck ([e7a4216](https://github.com/Zephyruso/zashboard/commit/e7a421659ee81740a783a1c918f17559a736e2d9)), closes [#675](https://github.com/Zephyruso/zashboard/issues/675)
+* add connection log handling and UI for displaying same connection logs for sing-box ([5b66582](https://github.com/Zephyruso/zashboard/commit/5b665823d996dd55e0f819f66d391738109952df))
+* add transition effects for expandable rule sections in RuleCard component ([f3da572](https://github.com/Zephyruso/zashboard/commit/f3da572881861622b0da63c7b53c0345ba111e62))
+* refactor proxy group components for improved mobile support and UI consistency ([64dace7](https://github.com/Zephyruso/zashboard/commit/64dace79c3866044e991e49c8cf5f685eac27a8d)), closes [#676](https://github.com/Zephyruso/zashboard/issues/676)
+
+
+### Bug Fixes
+
+* adjust width styles for better layout consistency in mobile proxy components ([fa7664f](https://github.com/Zephyruso/zashboard/commit/fa7664fb640800b6a2caeab93faabd8d8d68db10))
+* clear keyboard shortcut instead of resetting to default ([cdae6bf](https://github.com/Zephyruso/zashboard/commit/cdae6bfa68add44319e8a717658e6d536c2799ba)), closes [#673](https://github.com/Zephyruso/zashboard/issues/673)
+
 ## [3.8.0](https://github.com/Zephyruso/zashboard/compare/v3.7.1...v3.8.0) (2026-06-07)
 
 
