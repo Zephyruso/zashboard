@@ -97,3 +97,14 @@
 .slide-right-leave-to {
   transform: translateX(100%);
 }
+
+/* PC route transition: subtle fade, used with mode="out-in" */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.2s ease-in-out;
+  will-change: opacity;
+}
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+}

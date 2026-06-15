@@ -12,7 +12,7 @@
         {{ seqWithPadding }}
       </span>
       <span
-        class="badge badge-sm"
+        class="text-[11px] font-medium tracking-wide uppercase"
         :class="colorMapForType[log.type as keyof typeof colorMapForType]"
       >
         <HighlightText

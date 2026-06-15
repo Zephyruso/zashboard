@@ -2,7 +2,7 @@
   <div class="flex flex-1 items-center gap-1 truncate">
     <template v-if="proxyGroup.now">
       <Component
-        class="h-4 w-4 shrink-0 outline-none"
+        class="text-base-content/40 h-3.5 w-3.5 shrink-0 outline-none"
         :is="isFixed ? LockClosedIcon : ArrowRightCircleIcon"
         @mouseenter="tipForFixed"
       />
@@ -11,20 +11,20 @@
         :class="
           isNowAGroup && 'hover:bg-base-300 hover:-mx-1 hover:rounded-lg hover:px-1 hover:shadow'
         "
-        class="text-base-content/80 text-xs md:text-sm"
+        class="text-base-content text-xs font-medium md:text-sm"
         @click="handlerClickNow"
       />
       <template v-if="finalOutbound && displayFinalOutbound">
-        <ArrowRightCircleIcon class="h-4 w-4 shrink-0" />
+        <ArrowRightCircleIcon class="text-base-content/40 h-3.5 w-3.5 shrink-0" />
         <ProxyName
           :name="finalOutbound"
-          class="text-base-content/80 text-xs md:text-sm"
+          class="text-base-content text-xs font-medium md:text-sm"
         />
       </template>
     </template>
     <template v-else-if="proxyGroup.type.toLowerCase() === PROXY_TYPE.LoadBalance">
-      <CheckCircleIcon class="h-4 w-4 shrink-0" />
-      <span class="text-base-content/80 text-xs md:text-sm">
+      <CheckCircleIcon class="text-base-content/40 h-3.5 w-3.5 shrink-0" />
+      <span class="text-base-content text-xs font-medium md:text-sm">
         {{ $t('loadBalance') }}
       </span>
     </template>

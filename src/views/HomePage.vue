@@ -25,10 +25,13 @@
           >
             <Component :is="Component" />
           </Transition>
-          <Component
+          <Transition
             v-else
-            :is="Component"
-          />
+            name="page"
+            mode="out-in"
+          >
+            <Component :is="Component" />
+          </Transition>
         </div>
 
         <template v-if="isMiddleScreen">

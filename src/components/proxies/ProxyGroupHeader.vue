@@ -1,20 +1,21 @@
 <template>
-  <div class="relative flex w-full items-center gap-2 overflow-hidden">
+  <div class="relative flex w-full items-center gap-2.5 overflow-hidden">
     <ProxyName
       :name="name"
       :icon-size="proxyGroupIconSize"
       :icon-margin="proxyGroupIconMargin"
+      class="text-base-content font-medium"
     />
     <span
-      class="text-base-content/60 min-w-0 flex-1 truncate text-xs tabular-nums"
+      class="text-base-content/40 min-w-0 flex-1 truncate text-[11px] font-medium tracking-wider uppercase tabular-nums"
       @mouseenter="checkTruncation"
     >
-      · {{ proxyGroup.type }} · {{ proxiesCount }}
+      {{ proxyGroup.type }} · {{ proxiesCount }}
     </span>
     <ProxyGroupFilter :group-name="name" />
     <button
       v-if="manageHiddenGroup"
-      class="btn btn-circle btn-xs"
+      class="btn btn-circle btn-ghost btn-xs"
       @click.stop="handlerGroupToggle"
     >
       <EyeIcon
@@ -27,18 +28,20 @@
       />
     </button>
     <LatencyTag
-      :class="twMerge('bg-base-200/50 hover:bg-base-200')"
+      :class="twMerge('bg-base-200/40 hover:bg-base-200/70')"
       :loading="isLatencyTesting"
       :name="proxyGroup.now"
       :group-name="proxyGroup.name"
       @click.stop="emit('latency-test')"
     />
   </div>
-  <div class="text-base-content/80 mt-1.5 flex items-center gap-2">
+  <div class="text-base-content/70 mt-2 flex items-center gap-2">
     <div class="flex flex-1 items-center gap-2 truncate text-sm">
       <ProxyGroupNow :name="name" />
     </div>
-    <div class="min-w-12 shrink-0 text-right text-xs">{{ prettyBytesHelper(downloadTotal) }}/s</div>
+    <div class="text-base-content/40 min-w-12 shrink-0 text-right text-xs tabular-nums">
+      {{ prettyBytesHelper(downloadTotal) }}/s
+    </div>
   </div>
 </template>
 

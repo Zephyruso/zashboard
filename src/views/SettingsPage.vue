@@ -40,7 +40,7 @@
             class="mb-4 rounded-lg p-2 md:mb-6"
           >
             <div
-              class="mt-1 mb-3 px-1 text-lg font-semibold"
+              class="text-base-content/85 mt-1 mb-2.5 px-1 text-base font-semibold tracking-tight"
               v-if="![SETTINGS_MENU_KEY.general, SETTINGS_MENU_KEY.backend].includes(item.key)"
             >
               {{ $t(item.label) }}
@@ -63,7 +63,7 @@
         class="mb-4 md:mb-6"
       >
         <div
-          class="mt-1 mb-3 px-1 text-lg font-semibold"
+          class="text-base-content/85 mt-1 mb-2.5 px-1 text-base font-semibold tracking-tight"
           v-if="![SETTINGS_MENU_KEY.general, SETTINGS_MENU_KEY.backend].includes(item.key)"
         >
           {{ $t(item.label) }}

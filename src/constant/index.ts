@@ -226,6 +226,8 @@ export const DETAILED_CARD_STYLE = [
 export const ALL_THEME = [
   'light',
   'dark',
+  'light-neutral',
+  'dark-neutral',
   ...(window.ksu ? ['light-monet', 'dark-monet'] : []),
   'halloween',
   'forest',
