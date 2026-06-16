@@ -2,6 +2,23 @@
 
 # Changelog
 
+## [3.10.0](https://github.com/Zephyruso/zashboard/compare/v3.9.0...v3.10.0) (2026-06-16)
+
+
+### Features
+
+* add goroutines tracking and update related components for improved performance monitoring ([e6458f5](https://github.com/Zephyruso/zashboard/commit/e6458f5ff5a1222aef6fba3a1bf5dcf16283013c))
+* add sing-box native API support and font selection options ([6a4f752](https://github.com/Zephyruso/zashboard/commit/6a4f7525880cd4c4ff830cbed1a92e6935cbe30b))
+* enhance TailscalePeerDialog with copy functionality and notifications ([7ed0a91](https://github.com/Zephyruso/zashboard/commit/7ed0a917da5338a260e9500ccfd71488d19cce8c))
+* support sing-box native API ([d719c26](https://github.com/Zephyruso/zashboard/commit/d719c265a1b2420ff412bbf7ab844d6d6a1c9e54))
+* update theme styles and add new neutral themes ([b7d7c14](https://github.com/Zephyruso/zashboard/commit/b7d7c14d4bb122d322083d90b13cf2ae1fd10903))
+
+
+### Bug Fixes
+
+* implement viewport height tracking and keyboard inset handling for improved mobile experience ([b48a450](https://github.com/Zephyruso/zashboard/commit/b48a450719f5de6c10916e487b106392d0e6bca4))
+* update viewport height handling for terminal and improve CSS theme colors ([870249a](https://github.com/Zephyruso/zashboard/commit/870249a8ad03398cd918446ed79f9361273d53d7))
+
 ## [3.9.0](https://github.com/Zephyruso/zashboard/compare/v3.8.0...v3.9.0) (2026-06-12)
 
 
