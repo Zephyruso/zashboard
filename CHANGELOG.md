@@ -2,6 +2,16 @@
 
 # Changelog
 
+## [3.10.1](https://github.com/Zephyruso/zashboard/compare/v3.10.0...v3.10.1) (2026-06-17)
+
+
+### Bug Fixes
+
+* adjust padding in ConnectionDetails component for improved layout ([013a544](https://github.com/Zephyruso/zashboard/commit/013a5443a8ce2b852c263e98e08d0f33e64e9de7))
+* dock blur style in proxy page ([d10b9c7](https://github.com/Zephyruso/zashboard/commit/d10b9c79335cbaf37e3617a3cd33e6c243fc40a6))
+* sidebar active tab text invisible in dim theme ([5edc33b](https://github.com/Zephyruso/zashboard/commit/5edc33bbf1e95facd4cec4acc1a715e11c6d5bf3))
+* the mask style of proxy group mobile ([10bac17](https://github.com/Zephyruso/zashboard/commit/10bac177660449fc43109703cb4dfa62f91b4654))
+
 ## [3.10.0](https://github.com/Zephyruso/zashboard/compare/v3.9.0...v3.10.0) (2026-06-16)
 
 
