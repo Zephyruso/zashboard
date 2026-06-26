@@ -48,6 +48,12 @@ export const isProxyGroup = (name: string) => {
 export const getConnectionChains = (connection: Connection) =>
   connectionAccessor().chains(connection)
 
+export const getConnectionOutboundNode = (connection: Connection) => {
+  const chains = getConnectionChains(connection)
+
+  return chains.length > 0 ? chains[chains.length - 1] : '-'
+}
+
 export const getConnectionDownload = (connection: Connection) =>
   connectionAccessor().download(connection)
 

@@ -147,6 +147,7 @@ export enum ConnectionHistoryType {
   Destination = 'destination',
   Process = 'process',
   Outbound = 'outbound',
+  Node = 'node',
 }
 
 const connectionHistoryDB = useIndexedDB('connection-history')
@@ -177,4 +178,36 @@ export const getConnectionHistoryFromIndexedDB = async (
 
 export const clearConnectionHistoryFromIndexedDB = async () => {
   return connectionHistoryDB.clear()
+}
+
+export interface TrafficMatrixData {
+  sourceIP: string
+  outbound: string
+  download: number
+  upload: number
+  count: number
+}
+
+export const saveTrafficMatrixToIndexedDB = async (uuid: string, data: TrafficMatrixData[]) => {
+  const jsonData = JSON.stringify(data)
+  return connectionHistoryDB.put(`${uuid}-trafficMatrix`, jsonData)
+}
+
+export const getTrafficMatrixFromIndexedDB = async (uuid: string): Promise<TrafficMatrixData[]> => {
+  const jsonData = await connectionHistoryDB.get(`${uuid}-trafficMatrix`)
+  if (!jsonData) {
+    return []
+  }
+  try {
+    return JSON.parse(jsonData) as TrafficMatrixData[]
+  } catch {
+    return []
+  }
+}
+
+export const clearTrafficMatrixFromIndexedDB = async () => {
+  const keys = await connectionHistoryDB.getAllKeys()
+  const matrixKeys = keys.filter((key) => key.endsWith('-trafficMatrix'))
+
+  await Promise.all(matrixKeys.map((key) => connectionHistoryDB.del(key)))
 }

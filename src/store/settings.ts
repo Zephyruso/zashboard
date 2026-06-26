@@ -166,6 +166,8 @@ export const numberOfChartsInSidebar = useStorage<1 | 2 | 3>(
   'config/number-of-charts-in-sidebar',
   2,
 )
+export const trafficMonthlyResetEnabled = useStorage('config/traffic-monthly-reset-enabled', false)
+export const trafficMonthlyResetDay = useStorage('config/traffic-monthly-reset-day', 1)
 const defaultOverviewCardOrder: { card: OVERVIEW_CARD; visible: boolean }[] = [
   {
     card: OVERVIEW_CARD.ChartsCard,
@@ -185,6 +187,10 @@ const defaultOverviewCardOrder: { card: OVERVIEW_CARD; visible: boolean }[] = [
   },
   {
     card: OVERVIEW_CARD.ConnectionHistory,
+    visible: true,
+  },
+  {
+    card: OVERVIEW_CARD.TrafficUsageReport,
     visible: true,
   },
   {

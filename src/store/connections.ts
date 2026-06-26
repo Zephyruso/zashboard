@@ -17,6 +17,7 @@ import {
   getNetworkTypeFromConnection,
 } from '@/helper'
 import { toSearchRegex } from '@/helper/search'
+import { checkAndPerformTrafficReset } from '@/helper/trafficReset'
 import type { Connection } from '@/types'
 import { useStorage, watchOnce } from '@vueuse/core'
 import dayjs from 'dayjs'
@@ -62,7 +63,7 @@ export const initConnections = () => {
   closedConnections.value = []
   downloadTotal.value = 0
   uploadTotal.value = 0
-  initAggregatedDataMap()
+  checkAndPerformTrafficReset().then(() => initAggregatedDataMap())
   // active(已带瞬时速率)与 closed(本拍新关闭增量)均由各后端 assembly 算好,store 只消费。
   const ws = fetchConnectionsAPI()
   const unwatch = watch(ws.data, (snapshot) => {

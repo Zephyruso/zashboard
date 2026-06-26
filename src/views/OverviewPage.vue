@@ -18,6 +18,7 @@
 import OverviewCtrl from '@/components/controls/OverviewCtrl.vue'
 import ChartsCard from '@/components/overview/ChartsCard.vue'
 import ConnectionHistory from '@/components/overview/ConnectionHistory.vue'
+import TrafficUsageReport from '@/components/overview/TrafficUsageReport.vue'
 import NetworkCard from '@/components/overview/NetworkCard.vue'
 import ProviderTrafficOverview from '@/components/overview/ProviderTrafficOverview.vue'
 import RuleHitCountCard from '@/components/overview/RuleHitCountCard.vue'
@@ -41,6 +42,7 @@ const cardComponents: Record<string, Component> = {
   ProviderTrafficOverview,
   TopologyCharts,
   ConnectionHistory,
+  TrafficUsageReport,
   RuleHitCountCard,
 }
 </script>
