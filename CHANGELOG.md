@@ -2,6 +2,28 @@
 
 # Changelog
 
+## [3.12.0](https://github.com/Zephyruso/zashboard/compare/v3.11.0...v3.12.0) (2026-06-29)
+
+
+### Features
+
+* add BackendUptime component to display server uptime and integrate startedAt functionality ([bed57f2](https://github.com/Zephyruso/zashboard/commit/bed57f212e412a3f9a891527ae03d76c358f8fa7))
+* add keyboard shortcut for toggling manage hidden group ([f1d81e9](https://github.com/Zephyruso/zashboard/commit/f1d81e9fad587e8191e74dadf173baa0d979ed44))
+* enhance ConnectionStatus component with latency statistics and add LatencyChart for visual representation ([314afeb](https://github.com/Zephyruso/zashboard/commit/314afebbc474d0c876fa0f308c7ecc87818db5c5))
+
+
+### Bug Fixes
+
+* add icon mapping to proxies based on user configuration for enhanced visual representation ([357a9d5](https://github.com/Zephyruso/zashboard/commit/357a9d52f76973196c5eecfecd6990230ad7fe72))
+* adjust padding and styling in SettingsCtrl and SettingsPage components ([0d53688](https://github.com/Zephyruso/zashboard/commit/0d536888d23683cb4e0d3b471d51fc7e2c1105d3))
+* adjust setting item label flex properties and update select width in ProxiesSettings component ([83dda30](https://github.com/Zephyruso/zashboard/commit/83dda306721f3a390b4f57fafc9c78d013fe07a9))
+* enhance settings menu localization with new translations and update layout for better responsiveness ([5ea0645](https://github.com/Zephyruso/zashboard/commit/5ea0645f0c6d1f024f3a9c28f300ff0554f277ee))
+* enhance visual consistency by applying 'need-blur' class to various components ([781025e](https://github.com/Zephyruso/zashboard/commit/781025e0082d81d769ffc9176efddbe534da7299))
+* optimize rendering of selects in ConnectionHistory and improve button opacity handling in SetupPage ([396dc04](https://github.com/Zephyruso/zashboard/commit/396dc04567e2da1ab4433aa87b0f39a17da5be25))
+* remove default appearance for select utility to enhance styling ([6f65c3b](https://github.com/Zephyruso/zashboard/commit/6f65c3bf9d07384d92ada902ba46b45007fa35f1))
+* treat sing-box connections with closedAt &gt; 0 as closed ([9150a53](https://github.com/Zephyruso/zashboard/commit/9150a53e561bab97c14a924eb94bb98b197b64fb))
+* update backend type handling in setup process and enhance README with backend API selection ([87ccd26](https://github.com/Zephyruso/zashboard/commit/87ccd26f267f3610b95500316237699c1b9c972c))
+
 ## [3.11.0](https://github.com/Zephyruso/zashboard/compare/v3.10.1...v3.11.0) (2026-06-24)
 
 
