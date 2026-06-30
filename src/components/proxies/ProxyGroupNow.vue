@@ -32,9 +32,9 @@
 </template>
 
 <script setup lang="ts">
+import { openProxyGroupChain } from '@/composables/proxyGroupChain'
 import { PROXY_TYPE } from '@/constant'
 import { useTooltip } from '@/helper/tooltip'
-import { scrollToGroup } from '@/helper/utils'
 import { getNowProxyNodeName, proxyGroupList, proxyMap } from '@/assembly/proxies'
 import { displayFinalOutbound } from '@/store/settings'
 import { ArrowRightCircleIcon, CheckCircleIcon, LockClosedIcon } from '@heroicons/vue/24/outline'
@@ -81,7 +81,7 @@ const finalOutbound = computed(() => {
 const handlerClickNow = (e: Event) => {
   if (isNowAGroup.value) {
     e.stopPropagation()
-    scrollToGroup(proxyGroup.value.now)
+    openProxyGroupChain(props.name)
   }
 }
 </script>
