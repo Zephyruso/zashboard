@@ -23,6 +23,7 @@ import {
   collapseGroupMap,
   disableProxiesPageTextSelect,
   displayFinalOutbound,
+  displayProxyGroupChain,
   groupProxiesByProvider,
   hideUnavailableProxies,
   manageHiddenGroup,
@@ -318,6 +319,14 @@ export default defineComponent({
                     class="toggle toggle-sm"
                     type="checkbox"
                     v-model={displayFinalOutbound.value}
+                  />
+                </div>
+                <div class="setting-item">
+                  <div class="setting-item-label">{t('displayProxyGroupChain')}</div>
+                  <input
+                    class="toggle toggle-sm"
+                    type="checkbox"
+                    v-model={displayProxyGroupChain.value}
                   />
                 </div>
                 <div class="setting-item">

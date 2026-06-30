@@ -228,6 +228,7 @@ export const proxyGroupFilterMap = useStorage<Record<string, string>>(
   {},
 )
 export const displayFinalOutbound = useStorage('config/show-selected-for-now-node', false)
+export const displayProxyGroupChain = useStorage('config/display-proxy-group-chain', false)
 export const twoColumnProxyGroup = useStorage('config/two-columns', true)
 export const proxyFolderMode = useStorage<FOLDER_MODE>(
   'config/proxy-folder-mode-setting',
