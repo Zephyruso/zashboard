@@ -2,6 +2,16 @@
 
 # Changelog
 
+## [3.12.1](https://github.com/Zephyruso/zashboard/compare/v3.12.0...v3.12.1) (2026-07-02)
+
+
+### Bug Fixes
+
+* add download speed display to ProxyGroupHeaderForMobile component ([9544f9c](https://github.com/Zephyruso/zashboard/commit/9544f9c98416a465839913740eec734fdefc6832))
+* enhance layout and styling of ChartsCard, NetworkCard, and FolderTopBar components for improved responsiveness ([db75744](https://github.com/Zephyruso/zashboard/commit/db75744540d523654ac0fd48337e071ed01e37ad))
+* replace icons in BackendSwitch component for consistency ([d2f9452](https://github.com/Zephyruso/zashboard/commit/d2f9452a91b8c3bbb8b721560fcaf9e2dc64c99b))
+* update routing for manual backend setup and enhance backend retrieval logic in SetupPage ([656412e](https://github.com/Zephyruso/zashboard/commit/656412e25e2ca27064d87d4cbf4b86dd80a6d486))
+
 ## [3.12.0](https://github.com/Zephyruso/zashboard/compare/v3.11.0...v3.12.0) (2026-06-29)
 
 
