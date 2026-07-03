@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [3.13.1](https://github.com/Zephyruso/zashboard/compare/v3.13.0...v3.13.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* **router:** simplify setup redirection logic in beforeEach guard ([faa9f9e](https://github.com/Zephyruso/zashboard/commit/faa9f9e9e9d7ad352be77a66383b59f7ca6f27f5))
+* **sing-box-r:** add version check for provider latency fetching logic ([728588e](https://github.com/Zephyruso/zashboard/commit/728588e28264216746f47a5aed9f618f0b2f17a9))
+
 ## [3.13.0](https://github.com/Zephyruso/zashboard/compare/v3.12.1...v3.13.0) (2026-07-03)
 
 
