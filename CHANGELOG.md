@@ -2,6 +2,22 @@
 
 # Changelog
 
+## [3.13.0](https://github.com/Zephyruso/zashboard/compare/v3.12.1...v3.13.0) (2026-07-03)
+
+
+### Features
+
+* **connections:** add local GeoIP attribution column ([6ac5eb0](https://github.com/Zephyruso/zashboard/commit/6ac5eb0e269473d902107b64b7414514d9b7979d))
+* enhance ConnectionCardSettings and TableSettings components with improved UI and functionality; add internationalization support for new labels ([b69559b](https://github.com/Zephyruso/zashboard/commit/b69559bdb2eedf586e301e653b614d2cff1152f8))
+
+
+### Bug Fixes
+
+* **overview:** source sing-box traffic totals from the status statistics stream ([67e5011](https://github.com/Zephyruso/zashboard/commit/67e501102d9459e05f24d9c08a2959eef0c894d3))
+* **proxies:** use provider-scoped healthcheck endpoint for provider node latency test ([bde2145](https://github.com/Zephyruso/zashboard/commit/bde214501be18fcaaad2245593d025600d770e05))
+* **singbox:** carry persistent subscriptions over WebSocket to free the HTTP connection pool ([e9880fa](https://github.com/Zephyruso/zashboard/commit/e9880fabad972edb252954efc8180959d24cbe96))
+* **tailscale:** clear stale ping results when peer dialog closes or switches peers ([fafc2fb](https://github.com/Zephyruso/zashboard/commit/fafc2fbb28afb701172a677bd18671cd3aeedd43))
+
 ## [3.12.1](https://github.com/Zephyruso/zashboard/compare/v3.12.0...v3.12.1) (2026-07-02)
 
 
