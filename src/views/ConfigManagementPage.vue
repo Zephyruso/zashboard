@@ -1,184 +1,148 @@
 <template>
-  <div
-    class="relative flex size-full flex-col overflow-hidden"
-    :style="padding"
-  >
+  <div class="relative h-full overflow-y-auto">
     <CtrlsBar>
-      <div class="flex flex-wrap items-center justify-between gap-3 p-2">
-        <div class="tabs-box tabs tabs-sm">
+      <div class="scrollbar-hidden p-1 px-2">
+        <div class="flex w-full gap-2">
+          <div class="relative mx-auto flex max-w-6xl flex-1 gap-2">
+            <button
+              v-for="tab in tabs"
+              :key="tab.key"
+              type="button"
+              class="btn btn-ghost btn-sm hover:btn hover:btn-neutral my-1 flex-1 gap-2"
+              :class="activeTab === tab.key ? 'btn-active btn-neutral text-neutral-content' : ''"
+              @click="activeTab = tab.key"
+            >
+              <component
+                :is="tab.icon"
+                class="h-5 w-5"
+              />
+              <span class="hidden text-sm lg:block">{{ tab.label }}</span>
+              <span class="badge badge-ghost badge-xs hidden xl:inline-flex">{{ tab.count }}</span>
+            </button>
+          </div>
           <button
-            v-for="tab in tabs"
-            :key="tab.key"
-            class="tab gap-2"
-            :class="activeTab === tab.key && 'tab-active'"
-            @click="activeTab = tab.key"
-          >
-            <span>{{ tab.label }}</span>
-            <span class="badge badge-ghost badge-xs">{{ tab.count }}</span>
-          </button>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <span class="text-base-content/60 hidden text-xs md:inline"> 全局配置 </span>
-          <button
-            v-if="activeTab === 'dns' || activeTab === 'network'"
-            class="btn btn-primary btn-sm"
-            :disabled="busy || globalConfigSaving"
-            @click="saveGlobalConfig"
-          >
-            {{ globalConfigSaving ? '保存中…' : '保存配置' }}
-          </button>
-          <button
-            class="btn btn-sm"
-            :disabled="busy"
+            class="btn btn-circle btn-sm my-auto"
             @click="refreshPage"
           >
-            {{ $t('refresh') }}
+            <Cog6ToothIcon class="h-4 w-4" />
           </button>
         </div>
       </div>
     </CtrlsBar>
 
-    <div class="flex-1 overflow-y-auto">
-      <div
-        class="w-full space-y-4 p-3"
-        :style="padding"
+    <div
+      class="mx-auto w-full max-w-6xl space-y-4 p-3 md:px-6 md:py-5"
+      :style="padding"
+    >
+      <section
+        v-if="activeTab === 'inbounds'"
+        class="flex h-full min-h-0 flex-col"
       >
-        <section
-          v-if="activeTab === 'inbounds'"
-          class="flex h-full min-h-0 flex-col"
-        >
-          <div class="space-y-4">
-            <div class="base-container p-4">
-              <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                <div class="space-y-1">
-                  <h3 class="text-lg font-semibold">入站入口卡片</h3>
-                  <p class="text-base-content/60 text-sm leading-6">
-                    用 FastProxy 统一入站模型管理端口和 Tun，再分别编译到 sing-box inbounds 与
-                    mihomo 顶层端口配置。
-                  </p>
-                  <div class="flex flex-wrap gap-2 pt-1">
-                    <span
-                      class="badge"
-                      :class="inboundAuditSummaryBadgeClass"
-                    >
-                      {{ inboundAuditSummary }}
-                    </span>
-                    <span class="badge badge-outline">sing-box / mihomo 双核心审计</span>
-                  </div>
-                </div>
-
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <label class="input input-bordered flex w-full items-center gap-2 sm:w-72">
-                    <input
-                      v-model="inboundSearch"
-                      type="text"
-                      class="grow"
-                      placeholder="搜索 tag、type、端口"
-                    />
-                  </label>
-                  <button
-                    class="btn btn-primary"
-                    type="button"
-                    :disabled="inboundSaving"
-                    @click="openCreateInboundDialog"
+        <div class="space-y-4">
+          <div v-if="filteredInboundCards.length">
+            <Draggable
+              :model-value="filteredInboundCards"
+              item-key="id"
+              handle=".inbound-drag-handle"
+              ghost-class="ghost"
+              :animation="180"
+              class="grid grid-cols-1 content-start items-start gap-4 md:grid-cols-2"
+              @update:model-value="reorderInboundCards"
+            >
+              <template #item="{ element: card }">
+                <section
+                  class="group base-container collapse w-full shadow-sm"
+                  :class="isInboundCardExpanded(card.id) ? 'collapse-open' : 'collapse-close'"
+                >
+                  <div
+                    class="collapse-title cursor-pointer p-5"
+                    @click="toggleInboundCardExpanded(card.id)"
                   >
-                    {{ inboundSaving ? '保存中…' : '新增入站' }}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div v-if="filteredInboundCards.length">
-              <Draggable
-                :model-value="filteredInboundCards"
-                item-key="id"
-                handle=".inbound-drag-handle"
-                ghost-class="ghost"
-                :animation="180"
-                class="grid grid-cols-1 content-start items-start gap-4 md:grid-cols-2"
-                @update:model-value="reorderInboundCards"
-              >
-                <template #item="{ element: card }">
-                  <article
-                    class="base-container w-full p-5 shadow-sm transition"
-                    :class="card.enabled ? 'opacity-100' : 'opacity-60'"
-                  >
-                    <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                      <div class="min-w-0 flex-1 space-y-4">
-                        <div class="flex flex-wrap items-start gap-3">
-                          <button
-                            class="inbound-drag-handle btn btn-ghost btn-sm btn-square cursor-grab"
-                            type="button"
-                            aria-label="拖动排序"
-                          >
-                            <Bars3Icon class="h-5 w-5" />
-                          </button>
-
+                    <div class="relative flex w-full items-start gap-3 overflow-hidden">
+                      <div class="flex min-w-0 flex-1 flex-col gap-3">
+                        <div class="flex min-w-0 items-center gap-3">
+                          <Bars3Icon
+                            class="inbound-drag-handle text-base-content/45 h-4 w-4 shrink-0 cursor-grab"
+                          />
+                          <ChevronRightIcon
+                            class="h-4 w-4 shrink-0 transition-transform"
+                            :class="isInboundCardExpanded(card.id) && 'rotate-90'"
+                          />
                           <div class="min-w-0 flex-1">
-                            <div class="flex flex-wrap items-center gap-2">
+                            <div class="flex min-w-0 items-center gap-2 overflow-hidden">
                               <h4 class="truncate text-base font-semibold">
                                 {{ card.values.tag || '未命名入站' }}
                               </h4>
-                              <span class="badge badge-ghost">
-                                {{ inboundTypeLabelMap[card.type as InboundType] }}
-                              </span>
-                              <span
-                                v-if="inboundInjectSupportMap[card.type as InboundType]"
-                                class="badge badge-info badge-outline"
-                              >
-                                注入 {{ inboundInjectSupportMap[card.type as InboundType] }}
+                              <span class="text-base-content/60 shrink-0 text-xs tabular-nums">
+                                · {{ inboundTypeLabelMap[card.type as InboundType] }} ·
+                                {{ inboundPreviewEntries(card).length }} 项
                               </span>
                             </div>
-                            <p class="text-base-content/60 mt-2 text-sm leading-6">
-                              {{ describeInboundCard(card) }}
-                            </p>
+                            <div class="text-base-content/80 mt-1.5 flex items-center gap-2">
+                              <div class="flex flex-1 items-center gap-2 truncate text-sm">
+                                <div class="flex flex-1 items-center gap-1 truncate">
+                                  <span class="truncate text-xs md:text-sm">
+                                    {{ describeInboundCard(card) }}
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="shrink-0 text-right text-xs">
+                                {{ card.enabled ? '启用中' : '已禁用' }}
+                              </div>
+                            </div>
                           </div>
                         </div>
 
                         <div class="flex flex-wrap gap-2">
+                          <span class="badge badge-ghost h-5 min-h-5 rounded-md px-1.5 text-[10px]">
+                            {{ inboundTypeLabelMap[card.type as InboundType] }}
+                          </span>
+                          <span
+                            v-if="inboundInjectSupportMap[card.type as InboundType]"
+                            class="badge badge-outline h-5 min-h-5 rounded-md px-1.5 text-[10px]"
+                          >
+                            注入 {{ inboundInjectSupportMap[card.type as InboundType] }}
+                          </span>
                           <span
                             v-if="!inboundAuditByCard.get(card.id)?.length"
-                            class="badge badge-success badge-outline"
+                            class="badge badge-success badge-outline h-5 min-h-5 rounded-md px-1.5 text-[10px]"
                           >
                             双核心可编译
                           </span>
                           <span
                             v-else
-                            class="badge badge-warning badge-outline"
+                            class="badge badge-warning badge-outline h-5 min-h-5 rounded-md px-1.5 text-[10px]"
                           >
                             {{ inboundAuditByCard.get(card.id)?.length }} 条审计提示
                           </span>
                         </div>
-
-                        <div
-                          v-if="inboundAuditByCard.get(card.id)?.length"
-                          class="border-base-300/70 bg-base-200/50 rounded-lg border p-3"
-                        >
-                          <div
-                            v-for="issue in inboundAuditByCard.get(card.id)"
-                            :key="`${issue.core}-${issue.field}-${issue.message}`"
-                            class="text-sm leading-6"
-                            :class="
-                              issue.severity === 'error'
-                                ? 'text-error'
-                                : issue.severity === 'warning'
-                                  ? 'text-warning'
-                                  : 'text-base-content/65'
-                            "
-                          >
-                            {{ issue.core }} · {{ issue.message }}
-                          </div>
-                        </div>
                       </div>
 
-                      <div class="flex flex-wrap items-center gap-2 xl:justify-end">
-                        <label
-                          class="border-base-300/60 bg-base-200/45 flex items-center gap-3 rounded-2xl border px-3 py-2"
+                      <div
+                        class="absolute top-0 right-0 flex items-center gap-1"
+                        @click.stop
+                      >
+                        <button
+                          class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-base-content opacity-0 transition-all duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
+                          type="button"
+                          title="编辑入站"
+                          :disabled="inboundSaving"
+                          @click="openEditInboundDialog(card.id)"
                         >
-                          <span class="text-sm">{{ card.enabled ? '启用中' : '已禁用' }}</span>
+                          <PencilSquareIcon class="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-error opacity-0 transition-all duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
+                          type="button"
+                          title="删除入站"
+                          :disabled="inboundSaving"
+                          @click="removeInboundCard(card.id)"
+                        >
+                          <TrashIcon class="h-3.5 w-3.5" />
+                        </button>
+                        <label class="ml-1 flex items-center">
                           <input
-                            class="toggle toggle-primary"
+                            class="toggle toggle-primary toggle-sm"
                             type="checkbox"
                             :disabled="inboundSaving"
                             :checked="card.enabled"
@@ -190,293 +154,277 @@
                             "
                           />
                         </label>
-                        <button
-                          class="btn btn-outline btn-sm"
-                          type="button"
-                          :disabled="inboundSaving"
-                          @click="openEditInboundDialog(card.id)"
-                        >
-                          <PencilSquareIcon class="h-4 w-4" />
-                          编辑
-                        </button>
-                        <button
-                          class="btn btn-outline btn-error btn-sm"
-                          type="button"
-                          :disabled="inboundSaving"
-                          @click="removeInboundCard(card.id)"
-                        >
-                          <TrashIcon class="h-4 w-4" />
-                          删除
-                        </button>
                       </div>
                     </div>
-                  </article>
-                </template>
-              </Draggable>
-            </div>
+                  </div>
+                  <div class="collapse-content p-0">
+                    <div
+                      v-if="isInboundCardExpanded(card.id)"
+                      class="space-y-3 px-5 pb-5"
+                    >
+                      <div
+                        v-if="inboundAuditByCard.get(card.id)?.length"
+                        class="border-base-300/70 bg-base-200/50 rounded-2xl border p-4"
+                      >
+                        <div
+                          v-for="issue in inboundAuditByCard.get(card.id)"
+                          :key="`${issue.core}-${issue.field}-${issue.message}`"
+                          class="text-sm leading-6"
+                          :class="
+                            issue.severity === 'error'
+                              ? 'text-error'
+                              : issue.severity === 'warning'
+                                ? 'text-warning'
+                                : 'text-base-content/65'
+                          "
+                        >
+                          {{ issue.core }} · {{ issue.message }}
+                        </div>
+                      </div>
 
+                      <div class="grid gap-3 md:grid-cols-2">
+                        <div
+                          v-for="entry in inboundPreviewEntries(card)"
+                          :key="entry.key"
+                          class="border-base-300/50 bg-base-200/35 rounded-2xl border p-4"
+                        >
+                          <div class="text-base-content/50 text-xs font-semibold uppercase">
+                            {{ entry.key }}
+                          </div>
+                          <div class="mt-1 font-mono text-sm break-all">
+                            {{ entry.value }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div
+                        v-if="!inboundPreviewEntries(card).length"
+                        class="text-base-content/55 py-8 text-center text-sm"
+                      >
+                        暂无更多字段
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </template>
+            </Draggable>
+          </div>
+
+          <div
+            v-else
+            class="base-container"
+          >
             <div
-              v-else
-              class="base-container"
+              class="text-base-content/55 flex min-h-[280px] flex-col items-center justify-center gap-4 px-6 py-10 text-center"
             >
-              <div
-                class="text-base-content/55 flex min-h-[280px] flex-col items-center justify-center gap-4 px-6 py-10 text-center"
-              >
-                <div class="text-xl font-semibold">
-                  {{ inboundCards.length ? '没有匹配的入站卡片' : '还没有入站配置' }}
-                </div>
-                <p class="max-w-xl text-sm leading-6">
-                  {{
-                    inboundCards.length
-                      ? '换个关键词试试，或者直接新增一个新的入站入口。'
-                      : '先创建一个入站入口，按类型填写不同字段。'
-                  }}
-                </p>
-                <button
-                  class="btn btn-primary"
-                  type="button"
-                  :disabled="inboundSaving"
-                  @click="openCreateInboundDialog"
-                >
-                  {{ inboundSaving ? '保存中…' : '新增入站' }}
-                </button>
+              <div class="text-xl font-semibold">
+                {{ inboundCards.length ? '没有匹配的入站卡片' : '还没有入站配置' }}
               </div>
+              <p class="max-w-xl text-sm leading-6">
+                {{
+                  inboundCards.length
+                    ? '换个关键词试试，或者直接新增一个新的入站入口。'
+                    : '先创建一个入站入口，按类型填写不同字段。'
+                }}
+              </p>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section
-          v-else-if="activeTab === 'rule-sets'"
-          class="flex h-full min-h-0 flex-col"
-        >
-          <div class="space-y-4">
-            <article class="base-container p-4">
-              <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                <div class="space-y-1">
-                  <h3 class="text-lg font-semibold">内置规则集</h3>
-                  <p class="text-base-content/60 text-sm leading-6">
-                    MetaCubeX/meta-rules-dat 会缓存为本地索引；路由规则可以直接引用这里的路径名称。
-                  </p>
-                </div>
-
-                <div class="flex flex-wrap items-center gap-2">
-                  <label class="input input-sm input-bordered flex min-w-64 items-center gap-2">
+      <section
+        v-else-if="activeTab === 'rule-sets'"
+        class="flex h-full min-h-0 flex-col"
+      >
+        <div class="space-y-4">
+          <article class="base-container min-h-0 p-4">
+            <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div class="space-y-1">
+                <h4 class="text-base font-semibold">MetaCubeX/meta-rules-dat</h4>
+                <p class="text-base-content/60 text-sm">
+                  {{ builtInRuleIndexSummary }}
+                </p>
+              </div>
+              <div class="flex flex-col gap-2 md:items-end">
+                <div class="flex min-w-64 items-center gap-2">
+                  <label class="input input-sm input-bordered flex flex-1 items-center gap-2">
                     <input
-                      v-model.trim="builtInRuleSearch"
+                      v-model="builtInRuleSearch"
                       class="grow"
                       type="search"
-                      placeholder="搜索全部内置规则集"
-                    />
-                    <span
-                      v-if="builtInRuleSearching"
-                      class="loading loading-spinner loading-xs"
+                      placeholder="搜索名称、路径"
+                      @keydown.enter="triggerBuiltInRuleSearch"
                     />
                   </label>
                   <button
-                    class="btn btn-sm btn-primary"
+                    class="btn btn-sm btn-outline"
                     type="button"
-                    :disabled="builtInRuleIndexRefreshing"
-                    @click="refreshBuiltInRuleIndex"
+                    @click="triggerBuiltInRuleSearch"
                   >
-                    {{ builtInRuleIndexRefreshing ? '刷新中…' : '刷新内置索引' }}
+                    搜索
                   </button>
-                </div>
-              </div>
-            </article>
-
-            <article class="base-container min-h-0 p-4">
-              <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                <div class="space-y-1">
-                  <h4 class="text-base font-semibold">MetaCubeX/meta-rules-dat</h4>
-                  <p class="text-base-content/60 text-sm">
-                    {{ builtInRuleIndexSummary }}
-                  </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                   <span class="badge badge-outline">sing-box: sing</span>
                   <span class="badge badge-outline">mihomo: meta</span>
-                  <span class="badge badge-ghost">{{ builtInRuleIndexEntries.length }}</span>
+                  <span class="badge badge-ghost">{{ builtInRuleTableData.total || 0 }}</span>
                 </div>
+              </div>
+            </div>
+
+            <div
+              v-if="builtInRuleIndexError"
+              class="text-error mb-3 text-sm"
+            >
+              {{ builtInRuleIndexError }}
+            </div>
+
+            <div class="rounded-box border-base-300/60 bg-base-200/30 overflow-hidden border">
+              <div
+                v-if="(builtInRuleTableData.entries || []).length > 0"
+                class="overflow-x-auto"
+              >
+                <table class="table-pin-rows table-zebra table min-w-[980px]">
+                  <thead class="bg-base-100/95">
+                    <tr>
+                      <th>名称</th>
+                      <th>逻辑路径</th>
+                      <th>sing-box</th>
+                      <th>mihomo</th>
+                      <th>链接</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="entry in builtInRuleTableData.entries || []"
+                      :key="entry.logicalPath"
+                    >
+                      <td class="font-medium whitespace-nowrap">{{ entry.name }}</td>
+                      <td class="max-w-xl font-mono text-xs">{{ entry.logicalPath }}</td>
+                      <td>
+                        <div
+                          v-if="entry.files['sing-box']"
+                          class="flex flex-wrap items-center gap-1 text-xs"
+                        >
+                          <span class="badge badge-outline badge-sm">
+                            {{ entry.files['sing-box']?.format || '-' }}
+                          </span>
+                        </div>
+                        <span
+                          v-else
+                          class="text-base-content/45 text-xs"
+                        >
+                          -
+                        </span>
+                      </td>
+                      <td>
+                        <div
+                          v-if="entry.files.mihomo"
+                          class="flex flex-wrap items-center gap-1 text-xs"
+                        >
+                          <span class="badge badge-outline badge-sm">
+                            {{ entry.files.mihomo?.behavior || '-' }}
+                          </span>
+                          <span class="badge badge-outline badge-sm">
+                            {{ entry.files.mihomo?.format || '-' }}
+                          </span>
+                        </div>
+                        <span
+                          v-else
+                          class="text-base-content/45 text-xs"
+                        >
+                          -
+                        </span>
+                      </td>
+                      <td>
+                        <div class="flex gap-2 text-xs">
+                          <a
+                            v-if="entry.files['sing-box']?.rawUrl"
+                            class="link"
+                            :href="entry.files['sing-box']?.rawUrl"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            sing
+                          </a>
+                          <a
+                            v-if="entry.files.mihomo?.rawUrl"
+                            class="link"
+                            :href="entry.files.mihomo?.rawUrl"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            meta
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
 
               <div
-                v-if="builtInRuleIndexError || builtInRuleSearchError"
-                class="text-error mb-3 text-sm"
+                v-else
+                class="text-base-content/55 py-8 text-center text-sm"
               >
-                {{ builtInRuleSearchError || builtInRuleIndexError }}
+                {{ builtInRuleSearch.trim() ? '没有匹配的内置规则集' : '尚未刷新内置规则集索引' }}
               </div>
+            </div>
 
-              <div class="rounded-box border-base-300/60 bg-base-200/30 overflow-hidden border">
-                <div
-                  v-if="builtInRuleTreeRows.length > 0"
-                  ref="builtInRuleTreeScrollRef"
-                  class="max-h-[560px] min-h-80 overflow-y-auto"
+            <div
+              v-if="builtInRuleTotalPages > 1"
+              class="mt-4 flex items-center justify-between gap-3"
+            >
+              <div class="text-base-content/55 text-sm">
+                第 {{ builtInRuleTablePage }} / {{ builtInRuleTotalPages }} 页
+              </div>
+              <div class="join">
+                <button
+                  class="btn btn-sm join-item"
+                  :disabled="builtInRuleTablePage <= 1"
+                  @click="builtInRuleTablePage -= 1"
                 >
-                  <div
-                    class="relative"
-                    :style="{ height: `${builtInRuleTreeTotalSize}px` }"
-                  >
-                    <ul
-                      class="menu absolute top-0 right-0 left-0 w-full p-2"
-                      :style="{
-                        transform: `translateY(${builtInRuleTreeVirtualRows[0]?.start ?? 0}px)`,
-                      }"
+                  上一页
+                </button>
+                <button
+                  class="btn btn-sm join-item"
+                  :disabled="builtInRuleTablePage >= builtInRuleTotalPages"
+                  @click="builtInRuleTablePage += 1"
+                >
+                  下一页
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <div class="space-y-4">
+            <article class="base-container min-h-0 p-4">
+              <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h4 class="text-base font-semibold">自定义规则来源仓库</h4>
+                  <p class="text-base-content/60 mt-1 text-sm">内置仓库只读，自定义仓库可编辑。</p>
+                </div>
+                <div class="flex flex-col gap-2 md:items-end">
+                  <div class="flex min-w-64 items-center gap-2">
+                    <label class="input input-sm input-bordered flex flex-1 items-center gap-2">
+                      <input
+                        v-model="repositoryTableSearch"
+                        class="grow"
+                        type="search"
+                        placeholder="搜索名称、仓库、ID"
+                        @keydown.enter="triggerRepositoryTableSearch"
+                      />
+                    </label>
+                    <button
+                      class="btn btn-sm btn-outline"
+                      type="button"
+                      @click="triggerRepositoryTableSearch"
                     >
-                      <li
-                        v-for="virtualRow in builtInRuleTreeVirtualRows"
-                        :key="virtualRow.key.toString()"
-                        :data-index="virtualRow.index"
-                        :ref="(el) => measureBuiltInRuleTreeRow(el as Element | null)"
-                      >
-                        <template v-if="builtInRuleTreeRows[virtualRow.index]">
-                          <button
-                            v-if="builtInRuleTreeRows[virtualRow.index].type === 'directory'"
-                            class="min-h-10 justify-start gap-2"
-                            type="button"
-                            :style="{
-                              paddingLeft: `${12 + builtInRuleTreeRows[virtualRow.index].level * 18}px`,
-                            }"
-                            @click="
-                              toggleBuiltInRuleDir(builtInRuleTreeRows[virtualRow.index].path)
-                            "
-                          >
-                            <span class="font-mono text-xs">
-                              {{
-                                isBuiltInRuleDirExpanded(builtInRuleTreeRows[virtualRow.index].path)
-                                  ? '▾'
-                                  : '▸'
-                              }}
-                            </span>
-                            <FolderIcon class="text-base-content/55 h-4 w-4 shrink-0" />
-                            <span class="truncate font-medium">
-                              {{ builtInRuleTreeRows[virtualRow.index].name }}
-                            </span>
-                            <span class="text-base-content/45 ml-auto truncate font-mono text-xs">
-                              {{ builtInRuleTreeRows[virtualRow.index].path }}
-                            </span>
-                            <span
-                              v-if="
-                                loadingBuiltInRuleDirs.includes(
-                                  builtInRuleTreeRows[virtualRow.index].path,
-                                )
-                              "
-                              class="loading loading-spinner loading-xs"
-                            />
-                          </button>
-
-                          <div
-                            v-else
-                            class="hover:bg-base-200 flex min-h-12 items-center gap-2 rounded-lg px-3 py-2"
-                            :style="{
-                              paddingLeft: `${18 + builtInRuleTreeRows[virtualRow.index].level * 18}px`,
-                            }"
-                          >
-                            <DocumentTextIcon class="text-base-content/45 h-4 w-4 shrink-0" />
-                            <div class="min-w-0 flex-1">
-                              <div class="flex min-w-0 items-center gap-2">
-                                <span class="truncate text-sm font-medium">
-                                  {{ builtInRuleTreeRows[virtualRow.index].name }}
-                                </span>
-                                <span class="text-base-content/50 truncate font-mono text-xs">
-                                  {{
-                                    getBuiltInRuleFileRow(builtInRuleTreeRows[virtualRow.index])
-                                      ?.entry.logicalPath
-                                  }}
-                                </span>
-                              </div>
-                              <div class="mt-1 flex flex-wrap items-center gap-1 text-xs">
-                                <span
-                                  v-if="
-                                    getBuiltInRuleFileRow(builtInRuleTreeRows[virtualRow.index])
-                                      ?.entry.files['sing-box']
-                                  "
-                                  class="badge badge-outline badge-sm"
-                                >
-                                  sing-box ·
-                                  {{
-                                    getBuiltInRuleFileRow(builtInRuleTreeRows[virtualRow.index])
-                                      ?.entry.files['sing-box']?.format
-                                  }}
-                                </span>
-                                <span
-                                  v-if="
-                                    getBuiltInRuleFileRow(builtInRuleTreeRows[virtualRow.index])
-                                      ?.entry.files.mihomo
-                                  "
-                                  class="badge badge-outline badge-sm"
-                                >
-                                  mihomo ·
-                                  {{
-                                    getBuiltInRuleFileRow(builtInRuleTreeRows[virtualRow.index])
-                                      ?.entry.files.mihomo?.behavior
-                                  }}
-                                  ·
-                                  {{
-                                    getBuiltInRuleFileRow(builtInRuleTreeRows[virtualRow.index])
-                                      ?.entry.files.mihomo?.format
-                                  }}
-                                </span>
-                              </div>
-                            </div>
-                            <div class="flex shrink-0 flex-wrap gap-2 text-xs">
-                              <a
-                                v-if="
-                                  getBuiltInRuleFileRow(builtInRuleTreeRows[virtualRow.index])
-                                    ?.entry.files['sing-box']
-                                "
-                                class="link"
-                                :href="
-                                  getBuiltInRuleFileRow(builtInRuleTreeRows[virtualRow.index])
-                                    ?.entry.files['sing-box']?.rawUrl
-                                "
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                sing
-                              </a>
-                              <a
-                                v-if="
-                                  getBuiltInRuleFileRow(builtInRuleTreeRows[virtualRow.index])
-                                    ?.entry.files.mihomo
-                                "
-                                class="link"
-                                :href="
-                                  getBuiltInRuleFileRow(builtInRuleTreeRows[virtualRow.index])
-                                    ?.entry.files.mihomo?.rawUrl
-                                "
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                meta
-                              </a>
-                            </div>
-                          </div>
-                        </template>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div
-                  v-if="builtInRuleTreeRows.length === 0"
-                  class="text-base-content/55 py-8 text-center text-sm"
-                >
-                  {{ builtInRuleSearch.trim() ? '没有匹配的内置规则集' : '尚未刷新内置规则集索引' }}
-                </div>
-              </div>
-            </article>
-
-            <div class="grid gap-4 xl:grid-cols-2">
-              <article class="base-container min-h-0 p-4">
-                <div class="mb-4 flex items-center justify-between gap-3">
-                  <div>
-                    <h4 class="text-base font-semibold">自定义规则来源仓库</h4>
-                    <p class="text-base-content/60 mt-1 text-sm">
-                      内置仓库只读，自定义仓库可编辑。
-                    </p>
+                      搜索
+                    </button>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span class="badge badge-ghost">{{ customRuleSourceRepositories.length }}</span>
+                    <span class="badge badge-ghost">{{ repositoryTableData.total }}</span>
                     <button
                       class="btn btn-sm btn-outline"
                       type="button"
@@ -486,80 +434,127 @@
                     </button>
                   </div>
                 </div>
+              </div>
 
-                <div class="overflow-x-auto">
-                  <table class="table-pin-rows table-zebra table-sm table min-w-[720px]">
-                    <thead>
-                      <tr>
-                        <th>名称</th>
-                        <th>仓库</th>
-                        <th>支持内核</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        v-for="item in customRuleSourceRepositories"
-                        :key="item.id"
-                      >
-                        <td>
-                          <div class="font-medium">{{ item.name }}</div>
-                          <div class="text-base-content/55 text-xs">{{ item.id }}</div>
-                        </td>
-                        <td class="font-mono text-xs">{{ item.owner }}/{{ item.repository }}</td>
-                        <td class="text-xs">
-                          {{ (item.supportedCores || []).join(' / ') || '-' }}
-                        </td>
-                        <td>
-                          <div class="flex justify-end gap-2">
-                            <span
-                              v-if="item.builtIn"
-                              class="badge badge-outline"
+              <div class="overflow-x-auto">
+                <table class="table-pin-rows table-zebra table-sm table min-w-[720px]">
+                  <thead>
+                    <tr>
+                      <th>名称</th>
+                      <th>仓库</th>
+                      <th>支持内核</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="item in repositoryTableData.items"
+                      :key="item.id"
+                    >
+                      <td>
+                        <div class="font-medium">{{ item.name }}</div>
+                        <div class="text-base-content/55 text-xs">{{ item.id }}</div>
+                      </td>
+                      <td class="font-mono text-xs">{{ item.owner }}/{{ item.repository }}</td>
+                      <td class="text-xs">
+                        {{ (item.supportedCores || []).join(' / ') || '-' }}
+                      </td>
+                      <td>
+                        <div class="flex justify-end gap-2">
+                          <span
+                            v-if="item.builtIn"
+                            class="badge badge-outline"
+                          >
+                            内置
+                          </span>
+                          <template v-else>
+                            <button
+                              class="btn btn-ghost btn-xs"
+                              type="button"
+                              @click="openEditRepositoryDialog(item.id)"
                             >
-                              内置
-                            </span>
-                            <template v-else>
-                              <button
-                                class="btn btn-ghost btn-xs"
-                                type="button"
-                                @click="openEditRepositoryDialog(item.id)"
-                              >
-                                编辑
-                              </button>
-                              <button
-                                class="btn btn-ghost btn-xs text-error"
-                                type="button"
-                                @click="deleteRepository(item.id)"
-                              >
-                                删除
-                              </button>
-                            </template>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr v-if="customRuleSourceRepositories.length === 0">
-                        <td
-                          class="text-base-content/55 py-8 text-center text-sm"
-                          colspan="4"
-                        >
-                          暂无自定义仓库
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </article>
+                              编辑
+                            </button>
+                            <button
+                              class="btn btn-ghost btn-xs text-error"
+                              type="button"
+                              @click="deleteRepository(item.id)"
+                            >
+                              删除
+                            </button>
+                          </template>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr v-if="repositoryTableData.items.length === 0">
+                      <td
+                        class="text-base-content/55 py-8 text-center text-sm"
+                        colspan="4"
+                      >
+                        {{
+                          repositoryTableSearch.trim() ? '没有匹配的规则来源仓库' : '暂无自定义仓库'
+                        }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-              <article class="base-container min-h-0 p-4">
-                <div class="mb-4 flex items-center justify-between gap-3">
-                  <div>
-                    <h4 class="text-base font-semibold">自定义 Sing-box Rule-sets</h4>
-                    <p class="text-base-content/60 mt-1 text-sm">
-                      路由页在 `sing-box` 模式下会直接引用这里的 `tag`。
-                    </p>
+              <div
+                v-if="repositoryTableTotalPages > 1"
+                class="mt-4 flex items-center justify-between gap-3"
+              >
+                <div class="text-base-content/55 text-sm">
+                  第 {{ repositoryTablePage }} / {{ repositoryTableTotalPages }} 页
+                </div>
+                <div class="join">
+                  <button
+                    class="btn btn-sm join-item"
+                    :disabled="repositoryTablePage <= 1"
+                    @click="repositoryTablePage -= 1"
+                  >
+                    上一页
+                  </button>
+                  <button
+                    class="btn btn-sm join-item"
+                    :disabled="repositoryTablePage >= repositoryTableTotalPages"
+                    @click="repositoryTablePage += 1"
+                  >
+                    下一页
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="base-container min-h-0 p-4">
+              <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h4 class="text-base font-semibold">自定义 Sing-box Rule-sets</h4>
+                  <p class="text-base-content/60 mt-1 text-sm">
+                    路由页在 `sing-box` 模式下会直接引用这里的 `tag`。
+                  </p>
+                </div>
+                <div class="flex flex-col gap-2 md:items-end">
+                  <div class="flex min-w-64 items-center gap-2">
+                    <label class="input input-sm input-bordered flex flex-1 items-center gap-2">
+                      <input
+                        v-model="singBoxRuleSetTableSearch"
+                        class="grow"
+                        type="search"
+                        placeholder="搜索名称、tag、来源"
+                        @keydown.enter="triggerSingBoxRuleSetTableSearch"
+                      />
+                    </label>
+                    <button
+                      class="btn btn-sm btn-outline"
+                      type="button"
+                      @click="triggerSingBoxRuleSetTableSearch"
+                    >
+                      搜索
+                    </button>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span class="badge badge-ghost">{{ singBoxRuleSets.length }}</span>
+                    <span class="badge badge-ghost">{{ singBoxRuleSetTableData.total }}</span>
                     <button
                       class="btn btn-sm btn-outline"
                       type="button"
@@ -569,68 +564,119 @@
                     </button>
                   </div>
                 </div>
+              </div>
 
-                <div class="overflow-x-auto">
-                  <table class="table-pin-rows table-zebra table-sm table min-w-[820px]">
-                    <thead>
-                      <tr>
-                        <th>名称</th>
-                        <th>tag</th>
-                        <th>来源</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        v-for="item in singBoxRuleSets"
-                        :key="item.id"
+              <div class="overflow-x-auto">
+                <table class="table-pin-rows table-zebra table-sm table min-w-[820px]">
+                  <thead>
+                    <tr>
+                      <th>名称</th>
+                      <th>tag</th>
+                      <th>来源</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="item in singBoxRuleSetTableData.items"
+                      :key="item.id"
+                    >
+                      <td>
+                        <div class="font-medium">{{ item.name }}</div>
+                        <div class="text-base-content/55 text-xs">{{ item.id }}</div>
+                      </td>
+                      <td class="font-mono text-xs">{{ item.tag }}</td>
+                      <td class="text-xs">{{ item.sourceMode }}</td>
+                      <td>
+                        <div class="flex justify-end gap-2">
+                          <button
+                            class="btn btn-ghost btn-xs"
+                            type="button"
+                            @click="openEditRuleResourceDialog('sing-box-rule-set', item.id)"
+                          >
+                            编辑
+                          </button>
+                          <button
+                            class="btn btn-ghost btn-xs text-error"
+                            type="button"
+                            @click="deleteRuleResource('sing-box-rule-set', item.id)"
+                          >
+                            删除
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr v-if="singBoxRuleSetTableData.items.length === 0">
+                      <td
+                        class="text-base-content/55 py-8 text-center text-sm"
+                        colspan="4"
                       >
-                        <td>
-                          <div class="font-medium">{{ item.name }}</div>
-                          <div class="text-base-content/55 text-xs">{{ item.id }}</div>
-                        </td>
-                        <td class="font-mono text-xs">{{ item.tag }}</td>
-                        <td class="text-xs">{{ item.sourceMode }}</td>
-                        <td>
-                          <div class="flex justify-end gap-2">
-                            <button
-                              class="btn btn-ghost btn-xs"
-                              type="button"
-                              @click="openEditRuleResourceDialog('sing-box-rule-set', item.id)"
-                            >
-                              编辑
-                            </button>
-                            <button
-                              class="btn btn-ghost btn-xs text-error"
-                              type="button"
-                              @click="deleteRuleResource('sing-box-rule-set', item.id)"
-                            >
-                              删除
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr v-if="singBoxRuleSets.length === 0">
-                        <td
-                          class="text-base-content/55 py-8 text-center text-sm"
-                          colspan="4"
-                        >
-                          暂无自定义 Sing-box 规则集
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                        {{
+                          singBoxRuleSetTableSearch.trim()
+                            ? '没有匹配的 Sing-box 规则集'
+                            : '暂无自定义 Sing-box 规则集'
+                        }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-                <div class="mt-6 mb-4 flex items-center justify-between gap-3">
-                  <div>
-                    <h4 class="text-base font-semibold">自定义 Mihomo Rule-providers</h4>
-                    <p class="text-base-content/60 mt-1 text-sm">
-                      路由页在 `mihomo` 模式下会直接引用这里的 provider 名称。
-                    </p>
+              <div
+                v-if="singBoxRuleSetTableTotalPages > 1"
+                class="mt-4 flex items-center justify-between gap-3"
+              >
+                <div class="text-base-content/55 text-sm">
+                  第 {{ singBoxRuleSetTablePage }} / {{ singBoxRuleSetTableTotalPages }} 页
+                </div>
+                <div class="join">
+                  <button
+                    class="btn btn-sm join-item"
+                    :disabled="singBoxRuleSetTablePage <= 1"
+                    @click="singBoxRuleSetTablePage -= 1"
+                  >
+                    上一页
+                  </button>
+                  <button
+                    class="btn btn-sm join-item"
+                    :disabled="singBoxRuleSetTablePage >= singBoxRuleSetTableTotalPages"
+                    @click="singBoxRuleSetTablePage += 1"
+                  >
+                    下一页
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="base-container min-h-0 p-4">
+              <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h4 class="text-base font-semibold">自定义 Mihomo Rule-providers</h4>
+                  <p class="text-base-content/60 mt-1 text-sm">
+                    路由页在 `mihomo` 模式下会直接引用这里的 provider 名称。
+                  </p>
+                </div>
+                <div class="flex flex-col gap-2 md:items-end">
+                  <div class="flex min-w-64 items-center gap-2">
+                    <label class="input input-sm input-bordered flex flex-1 items-center gap-2">
+                      <input
+                        v-model="mihomoRuleProviderTableSearch"
+                        class="grow"
+                        type="search"
+                        placeholder="搜索名称、provider、来源"
+                        @keydown.enter="triggerMihomoRuleProviderTableSearch"
+                      />
+                    </label>
+                    <button
+                      class="btn btn-sm btn-outline"
+                      type="button"
+                      @click="triggerMihomoRuleProviderTableSearch"
+                    >
+                      搜索
+                    </button>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span class="badge badge-ghost">{{ mihomoRuleProviders.length }}</span>
+                    <span class="badge badge-ghost">{{ mihomoRuleProviderTableData.total }}</span>
                     <button
                       class="btn btn-sm btn-primary"
                       type="button"
@@ -640,197 +686,172 @@
                     </button>
                   </div>
                 </div>
-
-                <div class="overflow-x-auto">
-                  <table class="table-pin-rows table-zebra table-sm table min-w-[820px]">
-                    <thead>
-                      <tr>
-                        <th>名称</th>
-                        <th>provider</th>
-                        <th>来源</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        v-for="item in mihomoRuleProviders"
-                        :key="item.id"
-                      >
-                        <td>
-                          <div class="font-medium">{{ item.name }}</div>
-                          <div class="text-base-content/55 text-xs">{{ item.id }}</div>
-                        </td>
-                        <td class="font-mono text-xs">{{ item.provider }}</td>
-                        <td class="text-xs">{{ item.sourceMode }}</td>
-                        <td>
-                          <div class="flex justify-end gap-2">
-                            <button
-                              class="btn btn-ghost btn-xs"
-                              type="button"
-                              @click="openEditRuleResourceDialog('mihomo-rule-provider', item.id)"
-                            >
-                              编辑
-                            </button>
-                            <button
-                              class="btn btn-ghost btn-xs text-error"
-                              type="button"
-                              @click="deleteRuleResource('mihomo-rule-provider', item.id)"
-                            >
-                              删除
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr v-if="mihomoRuleProviders.length === 0">
-                        <td
-                          class="text-base-content/55 py-8 text-center text-sm"
-                          colspan="4"
-                        >
-                          暂无自定义 Mihomo Provider
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section
-          v-else-if="activeTab === 'diagnostics'"
-          class="space-y-4"
-        >
-          <article class="base-container p-4">
-            <div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <h3 class="text-lg font-semibold">最近错误</h3>
               </div>
-              <button
-                class="btn btn-sm"
-                type="button"
-                :disabled="operationEventsLoading"
-                @click="loadOperationEvents"
-              >
-                {{ operationEventsLoading ? '刷新中…' : '刷新诊断' }}
-              </button>
-            </div>
-            <div
-              v-if="operationEventsError"
-              class="text-error text-sm"
-            >
-              {{ operationEventsError }}
-            </div>
-            <div
-              v-else-if="recentErrorEvents.length === 0"
-              class="text-base-content/55 py-8 text-center text-sm"
-            >
-              暂无错误事件
-            </div>
-            <div
-              v-else
-              class="overflow-x-auto"
-            >
-              <table class="table-sm table">
-                <thead>
-                  <tr>
-                    <th>时间</th>
-                    <th>类型</th>
-                    <th>资源</th>
-                    <th>消息</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="event in recentErrorEvents"
-                    :key="event.id || `${event.eventType}-${event.createdAt}`"
-                  >
-                    <td class="whitespace-nowrap">
-                      {{ formatOperationEventTime(event.createdAt) }}
-                    </td>
-                    <td>{{ event.eventType }}</td>
-                    <td>{{ operationEventResourceLabel(event) }}</td>
-                    <td>
-                      <div class="max-w-xl truncate">{{ event.message }}</div>
-                      <div
-                        v-if="event.errorCode"
-                        class="text-base-content/55 text-xs"
-                      >
-                        {{ event.errorCode }}
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </article>
 
-          <div class="grid gap-4 xl:grid-cols-2">
-            <article class="base-container p-4">
-              <div class="mb-4 flex items-center justify-between gap-3">
-                <h3 class="text-lg font-semibold">节点健康</h3>
-                <span class="badge badge-ghost">{{ recentHealthSamples.length }}</span>
-              </div>
-              <div
-                v-if="recentHealthSamples.length === 0"
-                class="text-base-content/55 py-8 text-center text-sm"
-              >
-                暂无健康检查样本
-              </div>
-              <div
-                v-else
-                class="overflow-x-auto"
-              >
-                <table class="table-sm table">
+              <div class="overflow-x-auto">
+                <table class="table-pin-rows table-zebra table-sm table min-w-[820px]">
                   <thead>
                     <tr>
-                      <th>时间</th>
-                      <th>节点</th>
-                      <th>状态</th>
-                      <th>延迟</th>
+                      <th>名称</th>
+                      <th>provider</th>
+                      <th>来源</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr
-                      v-for="sample in recentHealthSamples"
-                      :key="sample.id || `${sample.nodeId}-${sample.checkedAt}`"
+                      v-for="item in mihomoRuleProviderTableData.items"
+                      :key="item.id"
                     >
-                      <td class="whitespace-nowrap">
-                        {{ formatOperationEventTime(sample.checkedAt) }}
-                      </td>
-                      <td>{{ sample.nodeId }}</td>
                       <td>
-                        <span
-                          class="badge badge-sm"
-                          :class="
-                            sample.success
-                              ? 'badge-success badge-outline'
-                              : 'badge-error badge-outline'
-                          "
-                        >
-                          {{ sample.success ? 'ok' : 'failed' }}
-                        </span>
+                        <div class="font-medium">{{ item.name }}</div>
+                        <div class="text-base-content/55 text-xs">{{ item.id }}</div>
                       </td>
+                      <td class="font-mono text-xs">{{ item.provider }}</td>
+                      <td class="text-xs">{{ item.sourceMode }}</td>
                       <td>
-                        {{ sample.success ? `${sample.latencyMs}ms` : sample.errorSummary || '-' }}
+                        <div class="flex justify-end gap-2">
+                          <button
+                            class="btn btn-ghost btn-xs"
+                            type="button"
+                            @click="openEditRuleResourceDialog('mihomo-rule-provider', item.id)"
+                          >
+                            编辑
+                          </button>
+                          <button
+                            class="btn btn-ghost btn-xs text-error"
+                            type="button"
+                            @click="deleteRuleResource('mihomo-rule-provider', item.id)"
+                          >
+                            删除
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr v-if="mihomoRuleProviderTableData.items.length === 0">
+                      <td
+                        class="text-base-content/55 py-8 text-center text-sm"
+                        colspan="4"
+                      >
+                        {{
+                          mihomoRuleProviderTableSearch.trim()
+                            ? '没有匹配的 Mihomo Provider'
+                            : '暂无自定义 Mihomo Provider'
+                        }}
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
+
+              <div
+                v-if="mihomoRuleProviderTableTotalPages > 1"
+                class="mt-4 flex items-center justify-between gap-3"
+              >
+                <div class="text-base-content/55 text-sm">
+                  第 {{ mihomoRuleProviderTablePage }} / {{ mihomoRuleProviderTableTotalPages }} 页
+                </div>
+                <div class="join">
+                  <button
+                    class="btn btn-sm join-item"
+                    :disabled="mihomoRuleProviderTablePage <= 1"
+                    @click="mihomoRuleProviderTablePage -= 1"
+                  >
+                    上一页
+                  </button>
+                  <button
+                    class="btn btn-sm join-item"
+                    :disabled="mihomoRuleProviderTablePage >= mihomoRuleProviderTableTotalPages"
+                    @click="mihomoRuleProviderTablePage += 1"
+                  >
+                    下一页
+                  </button>
+                </div>
+              </div>
             </article>
           </div>
+        </div>
+      </section>
 
+      <section
+        v-else-if="activeTab === 'diagnostics'"
+        class="space-y-4"
+      >
+        <article class="base-container p-4">
+          <div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h3 class="text-lg font-semibold">最近错误</h3>
+            </div>
+            <button
+              class="btn btn-sm"
+              type="button"
+              :disabled="operationEventsLoading"
+              @click="loadOperationEvents"
+            >
+              {{ operationEventsLoading ? '刷新中…' : '刷新诊断' }}
+            </button>
+          </div>
+          <div
+            v-if="operationEventsError"
+            class="text-error text-sm"
+          >
+            {{ operationEventsError }}
+          </div>
+          <div
+            v-else-if="recentErrorEvents.length === 0"
+            class="text-base-content/55 py-8 text-center text-sm"
+          >
+            暂无错误事件
+          </div>
+          <div
+            v-else
+            class="overflow-x-auto"
+          >
+            <table class="table-sm table">
+              <thead>
+                <tr>
+                  <th>时间</th>
+                  <th>类型</th>
+                  <th>资源</th>
+                  <th>消息</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="event in recentErrorEvents"
+                  :key="event.id || `${event.eventType}-${event.createdAt}`"
+                >
+                  <td class="whitespace-nowrap">
+                    {{ formatOperationEventTime(event.createdAt) }}
+                  </td>
+                  <td>{{ event.eventType }}</td>
+                  <td>{{ operationEventResourceLabel(event) }}</td>
+                  <td>
+                    <div class="max-w-xl truncate">{{ event.message }}</div>
+                    <div
+                      v-if="event.errorCode"
+                      class="text-base-content/55 text-xs"
+                    >
+                      {{ event.errorCode }}
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <div class="grid gap-4 xl:grid-cols-2">
           <article class="base-container p-4">
             <div class="mb-4 flex items-center justify-between gap-3">
-              <h3 class="text-lg font-semibold">操作历史</h3>
-              <span class="badge badge-ghost">{{ operationEvents.length }}</span>
+              <h3 class="text-lg font-semibold">节点健康</h3>
+              <span class="badge badge-ghost">{{ recentHealthSamples.length }}</span>
             </div>
             <div
-              v-if="operationEvents.length === 0"
+              v-if="recentHealthSamples.length === 0"
               class="text-base-content/55 py-8 text-center text-sm"
             >
-              暂无操作事件
+              暂无健康检查样本
             </div>
             <div
               v-else
@@ -840,695 +861,723 @@
                 <thead>
                   <tr>
                     <th>时间</th>
-                    <th>级别</th>
-                    <th>类型</th>
-                    <th>关联</th>
-                    <th>消息</th>
+                    <th>节点</th>
+                    <th>状态</th>
+                    <th>延迟</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr
-                    v-for="event in operationEvents"
-                    :key="event.id || `${event.eventType}-${event.createdAt}`"
+                    v-for="sample in recentHealthSamples"
+                    :key="sample.id || `${sample.nodeId}-${sample.checkedAt}`"
                   >
                     <td class="whitespace-nowrap">
-                      {{ formatOperationEventTime(event.createdAt) }}
+                      {{ formatOperationEventTime(sample.checkedAt) }}
                     </td>
+                    <td>{{ sample.nodeId }}</td>
                     <td>
                       <span
                         class="badge badge-sm"
                         :class="
-                          event.severity === 'error' ? 'badge-error badge-outline' : 'badge-ghost'
+                          sample.success
+                            ? 'badge-success badge-outline'
+                            : 'badge-error badge-outline'
                         "
                       >
-                        {{ event.severity }}
+                        {{ sample.success ? 'ok' : 'failed' }}
                       </span>
                     </td>
-                    <td>{{ event.eventType }}</td>
-                    <td>{{ event.core || operationEventResourceLabel(event) }}</td>
-                    <td class="max-w-xl truncate">{{ event.message }}</td>
+                    <td>
+                      {{ sample.success ? `${sample.latencyMs}ms` : sample.errorSummary || '-' }}
+                    </td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </article>
-        </section>
+        </div>
 
-        <section
-          v-else-if="activeTab !== 'outbounds'"
-          class="space-y-4"
-        >
-          <article
-            v-for="section in visibleFormSections"
-            :key="section.title"
-            class="base-container p-5"
+        <article class="base-container p-4">
+          <div class="mb-4 flex items-center justify-between gap-3">
+            <h3 class="text-lg font-semibold">操作历史</h3>
+            <span class="badge badge-ghost">{{ operationEvents.length }}</span>
+          </div>
+          <div
+            v-if="operationEvents.length === 0"
+            class="text-base-content/55 py-8 text-center text-sm"
           >
-            <div class="mb-5 flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
-              <div>
-                <h3 class="text-lg font-semibold">{{ section.title }}</h3>
-                <p class="text-base-content/60 mt-1 text-sm leading-6">
-                  {{ section.description }}
-                </p>
-              </div>
-              <div class="flex flex-wrap items-center gap-2">
-                <button
-                  v-if="section.title === '时间同步'"
-                  class="btn btn-sm btn-outline"
-                  type="button"
-                  @click="openNtpDialDialog"
+            暂无操作事件
+          </div>
+          <div
+            v-else
+            class="overflow-x-auto"
+          >
+            <table class="table-sm table">
+              <thead>
+                <tr>
+                  <th>时间</th>
+                  <th>级别</th>
+                  <th>类型</th>
+                  <th>关联</th>
+                  <th>消息</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="event in operationEvents"
+                  :key="event.id || `${event.eventType}-${event.createdAt}`"
                 >
-                  更多配置
-                </button>
-                <span
-                  v-if="section.title === '时间同步' && ntpDialConfiguredCount"
-                  class="badge badge-primary badge-outline"
-                >
-                  已配置 {{ ntpDialConfiguredCount }} 项
-                </span>
-                <span class="badge badge-ghost">{{ section.fields.length }} 项</span>
-              </div>
-            </div>
-
-            <div
-              v-if="section.kind === 'managed-dns-servers'"
-              class="space-y-4"
-            >
-              <div class="overflow-x-auto">
-                <table class="table-pin-rows table-zebra table min-w-[1240px]">
-                  <thead>
-                    <tr class="bg-base-100/95">
-                      <th>#</th>
-                      <th>名称</th>
-                      <th>角色</th>
-                      <th>协议</th>
-                      <th>地址</th>
-                      <th>端口</th>
-                      <th>路径</th>
-                      <th>detour</th>
-                      <th>client_subnet</th>
-                      <th>跳过证书</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="(server, index) in dnsServers"
-                      :key="server.id"
+                  <td class="whitespace-nowrap">
+                    {{ formatOperationEventTime(event.createdAt) }}
+                  </td>
+                  <td>
+                    <span
+                      class="badge badge-sm"
+                      :class="
+                        event.severity === 'error' ? 'badge-error badge-outline' : 'badge-ghost'
+                      "
                     >
-                      <td>{{ index + 1 }}</td>
-                      <td>
-                        <input
-                          class="input input-bordered input-sm w-36"
-                          :value="server.name"
-                          @input="
-                            setDnsServerField(
-                              index,
-                              'name',
-                              ($event.target as HTMLInputElement).value,
-                            )
-                          "
-                        />
-                      </td>
-                      <td>
-                        <select
-                          class="select select-bordered select-sm w-32"
-                          :value="server.role"
-                          @change="
-                            setDnsServerField(
-                              index,
-                              'role',
-                              ($event.target as HTMLSelectElement).value as DnsServerRole,
-                            )
-                          "
-                        >
-                          <option
-                            v-for="option in dnsServerRoleOptions"
-                            :key="option.value"
-                            :value="option.value"
-                          >
-                            {{ option.label }}
-                          </option>
-                        </select>
-                      </td>
-                      <td>
-                        <select
-                          class="select select-bordered select-sm w-28"
-                          :value="server.protocol"
-                          @change="
-                            setDnsServerField(
-                              index,
-                              'protocol',
-                              ($event.target as HTMLSelectElement).value as DnsServerProtocol,
-                            )
-                          "
-                        >
-                          <option
-                            v-for="option in dnsServerProtocolOptions"
-                            :key="option"
-                            :value="option"
-                          >
-                            {{ option }}
-                          </option>
-                        </select>
-                      </td>
-                      <td>
-                        <input
-                          class="input input-bordered input-sm w-52"
-                          :value="server.address"
-                          @input="
-                            setDnsServerField(
-                              index,
-                              'address',
-                              ($event.target as HTMLInputElement).value,
-                            )
-                          "
-                        />
-                      </td>
-                      <td>
-                        <input
-                          class="input input-bordered input-sm w-24"
-                          :value="server.port"
-                          @input="
-                            setDnsServerField(
-                              index,
-                              'port',
-                              ($event.target as HTMLInputElement).value,
-                            )
-                          "
-                        />
-                      </td>
-                      <td>
-                        <input
-                          class="input input-bordered input-sm w-36"
-                          :value="server.path"
-                          @input="
-                            setDnsServerField(
-                              index,
-                              'path',
-                              ($event.target as HTMLInputElement).value,
-                            )
-                          "
-                        />
-                      </td>
-                      <td>
-                        <input
-                          class="input input-bordered input-sm w-32"
-                          :value="server.detour"
-                          @input="
-                            setDnsServerField(
-                              index,
-                              'detour',
-                              ($event.target as HTMLInputElement).value,
-                            )
-                          "
-                        />
-                      </td>
-                      <td>
-                        <input
-                          class="input input-bordered input-sm w-40"
-                          :value="server.clientSubnet"
-                          @input="
-                            setDnsServerField(
-                              index,
-                              'clientSubnet',
-                              ($event.target as HTMLInputElement).value,
-                            )
-                          "
-                        />
-                      </td>
-                      <td>
-                        <input
-                          class="checkbox checkbox-primary checkbox-sm"
-                          type="checkbox"
-                          :checked="server.skipCertVerify"
-                          @change="
-                            setDnsServerField(
-                              index,
-                              'skipCertVerify',
-                              ($event.target as HTMLInputElement).checked,
-                            )
-                          "
-                        />
-                      </td>
-                      <td>
-                        <button
-                          class="btn btn-ghost btn-xs text-error"
-                          type="button"
-                          @click="removeDnsServer(index)"
-                        >
-                          删除
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                      {{ event.severity }}
+                    </span>
+                  </td>
+                  <td>{{ event.eventType }}</td>
+                  <td>{{ event.core || operationEventResourceLabel(event) }}</td>
+                  <td class="max-w-xl truncate">{{ event.message }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
 
-              <div class="flex justify-end">
-                <button
-                  class="btn btn-sm btn-outline"
-                  type="button"
-                  @click="addDnsServer"
-                >
-                  新增服务器
-                </button>
-              </div>
+      <section
+        v-else-if="activeTab !== 'outbounds'"
+        :class="
+          activeTab === 'network'
+            ? 'space-y-4 xl:columns-2 xl:gap-12 xl:space-y-0'
+            : 'grid items-start gap-4 xl:grid-cols-2'
+        "
+      >
+        <div
+          v-for="section in visibleFormSections"
+          :key="section.title"
+          :class="[
+            getSectionCardClass(section),
+            activeTab === 'network' ? 'mb-4 break-inside-avoid xl:inline-block xl:w-full' : '',
+          ]"
+        >
+          <div class="settings-section-label flex items-center justify-between gap-3 px-1">
+            <span>{{ section.title }}</span>
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                v-if="section.title === '时间同步'"
+                class="btn btn-sm btn-outline"
+                type="button"
+                @click="openNtpDialDialog"
+              >
+                更多配置
+              </button>
+              <span
+                v-if="section.title === '时间同步' && ntpDialConfiguredCount"
+                class="badge badge-primary badge-outline"
+              >
+                已配置 {{ ntpDialConfiguredCount }} 项
+              </span>
+              <span
+                v-if="getSectionItemCount(section)"
+                class="badge badge-ghost badge-sm"
+              >
+                {{ getSectionItemCount(section) }} 项
+              </span>
             </div>
+          </div>
 
-            <div
-              v-else-if="section.kind === 'managed-dns-policies'"
-              class="space-y-4"
-            >
-              <div class="overflow-x-auto">
-                <table class="table-pin-rows table-zebra table min-w-[920px]">
-                  <thead>
-                    <tr class="bg-base-100/95">
-                      <th>#</th>
-                      <th>匹配类型</th>
-                      <th>匹配值</th>
-                      <th>解析服务器</th>
-                      <th>strategy</th>
-                      <th>client_subnet</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="(rule, index) in dnsRules"
-                      :key="rule.id"
-                    >
-                      <td>{{ index + 1 }}</td>
-                      <td>
-                        <select
-                          class="select select-bordered select-sm w-32"
-                          :value="rule.matcher"
-                          @change="
-                            setDnsRuleField(
-                              index,
-                              'matcher',
-                              ($event.target as HTMLSelectElement).value as DnsPolicyMatcher,
-                            )
-                          "
-                        >
-                          <option
-                            v-for="option in dnsPolicyMatcherOptions"
-                            :key="option.value"
-                            :value="option.value"
-                          >
-                            {{ option.label }}
-                          </option>
-                        </select>
-                      </td>
-                      <td>
-                        <input
-                          class="input input-bordered input-sm w-52"
-                          :value="rule.value"
-                          @input="
-                            setDnsRuleField(
-                              index,
-                              'value',
-                              ($event.target as HTMLInputElement).value,
-                            )
-                          "
-                        />
-                      </td>
-                      <td>
-                        <select
-                          class="select select-bordered select-sm w-36"
-                          :value="rule.serverName"
-                          @change="
-                            setDnsRuleField(
-                              index,
-                              'serverName',
-                              ($event.target as HTMLSelectElement).value,
-                            )
-                          "
-                        >
-                          <option value="">默认解析</option>
-                          <option
-                            v-for="server in dnsServers"
-                            :key="server.id"
-                            :value="server.name"
-                          >
-                            {{ server.name || server.id }}
-                          </option>
-                        </select>
-                      </td>
-                      <td>
-                        <select
-                          class="select select-bordered select-sm w-32"
-                          :value="rule.strategy"
-                          @change="
-                            setDnsRuleField(
-                              index,
-                              'strategy',
-                              ($event.target as HTMLSelectElement).value,
-                            )
-                          "
-                        >
-                          <option value=""></option>
-                          <option
-                            v-for="option in dnsStrategyOptions"
-                            :key="option"
-                            :value="option"
-                          >
-                            {{ option }}
-                          </option>
-                        </select>
-                      </td>
-                      <td>
-                        <input
-                          class="input input-bordered input-sm w-40"
-                          :value="rule.clientSubnet"
-                          @input="
-                            setDnsRuleField(
-                              index,
-                              'clientSubnet',
-                              ($event.target as HTMLInputElement).value,
-                            )
-                          "
-                        />
-                      </td>
-                      <td>
-                        <button
-                          class="btn btn-ghost btn-xs text-error"
-                          type="button"
-                          @click="removeDnsRule(index)"
-                        >
-                          删除
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="flex justify-end">
-                <button
-                  class="btn btn-sm btn-outline"
-                  type="button"
-                  @click="addDnsRule"
-                >
-                  新增规则
-                </button>
-              </div>
-            </div>
-
-            <div
-              v-else-if="section.kind === 'managed-dns-preview'"
-              class="grid gap-4 xl:grid-cols-2"
-            >
-              <div class="border-base-300/70 rounded-lg border">
-                <div class="border-base-300/70 border-b px-4 py-3 text-sm font-semibold">
-                  mihomo
-                </div>
-                <pre class="max-h-[560px] overflow-auto p-4 text-xs leading-5">{{
-                  mihomoDnsPreview
-                }}</pre>
-              </div>
-              <div class="border-base-300/70 rounded-lg border">
-                <div class="border-base-300/70 border-b px-4 py-3 text-sm font-semibold">
-                  sing-box
-                </div>
-                <pre class="max-h-[560px] overflow-auto p-4 text-xs leading-5">{{
-                  singBoxDnsPreview
-                }}</pre>
-              </div>
-            </div>
-
-            <div
-              v-else-if="section.kind === 'field-table'"
-              class="overflow-x-auto"
-            >
-              <table class="table-pin-rows table-zebra table min-w-[980px]">
+          <div
+            v-if="section.kind === 'managed-dns-servers'"
+            class="base-container space-y-4 p-4"
+          >
+            <div class="overflow-x-auto">
+              <table class="table-pin-rows table-zebra table min-w-[1240px]">
                 <thead>
                   <tr class="bg-base-100/95">
                     <th>#</th>
-                    <th>字段</th>
-                    <th>键名</th>
-                    <th>值</th>
-                    <th>说明</th>
+                    <th>名称</th>
+                    <th>角色</th>
+                    <th>协议</th>
+                    <th>地址</th>
+                    <th>端口</th>
+                    <th>路径</th>
+                    <th>detour</th>
+                    <th>client_subnet</th>
+                    <th>跳过证书</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr
-                    v-for="(field, index) in section.fields"
-                    :key="field.key"
+                    v-for="(server, index) in dnsServers"
+                    :key="server.id"
                   >
                     <td>{{ index + 1 }}</td>
-                    <td class="font-medium whitespace-nowrap">{{ field.label }}</td>
-                    <td class="text-base-content/60 font-mono text-xs whitespace-nowrap">
-                      {{ field.key }}
+                    <td>
+                      <input
+                        class="input input-bordered input-sm w-36"
+                        :value="server.name"
+                        @input="
+                          setDnsServerField(
+                            index,
+                            'name',
+                            ($event.target as HTMLInputElement).value,
+                          )
+                        "
+                      />
                     </td>
-                    <td class="min-w-[260px]">
-                      <div
-                        v-if="field.type === 'boolean'"
-                        class="flex items-center justify-center"
-                      >
-                        <input
-                          class="toggle toggle-primary"
-                          type="checkbox"
-                          :checked="Boolean(baseConfigForm[field.key])"
-                          @change="
-                            setBooleanField(field.key, ($event.target as HTMLInputElement).checked)
-                          "
-                        />
-                      </div>
-
+                    <td>
                       <select
-                        v-else-if="field.type === 'select'"
-                        class="select select-bordered select-sm w-full"
-                        :value="String(baseConfigForm[field.key] ?? '')"
+                        class="select select-bordered select-sm w-32"
+                        :value="server.role"
                         @change="
-                          setTextField(field.key, ($event.target as HTMLSelectElement).value)
+                          setDnsServerField(
+                            index,
+                            'role',
+                            ($event.target as HTMLSelectElement).value as DnsServerRole,
+                          )
                         "
                       >
                         <option
-                          v-for="option in field.options || []"
+                          v-for="option in dnsServerRoleOptions"
                           :key="option.value"
                           :value="option.value"
                         >
                           {{ option.label }}
                         </option>
                       </select>
-
-                      <textarea
-                        v-else-if="field.type === 'textarea'"
-                        class="textarea textarea-bordered min-h-[96px] w-full font-mono text-sm"
-                        :rows="field.rows || 4"
-                        :value="String(baseConfigForm[field.key] ?? '')"
+                    </td>
+                    <td>
+                      <select
+                        class="select select-bordered select-sm w-28"
+                        :value="server.protocol"
+                        @change="
+                          setDnsServerField(
+                            index,
+                            'protocol',
+                            ($event.target as HTMLSelectElement).value as DnsServerProtocol,
+                          )
+                        "
+                      >
+                        <option
+                          v-for="option in dnsServerProtocolOptions"
+                          :key="option"
+                          :value="option"
+                        >
+                          {{ option }}
+                        </option>
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        class="input input-bordered input-sm w-52"
+                        :value="server.address"
                         @input="
-                          setTextField(field.key, ($event.target as HTMLTextAreaElement).value)
+                          setDnsServerField(
+                            index,
+                            'address',
+                            ($event.target as HTMLInputElement).value,
+                          )
                         "
                       />
-
+                    </td>
+                    <td>
                       <input
-                        v-else
-                        class="input input-bordered input-sm w-full"
-                        :type="field.type"
-                        :value="String(baseConfigForm[field.key] ?? '')"
-                        @input="setTextField(field.key, ($event.target as HTMLInputElement).value)"
+                        class="input input-bordered input-sm w-24"
+                        :value="server.port"
+                        @input="
+                          setDnsServerField(
+                            index,
+                            'port',
+                            ($event.target as HTMLInputElement).value,
+                          )
+                        "
                       />
                     </td>
-                    <td class="text-base-content/65 max-w-[340px] text-xs leading-5">
-                      {{ field.hint || '-' }}
+                    <td>
+                      <input
+                        class="input input-bordered input-sm w-36"
+                        :value="server.path"
+                        @input="
+                          setDnsServerField(
+                            index,
+                            'path',
+                            ($event.target as HTMLInputElement).value,
+                          )
+                        "
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="input input-bordered input-sm w-32"
+                        :value="server.detour"
+                        @input="
+                          setDnsServerField(
+                            index,
+                            'detour',
+                            ($event.target as HTMLInputElement).value,
+                          )
+                        "
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="input input-bordered input-sm w-40"
+                        :value="server.clientSubnet"
+                        @input="
+                          setDnsServerField(
+                            index,
+                            'clientSubnet',
+                            ($event.target as HTMLInputElement).value,
+                          )
+                        "
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="checkbox checkbox-primary checkbox-sm"
+                        type="checkbox"
+                        :checked="server.skipCertVerify"
+                        @change="
+                          setDnsServerField(
+                            index,
+                            'skipCertVerify',
+                            ($event.target as HTMLInputElement).checked,
+                          )
+                        "
+                      />
+                    </td>
+                    <td>
+                      <button
+                        class="btn btn-ghost btn-xs text-error"
+                        type="button"
+                        @click="removeDnsServer(index)"
+                      >
+                        删除
+                      </button>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <div
-              v-else
-              class="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
-            >
-              <label
-                v-for="field in section.fields"
-                :key="field.key"
-                class="form-control gap-2"
-                :class="getFieldSpanClass(field)"
+            <div class="flex justify-end">
+              <button
+                class="btn btn-sm btn-outline"
+                type="button"
+                @click="addDnsServer"
               >
-                <div
-                  v-if="field.type === 'boolean'"
-                  class="border-base-300/50 bg-base-200/25 flex min-h-[84px] items-center justify-between rounded-2xl border px-4 py-3"
-                >
-                  <div class="pr-4">
-                    <div class="text-sm font-medium">{{ field.label }}</div>
-                    <p
-                      v-if="field.hint"
-                      class="text-base-content/60 mt-1 text-xs leading-5"
-                    >
-                      {{ field.hint }}
-                    </p>
-                  </div>
-                  <input
-                    class="toggle toggle-primary"
-                    type="checkbox"
-                    :checked="Boolean(baseConfigForm[field.key])"
-                    @change="
-                      setBooleanField(field.key, ($event.target as HTMLInputElement).checked)
-                    "
-                  />
-                </div>
-
-                <template v-else>
-                  <span class="label-text text-sm font-medium">{{ field.label }}</span>
-
-                  <select
-                    v-if="field.type === 'select'"
-                    class="select select-bordered select-sm w-full"
-                    :value="String(baseConfigForm[field.key] ?? '')"
-                    @change="setTextField(field.key, ($event.target as HTMLSelectElement).value)"
-                  >
-                    <option
-                      v-for="option in field.options || []"
-                      :key="option.value"
-                      :value="option.value"
-                    >
-                      {{ option.label }}
-                    </option>
-                  </select>
-
-                  <textarea
-                    v-else-if="field.type === 'textarea'"
-                    class="textarea textarea-bordered min-h-[108px] w-full font-mono text-sm"
-                    :rows="field.rows || 5"
-                    :placeholder="field.placeholder"
-                    :value="String(baseConfigForm[field.key] ?? '')"
-                    @input="setTextField(field.key, ($event.target as HTMLTextAreaElement).value)"
-                  />
-
-                  <input
-                    v-else
-                    class="input input-bordered input-sm w-full"
-                    :type="field.type"
-                    :placeholder="field.placeholder"
-                    :value="String(baseConfigForm[field.key] ?? '')"
-                    @input="setTextField(field.key, ($event.target as HTMLInputElement).value)"
-                  />
-
-                  <span
-                    v-if="field.hint"
-                    class="text-base-content/55 text-xs leading-5"
-                  >
-                    {{ field.hint }}
-                  </span>
-                </template>
-              </label>
+                新增服务器
+              </button>
             </div>
+          </div>
 
-            <div
-              v-if="!section.fields.length && !section.kind"
-              class="border-base-300/50 bg-base-200/20 text-base-content/55 rounded-2xl border border-dashed px-4 py-8 text-sm"
-            >
-              这一组暂时作为结构占位，后续可接入 sing-box 原生字段。
-            </div>
-          </article>
-
-          <article
-            v-if="!visibleFormSections.length"
-            class="base-container p-5"
+          <div
+            v-else-if="section.kind === 'managed-dns-policies'"
+            class="base-container space-y-4 p-4"
           >
-            <div
-              class="border-base-300/50 bg-base-200/20 text-base-content/55 rounded-2xl border border-dashed px-4 py-8 text-sm"
-            >
-              这一组暂时作为结构占位，后续可接入 sing-box 原生字段。
-            </div>
-          </article>
-        </section>
-
-        <section
-          v-else-if="activeTab === 'outbounds'"
-          class="flex h-full min-h-0 flex-col"
-        >
-          <div class="base-container m-0 flex min-h-0 flex-1 flex-col overflow-hidden">
-            <div class="min-h-0 flex-1 overflow-auto">
-              <table class="table-pin-rows table-zebra table-xs table min-w-[720px]">
-                <thead class="bg-base-100 border-base-300/60 sticky top-0 z-10 border-b">
+            <div class="overflow-x-auto">
+              <table class="table-pin-rows table-zebra table min-w-[920px]">
+                <thead>
                   <tr class="bg-base-100/95">
-                    <th>来源</th>
-                    <th>类型</th>
-                    <th>标签</th>
-                    <th>地址</th>
-                    <th>操作</th>
+                    <th>#</th>
+                    <th>匹配类型</th>
+                    <th>匹配值</th>
+                    <th>解析服务器</th>
+                    <th>strategy</th>
+                    <th>client_subnet</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr
-                    v-for="row in outboundTableRows"
-                    :key="row.id"
-                    class="cursor-pointer"
+                    v-for="(rule, index) in dnsRules"
+                    :key="rule.id"
                   >
-                    <td class="text-sm whitespace-nowrap">{{ row.sourceLabel }}</td>
-                    <td class="text-sm whitespace-nowrap">{{ row.type }}</td>
-                    <td class="font-mono text-sm whitespace-nowrap">{{ row.tag }}</td>
-                    <td class="text-sm whitespace-nowrap">{{ row.address }}</td>
-                    <td class="text-sm whitespace-nowrap">
-                      <div class="flex items-center gap-1">
-                        <button
-                          type="button"
-                          class="btn btn-square btn-ghost btn-xs"
-                          :disabled="!row.shareUri"
-                          :title="row.shareUri ? '展示二维码' : '缺少节点信息'"
-                          aria-label="展示二维码"
-                          @click="openOutboundQrDialog(row)"
+                    <td>{{ index + 1 }}</td>
+                    <td>
+                      <select
+                        class="select select-bordered select-sm w-32"
+                        :value="rule.matcher"
+                        @change="
+                          setDnsRuleField(
+                            index,
+                            'matcher',
+                            ($event.target as HTMLSelectElement).value as DnsPolicyMatcher,
+                          )
+                        "
+                      >
+                        <option
+                          v-for="option in dnsPolicyMatcherOptions"
+                          :key="option.value"
+                          :value="option.value"
                         >
-                          <QrCodeIcon class="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-square btn-ghost btn-xs"
-                          :disabled="!row.shareUri"
-                          :title="row.shareUri ? '复制节点信息' : '缺少节点信息'"
-                          aria-label="复制节点信息"
-                          @click="copyOutboundShareUri(row)"
+                          {{ option.label }}
+                        </option>
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        class="input input-bordered input-sm w-52"
+                        :value="rule.value"
+                        @input="
+                          setDnsRuleField(index, 'value', ($event.target as HTMLInputElement).value)
+                        "
+                      />
+                    </td>
+                    <td>
+                      <select
+                        class="select select-bordered select-sm w-36"
+                        :value="rule.serverName"
+                        @change="
+                          setDnsRuleField(
+                            index,
+                            'serverName',
+                            ($event.target as HTMLSelectElement).value,
+                          )
+                        "
+                      >
+                        <option value="">默认解析</option>
+                        <option
+                          v-for="server in dnsServers"
+                          :key="server.id"
+                          :value="server.name"
                         >
-                          <ClipboardDocumentIcon class="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-square btn-ghost btn-xs"
-                          :disabled="!row.node"
-                          :title="row.node ? '编辑节点' : '缺少节点信息'"
-                          aria-label="编辑节点"
-                          @click="openNodeEditDialog(row)"
+                          {{ server.name || server.id }}
+                        </option>
+                      </select>
+                    </td>
+                    <td>
+                      <select
+                        class="select select-bordered select-sm w-32"
+                        :value="rule.strategy"
+                        @change="
+                          setDnsRuleField(
+                            index,
+                            'strategy',
+                            ($event.target as HTMLSelectElement).value,
+                          )
+                        "
+                      >
+                        <option value=""></option>
+                        <option
+                          v-for="option in dnsStrategyOptions"
+                          :key="option"
+                          :value="option"
                         >
-                          <PencilSquareIcon class="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-square btn-ghost btn-xs text-error"
-                          :disabled="!row.editable"
-                          :title="row.editable ? '删除节点' : '只能删除手动添加节点'"
-                          aria-label="删除节点"
-                          @click="deleteOutboundNode(row)"
-                        >
-                          <TrashIcon class="h-4 w-4" />
-                        </button>
-                      </div>
+                          {{ option }}
+                        </option>
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        class="input input-bordered input-sm w-40"
+                        :value="rule.clientSubnet"
+                        @input="
+                          setDnsRuleField(
+                            index,
+                            'clientSubnet',
+                            ($event.target as HTMLInputElement).value,
+                          )
+                        "
+                      />
+                    </td>
+                    <td>
+                      <button
+                        class="btn btn-ghost btn-xs text-error"
+                        type="button"
+                        @click="removeDnsRule(index)"
+                      >
+                        删除
+                      </button>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
-          </div>
-        </section>
 
-        <section
-          v-else
-          class="space-y-4"
-        ></section>
-      </div>
+            <div class="flex justify-end">
+              <button
+                class="btn btn-sm btn-outline"
+                type="button"
+                @click="addDnsRule"
+              >
+                新增规则
+              </button>
+            </div>
+          </div>
+
+          <div
+            v-else-if="section.kind === 'managed-dns-preview'"
+            class="base-container grid gap-4 p-4 xl:grid-cols-2"
+          >
+            <div class="border-base-300/70 rounded-lg border">
+              <div class="border-base-300/70 border-b px-4 py-3 text-sm font-semibold">mihomo</div>
+              <pre class="max-h-[560px] overflow-auto p-4 text-xs leading-5">{{
+                mihomoDnsPreview
+              }}</pre>
+            </div>
+            <div class="border-base-300/70 rounded-lg border">
+              <div class="border-base-300/70 border-b px-4 py-3 text-sm font-semibold">
+                sing-box
+              </div>
+              <pre class="max-h-[560px] overflow-auto p-4 text-xs leading-5">{{
+                singBoxDnsPreview
+              }}</pre>
+            </div>
+          </div>
+
+          <div
+            v-else-if="section.kind === 'field-table'"
+            class="settings-grid"
+          >
+            <div
+              v-for="field in section.fields"
+              :key="field.key"
+              class="setting-item"
+            >
+              <div class="setting-item-label">
+                {{ field.label }}
+                <QuestionMarkCircleIcon
+                  v-if="field.hint"
+                  class="h-4 w-4 shrink-0"
+                  :title="`${field.key}\n${field.hint}`"
+                />
+              </div>
+
+              <input
+                v-if="field.type === 'boolean'"
+                class="toggle"
+                type="checkbox"
+                :checked="Boolean(baseConfigForm[field.key])"
+                @change="setBooleanField(field.key, ($event.target as HTMLInputElement).checked)"
+              />
+
+              <select
+                v-else-if="field.type === 'select'"
+                class="select select-sm min-w-24"
+                :value="String(baseConfigForm[field.key] ?? '')"
+                @change="setTextField(field.key, ($event.target as HTMLSelectElement).value)"
+              >
+                <option
+                  v-for="option in field.options || []"
+                  :key="option.value"
+                  :value="option.value"
+                >
+                  {{ option.label }}
+                </option>
+              </select>
+
+              <textarea
+                v-else-if="field.type === 'textarea'"
+                class="textarea textarea-sm my-2 min-h-[96px] min-w-0 flex-1 font-mono text-sm"
+                :rows="field.rows || 4"
+                :value="String(baseConfigForm[field.key] ?? '')"
+                @input="setTextField(field.key, ($event.target as HTMLTextAreaElement).value)"
+              />
+
+              <div
+                v-else
+                class="text-base-content/55 flex min-w-0 flex-1 items-center justify-end gap-2"
+              >
+                <span class="hidden font-mono text-xs md:inline">{{ field.key }}</span>
+                <input
+                  class="input input-sm min-w-0 flex-1 md:max-w-md"
+                  :type="field.type"
+                  :value="String(baseConfigForm[field.key] ?? '')"
+                  @input="setTextField(field.key, ($event.target as HTMLInputElement).value)"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            v-else
+            class="settings-grid"
+          >
+            <div
+              v-for="field in section.fields"
+              :key="field.key"
+              class="setting-item"
+            >
+              <div class="setting-item-label">
+                {{ field.label }}
+                <QuestionMarkCircleIcon
+                  v-if="field.hint"
+                  class="h-4 w-4 shrink-0"
+                  :title="field.hint"
+                />
+              </div>
+
+              <input
+                v-if="field.type === 'boolean'"
+                class="toggle"
+                type="checkbox"
+                :checked="Boolean(baseConfigForm[field.key])"
+                @change="setBooleanField(field.key, ($event.target as HTMLInputElement).checked)"
+              />
+
+              <select
+                v-else-if="field.type === 'select'"
+                class="select select-sm min-w-24"
+                :value="String(baseConfigForm[field.key] ?? '')"
+                @change="setTextField(field.key, ($event.target as HTMLSelectElement).value)"
+              >
+                <option
+                  v-for="option in field.options || []"
+                  :key="option.value"
+                  :value="option.value"
+                >
+                  {{ option.label }}
+                </option>
+              </select>
+
+              <textarea
+                v-else-if="field.type === 'textarea'"
+                class="textarea textarea-sm my-2 min-h-[108px] min-w-0 flex-1 font-mono text-sm"
+                :rows="field.rows || 5"
+                :placeholder="field.placeholder"
+                :value="String(baseConfigForm[field.key] ?? '')"
+                @input="setTextField(field.key, ($event.target as HTMLTextAreaElement).value)"
+              />
+
+              <input
+                v-else
+                class="input input-sm min-w-0 flex-1 md:max-w-md"
+                :type="field.type"
+                :placeholder="field.placeholder"
+                :value="String(baseConfigForm[field.key] ?? '')"
+                @input="setTextField(field.key, ($event.target as HTMLInputElement).value)"
+              />
+            </div>
+          </div>
+
+          <div
+            v-if="!section.fields.length && !section.kind"
+            class="border-base-300/50 bg-base-200/20 text-base-content/55 rounded-2xl border border-dashed px-4 py-8 text-sm"
+          >
+            这一组暂时作为结构占位，后续可接入 sing-box 原生字段。
+          </div>
+        </div>
+
+        <article
+          v-if="!visibleFormSections.length"
+          class="base-container p-5 xl:col-span-2"
+        >
+          <div
+            class="border-base-300/50 bg-base-200/20 text-base-content/55 rounded-2xl border border-dashed px-4 py-8 text-sm"
+          >
+            这一组暂时作为结构占位，后续可接入 sing-box 原生字段。
+          </div>
+        </article>
+      </section>
+
+      <section
+        v-else-if="activeTab === 'outbounds'"
+        class="flex h-full min-h-0 flex-col"
+      >
+        <div class="base-container m-0 flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div class="min-h-0 flex-1 overflow-auto">
+            <table class="table-pin-rows table-zebra table-xs table min-w-[720px]">
+              <thead class="bg-base-100 border-base-300/60 sticky top-0 z-10 border-b">
+                <tr class="bg-base-100/95">
+                  <th>来源</th>
+                  <th>类型</th>
+                  <th>标签</th>
+                  <th>地址</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="row in outboundTableRows"
+                  :key="row.id"
+                  class="cursor-pointer"
+                >
+                  <td class="text-sm whitespace-nowrap">{{ row.sourceLabel }}</td>
+                  <td class="text-sm whitespace-nowrap">{{ row.type }}</td>
+                  <td class="font-mono text-sm whitespace-nowrap">{{ row.tag }}</td>
+                  <td class="text-sm whitespace-nowrap">{{ row.address }}</td>
+                  <td class="text-sm whitespace-nowrap">
+                    <div class="flex items-center gap-1">
+                      <button
+                        type="button"
+                        class="btn btn-square btn-ghost btn-xs"
+                        :disabled="!row.shareUri"
+                        :title="row.shareUri ? '展示二维码' : '缺少节点信息'"
+                        aria-label="展示二维码"
+                        @click="openOutboundQrDialog(row)"
+                      >
+                        <QrCodeIcon class="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-square btn-ghost btn-xs"
+                        :disabled="!row.shareUri"
+                        :title="row.shareUri ? '复制节点信息' : '缺少节点信息'"
+                        aria-label="复制节点信息"
+                        @click="copyOutboundShareUri(row)"
+                      >
+                        <ClipboardDocumentIcon class="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-square btn-ghost btn-xs"
+                        :disabled="!row.node"
+                        :title="row.node ? '编辑节点' : '缺少节点信息'"
+                        aria-label="编辑节点"
+                        @click="openNodeEditDialog(row)"
+                      >
+                        <PencilSquareIcon class="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-square btn-ghost btn-xs text-error"
+                        :disabled="!row.editable"
+                        :title="row.editable ? '删除节点' : '只能删除手动添加节点'"
+                        aria-label="删除节点"
+                        @click="deleteOutboundNode(row)"
+                      >
+                        <TrashIcon class="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section
+        v-else
+        class="space-y-4"
+      ></section>
     </div>
 
-    <button
-      v-if="activeTab === 'outbounds'"
-      type="button"
-      class="btn btn-primary fixed right-6 bottom-6 z-30 shadow-lg"
-      @click="openManualNodeDialog()"
-    >
-      添加
-    </button>
+    <div class="fixed right-6 bottom-6 z-30 flex flex-col items-end gap-2">
+      <button
+        v-for="action in floatingActions"
+        :key="action.key"
+        type="button"
+        class="btn btn-sm shadow-lg"
+        :class="action.primary ? 'btn-primary' : 'btn-neutral'"
+        :disabled="action.disabled"
+        @click="action.onClick"
+      >
+        <component
+          :is="action.icon"
+          class="h-4 w-4"
+        />
+        {{ action.label }}
+      </button>
+    </div>
 
     <DialogWrapper
       v-model="manualNodeDialogOpen"
@@ -2435,7 +2484,10 @@ import {
   fetchGlobalConfigAPI,
   fetchLatestNodeHealthAPI,
   fetchRuleSourceRepositoryIndexAPI,
+  queryMihomoRuleProvidersAPI,
   queryOperationEventsAPI,
+  queryRuleSourceRepositoriesAPI,
+  querySingBoxRuleSetsAPI,
   refreshRuleSourceRepositoryIndexAPI,
   refreshRuleSourceSelectableFilesAPI,
   searchRuleSourceRepositoryIndexAPI,
@@ -2464,27 +2516,56 @@ import type {
   FastProxyHealthCheckSample,
   FastProxyNormalizedNode,
   FastProxyOperationEvent,
+  FastProxyMihomoRuleProviderPage,
   FastProxyRuleAssetSourceMode,
   FastProxyRuleSourceIndex,
   FastProxyRuleSourceIndexEntry,
+  FastProxyRuleSourceRepositoryPage,
   FastProxyRuleSourceSelectableFile,
+  FastProxySingBoxRuleSetPage,
   FastProxySingBoxRuleSetResource,
 } from '@/types/fastproxy'
 import {
   Bars3Icon,
   ClipboardDocumentIcon,
+  ArrowPathIcon,
+  CheckIcon,
+  ChevronRightIcon,
+  CircleStackIcon,
+  Cog6ToothIcon,
   DocumentTextIcon,
+  ExclamationTriangleIcon,
   FolderIcon,
+  GlobeAltIcon,
   PencilSquareIcon,
+  PlusIcon,
+  QuestionMarkCircleIcon,
   QrCodeIcon,
+  ServerStackIcon,
   TrashIcon,
 } from '@heroicons/vue/24/outline'
-import { useVirtualizer } from '@tanstack/vue-virtual'
 import * as QRCode from 'qrcode'
-import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import type { Component } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import Draggable from 'vuedraggable'
 
 type ConfigTabKey = 'dns' | 'network' | 'inbounds' | 'outbounds' | 'rule-sets' | 'diagnostics'
+type ConfigTabMeta = {
+  key: ConfigTabKey
+  label: string
+  heading: string
+  description: string
+  icon: Component
+  count: number
+}
+type FloatingAction = {
+  key: string
+  label: string
+  icon: Component
+  onClick: () => void | Promise<void>
+  disabled?: boolean
+  primary?: boolean
+}
 type BaseFieldType = 'text' | 'number' | 'textarea' | 'select' | 'boolean'
 
 type BaseFormField = {
@@ -2564,6 +2645,7 @@ const ntpDialDialogOpen = ref(false)
 const inboundDialogOpen = ref(false)
 const editingInboundId = ref<string | null>(null)
 const inboundSearch = ref('')
+const inboundExpandedMap = ref<Record<string, boolean>>({})
 const inboundSaving = ref(false)
 const globalConfigSaving = ref(false)
 const outboundQrDialogOpen = ref(false)
@@ -2679,23 +2761,6 @@ type RuleResourceDraft = {
   interval: string
 }
 
-type BuiltInRuleTreeRow =
-  | {
-      id: string
-      type: 'directory'
-      path: string
-      name: string
-      level: number
-    }
-  | {
-      id: string
-      type: 'file'
-      path: string
-      name: string
-      level: number
-      entry: FastProxyRuleSourceIndexEntry
-    }
-
 const builtInRuleSourceRepositoryId = 'metacubex-meta-rules-dat'
 const repositoryWorkspace = computed(() => fastProxyRepository.value)
 const ruleSourceRepositories = computed(
@@ -2713,34 +2778,55 @@ const builtInRuleSourceIndex = computed(() => {
     ) || null
   )
 })
-const builtInRuleLoadedIndexes = computed(() =>
-  (repositoryWorkspace.value?.ruleSourceIndexes || []).filter(
-    (item) => item.repositoryId === builtInRuleSourceRepositoryId,
-  ),
-)
-const builtInRuleIndexEntries = computed(() =>
-  builtInRuleLoadedIndexes.value.flatMap((index) => index.entries || []),
-)
-const builtInRuleIndexByPath = computed(() => {
-  const result = new Map<string, FastProxyRuleSourceIndex>()
-  for (const index of builtInRuleLoadedIndexes.value) {
-    result.set(index.path || '', index)
-  }
-  return result
-})
-const builtInRuleSearch = ref('')
-const builtInRuleSearchResults = ref<FastProxyRuleSourceIndexEntry[]>([])
-const builtInRuleSearchTotal = ref(0)
-const builtInRuleSearching = ref(false)
-const builtInRuleSearchError = ref('')
 const builtInRuleIndexRefreshing = ref(false)
 const builtInRuleIndexError = ref('')
-const expandedBuiltInRuleDirs = ref<string[]>([])
-const loadingBuiltInRuleDirs = ref<string[]>([])
-const builtInRuleTreeScrollRef = ref<HTMLElement | null>(null)
 const builtInRuleIndexPageSize = 500
-const builtInRuleSearchLimit = 200
-let builtInRuleSearchTimer: ReturnType<typeof setTimeout> | null = null
+const builtInRuleTablePage = ref(1)
+const builtInRuleTablePageSize = 20
+const builtInRuleSearch = ref('')
+const builtInRuleTableData = ref<FastProxyRuleSourceIndex>({
+  repositoryId: builtInRuleSourceRepositoryId,
+  owner: '',
+  repository: '',
+  refs: {},
+  offset: 0,
+  limit: builtInRuleTablePageSize,
+  total: 0,
+  nextOffset: 0,
+  hasMore: false,
+  entries: [],
+})
+const repositoryTablePage = ref(1)
+const singBoxRuleSetTablePage = ref(1)
+const mihomoRuleProviderTablePage = ref(1)
+const customTablePageSize = 20
+const repositoryTableSearch = ref('')
+const singBoxRuleSetTableSearch = ref('')
+const mihomoRuleProviderTableSearch = ref('')
+const repositoryTableData = ref<FastProxyRuleSourceRepositoryPage>({
+  items: [],
+  offset: 0,
+  limit: customTablePageSize,
+  total: 0,
+  nextOffset: 0,
+  hasMore: false,
+})
+const singBoxRuleSetTableData = ref<FastProxySingBoxRuleSetPage>({
+  items: [],
+  offset: 0,
+  limit: customTablePageSize,
+  total: 0,
+  nextOffset: 0,
+  hasMore: false,
+})
+const mihomoRuleProviderTableData = ref<FastProxyMihomoRuleProviderPage>({
+  items: [],
+  offset: 0,
+  limit: customTablePageSize,
+  total: 0,
+  nextOffset: 0,
+  hasMore: false,
+})
 const repositoryDialogOpen = ref(false)
 const ruleResourceDialogOpen = ref(false)
 const editingRepositoryId = ref<string | null>(null)
@@ -3087,15 +3173,15 @@ const inboundFieldCatalog: Record<InboundType, InboundField[]> = {
       span: 'wide',
       placeholder: '172.19.0.1/30',
     },
-    { key: 'interface_name', label: 'interface_name', type: 'text', defaultValue: 'tun0' },
+    { key: 'interface_name', label: 'interface_name', type: 'text', defaultValue: 'utun101' },
     { key: 'mtu', label: 'mtu', type: 'number', defaultValue: '9000' },
     { key: 'auto_route', label: 'auto_route', type: 'boolean', defaultValue: true },
-    { key: 'auto_redirect', label: 'auto_redirect', type: 'boolean', defaultValue: false },
+    { key: 'auto_redirect', label: 'auto_redirect', type: 'boolean', defaultValue: true },
     {
       key: 'auto_detect_interface',
       label: 'auto_detect_interface',
       type: 'boolean',
-      defaultValue: false,
+      defaultValue: true,
     },
     { key: 'strict_route', label: 'strict_route', type: 'boolean', defaultValue: false },
     {
@@ -3223,10 +3309,15 @@ const inboundFieldCatalog: Record<InboundType, InboundField[]> = {
 const createInboundValues = (type: InboundType, current?: Record<string, string | boolean>) => {
   const values: Record<string, string | boolean> = {}
   for (const field of inboundFieldCatalog[type]) {
-    values[field.key] = current?.[field.key] ?? field.defaultValue
+    values[field.key] =
+      current?.[field.key] ??
+      (type === 'tun' && field.key === 'address' ? defaultTunAddressValue() : field.defaultValue)
   }
   return values
 }
+
+const defaultTunAddressValue = () =>
+  Boolean(baseConfigForm.ipv6) ? '172.19.0.1/30\nfdfe:dcba:9876::1/126' : '172.19.0.1/30'
 
 const createInboundCard = (type: InboundType, current?: Partial<InboundCard>): InboundCard => ({
   id: current?.id || `inbound-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -3381,13 +3472,13 @@ const managedInboundToCard = (inbound: FastProxyManagedInbound, index: number): 
       users: (inbound.auth?.users || [])
         .map((user) => [user.username, user.password].filter(Boolean).join(':'))
         .join('\n'),
-      address: (inbound.tun?.address || ['172.19.0.1/30']).join('\n'),
-      interface_name: inbound.tun?.interfaceName || inbound.tun?.device || 'tun0',
+      address: (inbound.tun?.address || defaultTunAddressValue().split('\n')).join('\n'),
+      interface_name: inbound.tun?.interfaceName || inbound.tun?.device || 'utun101',
       stack: inbound.tun?.stack || 'system',
       mtu: inbound.tun?.mtu ? String(inbound.tun.mtu) : '9000',
       auto_route: inbound.tun?.autoRoute ?? true,
-      auto_redirect: inbound.tun?.autoRedirect ?? false,
-      auto_detect_interface: inbound.tun?.autoDetectInterface ?? false,
+      auto_redirect: inbound.tun?.autoRedirect ?? true,
+      auto_detect_interface: inbound.tun?.autoDetectInterface ?? true,
       strict_route: inbound.tun?.strictRoute ?? false,
       dns_hijack: (inbound.tun?.dnsHijack || []).join('\n'),
       route_address: (inbound.tun?.routeAddress || []).join('\n'),
@@ -5297,13 +5388,34 @@ const wildcardToRegex = (value: string) => {
   return `^${escaped}$`
 }
 
+const isSingBoxBuiltInRuleSetTag = (value: string) => {
+  const tag = value.trim()
+  return (
+    tag.startsWith('geoip-') ||
+    tag.startsWith('geosite-') ||
+    tag.startsWith('geo/') ||
+    tag.startsWith('geo-lite/')
+  )
+}
+
+const toSingBoxGeositeRuleSetTag = (value: string) => {
+  const code = value
+    .trim()
+    .toLowerCase()
+    .replace(/^geosite:/, '')
+    .trim()
+  if (!code) return ''
+  return isSingBoxBuiltInRuleSetTag(code) ? code : `geo/geosite/${code}`
+}
+
 const singBoxDnsMatcherFromValue = (value: string) => {
   const item = value.trim()
   if (!item) return null
   const lower = item.toLowerCase()
   if (lower.startsWith('geosite:')) {
     const geosite = item.slice('geosite:'.length).trim()
-    return geosite ? { geosite: [geosite] } : null
+    const tag = toSingBoxGeositeRuleSetTag(geosite)
+    return tag ? { rule_set: [tag] } : null
   }
   if (lower.startsWith('rule-set:')) {
     const ruleSet = item.slice('rule-set:'.length).trim()
@@ -5353,7 +5465,7 @@ const singBoxDnsRuleFromFakeIpRuleLine = (line: string) => {
     case 'DOMAIN-WILDCARD':
       return { domain_regex: [wildcardToRegex(parts[1])], server }
     case 'GEOSITE':
-      return { geosite: [parts[1]], server }
+      return { rule_set: [toSingBoxGeositeRuleSetTag(parts[1])], server }
     case 'RULE-SET':
       return { rule_set: [parts[1]], server }
     default:
@@ -5384,6 +5496,20 @@ const singBoxFakeIpRules = (): Record<string, unknown>[] => {
 
 const singBoxDnsFinalServer = () => {
   return firstDnsServerNameByRole('default')
+}
+
+const singBoxDefaultLeakPreventionRuleSetTag = 'geo/geosite/geolocation-!cn'
+
+const singBoxDefaultLeakPreventionDnsRules = () => {
+  if (singBoxFakeIpEnabled()) return []
+  const proxyIndex = dnsServers.value.findIndex(
+    (server) => server.role === 'proxy' && server.address.trim(),
+  )
+  const proxyServer =
+    proxyIndex >= 0 ? normalizeDnsServerName(dnsServers.value[proxyIndex], proxyIndex) : ''
+  return proxyServer
+    ? [{ rule_set: [singBoxDefaultLeakPreventionRuleSetTag], server: proxyServer }]
+    : []
 }
 
 const singBoxFakeIpCatchAllRule = () => {
@@ -5506,8 +5632,12 @@ const singBoxDnsPreviewObject = computed(() => {
       return compactObject({
         domain: rule.matcher === 'domain' ? [value] : undefined,
         domain_suffix: rule.matcher === 'domain_suffix' ? [value] : undefined,
-        geosite: rule.matcher === 'geosite' ? [value] : undefined,
-        rule_set: rule.matcher === 'rule_set' ? [value] : undefined,
+        rule_set:
+          rule.matcher === 'geosite'
+            ? [toSingBoxGeositeRuleSetTag(value)]
+            : rule.matcher === 'rule_set'
+              ? [value]
+              : undefined,
         server: rule.serverName.trim() || firstDnsServerNameByRole('default'),
         strategy: rule.strategy.trim(),
         client_subnet: rule.clientSubnet.trim(),
@@ -5520,6 +5650,7 @@ const singBoxDnsPreviewObject = computed(() => {
   const mergedRules = mergeAdjacentSingBoxDnsRules([
     ...fakeIpRules,
     ...rules,
+    ...singBoxDefaultLeakPreventionDnsRules(),
     ...(fakeIpCatchAllRule ? [fakeIpCatchAllRule] : []),
   ])
 
@@ -5584,208 +5715,80 @@ const ntpDialConfiguredCount = computed(
 )
 
 const builtInRuleIndexSummary = computed(() => {
-  const keyword = builtInRuleSearch.value.trim()
-  if (keyword) {
-    const shown = builtInRuleSearchResults.value.length
-    const total = builtInRuleSearchTotal.value || shown
-    return `搜索到 ${total} 个内置规则集，当前显示 ${shown} 个结果。`
-  }
-  const refreshedAt = builtInRuleSourceIndex.value?.refreshedAt
+  const refreshedAt =
+    builtInRuleTableData.value.refreshedAt || builtInRuleSourceIndex.value?.refreshedAt
   if (!refreshedAt) {
-    return '本地还没有缓存索引，点击刷新后会从 GitHub 拉取 sing/meta 两个分支的文件信息。'
+    return '本地还没有缓存索引，点击刷新后会以分页表格加载全部规则集。'
   }
-  return `已加载 ${builtInRuleIndexEntries.value.length} 个规则集、${builtInRuleLoadedIndexes.value.length} 个目录索引，刷新时间 ${new Date(refreshedAt).toLocaleString()}`
+  return `共 ${builtInRuleTableData.value.total || 0} 个规则集，刷新时间 ${new Date(refreshedAt).toLocaleString()}`
 })
 
-const builtInRuleTreeRows = computed<BuiltInRuleTreeRow[]>(() => {
-  const hasKeyword = Boolean(builtInRuleSearch.value.trim())
-  const entries = [
-    ...(hasKeyword ? builtInRuleSearchResults.value : builtInRuleIndexEntries.value),
-  ].sort((a, b) => a.logicalPath.localeCompare(b.logicalPath))
-
-  const directoriesByParent = new Map<string, string[]>()
-  const filesByParent = new Map<string, FastProxyRuleSourceIndexEntry[]>()
-  const addDirectory = (directoryPath: string) => {
-    const normalizedPath = directoryPath.trim()
-    if (!normalizedPath) return
-    const parts = normalizedPath.split('/').filter(Boolean)
-    const parent = parts.slice(0, -1).join('/')
-    const siblings = directoriesByParent.get(parent) || []
-    if (!siblings.includes(normalizedPath)) {
-      directoriesByParent.set(parent, [...siblings, normalizedPath])
-    }
-  }
-
-  if (hasKeyword) {
-    for (const entry of entries) {
-      const parts = entry.logicalPath.split('/').filter(Boolean)
-      for (let depth = 1; depth < parts.length; depth += 1) {
-        addDirectory(parts.slice(0, depth).join('/'))
-      }
-    }
-  } else {
-    for (const index of builtInRuleLoadedIndexes.value) {
-      for (const directory of index.directories || []) {
-        addDirectory(directory.path)
-      }
-    }
-  }
-  for (const entry of entries) {
-    const parts = entry.logicalPath.split('/').filter(Boolean)
-    const parent = parts.slice(0, -1).join('/')
-    const siblings = filesByParent.get(parent) || []
-    filesByParent.set(parent, [...siblings, entry])
-  }
-
-  const rows: BuiltInRuleTreeRow[] = []
-  const appendDirectory = (directoryPath: string) => {
-    const parts = directoryPath.split('/').filter(Boolean)
-    rows.push({
-      id: `dir:${directoryPath}`,
-      type: 'directory',
-      path: directoryPath,
-      name: parts.at(-1) || directoryPath,
-      level: Math.max(parts.length - 1, 0),
-    })
-    if (!hasKeyword && !isBuiltInRuleDirExpanded(directoryPath)) {
-      return
-    }
-    for (const childDir of (directoriesByParent.get(directoryPath) || []).sort((a, b) =>
-      a.localeCompare(b),
-    )) {
-      appendDirectory(childDir)
-    }
-    for (const entry of (filesByParent.get(directoryPath) || []).sort((a, b) =>
-      a.logicalPath.localeCompare(b.logicalPath),
-    )) {
-      const fileParts = entry.logicalPath.split('/').filter(Boolean)
-      rows.push({
-        id: `file:${entry.logicalPath}`,
-        type: 'file',
-        path: entry.logicalPath,
-        name: entry.name,
-        level: Math.max(fileParts.length - 1, 0),
-        entry,
-      })
-    }
-  }
-
-  for (const directoryPath of (directoriesByParent.get('') || []).sort((a, b) =>
-    a.localeCompare(b),
-  )) {
-    appendDirectory(directoryPath)
-  }
-  for (const entry of (filesByParent.get('') || []).sort((a, b) =>
-    a.logicalPath.localeCompare(b.logicalPath),
-  )) {
-    rows.push({
-      id: `file:${entry.logicalPath}`,
-      type: 'file',
-      path: entry.logicalPath,
-      name: entry.name,
-      level: 0,
-      entry,
-    })
-  }
-  return rows
-})
-
-const builtInRuleTreeVirtualizer = useVirtualizer(
-  computed(() => ({
-    count: builtInRuleTreeRows.value.length,
-    getScrollElement: () => builtInRuleTreeScrollRef.value,
-    estimateSize: (index) => (builtInRuleTreeRows.value[index]?.type === 'directory' ? 42 : 58),
-    overscan: 16,
-  })),
+const builtInRuleTotalPages = computed(() =>
+  Math.max(1, Math.ceil((builtInRuleTableData.value.total || 0) / builtInRuleTablePageSize)),
 )
-const builtInRuleTreeVirtualRows = computed(() =>
-  builtInRuleTreeVirtualizer.value.getVirtualItems(),
+const repositoryTableTotalPages = computed(() =>
+  Math.max(1, Math.ceil(repositoryTableData.value.total / customTablePageSize)),
 )
-const builtInRuleTreeTotalSize = computed(() => builtInRuleTreeVirtualizer.value.getTotalSize())
+const singBoxRuleSetTableTotalPages = computed(() =>
+  Math.max(1, Math.ceil(singBoxRuleSetTableData.value.total / customTablePageSize)),
+)
+const mihomoRuleProviderTableTotalPages = computed(() =>
+  Math.max(1, Math.ceil(mihomoRuleProviderTableData.value.total / customTablePageSize)),
+)
 
-const measureBuiltInRuleTreeRow = (el: Element | null) => {
-  if (!el) return
-  nextTick(() => {
-    builtInRuleTreeVirtualizer.value.measureElement(el)
+watch(builtInRuleTablePage, async () => {
+  await loadBuiltInRuleTablePage().catch((error) => {
+    showNotification({
+      content: toErrorMessage(error),
+      type: 'alert-error',
+    })
   })
-}
-
-const getBuiltInRuleFileRow = (row: BuiltInRuleTreeRow) => {
-  return row.type === 'file' ? row : null
-}
-
-const directoryPathForBuiltInRuleRow = (row: BuiltInRuleTreeRow) => {
-  if (row.type === 'directory') return row.path
-  const parts = row.entry.logicalPath.split('/').filter(Boolean)
-  return parts.slice(0, -1).join('/')
-}
-
-watch(builtInRuleTreeVirtualRows, (rows) => {
-  if (builtInRuleSearch.value.trim()) return
-  const last = rows.at(-1)
-  if (!last) return
-  const row = builtInRuleTreeRows.value[last.index]
-  if (!row) return
-  const directoryPath = directoryPathForBuiltInRuleRow(row)
-  if (!directoryPath || !isBuiltInRuleDirExpanded(directoryPath)) return
-  const index = builtInRuleIndexByPath.value.get(directoryPath)
-  if (!index?.hasMore) return
-  const remainingRows = builtInRuleTreeRows.value.length - last.index
-  if (remainingRows > 40) return
-  void loadMoreBuiltInRuleIndexPath(directoryPath)
 })
 
-watch(builtInRuleSearch, (value) => {
-  const keyword = value.trim()
-  if (builtInRuleSearchTimer) {
-    clearTimeout(builtInRuleSearchTimer)
-    builtInRuleSearchTimer = null
-  }
-  builtInRuleSearchError.value = ''
-  if (!keyword) {
-    builtInRuleSearchResults.value = []
-    builtInRuleSearchTotal.value = 0
-    builtInRuleSearching.value = false
-    return
-  }
-
-  builtInRuleSearching.value = true
-  builtInRuleSearchTimer = setTimeout(async () => {
-    try {
-      const { data } = await searchRuleSourceRepositoryIndexAPI(
-        builtInRuleSourceRepositoryId,
-        keyword,
-        {
-          limit: builtInRuleSearchLimit,
-        },
-      )
-      if (builtInRuleSearch.value.trim() !== keyword) return
-      builtInRuleSearchResults.value = data.entries || []
-      builtInRuleSearchTotal.value = data.total || data.entries?.length || 0
-    } catch (error) {
-      if (builtInRuleSearch.value.trim() !== keyword) return
-      builtInRuleSearchResults.value = []
-      builtInRuleSearchTotal.value = 0
-      builtInRuleSearchError.value = toErrorMessage(error)
-    } finally {
-      if (builtInRuleSearch.value.trim() === keyword) {
-        builtInRuleSearching.value = false
-      }
-    }
-  }, 250)
+watch(repositoryTablePage, async () => {
+  await loadRepositoryTablePage().catch((error) => {
+    showNotification({
+      content: toErrorMessage(error),
+      type: 'alert-error',
+    })
+  })
 })
 
-const tabs = computed(() => [
+watch(singBoxRuleSetTablePage, async () => {
+  await loadSingBoxRuleSetTablePage().catch((error) => {
+    showNotification({
+      content: toErrorMessage(error),
+      type: 'alert-error',
+    })
+  })
+})
+
+watch(mihomoRuleProviderTablePage, async () => {
+  await loadMihomoRuleProviderTablePage().catch((error) => {
+    showNotification({
+      content: toErrorMessage(error),
+      type: 'alert-error',
+    })
+  })
+})
+
+const tabs = computed<ConfigTabMeta[]>(() => [
   {
-    key: 'network' as const,
+    key: 'network',
     label: '网络',
+    heading: '网络基础配置',
+    description: '集中维护日志、实验特性、TUN 与时间同步等全局基础能力。',
+    icon: GlobeAltIcon,
     count: baseFormSections
       .filter((section) => section.tab === 'network')
       .reduce((sum, section) => sum + section.fields.length, 0),
   },
   {
-    key: 'dns' as const,
+    key: 'dns',
     label: 'DNS',
+    heading: 'DNS 编排与预览',
+    description: '统一管理解析服务器、策略规则和双核心最终渲染结果。',
+    icon: CircleStackIcon,
     count:
       baseFormSections
         .filter((section) => section.tab === 'dns')
@@ -5794,31 +5797,42 @@ const tabs = computed(() => [
       dnsRules.value.length,
   },
   {
-    key: 'inbounds' as const,
+    key: 'inbounds',
     label: '入站',
+    heading: '入站入口卡片',
+    description: '按卡片组织端口、协议和注入能力，并对 sing-box / mihomo 做兼容审计。',
+    icon: ServerStackIcon,
     count: inboundCards.value.length,
   },
   {
-    key: 'outbounds' as const,
+    key: 'outbounds',
     label: '出站',
+    heading: '出站节点总览',
+    description: '汇总所有来源的节点信息，支持二维码、复制、编辑和清理手动节点。',
+    icon: DocumentTextIcon,
     count: outboundTableRows.value.length,
   },
   {
-    key: 'rule-sets' as const,
+    key: 'rule-sets',
     label: '规则集',
+    heading: '规则资源工作区',
+    description: '把内置规则索引、自定义仓库和双核心规则资源放在同一个操作面板里。',
+    icon: FolderIcon,
     count:
-      builtInRuleIndexEntries.value.length +
+      (builtInRuleTableData.value.total || 0) +
       customRuleSourceRepositories.value.length +
       singBoxRuleSets.value.length +
       mihomoRuleProviders.value.length,
   },
   {
-    key: 'diagnostics' as const,
+    key: 'diagnostics',
     label: '诊断',
+    heading: '诊断与操作历史',
+    description: '查看最近错误、节点健康和操作流水，方便快速确认配置状态。',
+    icon: ExclamationTriangleIcon,
     count: recentErrorEvents.value.length,
   },
 ])
-
 const getFieldSpanClass = (field: BaseFormField) => {
   if (field.span === 'full') {
     return 'md:col-span-2 xl:col-span-3'
@@ -5829,7 +5843,90 @@ const getFieldSpanClass = (field: BaseFormField) => {
   return ''
 }
 
+const getSectionCardClass = (section: BaseFormSection) => {
+  if (
+    section.kind === 'managed-dns-servers' ||
+    section.kind === 'managed-dns-policies' ||
+    section.kind === 'managed-dns-preview'
+  ) {
+    return 'xl:col-span-2'
+  }
+  return ''
+}
+
+const getSectionItemCount = (section: BaseFormSection) => {
+  if (section.kind === 'managed-dns-servers') return dnsServers.value.length
+  if (section.kind === 'managed-dns-policies') return dnsRules.value.length
+  return section.fields.length
+}
+
 const getInboundFieldSpanClass = (field: InboundField) => getFieldSpanClass(field)
+
+const isInboundCardExpanded = (id: string) => inboundExpandedMap.value[id] ?? false
+
+const toggleInboundCardExpanded = (id: string) => {
+  inboundExpandedMap.value = {
+    ...inboundExpandedMap.value,
+    [id]: !isInboundCardExpanded(id),
+  }
+}
+
+const floatingActions = computed<FloatingAction[]>(() => {
+  const actions: FloatingAction[] = [
+    {
+      key: 'refresh',
+      label: '刷新',
+      icon: ArrowPathIcon,
+      onClick: refreshPage,
+      disabled: busy.value,
+    },
+  ]
+
+  if (activeTab.value === 'network' || activeTab.value === 'dns') {
+    actions.unshift({
+      key: 'save-global-config',
+      label: globalConfigSaving.value ? '保存中…' : '保存配置',
+      icon: CheckIcon,
+      onClick: saveGlobalConfig,
+      disabled: busy.value || globalConfigSaving.value,
+      primary: true,
+    })
+  }
+
+  if (activeTab.value === 'inbounds') {
+    actions.unshift({
+      key: 'add-inbound',
+      label: inboundSaving.value ? '保存中…' : '新增入站',
+      icon: PlusIcon,
+      onClick: openCreateInboundDialog,
+      disabled: inboundSaving.value,
+      primary: true,
+    })
+  }
+
+  if (activeTab.value === 'rule-sets') {
+    actions.unshift({
+      key: 'refresh-rule-index',
+      label: builtInRuleIndexRefreshing.value ? '刷新中…' : '刷新内置索引',
+      icon: ArrowPathIcon,
+      onClick: refreshBuiltInRuleIndex,
+      disabled: builtInRuleIndexRefreshing.value,
+      primary: true,
+    })
+  }
+
+  if (activeTab.value === 'outbounds') {
+    actions.unshift({
+      key: 'add-outbound',
+      label: '添加节点',
+      icon: PlusIcon,
+      onClick: openManualNodeDialog,
+      primary: true,
+    })
+  }
+
+  return actions
+})
 
 const currentInboundFields = computed(() => inboundFieldCatalog[inboundDraft.type])
 
@@ -5953,33 +6050,6 @@ const inboundAuditByCard = computed(() => {
   return result
 })
 
-const inboundAuditSummary = computed(() => {
-  const errors = inboundAuditIssues.value.filter((issue) => issue.severity === 'error').length
-  const warnings = inboundAuditIssues.value.filter((issue) => issue.severity === 'warning').length
-  const infos = inboundAuditIssues.value.filter((issue) => issue.severity === 'info').length
-  if (!errors && !warnings && !infos) {
-    return '审计通过'
-  }
-  return `错误 ${errors} · 警告 ${warnings} · 提示 ${infos}`
-})
-
-const hasInboundAuditErrors = computed(() =>
-  inboundAuditIssues.value.some((issue) => issue.severity === 'error'),
-)
-
-const inboundAuditSummaryBadgeClass = computed(() => {
-  if (hasInboundAuditErrors.value) {
-    return 'badge-error text-error-content'
-  }
-  if (inboundAuditIssues.value.some((issue) => issue.severity === 'warning')) {
-    return 'badge-warning text-warning-content'
-  }
-  if (inboundAuditIssues.value.length) {
-    return 'badge-info text-info-content'
-  }
-  return 'badge-success text-success-content'
-})
-
 const setInboundDraftValue = (key: string, value: string | boolean) => {
   inboundDraft.values[key] = value
 }
@@ -6003,6 +6073,16 @@ const displayInboundPort = (card: InboundCard) => {
     return String(card.values.interface_name || '-')
   }
   return String(card.values.listen_port || '-')
+}
+
+const inboundPreviewEntries = (card: InboundCard) => {
+  return Object.entries(card.values)
+    .filter(([, value]) => value !== '' && value !== false && value !== undefined && value !== null)
+    .map(([key, value]) => ({
+      key,
+      value: typeof value === 'boolean' ? (value ? 'true' : 'false') : String(value),
+    }))
+    .slice(0, 8)
 }
 
 const assignInboundDraft = (source: InboundCard) => {
@@ -6259,97 +6339,25 @@ const loadGlobalConfigFromBackend = async () => {
 const coreOptions: FastProxyCoreId[] = ['sing-box', 'mihomo']
 const ruleAssetSourceModes: FastProxyRuleAssetSourceMode[] = ['repository-file', 'remote', 'local']
 
-function isBuiltInRuleDirExpanded(path: string) {
-  if (builtInRuleSearch.value.trim()) return true
-  return expandedBuiltInRuleDirs.value.includes(path)
-}
-
-const hasBuiltInRuleIndexPathLoaded = (path: string) => {
-  const normalizedPath = path.trim()
-  return builtInRuleLoadedIndexes.value.some((item) => (item.path || '') === normalizedPath)
-}
-
-const mergeBuiltInRuleIndex = (
-  index: FastProxyRuleSourceIndex,
-  mode: 'replace' | 'append' = 'replace',
-) => {
-  if (!fastProxyRepository.value) return
-  const normalizedPath = index.path || ''
-  const currentIndex = builtInRuleIndexByPath.value.get(normalizedPath)
-  const nextIndex =
-    mode === 'append' && currentIndex
-      ? {
-          ...index,
-          directories: index.directories?.length
-            ? index.directories
-            : currentIndex.directories || [],
-          entries: [
-            ...(currentIndex.entries || []),
-            ...(index.entries || []).filter(
-              (entry) =>
-                !(currentIndex.entries || []).some(
-                  (current) => current.logicalPath === entry.logicalPath,
-                ),
-            ),
-          ],
-        }
-      : index
-  const nextIndexes = [
-    ...(fastProxyRepository.value.ruleSourceIndexes || []).filter(
-      (item) =>
-        !(item.repositoryId === nextIndex.repositoryId && (item.path || '') === normalizedPath),
-    ),
-    nextIndex,
-  ]
-  fastProxyRepository.value = {
-    ...fastProxyRepository.value,
-    ruleSourceIndexes: nextIndexes,
+const loadBuiltInRuleTablePage = async () => {
+  const safePage = Math.max(1, builtInRuleTablePage.value)
+  const offset = (safePage - 1) * builtInRuleTablePageSize
+  const keyword = builtInRuleSearch.value.trim()
+  const { data } = keyword
+    ? await searchRuleSourceRepositoryIndexAPI(builtInRuleSourceRepositoryId, keyword, {
+        offset,
+        limit: builtInRuleTablePageSize,
+      })
+    : await fetchRuleSourceRepositoryIndexAPI(builtInRuleSourceRepositoryId, '', {
+        offset,
+        limit: builtInRuleTablePageSize,
+        flat: true,
+      })
+  builtInRuleTableData.value = data
+  const totalPages = Math.max(1, Math.ceil((data.total || 0) / builtInRuleTablePageSize))
+  if (builtInRuleTablePage.value > totalPages) {
+    builtInRuleTablePage.value = totalPages
   }
-}
-
-const loadBuiltInRuleIndexPath = async (
-  path: string,
-  options: { offset?: number; append?: boolean } = {},
-) => {
-  const normalizedPath = path.trim()
-  if (!options.append && hasBuiltInRuleIndexPathLoaded(normalizedPath)) return
-  if (loadingBuiltInRuleDirs.value.includes(normalizedPath)) return
-  loadingBuiltInRuleDirs.value = [...loadingBuiltInRuleDirs.value, normalizedPath]
-  try {
-    const { data } = await fetchRuleSourceRepositoryIndexAPI(
-      builtInRuleSourceRepositoryId,
-      normalizedPath,
-      {
-        offset: options.offset ?? 0,
-        limit: builtInRuleIndexPageSize,
-      },
-    )
-    mergeBuiltInRuleIndex(data, options.append ? 'append' : 'replace')
-  } catch (error) {
-    builtInRuleIndexError.value = toErrorMessage(error)
-  } finally {
-    loadingBuiltInRuleDirs.value = loadingBuiltInRuleDirs.value.filter(
-      (item) => item !== normalizedPath,
-    )
-  }
-}
-
-const toggleBuiltInRuleDir = async (path: string) => {
-  if (expandedBuiltInRuleDirs.value.includes(path)) {
-    expandedBuiltInRuleDirs.value = expandedBuiltInRuleDirs.value.filter((item) => item !== path)
-    return
-  }
-  expandedBuiltInRuleDirs.value = [...expandedBuiltInRuleDirs.value, path]
-  await loadBuiltInRuleIndexPath(path)
-}
-
-const loadMoreBuiltInRuleIndexPath = async (path: string) => {
-  const index = builtInRuleIndexByPath.value.get(path)
-  if (!index?.hasMore) return
-  await loadBuiltInRuleIndexPath(path, {
-    offset: index.nextOffset || 0,
-    append: true,
-  })
 }
 
 const refreshBuiltInRuleIndex = async () => {
@@ -6369,6 +6377,7 @@ const refreshBuiltInRuleIndex = async () => {
         ruleSourceIndexes: nextIndexes,
       }
     }
+    await loadBuiltInRuleTablePage()
   } catch (error) {
     builtInRuleIndexError.value = toErrorMessage(error)
     showNotification({
@@ -6378,6 +6387,83 @@ const refreshBuiltInRuleIndex = async () => {
   } finally {
     builtInRuleIndexRefreshing.value = false
   }
+}
+
+const loadRepositoryTablePage = async () => {
+  const safePage = Math.max(1, repositoryTablePage.value)
+  const offset = (safePage - 1) * customTablePageSize
+  const { data } = await queryRuleSourceRepositoriesAPI({
+    offset,
+    limit: customTablePageSize,
+    q: repositoryTableSearch.value,
+  })
+  repositoryTableData.value = data
+  const totalPages = Math.max(1, Math.ceil(data.total / customTablePageSize))
+  if (repositoryTablePage.value > totalPages) {
+    repositoryTablePage.value = totalPages
+  }
+}
+
+const loadSingBoxRuleSetTablePage = async () => {
+  const safePage = Math.max(1, singBoxRuleSetTablePage.value)
+  const offset = (safePage - 1) * customTablePageSize
+  const { data } = await querySingBoxRuleSetsAPI({
+    offset,
+    limit: customTablePageSize,
+    q: singBoxRuleSetTableSearch.value,
+  })
+  singBoxRuleSetTableData.value = data
+  const totalPages = Math.max(1, Math.ceil(data.total / customTablePageSize))
+  if (singBoxRuleSetTablePage.value > totalPages) {
+    singBoxRuleSetTablePage.value = totalPages
+  }
+}
+
+const loadMihomoRuleProviderTablePage = async () => {
+  const safePage = Math.max(1, mihomoRuleProviderTablePage.value)
+  const offset = (safePage - 1) * customTablePageSize
+  const { data } = await queryMihomoRuleProvidersAPI({
+    offset,
+    limit: customTablePageSize,
+    q: mihomoRuleProviderTableSearch.value,
+  })
+  mihomoRuleProviderTableData.value = data
+  const totalPages = Math.max(1, Math.ceil(data.total / customTablePageSize))
+  if (mihomoRuleProviderTablePage.value > totalPages) {
+    mihomoRuleProviderTablePage.value = totalPages
+  }
+}
+
+const triggerBuiltInRuleSearch = async () => {
+  if (builtInRuleTablePage.value !== 1) {
+    builtInRuleTablePage.value = 1
+    return
+  }
+  await loadBuiltInRuleTablePage()
+}
+
+const triggerRepositoryTableSearch = async () => {
+  if (repositoryTablePage.value !== 1) {
+    repositoryTablePage.value = 1
+    return
+  }
+  await loadRepositoryTablePage()
+}
+
+const triggerSingBoxRuleSetTableSearch = async () => {
+  if (singBoxRuleSetTablePage.value !== 1) {
+    singBoxRuleSetTablePage.value = 1
+    return
+  }
+  await loadSingBoxRuleSetTablePage()
+}
+
+const triggerMihomoRuleProviderTableSearch = async () => {
+  if (mihomoRuleProviderTablePage.value !== 1) {
+    mihomoRuleProviderTablePage.value = 1
+    return
+  }
+  await loadMihomoRuleProviderTablePage()
 }
 
 const resetRepositoryDraft = () => {
@@ -6838,7 +6924,10 @@ const refreshPage = async () => {
   const results = await Promise.allSettled([
     loadGlobalConfigFromBackend(),
     loadOperationEvents(),
-    loadBuiltInRuleIndexPath(''),
+    loadBuiltInRuleTablePage(),
+    loadRepositoryTablePage(),
+    loadSingBoxRuleSetTablePage(),
+    loadMihomoRuleProviderTablePage(),
   ])
 
   if (results.some((result) => result.status === 'rejected')) {

@@ -1,155 +1,153 @@
 <template>
-  <div class="relative flex size-full flex-col overflow-hidden">
+  <div
+    class="relative flex size-full flex-col overflow-hidden"
+    :style="padding"
+  >
     <CtrlsBar>
-      <div class="flex flex-wrap items-center justify-between gap-3 p-2">
-        <div class="flex flex-wrap items-center gap-3">
-          <details
-            ref="presetDropdownRef"
-            class="dropdown"
+      <div class="flex flex-wrap items-center gap-2 p-2">
+        <div class="tabs-box tabs tabs-xs">
+          <button
+            v-for="tab in tabs"
+            :key="tab.key"
+            class="tab"
+            :class="activeTab === tab.key && 'tab-active'"
+            @click="activeTab = tab.key"
           >
-            <summary class="btn btn-sm btn-outline min-w-40 justify-between">
-              <span class="flex min-w-0 items-center gap-2">
-                <QueueListIcon class="h-4 w-4 shrink-0" />
-                <span class="truncate">{{ selectedPresetName }}</span>
-              </span>
-              <ChevronDownIcon class="h-4 w-4 shrink-0" />
-            </summary>
+            {{ tab.label }}
+          </button>
+        </div>
 
-            <div
-              class="dropdown-content bg-base-100 border-base-300 z-50 mt-2 w-72 rounded-xl border p-1 shadow-xl"
-            >
-              <div class="flex items-center gap-2 px-2 py-1.5 text-sm font-medium">
-                <QueueListIcon class="h-4 w-4" />
-                配置预设
-              </div>
-              <div class="border-base-300 my-1 border-t" />
+        <details
+          ref="presetDropdownRef"
+          class="dropdown"
+        >
+          <summary
+            class="select select-sm flex max-w-64 min-w-40 items-center justify-between gap-2"
+          >
+            <span class="flex min-w-0 items-center gap-2">
+              <QueueListIcon class="h-4 w-4 shrink-0" />
+              <span class="truncate">{{ selectedPresetName }}</span>
+            </span>
+            <ChevronDownIcon class="h-4 w-4 shrink-0" />
+          </summary>
 
-              <template v-if="routingPresets.length > 0">
-                <div
-                  v-for="preset in routingPresets"
-                  :key="preset.id"
-                  class="hover:bg-base-200 flex w-full items-start gap-1 rounded-lg text-sm"
-                >
-                  <button
-                    class="flex min-w-0 flex-1 items-start gap-2 px-2 py-2 text-left"
-                    type="button"
-                    @click="applyRoutingPreset(preset.id)"
-                  >
-                    <CheckIcon
-                      class="mt-0.5 h-4 w-4 shrink-0"
-                      :class="selectedPresetId === preset.id ? 'opacity-100' : 'opacity-0'"
-                    />
-                    <span class="min-w-0 flex-1">
-                      <span class="block truncate">{{ preset.name }}</span>
-                      <span
-                        v-if="preset.remoteConfigLabel || preset.remoteConfigUrl"
-                        class="text-base-content/55 mt-0.5 block truncate text-xs"
-                      >
-                        {{ preset.remoteConfigLabel || preset.remoteConfigUrl }}
-                      </span>
-                    </span>
-                  </button>
-                  <button
-                    v-if="preset.custom"
-                    class="btn btn-ghost btn-xs btn-circle mt-1.5 mr-1 shrink-0"
-                    type="button"
-                    aria-label="删除预设"
-                    @click="removeCustomPreset(preset.id)"
-                  >
-                    <TrashIcon class="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </template>
-              <div
-                v-else
-                class="text-base-content/60 px-2 py-3 text-center text-sm"
-              >
-                暂无保存的预设
-              </div>
+          <div
+            class="dropdown-content bg-base-100 border-base-300 z-50 mt-2 w-72 rounded-xl border p-1 shadow-xl"
+          >
+            <div class="flex items-center gap-2 px-2 py-1.5 text-sm font-medium">
+              <QueueListIcon class="h-4 w-4" />
+              配置预设
             </div>
-          </details>
+            <div class="border-base-300 my-1 border-t" />
 
-          <div class="tabs-box tabs tabs-sm">
-            <button
-              v-for="tab in tabs"
-              :key="tab.key"
-              class="tab"
-              :class="activeTab === tab.key && 'tab-active'"
-              @click="activeTab = tab.key"
+            <template v-if="routingPresets.length > 0">
+              <div
+                v-for="preset in routingPresets"
+                :key="preset.id"
+                class="hover:bg-base-200 flex w-full items-start gap-1 rounded-lg text-sm"
+              >
+                <button
+                  class="flex min-w-0 flex-1 items-start gap-2 px-2 py-2 text-left"
+                  type="button"
+                  @click="applyRoutingPreset(preset.id)"
+                >
+                  <CheckIcon
+                    class="mt-0.5 h-4 w-4 shrink-0"
+                    :class="selectedPresetId === preset.id ? 'opacity-100' : 'opacity-0'"
+                  />
+                  <span class="min-w-0 flex-1">
+                    <span class="block truncate">{{ preset.name }}</span>
+                    <span
+                      v-if="preset.remoteConfigLabel || preset.remoteConfigUrl"
+                      class="text-base-content/55 mt-0.5 block truncate text-xs"
+                    >
+                      {{ preset.remoteConfigLabel || preset.remoteConfigUrl }}
+                    </span>
+                  </span>
+                </button>
+                <button
+                  v-if="preset.custom"
+                  class="btn btn-ghost btn-xs btn-circle mt-1.5 mr-1 shrink-0"
+                  type="button"
+                  aria-label="删除预设"
+                  @click="removeCustomPreset(preset.id)"
+                >
+                  <TrashIcon class="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </template>
+            <div
+              v-else
+              class="text-base-content/60 px-2 py-3 text-center text-sm"
             >
-              {{ tab.label }}
+              暂无保存的预设
+            </div>
+
+            <div class="border-base-300 my-1 border-t" />
+            <button
+              class="hover:bg-base-200 flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm"
+              type="button"
+              @click="openAddPresetDialog"
+            >
+              <PlusIcon class="h-4 w-4 shrink-0" />
+              <span>添加预设</span>
             </button>
           </div>
-        </div>
+        </details>
+
+        <div class="hidden flex-1 sm:block" />
 
         <div class="flex items-center gap-2">
           <button
-            class="btn btn-sm btn-error btn-outline"
+            class="btn btn-circle btn-sm"
+            type="button"
+            title="添加当前标签内容"
+            @click="openActiveAddDialog"
+          >
+            <PlusIcon class="h-4 w-4" />
+          </button>
+
+          <button
+            class="btn btn-circle btn-sm"
+            type="button"
+            :title="activeTab === 'groups' ? '折叠或展开全部分组' : '折叠或展开全部规则卡片'"
+            @click="activeTab === 'groups' ? toggleAllGroups() : toggleAllRuleCards()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              aria-hidden="true"
+              data-slot="icon"
+              class="h-4 w-4 transition-transform"
+              :class="
+                activeTab === 'groups'
+                  ? allGroupsCollapsed
+                    ? 'rotate-180'
+                    : ''
+                  : allRuleCardsCollapsed
+                    ? 'rotate-180'
+                    : ''
+              "
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m4.5 15.75 7.5-7.5 7.5 7.5"
+              />
+            </svg>
+          </button>
+
+          <button
+            class="btn btn-circle btn-sm"
             type="button"
             :disabled="!selectedPreset || deletingPreset"
+            :title="deletingPreset ? '删除中…' : '删除当前预设'"
             @click="deleteSelectedPreset"
           >
             <TrashIcon class="h-4 w-4" />
-            {{ deletingPreset ? '删除中...' : '删除配置' }}
-          </button>
-
-          <button
-            class="btn btn-sm btn-outline"
-            type="button"
-            @click="openAddPresetDialog"
-          >
-            <PlusIcon class="h-4 w-4" />
-            添加预设
-          </button>
-
-          <button
-            v-if="activeTab === 'groups'"
-            class="btn btn-circle btn-sm max-sm:hidden"
-            type="button"
-            @click="toggleAllGroups"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              aria-hidden="true"
-              data-slot="icon"
-              class="h-4 w-4 transition-transform"
-              :class="allGroupsCollapsed ? 'rotate-180' : ''"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="m4.5 15.75 7.5-7.5 7.5 7.5"
-              />
-            </svg>
-          </button>
-
-          <button
-            v-else
-            class="btn btn-circle btn-sm max-sm:hidden"
-            type="button"
-            @click="toggleAllRuleCards"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              aria-hidden="true"
-              data-slot="icon"
-              class="h-4 w-4 transition-transform"
-              :class="allRuleCardsCollapsed ? 'rotate-180' : ''"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="m4.5 15.75 7.5-7.5 7.5 7.5"
-              />
-            </svg>
           </button>
         </div>
       </div>
@@ -189,7 +187,7 @@
             </template>
           </Draggable>
 
-          <aside class="base-container flex min-h-0 flex-col p-4 xl:col-span-1">
+          <aside class="base-container hidden min-h-0 flex-col p-4 xl:col-span-1 xl:flex">
             <div class="flex items-center justify-between gap-3">
               <div>
                 <h2 class="text-base font-semibold">All Resources</h2>
@@ -271,15 +269,6 @@
         </div>
       </div>
     </div>
-
-    <button
-      class="btn btn-primary shadow-base-content/20 absolute right-5 bottom-5 z-30 gap-2 shadow-lg"
-      type="button"
-      @click="openActiveAddDialog"
-    >
-      <PlusIcon class="h-4 w-4" />
-      {{ activeAddButtonLabel }}
-    </button>
 
     <DialogWrapper
       v-model="addGroupDialogOpen"
@@ -448,6 +437,25 @@
     >
       <div class="p-1">
         <div class="grid gap-4">
+          <label class="form-control gap-2">
+            <span class="label-text text-sm font-medium">出站目标</span>
+            <input
+              v-model="ruleCardOutboundSearch"
+              class="input input-bordered w-full"
+              list="rule-card-outbound-options"
+              type="text"
+              placeholder="搜索并选择节点或分组"
+              @input="syncRuleCardOutboundKeyFromSearch"
+            />
+            <datalist id="rule-card-outbound-options">
+              <option
+                v-for="resource in resourcePool"
+                :key="`${resource.type}:${resource.id}`"
+                :value="formatRuleCardOutboundOption(resource)"
+              />
+            </datalist>
+          </label>
+
           <div class="form-control">
             <label class="flex w-full items-center justify-between gap-4">
               <span class="label-text text-sm font-medium">启用</span>
@@ -471,6 +479,7 @@
           <button
             class="btn btn-primary btn-sm"
             type="button"
+            :disabled="!canConfirmRuleCardDialog"
             @click="confirmRuleCardDialog"
           >
             确认
@@ -554,17 +563,20 @@ import CtrlsBar from '@/components/common/CtrlsBar.vue'
 import RoutingRuleCard from '@/components/routing/RoutingRuleCard.vue'
 import RoutingRuleGroupBucket from '@/components/routing/RoutingRuleGroupBucket.vue'
 import {
-  createMihomoRuleProviderAPI,
   createGroupSetAPI,
+  createMihomoRuleProviderAPI,
   createRoutingRuleSetAPI,
   deleteGroupSetAPI,
   deleteRoutingRuleSetAPI,
+  expandRemoteRuleSetAPI,
+  fetchRemoteTextAPI,
   searchRuleSourceRepositoryIndexAPI,
   updateGroupSetAPI,
   updateMihomoRuleProviderAPI,
   updateRoutingRuleSetAPI,
 } from '@/api/fastproxy'
 import { remoteConfigPresets } from '@/config/remoteConfigPresets'
+import { usePaddingForViews } from '@/composables/paddingViews'
 import { showNotification } from '@/helper/notification'
 import type {
   RoutingGroupMode,
@@ -578,6 +590,7 @@ import type {
   RuleSetOption,
   RoutingRuleDraft,
   RoutingRuleCardResource,
+  RoutingRuleLeaf,
   RoutingRuleTargetReference,
 } from '@/components/routing/RoutingRuleCard.vue'
 import {
@@ -612,6 +625,7 @@ import { useI18n } from 'vue-i18n'
 import Draggable from 'vuedraggable'
 
 const { t } = useI18n()
+const { padding } = usePaddingForViews()
 
 type RoutingPresetOption = {
   custom?: boolean
@@ -637,6 +651,8 @@ const ruleCardDialogOpen = ref(false)
 const presetDialogOpen = ref(false)
 const editingGroupId = ref<string | null>(null)
 const editingRuleCardId = ref<string | null>(null)
+const ruleCardOutboundKey = ref('')
+const ruleCardOutboundSearch = ref('')
 const newPresetName = ref('')
 const newPresetRemoteConfigUrl = ref('')
 const newGroupName = ref('')
@@ -652,18 +668,18 @@ const newGroupStrategy = ref<'round-robin' | 'consistent-hashing' | 'sticky-sess
   'round-robin',
 )
 const ruleCardEnabled = ref(true)
-const nextEntryId = ref(1000)
-const nextRuleCardId = ref(3)
-const nextRuleLeafId = ref(6)
+const INITIAL_ENTRY_ID = 1000
+const INITIAL_RULE_CARD_ID = 3
+const INITIAL_RULE_LEAF_ID = 6
+
+const nextEntryId = ref(INITIAL_ENTRY_ID)
+const nextRuleCardId = ref(INITIAL_RULE_CARD_ID)
+const nextRuleLeafId = ref(INITIAL_RULE_LEAF_ID)
 
 const tabs = computed(() => [
   { key: 'groups' as const, label: t('routingRuleGroups') },
   { key: 'rules' as const, label: t('rules') },
 ])
-
-const activeAddButtonLabel = computed(() =>
-  activeTab.value === 'groups' ? '添加分组' : '添加规则卡片',
-)
 
 const customRoutingPresets = useStorage<CustomRoutingPreset[]>('config/routing-custom-presets', [])
 
@@ -951,6 +967,16 @@ const canConfirmAddGroup = computed(() => {
   return true
 })
 
+const selectedRuleCardOutboundResource = computed(() => {
+  return resourcePool.value.find(
+    (resource) => `${resource.type}:${resource.id}` === ruleCardOutboundKey.value,
+  )
+})
+
+const canConfirmRuleCardDialog = computed(() => {
+  return Boolean(selectedRuleCardOutboundResource.value)
+})
+
 function createEntryId() {
   nextEntryId.value += 1
   return `entry-${nextEntryId.value}`
@@ -959,6 +985,22 @@ function createEntryId() {
 function createRuleId() {
   nextRuleCardId.value += 1
   return `rule-card-${nextRuleCardId.value}`
+}
+
+function extractSequentialId(value: string, prefix: string) {
+  if (!value.startsWith(prefix)) return null
+
+  const numericPart = Number.parseInt(value.slice(prefix.length), 10)
+  return Number.isFinite(numericPart) ? numericPart : null
+}
+
+function syncRuleCardIdCounter(cards: RoutingRuleCardResource[]) {
+  const maxExistingId = cards.reduce((maxValue, card) => {
+    const parsedId = extractSequentialId(card.id, 'rule-card-')
+    return parsedId === null ? maxValue : Math.max(maxValue, parsedId)
+  }, INITIAL_RULE_CARD_ID)
+
+  nextRuleCardId.value = maxExistingId
 }
 
 function hasDuplicateGroupName(name: string, currentGroupId: string | null = null) {
@@ -1249,9 +1291,30 @@ function createRuleLeafId() {
   return `rule-leaf-${nextRuleLeafId.value}`
 }
 
+function formatRuleCardOutboundOption(
+  resource: Pick<RoutingItemReference, 'id' | 'name' | 'type'> & { address?: string },
+) {
+  if (resource.type === 'group') {
+    return `${resource.name} (分组)`
+  }
+
+  return resource.address ? `${resource.name} (${resource.address})` : resource.name
+}
+
+function syncRuleCardOutboundKeyFromSearch() {
+  const normalizedValue = ruleCardOutboundSearch.value.trim()
+  const matchedResource = resourcePool.value.find(
+    (resource) => formatRuleCardOutboundOption(resource) === normalizedValue,
+  )
+
+  ruleCardOutboundKey.value = matchedResource ? `${matchedResource.type}:${matchedResource.id}` : ''
+}
+
 function resetRuleCardDialog() {
   editingRuleCardId.value = null
   ruleCardEnabled.value = true
+  ruleCardOutboundKey.value = ''
+  ruleCardOutboundSearch.value = ''
 }
 
 function openAddRuleCardDialog() {
@@ -1308,6 +1371,13 @@ type RemoteConfigParsedRuleProvider = {
   url: string
 }
 
+type RemoteConfigParsedRule = Pick<
+  RoutingRuleLeaf,
+  'condition' | 'target' | 'unsupportedCores' | 'unsupportedReason' | 'value'
+> & {
+  sourceRule?: Omit<FastProxyNormalizedRule, 'id'>
+}
+
 type RemoteConfigParsedResult = {
   groups: RoutingGroupResource[]
   providers: RemoteConfigParsedRuleProvider[]
@@ -1330,24 +1400,124 @@ function createBuiltInOutboundReference(name: string): RoutingNodeReference {
 }
 
 function sanitizeRemoteProviderName(value: string) {
-  return value
-    .trim()
-    .replace(/^\/+|\/+$/g, '')
-    .replace(/\.(list|txt|yaml|yml|mrs)$/i, '')
+  const lastSegment =
+    value
+      .trim()
+      .replace(/^\/+|\/+$/g, '')
+      .split('/')
+      .filter(Boolean)
+      .pop() || ''
+  return lastSegment.replace(/\.[^.]+$/u, '')
 }
 
 function providerNameFromRemoteRuleSetUrl(url: string) {
   try {
     const parsedUrl = new URL(url)
     const path = decodeURIComponent(parsedUrl.pathname)
-    const clashPath = path.split('/Clash/')[1]
-    const basePath = clashPath || path.split('/').slice(-2).join('/')
-    return (
-      sanitizeRemoteProviderName(basePath) || `remote-${Math.random().toString(36).slice(2, 8)}`
-    )
+    return sanitizeRemoteProviderName(path) || `remote-${Math.random().toString(36).slice(2, 8)}`
   } catch {
     return sanitizeRemoteProviderName(url) || `remote-${Math.random().toString(36).slice(2, 8)}`
   }
+}
+
+function splitTrailingAcronymRuleSetName(name: string) {
+  const trimmed = name.trim()
+  const match = /^(.*?[a-z])([A-Z]{2,})$/.exec(trimmed)
+  return match ? `${match[1]}-${match[2]}` : trimmed
+}
+
+function splitCamelRuleSetName(name: string) {
+  return name
+    .trim()
+    .replace(/([a-z])([A-Z])|([A-Z])([A-Z][a-z])/g, (_match, lower, upper, acronym, word) => {
+      if (lower && upper) return `${lower}-${upper}`
+      return `${acronym}-${word}`
+    })
+}
+
+function normalizeSingBoxGeositeCandidate(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9!]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+function getSingBoxGeositeNameCandidates(name: string) {
+  const trimmed = name.trim()
+  return [
+    trimmed.toLowerCase(),
+    normalizeSingBoxGeositeCandidate(splitTrailingAcronymRuleSetName(trimmed)),
+    normalizeSingBoxGeositeCandidate(trimmed),
+    normalizeSingBoxGeositeCandidate(splitCamelRuleSetName(trimmed)),
+  ].filter((item, index, items) => item && items.indexOf(item) === index)
+}
+
+async function getSingBoxBuiltInRuleSetTagFromRemoteSource(source: string) {
+  const name = providerNameFromRemoteRuleSetUrl(source)
+  if (!name) return ''
+
+  const builtInValues = new Set(builtInRuleSetOptions.value.map((option) => option.value))
+  for (const candidate of getSingBoxGeositeNameCandidates(name)) {
+    if (
+      builtInValues.has(`geo/geosite/${candidate}`) ||
+      builtInValues.has(`geosite-${candidate}`)
+    ) {
+      return `geo/geosite/${candidate}`
+    }
+    try {
+      const { data } = await searchRuleSourceRepositoryIndexAPI(
+        'metacubex-meta-rules-dat',
+        candidate,
+        {
+          core: 'sing-box',
+          limit: 20,
+          pathPrefix: 'geo/geosite',
+        },
+      )
+      const matched = (data.entries || []).some(
+        (entry) => entry.logicalPath === `geo/geosite/${candidate}` && entry.files?.['sing-box'],
+      )
+      if (matched) {
+        return `geo/geosite/${candidate}`
+      }
+    } catch {
+      continue
+    }
+  }
+  return ''
+}
+
+function ruleWithoutId(rule: FastProxyNormalizedRule): Omit<FastProxyNormalizedRule, 'id'> {
+  const clone = { ...rule } as Partial<FastProxyNormalizedRule>
+  delete clone.id
+  return clone as Omit<FastProxyNormalizedRule, 'id'>
+}
+
+function createUnsupportedRemoteRuleSetRule(
+  provider: RemoteConfigParsedRuleProvider,
+  target: string,
+): RemoteConfigParsedRule {
+  return {
+    condition: 'RULE-SET',
+    target,
+    unsupportedCores: ['sing-box'] as FastProxyCoreId[],
+    unsupportedReason: '未匹配到内置 sing-box 规则集，且远程规则集展开失败',
+    value: provider.name,
+  }
+}
+
+function createExpandedRemoteRuleSetRules(
+  rules: FastProxyNormalizedRule[],
+  target: string,
+): RemoteConfigParsedRule[] {
+  return rules.map((rule) => ({
+    condition: 'RAW',
+    sourceRule: ruleWithoutId(rule),
+    target,
+    value: rule.raw?.length ? rule.raw : JSON.stringify(ruleWithoutId(rule)),
+  }))
 }
 
 function parseRemoteProxyGroupLine(line: string) {
@@ -1416,7 +1586,7 @@ function parseRemoteProxyGroupLine(line: string) {
   }
 }
 
-function parseRemoteRuleSetLine(line: string) {
+async function parseRemoteRuleSetLine(line: string) {
   const equalsIndex = line.indexOf('=')
   const content = equalsIndex >= 0 ? line.slice(equalsIndex + 1) : ''
   const commaIndex = content.indexOf(',')
@@ -1431,13 +1601,46 @@ function parseRemoteRuleSetLine(line: string) {
       name: providerNameFromRemoteRuleSetUrl(source),
       url: source,
     }
+    const singBoxRuleSetTag = await getSingBoxBuiltInRuleSetTagFromRemoteSource(source)
+    const providerPayload = buildRemoteMihomoProviderPayload(provider)
+    if (singBoxRuleSetTag) {
+      const sourceRule: Omit<FastProxyNormalizedRule, 'id'> = {
+        outbound: target,
+        raw: [`RULE-SET,${provider.name},${target}`],
+        rule_set: [singBoxRuleSetTag],
+        mihomoRuleProvider: providerPayload,
+      }
+
+      return {
+        provider,
+        rules: [
+          {
+            condition: 'RULE-SET',
+            sourceRule,
+            target,
+            value: provider.name,
+          },
+        ],
+        target,
+      }
+    }
+
+    try {
+      const { data } = await expandRemoteRuleSetAPI(source, target)
+      if (data.rules?.length) {
+        return {
+          provider,
+          rules: createExpandedRemoteRuleSetRules(data.rules, target),
+          target,
+        }
+      }
+    } catch (error) {
+      console.warn('remote rule set expansion failed', error)
+    }
+
     return {
       provider,
-      rule: {
-        condition: 'RULE-SET',
-        target,
-        value: provider.name,
-      },
+      rules: [createUnsupportedRemoteRuleSetRule(provider, target)],
       target,
     }
   }
@@ -1449,11 +1652,13 @@ function parseRemoteRuleSetLine(line: string) {
       .map((item) => item.trim())
     const normalizedCondition = condition.toUpperCase() === 'FINAL' ? 'MATCH' : condition
     return {
-      rule: {
-        condition: normalizedCondition,
-        target,
-        value: normalizedCondition === 'MATCH' ? '*' : values.join(','),
-      },
+      rules: [
+        {
+          condition: normalizedCondition,
+          target,
+          value: normalizedCondition === 'MATCH' ? '*' : values.join(','),
+        },
+      ],
       target,
     }
   }
@@ -1463,7 +1668,7 @@ function parseRemoteRuleSetLine(line: string) {
 
 function createRemoteRuleCard(
   target: string,
-  rules: Array<{ condition: string; target: string; value: string }>,
+  rules: RemoteConfigParsedRule[],
   groupLookup: Map<string, RoutingGroupResource>,
 ): RoutingRuleCardResource {
   const groupTarget = groupLookup.get(target)
@@ -1476,21 +1681,24 @@ function createRemoteRuleCard(
     id: createRuleId(),
     name: target,
     outboundTarget,
-    rules: rules.map((rule) => ({
-      condition: rule.condition,
-      id: createRuleLeafId(),
-      target: rule.target,
-      value: rule.value,
-    })),
+    rules: rules.map((rule) => {
+      const ruleId = createRuleLeafId()
+      return {
+        condition: rule.condition,
+        id: ruleId,
+        sourceRule: rule.sourceRule ? { ...rule.sourceRule, id: ruleId } : undefined,
+        target: rule.target,
+        unsupportedCores: rule.unsupportedCores,
+        unsupportedReason: rule.unsupportedReason,
+        value: rule.value,
+      }
+    }),
   }
 }
 
-function parseRemoteRoutingConfig(content: string): RemoteConfigParsedResult {
+async function parseRemoteRoutingConfig(content: string): Promise<RemoteConfigParsedResult> {
   const parsedGroups = []
-  const rulesByTarget = new Map<
-    string,
-    Array<{ condition: string; target: string; value: string }>
-  >()
+  const rulesByTarget = new Map<string, RemoteConfigParsedRule[]>()
   const providersByUrl = new Map<string, RemoteConfigParsedRuleProvider>()
 
   for (const rawLine of content.split(/\r?\n/)) {
@@ -1504,11 +1712,11 @@ function parseRemoteRoutingConfig(content: string): RemoteConfigParsedResult {
     }
 
     if (line.startsWith('ruleset=')) {
-      const parsed = parseRemoteRuleSetLine(line)
+      const parsed = await parseRemoteRuleSetLine(line)
       if (!parsed) continue
       if (parsed.provider) providersByUrl.set(parsed.provider.url, parsed.provider)
       const rules = rulesByTarget.get(parsed.target) || []
-      rules.push(parsed.rule)
+      rules.push(...parsed.rules)
       rulesByTarget.set(parsed.target, rules)
     }
   }
@@ -1607,11 +1815,12 @@ function buildGroupOutbounds(group: RoutingGroupResource) {
 }
 
 async function fetchRemoteRoutingConfig(url: string) {
-  const response = await fetch(url)
-  if (!response.ok) {
-    throw new Error(`远程配置请求失败：${response.status}`)
+  try {
+    const { data } = await fetchRemoteTextAPI(url)
+    return data.content
+  } catch (error) {
+    throw new Error(extractErrorMessage(error, '远程配置请求失败'))
   }
-  return response.text()
 }
 
 function inferRemoteRuleProviderBehavior(url: string) {
@@ -1657,7 +1866,7 @@ async function ensureRemoteMihomoRuleProviders(providers: RemoteConfigParsedRule
 
 async function createRemotePresetResources(name: string, remoteConfigUrl: string) {
   const content = await fetchRemoteRoutingConfig(remoteConfigUrl)
-  const parsed = parseRemoteRoutingConfig(content)
+  const parsed = await parseRemoteRoutingConfig(content)
   if (parsed.groups.length === 0 && parsed.ruleCards.length === 0) {
     throw new Error('远程配置中没有可解析的 custom_proxy_group 或 ruleset')
   }
@@ -1687,7 +1896,6 @@ async function createRemotePresetResources(name: string, remoteConfigUrl: string
     rules: parsed.ruleCards.flatMap((card) =>
       card.rules.map((rule) => buildNormalizedRuleFromLeaf(rule)),
     ),
-    supportedCores: ['mihomo'],
   }
 
   const [groupResult, ruleResult] = await Promise.all([
@@ -1810,6 +2018,12 @@ function openEditRuleCardDialog(cardId: string) {
 
   editingRuleCardId.value = cardId
   ruleCardEnabled.value = targetCard.enabled
+  ruleCardOutboundKey.value = targetCard.outboundTarget
+    ? `${targetCard.outboundTarget.type}:${targetCard.outboundTarget.id}`
+    : ''
+  ruleCardOutboundSearch.value = targetCard.outboundTarget
+    ? formatRuleCardOutboundOption(targetCard.outboundTarget)
+    : ''
   ruleCardDialogOpen.value = true
 }
 
@@ -1819,18 +2033,26 @@ function closeRuleCardDialog() {
 }
 
 function confirmRuleCardDialog() {
+  const selectedOutbound = selectedRuleCardOutboundResource.value
+  if (!selectedOutbound) return
+
   if (editingRuleCardId.value) {
     const targetCard = ruleCards.value.find((card) => card.id === editingRuleCardId.value)
     if (!targetCard) return
 
     targetCard.enabled = ruleCardEnabled.value
+    updateRuleCardOutboundTarget(editingRuleCardId.value, selectedOutbound, false)
   } else {
     const id = createRuleId()
     ruleCards.value.push({
       enabled: ruleCardEnabled.value,
       id,
-      name: '未选择出站',
-      outboundTarget: null,
+      name: selectedOutbound.name,
+      outboundTarget: {
+        id: selectedOutbound.id,
+        name: selectedOutbound.name,
+        type: selectedOutbound.type,
+      },
       rules: [],
     })
     collapsedRuleCardIds.value = [...collapsedRuleCardIds.value, id]
@@ -1896,7 +2118,11 @@ function updateRuleCardEnabled(cardId: string, enabled: boolean) {
   queueSaveRoutingWorkspace()
 }
 
-function updateRuleCardOutboundTarget(cardId: string, target: RoutingItemReference) {
+function updateRuleCardOutboundTarget(
+  cardId: string,
+  target: RoutingItemReference,
+  shouldQueueSave = true,
+) {
   const targetCard = ruleCards.value.find((card) => card.id === cardId)
   if (!targetCard) return
 
@@ -1912,7 +2138,9 @@ function updateRuleCardOutboundTarget(cardId: string, target: RoutingItemReferen
     ...rule,
     target: target.name,
   }))
-  queueSaveRoutingWorkspace()
+  if (shouldQueueSave) {
+    queueSaveRoutingWorkspace()
+  }
 }
 
 function addRuleToCard(cardId: string, rule: RoutingRuleDraft) {
@@ -1936,8 +2164,20 @@ function removeRuleFromCard(cardId: string, ruleId: string) {
   queueSaveRoutingWorkspace()
 }
 
-const RULE_RESERVED_KEYS = new Set(['id', 'type', 'mode', 'rules', 'action', 'outbound', 'raw'])
+const RULE_RESERVED_KEYS = new Set([
+  'id',
+  'type',
+  'mode',
+  'rules',
+  'action',
+  'outbound',
+  'raw',
+  'mihomoRuleProvider',
+  'unsupportedCores',
+  'unsupportedReason',
+])
 const SAVE_DEBOUNCE_MS = 500
+const BUILT_IN_OUTBOUND_TAGS = new Set(['DIRECT', 'GLOBAL', 'REJECT', 'REJECT-DROP', 'BLOCK'])
 
 function mapSingBoxGroupType(type: string): RoutingGroupMode {
   switch (type) {
@@ -1950,8 +2190,29 @@ function mapSingBoxGroupType(type: string): RoutingGroupMode {
   }
 }
 
+function normalizeLoadBalanceStrategy(strategy: unknown): RoutingGroupResource['strategy'] {
+  if (
+    strategy === 'round-robin' ||
+    strategy === 'consistent-hashing' ||
+    strategy === 'sticky-sessions'
+  ) {
+    return strategy
+  }
+  return undefined
+}
+
 function getActiveNodes(): FastProxyNormalizedNode[] {
   return (repository.value?.nodeSets || []).flatMap((item) => item.nodes || [])
+}
+
+function normalizeBuiltInOutboundTag(outbound: string) {
+  const normalized = outbound.trim().toUpperCase()
+  if (normalized === 'BLOCK') return 'REJECT'
+  return normalized
+}
+
+function isBuiltInOutboundTag(outbound: string) {
+  return BUILT_IN_OUTBOUND_TAGS.has(outbound.trim().toUpperCase())
 }
 
 function getActiveGroups(): FastProxyNormalizedGroup[] {
@@ -2008,16 +2269,22 @@ function buildNodeResources(
   }))
   const knownNodeIds = new Set(resources.map((item) => item.id))
   for (const outbound of extraOutbounds) {
-    if (!outbound || groupTags.has(outbound) || knownNodeIds.has(outbound)) {
+    const builtInOutbound = normalizeBuiltInOutboundTag(outbound)
+    if (
+      !outbound ||
+      !isBuiltInOutboundTag(outbound) ||
+      groupTags.has(outbound) ||
+      knownNodeIds.has(builtInOutbound)
+    ) {
       continue
     }
     resources.push({
-      id: outbound,
+      id: builtInOutbound,
       type: 'node',
-      name: outbound,
+      name: builtInOutbound,
       address: 'built-in outbound',
     })
-    knownNodeIds.add(outbound)
+    knownNodeIds.add(builtInOutbound)
   }
   return resources
 }
@@ -2046,6 +2313,19 @@ function createReferenceFromTag(
       address: node.address,
     }
   }
+  const builtInOutbound = normalizeBuiltInOutboundTag(outbound)
+  if (isBuiltInOutboundTag(outbound)) {
+    const builtInNode = nodeLookup.get(builtInOutbound)
+    if (builtInNode) {
+      return {
+        entryId: createEntryId(),
+        id: builtInNode.id,
+        name: builtInNode.name,
+        type: 'node',
+        address: builtInNode.address,
+      }
+    }
+  }
   return null
 }
 
@@ -2068,7 +2348,8 @@ function reserveUniqueId(
 function buildGroupsFromSource(
   groupsSource: FastProxyNormalizedGroup[],
   nodeSource: RoutingNodeResource[],
-): RoutingGroupResource[] {
+): { changed: boolean; groups: RoutingGroupResource[] } {
+  let changed = false
   const usedGroupIds = new Set<string>()
   const normalizedGroups = groupsSource.map((group, index) => ({
     group,
@@ -2079,28 +2360,39 @@ function buildGroupsFromSource(
   )
   const nodeLookup = new Map(nodeSource.map((node) => [node.id, node]))
 
-  return normalizedGroups.map(({ group, id }) => ({
-    enabled: true,
-    groupType: mapSingBoxGroupType(group.type),
-    id,
-    interval: typeof group.raw?.interval === 'number' ? group.raw.interval : undefined,
-    lazy: typeof group.raw?.lazy === 'boolean' ? group.raw.lazy : undefined,
-    name: group.tag,
-    raw: group.raw,
-    regexEnabled: false,
-    strategy:
-      group.raw?.strategy === 'round-robin' ||
-      group.raw?.strategy === 'consistent-hashing' ||
-      group.raw?.strategy === 'sticky-sessions'
-        ? group.raw.strategy
-        : undefined,
-    testUrl: typeof group.raw?.url === 'string' ? group.raw.url : undefined,
-    tolerance: typeof group.raw?.tolerance === 'number' ? group.raw.tolerance : undefined,
-    type: 'group',
-    items: (group.outbounds || [])
+  const groups = normalizedGroups.map(({ group, id }) => {
+    const sourceOutbounds = group.outbounds || []
+    const items = sourceOutbounds
       .map((outbound) => createReferenceFromTag(outbound, groupLookup, nodeLookup))
-      .filter((item): item is RoutingItemReference => item !== null),
-  }))
+      .filter((item): item is RoutingItemReference => item !== null)
+
+    if (
+      items.length !== sourceOutbounds.length ||
+      items.some((item, index) => item.name !== sourceOutbounds[index])
+    ) {
+      changed = true
+    }
+
+    return {
+      enabled: true,
+      groupType: mapSingBoxGroupType(group.type),
+      id,
+      interval: typeof group.raw?.interval === 'number' ? group.raw.interval : undefined,
+      lazy: typeof group.raw?.lazy === 'boolean' ? group.raw.lazy : undefined,
+      matchPattern:
+        typeof group.raw?.matchPattern === 'string' ? group.raw.matchPattern : undefined,
+      name: group.tag,
+      raw: group.raw,
+      regexEnabled: group.raw?.regexEnabled === true,
+      strategy: normalizeLoadBalanceStrategy(group.raw?.strategy),
+      testUrl: typeof group.raw?.url === 'string' ? group.raw.url : undefined,
+      tolerance: typeof group.raw?.tolerance === 'number' ? group.raw.tolerance : undefined,
+      type: 'group' as const,
+      items,
+    }
+  })
+
+  return { changed, groups }
 }
 
 function getRuleFieldEntries(rule: FastProxyNormalizedRule): Array<[string, unknown]> {
@@ -2127,12 +2419,27 @@ function formatRuleLeafValue(value: unknown): string | string[] {
 }
 
 function buildRuleLeafs(rule: FastProxyNormalizedRule, outboundName: string) {
+  if (rule.raw?.length) {
+    return [
+      {
+        condition: 'RAW',
+        id: createRuleLeafId(),
+        target: outboundName,
+        unsupportedCores: rule.unsupportedCores,
+        unsupportedReason: rule.unsupportedReason,
+        value: rule.raw,
+      },
+    ]
+  }
+
   if (rule.type === 'logical') {
     return [
       {
         condition: `LOGICAL-${(rule.mode || 'or').toUpperCase()}`,
         id: createRuleLeafId(),
         target: outboundName,
+        unsupportedCores: rule.unsupportedCores,
+        unsupportedReason: rule.unsupportedReason,
         value:
           rule.rules?.map((child) => child.raw?.[0] || formatRuleCondition(child.type || 'rule')) ||
           [],
@@ -2147,6 +2454,8 @@ function buildRuleLeafs(rule: FastProxyNormalizedRule, outboundName: string) {
         condition: 'MATCH',
         id: createRuleLeafId(),
         target: outboundName,
+        unsupportedCores: rule.unsupportedCores,
+        unsupportedReason: rule.unsupportedReason,
         value: '*',
       },
     ]
@@ -2156,8 +2465,42 @@ function buildRuleLeafs(rule: FastProxyNormalizedRule, outboundName: string) {
     condition: formatRuleCondition(field),
     id: createRuleLeafId(),
     target: outboundName,
+    unsupportedCores: rule.unsupportedCores,
+    unsupportedReason: rule.unsupportedReason,
     value: formatRuleLeafValue(value),
   }))
+}
+
+function resolveOutboundTarget(
+  outboundName: string,
+  groupsSource: RoutingGroupResource[],
+  nodesSource: RoutingNodeResource[],
+): RoutingRuleTargetReference | null {
+  const groupTarget = groupsSource.find(
+    (group) => group.name === outboundName || group.id === outboundName,
+  )
+  if (groupTarget) {
+    return { id: groupTarget.id, name: groupTarget.name, type: 'group' }
+  }
+
+  const nodeTarget = nodesSource.find(
+    (node) => node.name === outboundName || node.id === outboundName,
+  )
+  if (nodeTarget) {
+    return { id: nodeTarget.id, name: nodeTarget.name, type: 'node' }
+  }
+
+  if (isBuiltInOutboundTag(outboundName)) {
+    const builtInOutbound = normalizeBuiltInOutboundTag(outboundName)
+    const builtInTarget = nodesSource.find(
+      (node) => node.name === builtInOutbound || node.id === builtInOutbound,
+    )
+    if (builtInTarget) {
+      return { id: builtInTarget.id, name: builtInTarget.name, type: 'node' }
+    }
+  }
+
+  return null
 }
 
 function getRuleCardSignature(card: Pick<RoutingRuleCardResource, 'rules' | 'outboundTarget'>) {
@@ -2176,30 +2519,22 @@ function buildRuleCardsFromSource(
   groupsSource: RoutingGroupResource[],
   nodesSource: RoutingNodeResource[],
 ): RoutingRuleCardResource[] {
-  const groupLookup = new Map(groupsSource.map((group) => [group.name, group]))
-  const nodeLookup = new Map(nodesSource.map((node) => [node.name, node]))
-
-  return rulesSource.map((rule, index) => {
-    const outboundName = rule.outbound || 'direct'
-    const groupTarget = groupLookup.get(outboundName)
-    const nodeTarget = nodeLookup.get(outboundName)
-    const outboundTarget: RoutingRuleTargetReference | null = groupTarget
-      ? { id: groupTarget.id, name: groupTarget.name, type: 'group' }
-      : nodeTarget
-        ? { id: nodeTarget.id, name: nodeTarget.name, type: 'node' }
-        : { id: outboundName, name: outboundName, type: 'node' }
+  return rulesSource.flatMap((rule, index) => {
+    const outboundName = rule.outbound || getRawRuleTarget(rule.raw?.[0] || '') || 'direct'
+    const outboundTarget = resolveOutboundTarget(outboundName, groupsSource, nodesSource)
+    if (!outboundTarget) return []
 
     const card = {
       enabled: true,
       id: rule.id,
-      name: outboundName || `Rule ${index + 1}`,
+      name: outboundTarget.name || `Rule ${index + 1}`,
       outboundTarget,
-      rules: buildRuleLeafs(rule, outboundName),
+      rules: buildRuleLeafs(rule, outboundTarget.name),
       sourceRule: rule,
       sourceSignature: '',
     }
     card.sourceSignature = getRuleCardSignature(card)
-    return card
+    return [card]
   })
 }
 
@@ -2221,6 +2556,52 @@ function buildRuleCardsFromStoredCards(
     sourceRule: card.sourceRule,
     sourceSignature: card.sourceSignature,
   }))
+}
+
+function sanitizeRuleCards(
+  cards: RoutingRuleCardResource[],
+  groupsSource: RoutingGroupResource[],
+  nodesSource: RoutingNodeResource[],
+) {
+  let changed = false
+
+  const sanitizedCards = cards.flatMap((card) => {
+    const outboundName = card.outboundTarget?.name || card.name
+    const outboundTarget = resolveOutboundTarget(outboundName, groupsSource, nodesSource)
+    if (!outboundTarget) {
+      changed = true
+      return []
+    }
+
+    const nextRules = (card.rules || []).map((rule) => ({
+      ...rule,
+      target: outboundTarget.name,
+    }))
+
+    if (
+      card.outboundTarget?.id !== outboundTarget.id ||
+      card.outboundTarget?.name !== outboundTarget.name ||
+      card.outboundTarget?.type !== outboundTarget.type ||
+      card.name !== outboundTarget.name ||
+      nextRules.some((rule, index) => rule.target !== card.rules[index]?.target)
+    ) {
+      changed = true
+    }
+
+    return [
+      {
+        ...card,
+        name: outboundTarget.name,
+        outboundTarget,
+        rules: nextRules,
+      },
+    ]
+  })
+
+  return {
+    changed,
+    cards: sanitizedCards,
+  }
 }
 
 function serializeRuleCards(): FastProxyRoutingRuleCard[] {
@@ -2258,6 +2639,13 @@ function buildGroupRaw(group: RoutingGroupResource) {
   if (typeof group.tolerance === 'number') raw.tolerance = group.tolerance
   if (typeof group.lazy === 'boolean') raw.lazy = group.lazy
   if (group.strategy) raw.strategy = group.strategy
+  if (group.regexEnabled) {
+    raw.regexEnabled = true
+    raw.matchPattern = group.matchPattern?.trim() || ''
+  } else {
+    delete raw.regexEnabled
+    delete raw.matchPattern
+  }
   return raw
 }
 
@@ -2287,6 +2675,7 @@ function getClashRuleType(condition: string) {
     geoip: 'GEOIP',
     geosite: 'GEOSITE',
     ip_cidr: 'IP-CIDR',
+    source_ip_cidr: 'SRC-IP-CIDR',
     package_name: 'PROCESS-NAME',
     port: 'DST-PORT',
     process_name: 'PROCESS-NAME',
@@ -2301,12 +2690,91 @@ function buildRawRuleLines(condition: string, value: string | string[], target: 
   return normalizeRuleValue(value).map((item) => `${ruleType},${item},${target}`)
 }
 
-function buildNormalizedRuleFromLeaf(rule: RoutingRuleCardResource['rules'][number]) {
+function isSingBoxRuleSetValue(value: string) {
+  return (
+    value.startsWith('geoip-') ||
+    value.startsWith('geosite-') ||
+    value.startsWith('geo/') ||
+    value.startsWith('geo-lite/')
+  )
+}
+
+function inferUnsupportedCoresForRuleLeaf(rule: RoutingRuleCardResource['rules'][number]) {
+  if (rule.unsupportedCores?.includes('sing-box')) {
+    return rule.unsupportedCores
+  }
   const ruleKey = rule.condition.toLowerCase().replaceAll('-', '_')
+  if (ruleKey !== 'rule_set') {
+    return rule.unsupportedCores
+  }
+  if (rule.sourceRule?.rule_set?.length) {
+    return rule.unsupportedCores
+  }
+  if (normalizeRuleValue(rule.value).every(isSingBoxRuleSetValue)) {
+    return rule.unsupportedCores
+  }
+  return [...(rule.unsupportedCores || []), 'sing-box' as FastProxyCoreId]
+}
+
+function inferUnsupportedReasonForRuleLeaf(rule: RoutingRuleCardResource['rules'][number]) {
+  const unsupportedCores = inferUnsupportedCoresForRuleLeaf(rule)
+  if (!unsupportedCores?.includes('sing-box')) {
+    return rule.unsupportedReason
+  }
+  return rule.unsupportedReason || '未匹配到内置 sing-box 规则集'
+}
+
+function replaceRawRuleTarget(raw: string, target: string) {
+  const parts = splitTopLevelCommaParts(raw)
+  if (parts.length === 0) return raw
+  const ruleType = parts[0].toUpperCase()
+  if (ruleType === 'MATCH' && parts.length >= 2) {
+    parts[1] = target
+    return parts.join(',')
+  }
+  if (['AND', 'OR', 'NOT'].includes(ruleType) && parts.length >= 3) {
+    parts[parts.length - 1] = target
+    return parts.join(',')
+  }
+  if (parts.length >= 3) {
+    parts[2] = target
+    return parts.join(',')
+  }
+  return raw
+}
+
+function sourceRuleFromLeaf(rule: RoutingRuleCardResource['rules'][number]) {
+  if (!rule.sourceRule) return null
+  return {
+    ...rule.sourceRule,
+    id: rule.id,
+    outbound: rule.target,
+    raw: rule.sourceRule.raw?.map((line) => replaceRawRuleTarget(line, rule.target)),
+  } as FastProxyNormalizedRule
+}
+
+function buildNormalizedRuleFromLeaf(rule: RoutingRuleCardResource['rules'][number]) {
+  const sourceRule = sourceRuleFromLeaf(rule)
+  if (sourceRule) {
+    return sourceRule
+  }
+
+  const ruleKey = rule.condition.toLowerCase().replaceAll('-', '_')
+  if (ruleKey === 'raw') {
+    return {
+      id: rule.id,
+      raw: normalizeRawRuleLines(rule.value),
+      unsupportedCores: inferUnsupportedCoresForRuleLeaf(rule),
+      unsupportedReason: inferUnsupportedReasonForRuleLeaf(rule),
+    }
+  }
+
   const normalized: FastProxyNormalizedRule = {
     id: rule.id,
     outbound: rule.target,
     raw: buildRawRuleLines(ruleKey, rule.value, rule.target),
+    unsupportedCores: inferUnsupportedCoresForRuleLeaf(rule),
+    unsupportedReason: inferUnsupportedReasonForRuleLeaf(rule),
   }
 
   if (ruleKey !== 'match') {
@@ -2315,6 +2783,43 @@ function buildNormalizedRuleFromLeaf(rule: RoutingRuleCardResource['rules'][numb
   }
 
   return normalized
+}
+
+function normalizeRawRuleLines(value: string | string[]) {
+  return normalizeRuleValue(value)
+    .map((line) =>
+      line
+        .replace(/^\s*#\s*-?\s*/, '')
+        .replace(/^\s*-\s*/, '')
+        .trim(),
+    )
+    .filter(Boolean)
+}
+
+function getRawRuleTarget(raw: string) {
+  const parts = splitTopLevelCommaParts(raw)
+  return parts.length > 1 ? parts[parts.length - 1].trim() : ''
+}
+
+function splitTopLevelCommaParts(value: string) {
+  const parts: string[] = []
+  let depth = 0
+  let start = 0
+
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value[index]
+    if (char === '(') {
+      depth += 1
+    } else if (char === ')') {
+      depth = Math.max(0, depth - 1)
+    } else if (char === ',' && depth === 0) {
+      parts.push(value.slice(start, index))
+      start = index + 1
+    }
+  }
+
+  parts.push(value.slice(start))
+  return parts.map((part) => part.trim()).filter(Boolean)
 }
 
 function buildNormalizedRules(): FastProxyNormalizedRule[] {
@@ -2426,19 +2931,27 @@ function syncRoutingWorkspace() {
   const sourceNodes = getActiveNodes()
   const referencedOutbounds = [
     ...sourceGroups.flatMap((group) => group.outbounds || []),
-    ...sourceRules.map((rule) => rule.outbound || '').filter(Boolean),
+    ...sourceRules
+      .map((rule) => rule.outbound || getRawRuleTarget(rule.raw?.[0] || ''))
+      .filter(Boolean),
   ]
   const nextNodes = buildNodeResources(sourceNodes, referencedOutbounds, sourceGroups)
-  const nextGroups = buildGroupsFromSource(sourceGroups, nextNodes)
+  const groupBuildResult = buildGroupsFromSource(sourceGroups, nextNodes)
+  const nextGroups = groupBuildResult.groups
   const previousGroupIds = groups.value.map((group) => group.id)
   const previousRuleCardIds = ruleCards.value.map((card) => card.id)
 
   nodeResources.value = nextNodes
   groups.value = nextGroups
-  const nextRuleCards = storedRuleCards.length
+  const builtRuleCards = storedRuleCards.length
     ? buildRuleCardsFromStoredCards(storedRuleCards)
     : buildRuleCardsFromSource(sourceRules, nextGroups, nextNodes)
+  const sourceRuleCardsChanged =
+    storedRuleCards.length === 0 && builtRuleCards.length !== sourceRules.length
+  const ruleCardSanitizeResult = sanitizeRuleCards(builtRuleCards, nextGroups, nextNodes)
+  const nextRuleCards = ruleCardSanitizeResult.cards
   ruleCards.value = nextRuleCards
+  syncRuleCardIdCounter(nextRuleCards)
   collapsedGroupIds.value = reconcileCollapsedIds(
     collapsedGroupIds.value,
     previousGroupIds,
@@ -2449,6 +2962,10 @@ function syncRoutingWorkspace() {
     previousRuleCardIds,
     nextRuleCards.map((card) => card.id),
   )
+
+  if (groupBuildResult.changed || sourceRuleCardsChanged || ruleCardSanitizeResult.changed) {
+    queueSaveRoutingWorkspace()
+  }
 }
 
 function extractErrorMessage(error: unknown, fallback: string) {

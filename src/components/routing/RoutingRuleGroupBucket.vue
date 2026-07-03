@@ -1,137 +1,178 @@
 <template>
   <div v-bind="attrs">
-    <section class="base-container w-full p-5">
-      <div class="flex items-start justify-between gap-4">
-        <div class="flex min-w-0 flex-1 items-center gap-3">
-          <Bars3Icon class="group-drag-handle text-base-content/45 h-4 w-4 shrink-0 cursor-grab" />
-          <button
-            class="flex min-w-0 flex-1 items-center gap-3 text-left"
-            type="button"
-            @click="$emit('toggle-group', group.id)"
-          >
-            <ChevronRightIcon
-              class="h-4 w-4 shrink-0 transition-transform"
-              :class="!isCollapsed && 'rotate-90'"
-            />
-            <div class="flex min-w-0 items-center gap-2">
-              <h2 class="truncate text-lg font-semibold">{{ group.name }}</h2>
-              <span class="text-base-content/55 shrink-0 text-xs tabular-nums">
-                {{ displayedItemsCount }}
+    <section
+      class="group base-container collapse w-full"
+      :class="isCollapsed ? 'collapse-close' : 'collapse-open'"
+    >
+      <div
+        class="collapse-title cursor-pointer p-5"
+        @click="$emit('toggle-group', group.id)"
+      >
+        <div class="relative flex w-full items-start gap-3 overflow-hidden">
+          <div class="flex min-w-0 flex-1 flex-col gap-3">
+            <div class="flex min-w-0 items-center gap-3">
+              <Bars3Icon
+                class="group-drag-handle text-base-content/45 h-4 w-4 shrink-0 cursor-grab"
+              />
+              <ChevronRightIcon
+                class="h-4 w-4 shrink-0 transition-transform"
+                :class="!isCollapsed && 'rotate-90'"
+              />
+              <div class="min-w-0 flex-1">
+                <div class="flex min-w-0 items-center gap-2 overflow-hidden">
+                  <h2 class="truncate text-base font-semibold">{{ group.name }}</h2>
+                  <span class="text-base-content/60 shrink-0 text-xs tabular-nums">
+                    · {{ groupTypeLabel }} · {{ displayedItemsCount }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="item in visibleItemPreview"
+                :key="previewItemKey(item)"
+                class="badge badge-outline h-5 min-h-5 max-w-full justify-start rounded-md px-1.5 text-[10px] leading-none"
+              >
+                <span class="truncate">{{ item.name }}</span>
+              </span>
+              <span
+                v-if="hiddenItemPreviewCount > 0"
+                class="badge badge-ghost h-5 min-h-5 rounded-md px-1.5 text-[10px] leading-none"
+              >
+                +{{ hiddenItemPreviewCount }}
+              </span>
+              <span
+                v-if="displayedItemsCount === 0"
+                class="text-base-content/50 text-xs"
+              >
+                {{ group.regexEnabled ? '没有匹配的节点' : '暂无节点' }}
               </span>
             </div>
-          </button>
-        </div>
+          </div>
 
-        <div class="flex shrink-0 flex-wrap items-center justify-end gap-2">
-          <button
-            class="btn btn-sm btn-outline"
-            type="button"
-            @click="$emit('edit-group', group.id)"
+          <div
+            class="absolute top-0 right-0 flex items-center gap-1"
+            @click.stop
           >
-            编辑
-          </button>
-          <button
-            class="btn btn-sm btn-outline"
-            type="button"
-            @click="$emit('delete-group', group.id)"
-          >
-            删除
-          </button>
-          <button
-            class="btn btn-sm btn-outline"
-            type="button"
-            :disabled="group.regexEnabled"
-            @click="openAddNodesDialog"
-          >
-            添加节点
-          </button>
-          <label class="flex items-center">
-            <input
-              :checked="group.enabled !== false"
-              class="toggle toggle-primary toggle-sm"
-              type="checkbox"
-              @change="emitGroupEnabled(($event.target as HTMLInputElement).checked)"
-            />
-          </label>
+            <button
+              class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-base-content opacity-0 transition-all duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
+              type="button"
+              title="编辑分组"
+              @click="$emit('edit-group', group.id)"
+            >
+              <PencilSquareIcon class="h-3.5 w-3.5" />
+            </button>
+            <button
+              class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-base-content opacity-0 transition-all duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
+              type="button"
+              title="添加节点"
+              :disabled="group.regexEnabled"
+              @click="openAddNodesDialog"
+            >
+              <PlusIcon class="h-3.5 w-3.5" />
+            </button>
+            <button
+              class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-error opacity-0 transition-all duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
+              type="button"
+              title="删除分组"
+              @click="$emit('delete-group', group.id)"
+            >
+              <TrashIcon class="h-3.5 w-3.5" />
+            </button>
+            <label class="ml-1 flex items-center">
+              <input
+                :checked="group.enabled !== false"
+                class="toggle toggle-primary toggle-sm"
+                type="checkbox"
+                @change="emitGroupEnabled(($event.target as HTMLInputElement).checked)"
+              />
+            </label>
+          </div>
         </div>
       </div>
 
       <div
-        v-if="!isCollapsed"
-        class="mt-4"
+        class="collapse-content p-0"
+        @transitionend="handleCollapseTransitionEnd"
       >
         <div
-          v-if="group.regexEnabled"
-          class="space-y-3"
+          v-if="showCollapseContent"
+          class="px-5 pb-5"
         >
           <div
-            v-for="node in matchedNodes"
-            :key="node.id"
-            class="border-base-300/50 bg-base-200/35 rounded-2xl border p-4"
+            v-if="group.regexEnabled"
+            class="grid grid-cols-1 gap-3 md:grid-cols-2"
           >
-            <div class="flex items-center justify-between gap-3">
-              <div class="min-w-0">
-                <div class="truncate text-sm font-medium">{{ node.name }}</div>
-                <div class="text-base-content/55 mt-1 truncate text-xs">{{ node.address }}</div>
+            <div
+              v-for="node in matchedNodes"
+              :key="node.id"
+              class="border-base-300/50 bg-base-200/35 rounded-2xl border p-4"
+            >
+              <div class="flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="truncate text-sm font-medium">{{ node.name }}</div>
+                  <div class="text-base-content/55 mt-1 truncate text-xs">{{ node.address }}</div>
+                </div>
+                <div class="badge badge-primary badge-outline badge-sm">Node</div>
               </div>
-              <div class="badge badge-primary badge-outline badge-sm">Node</div>
+            </div>
+
+            <div
+              v-if="matchedNodes.length === 0"
+              class="text-base-content/55 py-8 text-center text-sm"
+            >
+              没有匹配的节点
             </div>
           </div>
 
-          <div
-            v-if="matchedNodes.length === 0"
-            class="text-base-content/55 py-8 text-center text-sm"
+          <Draggable
+            v-else
+            :model-value="group.items"
+            @update:model-value="updateItems"
+            item-key="entryId"
+            :group="{ name: dragGroupName, pull: true, put: true }"
+            :move="handleMove"
+            handle=".resource-drag-handle"
+            :animation="150"
+            ghost-class="routing-ghost"
+            class="grid grid-cols-1 gap-3 md:grid-cols-2"
           >
-            没有匹配的节点
-          </div>
-        </div>
-
-        <Draggable
-          v-else
-          :model-value="group.items"
-          @update:model-value="updateItems"
-          item-key="entryId"
-          :group="{ name: dragGroupName, pull: true, put: true }"
-          :move="handleMove"
-          handle=".resource-drag-handle"
-          :animation="150"
-          ghost-class="routing-ghost"
-          class="space-y-3"
-        >
-          <template #item="{ element: item }">
-            <div class="border-base-300/50 bg-base-200/35 rounded-2xl border p-4">
-              <div class="flex items-center justify-between gap-3">
-                <div class="flex min-w-0 items-center gap-3">
-                  <Bars3Icon
-                    class="resource-drag-handle text-base-content/45 h-4 w-4 shrink-0 cursor-grab"
-                  />
-                  <div class="min-w-0">
-                    <div class="truncate text-sm font-medium">{{ item.name }}</div>
-                    <div class="text-base-content/55 mt-1 truncate text-xs">
-                      {{ item.type === 'group' ? 'Group resource' : item.address }}
+            <template #item="{ element: item }">
+              <div class="border-base-300/50 bg-base-200/35 rounded-2xl border p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="flex min-w-0 items-center gap-3">
+                    <Bars3Icon
+                      class="resource-drag-handle text-base-content/45 h-4 w-4 shrink-0 cursor-grab"
+                    />
+                    <div class="min-w-0">
+                      <div class="truncate text-sm font-medium">{{ item.name }}</div>
+                      <div class="text-base-content/55 mt-1 truncate text-xs">
+                        {{ item.type === 'group' ? 'Group resource' : item.address }}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div class="flex items-center gap-2">
-                  <div
-                    class="badge badge-sm"
-                    :class="item.type === 'group' ? 'badge-ghost' : 'badge-primary badge-outline'"
-                  >
-                    {{ item.type === 'group' ? 'Group' : 'Node' }}
+                  <div class="flex items-center gap-2">
+                    <div
+                      class="badge badge-sm"
+                      :class="item.type === 'group' ? 'badge-ghost' : 'badge-primary badge-outline'"
+                    >
+                      {{ item.type === 'group' ? 'Group' : 'Node' }}
+                    </div>
+                    <button
+                      class="btn btn-circle btn-ghost btn-xs"
+                      type="button"
+                      @click="$emit('remove-item', group.id, item.entryId)"
+                    >
+                      <XMarkIcon class="h-3.5 w-3.5" />
+                    </button>
                   </div>
-                  <button
-                    class="btn btn-circle btn-ghost btn-xs"
-                    type="button"
-                    @click="$emit('remove-item', group.id, item.entryId)"
-                  >
-                    <XMarkIcon class="h-3.5 w-3.5" />
-                  </button>
                 </div>
               </div>
-            </div>
-          </template>
-        </Draggable>
+            </template>
+          </Draggable>
+        </div>
       </div>
     </section>
 
@@ -232,8 +273,15 @@
 
 <script setup lang="ts">
 import DialogWrapper from '@/components/common/DialogWrapper.vue'
-import { Bars3Icon, ChevronRightIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import { computed, ref, useAttrs } from 'vue'
+import {
+  Bars3Icon,
+  ChevronRightIcon,
+  PencilSquareIcon,
+  PlusIcon,
+  TrashIcon,
+  XMarkIcon,
+} from '@heroicons/vue/24/outline'
+import { computed, ref, useAttrs, watch } from 'vue'
 import Draggable from 'vuedraggable'
 
 defineOptions({
@@ -308,6 +356,8 @@ const isCollapsed = computed(() => props.collapsedIds.includes(props.group.id))
 const addResourcesDialogOpen = ref(false)
 const resourceSearch = ref('')
 const selectedResourceKeys = ref<string[]>([])
+const showCollapseContent = ref(!isCollapsed.value)
+const ITEM_PREVIEW_LIMIT = 4
 
 const matchedNodes = computed(() => {
   const pattern = props.group.matchPattern?.trim()
@@ -331,6 +381,27 @@ const matchedNodes = computed(() => {
 const displayedItemsCount = computed(() => {
   return props.group.regexEnabled ? matchedNodes.value.length : props.group.items.length
 })
+const groupTypeLabel = computed(() => {
+  switch (props.group.groupType) {
+    case 'url-test':
+      return 'URLTest'
+    case 'fallback':
+      return 'Fallback'
+    case 'load-balance':
+      return 'LoadBalance'
+    case 'relay':
+      return 'Relay'
+    default:
+      return 'Selector'
+  }
+})
+const previewItems = computed(() => {
+  return props.group.regexEnabled ? matchedNodes.value : props.group.items
+})
+const visibleItemPreview = computed(() => previewItems.value.slice(0, ITEM_PREVIEW_LIMIT))
+const hiddenItemPreviewCount = computed(() =>
+  Math.max(0, previewItems.value.length - visibleItemPreview.value.length),
+)
 
 const existingResourceKeys = computed(() => {
   return new Set(props.group.items.map((item) => `${item.type}:${item.id}`))
@@ -419,6 +490,22 @@ function isResourceSelectable(resource: RoutingItemReference) {
   }
 
   return props.canDropItem(resource, props.group.id)
+}
+
+function previewItemKey(item: RoutingNodeResource | RoutingItemReference) {
+  return 'entryId' in item ? item.entryId : `${item.type}:${item.id}`
+}
+
+watch(isCollapsed, (collapsed) => {
+  if (!collapsed) {
+    showCollapseContent.value = true
+  }
+})
+
+const handleCollapseTransitionEnd = () => {
+  if (isCollapsed.value) {
+    showCollapseContent.value = false
+  }
 }
 </script>
 

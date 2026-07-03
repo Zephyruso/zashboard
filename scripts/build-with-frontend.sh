@@ -21,6 +21,9 @@ if [ ! -f "$EMBED_DIR/index.html" ]; then
 	exit 1
 fi
 
+printf 'Preparing embedded core binaries...\n'
+"$ROOT_DIR/scripts/prepare-embedded-cores.sh"
+
 printf 'Building backend binary...\n'
 mkdir -p "$(dirname -- "$OUTPUT_PATH")"
 (cd "$SERVER_DIR" && go build -o "$OUTPUT_PATH" ./cmd/fastproxy-server)

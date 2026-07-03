@@ -4,7 +4,9 @@ set -euo pipefail
 ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 SERVER_DIR="$ROOT_DIR/FastProxy-Server"
 BACKEND_ADDR="${FASTPROXY_SERVER_ADDR:-127.0.0.1:43171}"
+BACKEND_PROXY_TARGET="${FASTPROXY_SERVER_PROXY_TARGET:-http://$BACKEND_ADDR}"
 STATUS_DIR=$(mktemp -d "${TMPDIR:-/tmp}/fastproxy-dev.XXXXXX")
+VITE_CACHE_DIR="${VITE_CACHE_DIR:-$STATUS_DIR/vite-cache}"
 
 pids=()
 
@@ -54,10 +56,12 @@ fi
 printf 'Starting FastProxy full-stack development environment...\n'
 printf '  frontend: pnpm dev\n'
 printf '  backend:  FASTPROXY_SERVER_ADDR=%s go run ./cmd/fastproxy-server serve\n' "$BACKEND_ADDR"
+printf '  proxy:    FASTPROXY_SERVER_PROXY_TARGET=%s\n' "$BACKEND_PROXY_TARGET"
+printf '  cache:    VITE_CACHE_DIR=%s\n' "$VITE_CACHE_DIR"
 printf '\nPress Ctrl+C to stop both services.\n\n'
 
 start_process backend "$SERVER_DIR" env FASTPROXY_SERVER_ADDR="$BACKEND_ADDR" go run ./cmd/fastproxy-server serve
-start_process frontend "$ROOT_DIR" pnpm dev
+start_process frontend "$ROOT_DIR" env FASTPROXY_SERVER_PROXY_TARGET="$BACKEND_PROXY_TARGET" VITE_CACHE_DIR="$VITE_CACHE_DIR" pnpm dev
 
 while true; do
 	for status_file in "$STATUS_DIR"/*.status; do

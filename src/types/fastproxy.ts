@@ -118,6 +118,8 @@ export type FastProxyBaseRule = {
   action?: string
   outbound?: string
   raw?: string[]
+  unsupportedCores?: FastProxyCoreId[]
+  unsupportedReason?: string
 }
 
 export type FastProxyLogicalRule = FastProxyBaseRule &
@@ -262,6 +264,15 @@ export type FastProxyOperationEventPage = {
   hasMore: boolean
 }
 
+export type FastProxyRuleSourceRepositoryPage = {
+  items: FastProxyRuleSourceRepository[]
+  offset: number
+  limit: number
+  total: number
+  nextOffset: number
+  hasMore: boolean
+}
+
 export type FastProxyHealthCheckSample = {
   id?: number
   nodeId: string
@@ -287,7 +298,10 @@ export type FastProxyRoutingRuleTarget = {
 export type FastProxyRoutingRuleLeaf = {
   condition: string
   id: string
+  sourceRule?: FastProxyNormalizedRule
   target: string
+  unsupportedCores?: FastProxyCoreId[]
+  unsupportedReason?: string
   value: string | string[]
 }
 
@@ -411,6 +425,24 @@ export type FastProxyMihomoRuleProviderResource = FastProxyMetadata & {
   interval?: string
 }
 
+export type FastProxySingBoxRuleSetPage = {
+  items: FastProxySingBoxRuleSetResource[]
+  offset: number
+  limit: number
+  total: number
+  nextOffset: number
+  hasMore: boolean
+}
+
+export type FastProxyMihomoRuleProviderPage = {
+  items: FastProxyMihomoRuleProviderResource[]
+  offset: number
+  limit: number
+  total: number
+  nextOffset: number
+  hasMore: boolean
+}
+
 export type FastProxyGroupSetResource = FastProxyMetadata & {
   groups?: FastProxyNormalizedGroup[]
 }
@@ -509,6 +541,18 @@ export type FastProxyCoreUpdateInfo = {
   updateAvailable: boolean
   cached: boolean
   assetName: string
+  assetUrl: string
+}
+
+export type FastProxyRuntimeResource = {
+  name: string
+  path: string
+  size: number
+  updatedAt: string
+}
+
+export type FastProxyRuntimeResourceInventory = {
+  resources: FastProxyRuntimeResource[]
 }
 
 export type FastProxyGitHubTokenSetting = {

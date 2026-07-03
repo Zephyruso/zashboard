@@ -33,8 +33,9 @@
 
         <template v-if="isMiddleScreen">
           <div
-            class="bg-base-100/20 dock dock-xs z-10 h-14 w-auto shadow-sm backdrop-blur-sm"
+            class="bg-base-100/20 dock dock-xs z-10 grid h-auto w-auto max-w-[calc(100vw-var(--spacing)*4)] shadow-sm backdrop-blur-sm"
             :style="{
+              gridTemplateColumns: `repeat(${mobileDockColumnCount}, minmax(0, 1fr))`,
               padding: '0',
               bottom: 'calc(var(--spacing) * 2 + env(safe-area-inset-bottom))',
             }"
@@ -45,7 +46,7 @@
               :key="r"
               :disabled="!isRouteAvailable(r)"
               @click="navigateDockRoute(r)"
-              class="h-14 flex-col items-center justify-center pt-2"
+              class="h-14 min-w-0 flex-col items-center justify-center pt-2"
               :class="[r === route.name && 'dock-active', !isRouteAvailable(r) && 'opacity-45']"
             >
               <component
@@ -123,12 +124,17 @@ import {
 } from '@/store/setup'
 import type { Backend } from '@/types'
 import { useDocumentVisibility, useElementBounding } from '@vueuse/core'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
 
 const router = useRouter()
 const { swiperRef } = useSwipeRouter()
 const sidebarLayoutCollapsed = ref(isSidebarCollapsed.value)
+const mobileDockColumnCount = computed(() => {
+  return renderRoutes.value.length > 6
+    ? Math.ceil(renderRoutes.value.length / 2)
+    : renderRoutes.value.length
+})
 
 const dockRef = ref<HTMLDivElement>()
 const { top: dockRefTop } = useElementBounding(dockRef)

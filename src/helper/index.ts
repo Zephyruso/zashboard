@@ -3,13 +3,7 @@ import { showNotification } from '@/helper/notification'
 import { fastProxyRuntimeStatus } from '@/store/fastproxyRepository'
 import { timeSaved } from '@/store/overview'
 import { hiddenGroupMap, proxyMap } from '@/store/proxies'
-import {
-  customThemes,
-  lowLatency,
-  mediumLatency,
-  proxyChainDirection,
-  splitOverviewPage,
-} from '@/store/settings'
+import { customThemes, lowLatency, mediumLatency, proxyChainDirection } from '@/store/settings'
 import { activeBackendFlavor } from '@/store/setup'
 import type { Connection } from '@/types'
 import dayjs from 'dayjs'
@@ -143,30 +137,31 @@ export const getColorForLatency = (latency: number) => {
   }
 }
 
-export const renderRoutes = computed(() => {
-  return [
-    ROUTE_NAME.home,
-    ROUTE_NAME.kernelManagement,
-    ROUTE_NAME.configManagement,
-    ROUTE_NAME.configSubscriptions,
-    ROUTE_NAME.routingRules,
-    ...[
-      !splitOverviewPage.value ? null : ROUTE_NAME.overview,
-      ROUTE_NAME.proxies,
-      ROUTE_NAME.connections,
-      ROUTE_NAME.rules,
-      ROUTE_NAME.logs,
-      ROUTE_NAME.settings,
-    ].filter(Boolean),
-  ] as ROUTE_NAME[]
-})
-
 const runtimePanelRoutes = new Set<string | symbol | undefined>([
   ROUTE_NAME.proxies,
   ROUTE_NAME.connections,
   ROUTE_NAME.rules,
   ROUTE_NAME.logs,
 ])
+
+const isFastProxyRuntimeRunning = computed(
+  () =>
+    activeBackendFlavor.value !== 'fastproxy' || fastProxyRuntimeStatus.value?.state === 'running',
+)
+
+export const renderRoutes = computed(() => {
+  return [
+    ROUTE_NAME.home,
+    ...[ROUTE_NAME.proxies, ROUTE_NAME.connections, ROUTE_NAME.rules, ROUTE_NAME.logs].filter(
+      () => isFastProxyRuntimeRunning.value,
+    ),
+    ROUTE_NAME.routingRules,
+    ROUTE_NAME.configSubscriptions,
+    ROUTE_NAME.kernelManagement,
+    ROUTE_NAME.configManagement,
+    ROUTE_NAME.settings,
+  ] as ROUTE_NAME[]
+})
 
 export const isRouteAvailable = (routeName: string | symbol | undefined) => {
   if (!routeName) {

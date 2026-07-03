@@ -10,7 +10,6 @@ import ConnectionsPage from '@/views/ConnectionsPage.vue'
 import HomePage from '@/views/HomePage.vue'
 import KernelManagementPage from '@/views/KernelManagementPage.vue'
 import LogsPage from '@/views/LogsPage.vue'
-import OverviewPage from '@/views/OverviewPage.vue'
 import ProxiesPage from '@/views/ProxiesPage.vue'
 import RoutingRulesPage from '@/views/RoutingRulesPage.vue'
 import RulesPage from '@/views/RulesPage.vue'
@@ -50,11 +49,6 @@ const childrenRouter = [
     path: 'proxies',
     name: ROUTE_NAME.proxies,
     component: ProxiesPage,
-  },
-  {
-    path: 'overview',
-    name: ROUTE_NAME.overview,
-    component: OverviewPage,
   },
   {
     path: 'connections',
@@ -98,12 +92,13 @@ const router = createRouter({
   ],
 })
 
-const title = useTitle('zashboard')
+const appTitle = 'FastProxy'
+const title = useTitle(appTitle)
 const setTitleByName = (name: string | symbol | undefined) => {
   if (typeof name === 'string' && activeBackend.value) {
-    title.value = `zashboard | ${i18n.global.t(name)}`
+    title.value = `${appTitle} | ${i18n.global.t(name)}`
   } else {
-    title.value = 'zashboard'
+    title.value = appTitle
   }
 }
 

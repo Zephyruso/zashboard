@@ -1,37 +1,54 @@
 <template>
   <div class="bg-base-200/40 min-h-full px-3 pt-4 pb-24 sm:px-5 md:pb-6 lg:px-6">
     <main class="mx-auto flex w-full flex-col gap-5">
-      <section class="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(360px,0.9fr)]">
-        <div class="border-base-300 bg-base-100 rounded-xl border p-4 shadow-sm sm:p-5">
-          <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <h2 class="text-xl font-semibold">运行控制</h2>
-              <div class="text-base-content/55 mt-1 text-xs">
-                所选内核版本：{{ selectedCoreVersionText }}
+      <section class="grid gap-3 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]">
+        <div class="border-base-300 bg-base-100 rounded-xl border p-3 shadow-sm sm:p-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <h2 class="text-lg font-semibold">运行控制</h2>
+                <span class="badge badge-sm badge-ghost">目标 {{ selectedCore }}</span>
+                <span
+                  class="badge badge-sm"
+                  :class="
+                    runtimeSwitchChecked ? 'badge-success font-medium text-white' : 'badge-ghost'
+                  "
+                >
+                  {{ runtimeSwitchChecked ? `运行 ${runningCore || selectedCore}` : '未运行' }}
+                </span>
+              </div>
+              <div class="text-base-content/55 mt-1 truncate text-xs">
+                版本 {{ selectedCoreVersionText }}
               </div>
             </div>
 
-            <div
-              class="border-base-300 divide-base-300 bg-base-200/40 grid grid-cols-2 overflow-hidden rounded-lg border lg:min-w-80"
+            <label
+              v-if="isFastProxy"
+              class="flex min-h-9 items-center gap-2"
             >
-              <div class="p-3">
-                <div class="text-base-content/50 text-xs">{{ $t('homeSelectedCore') }}</div>
-                <div class="mt-1 text-sm font-semibold">{{ selectedCore }}</div>
-              </div>
-              <div class="border-base-300 border-l p-3">
-                <div class="text-base-content/50 text-xs">运行内核</div>
-                <div class="mt-1 text-sm font-semibold">{{ runningCore || '未运行' }}</div>
-              </div>
-            </div>
+              <input
+                class="toggle toggle-primary toggle-sm"
+                type="checkbox"
+                :checked="runtimeSwitchChecked"
+                :disabled="runtimeAction !== null"
+                aria-label="启动或停止运行时"
+                @change="handleRuntimeToggle"
+              />
+              <span class="text-sm font-medium">
+                {{ runtimeSwitchChecked ? '运行中' : '已停止' }}
+              </span>
+            </label>
           </div>
 
-          <div class="mt-5 grid gap-3 md:grid-cols-2">
+          <div
+            class="mt-4 grid gap-3 lg:grid-cols-[minmax(140px,0.75fr)_minmax(170px,1fr)_minmax(170px,0.9fr)_auto]"
+          >
             <label class="form-control">
-              <span class="label pb-1">
-                <span class="label-text text-sm font-medium">{{ $t('homeSelectedCore') }}</span>
+              <span class="label min-h-0 py-0 pb-1">
+                <span class="label-text text-xs font-medium">{{ $t('homeSelectedCore') }}</span>
               </span>
               <select
-                class="select select-bordered w-full"
+                class="select select-bordered select-sm w-full"
                 :value="selectedCore"
                 :disabled="!isFastProxy || runtimeAction !== null"
                 aria-label="选择内核"
@@ -40,17 +57,17 @@
                 <option value="mihomo">mihomo</option>
                 <option value="sing-box">sing-box</option>
               </select>
-              <span class="text-base-content/55 mt-2 text-xs">
+              <span class="text-base-content/55 mt-1 text-xs">
                 {{ pendingCoreSwitch ? `运行中仍是 ${runningCore}` : '配置目标核心' }}
               </span>
             </label>
 
             <label class="form-control">
-              <span class="label pb-1">
-                <span class="label-text text-sm font-medium">路由规则</span>
+              <span class="label min-h-0 py-0 pb-1">
+                <span class="label-text text-xs font-medium">路由规则</span>
               </span>
               <select
-                class="select select-bordered w-full"
+                class="select select-bordered select-sm w-full"
                 :value="selectedRoutingRuleSetId"
                 :disabled="!isFastProxy || runtimeAction !== null || routingRuleSets.length === 0"
                 aria-label="选择路由规则"
@@ -64,34 +81,48 @@
                   {{ ruleSet.name }}
                 </option>
               </select>
-              <span class="text-base-content/55 mt-2 line-clamp-1 text-xs">
+              <span class="text-base-content/55 mt-1 line-clamp-1 text-xs">
                 {{ selectedRoutingRuleSetName }}
               </span>
             </label>
-          </div>
 
-          <div
-            v-if="isFastProxy"
-            class="border-base-300 bg-base-200/35 mt-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3"
-          >
-            <label class="flex min-h-9 items-center gap-3">
-              <input
-                class="toggle toggle-primary"
-                type="checkbox"
-                :checked="runtimeSwitchChecked"
-                :disabled="runtimeAction !== null"
-                aria-label="启动或停止运行时"
-                @change="handleRuntimeToggle"
-              />
-              <span class="text-sm font-medium">
-                {{ runtimeSwitchChecked ? '运行中' : '已停止' }}
+            <label
+              v-if="runtimeSwitchChecked"
+              class="form-control"
+            >
+              <span class="label min-h-0 py-0 pb-1">
+                <span class="label-text text-xs font-medium">代理模式</span>
+              </span>
+              <div
+                class="join w-full"
+                role="radiogroup"
+                aria-label="选择代理模式"
+              >
+                <input
+                  v-for="mode in proxyModeList"
+                  :key="mode"
+                  class="btn join-item btn-sm flex-1 px-2 text-xs"
+                  type="radio"
+                  name="home-proxy-mode"
+                  :value="mode"
+                  :aria-label="proxyModeLabel(mode)"
+                  :checked="currentProxyMode === mode"
+                  :disabled="proxyModeUpdating"
+                  @change="handleProxyModeChange(mode)"
+                />
+              </div>
+              <span class="text-base-content/55 mt-1 truncate text-xs">
+                当前 {{ proxyModeLabel(currentProxyMode) }}
               </span>
             </label>
 
-            <div class="flex items-center gap-2">
+            <div
+              v-if="isFastProxy"
+              class="flex items-center gap-2 self-center"
+            >
               <button
                 v-if="runtimeSwitchChecked"
-                class="btn btn-square btn-outline btn-sm"
+                class="btn btn-outline btn-sm"
                 :disabled="runtimeAction !== null"
                 title="重启"
                 aria-label="重启运行时"
@@ -101,10 +132,11 @@
                   class="h-4 w-4"
                   :class="runtimeAction === 'restart' && 'animate-spin'"
                 />
+                重启
               </button>
               <button
                 v-if="runtimeSwitchChecked && pendingRestart"
-                class="btn btn-square btn-primary btn-sm"
+                class="btn btn-primary btn-sm"
                 :disabled="runtimeAction !== null"
                 title="应用并重启"
                 aria-label="应用配置并重启运行时"
@@ -118,12 +150,13 @@
                   v-else
                   class="h-4 w-4 animate-spin"
                 />
+                应用重启
               </button>
             </div>
           </div>
 
           <div
-            v-else
+            v-if="!isFastProxy"
             class="border-base-300 bg-base-200/45 mt-5 rounded-lg border p-4"
           >
             <div class="text-sm font-medium">当前后端仍使用控制器模式。</div>
@@ -154,47 +187,35 @@
           </p>
         </div>
 
-        <aside class="border-base-300 bg-base-100 rounded-xl border p-4 shadow-sm sm:p-5">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <h2 class="text-lg font-semibold">{{ statusTitle }}</h2>
-            </div>
-          </div>
+        <aside class="border-base-300 bg-base-100 rounded-xl border p-3 shadow-sm sm:p-4">
+          <h2 class="text-base font-semibold">{{ statusTitle }}</h2>
 
           <template v-if="isFastProxy">
-            <dl class="divide-base-300 mt-5 divide-y">
-              <div
-                v-for="item in repositorySummary"
-                :key="item.label"
-                class="grid gap-1 py-3 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-4"
-              >
-                <dt class="text-base-content/50 text-xs font-medium tracking-wide uppercase">
-                  {{ item.label }}
-                </dt>
-                <dd class="min-w-0 text-sm">
-                  <div class="truncate font-medium">{{ item.value }}</div>
-                  <div
-                    v-if="item.description"
-                    class="text-base-content/55 mt-1 truncate text-xs"
-                  >
-                    {{ item.description }}
-                  </div>
-                </dd>
-              </div>
+            <dl class="mt-3 grid gap-x-3 gap-y-2 text-sm sm:grid-cols-[4.5rem_minmax(0,1fr)]">
+              <dt class="text-base-content/50 text-xs font-medium">数据目录</dt>
+              <dd class="min-w-0 truncate font-medium">{{ bootstrap?.dataDir || '-' }}</dd>
+
+              <dt class="text-base-content/50 text-xs font-medium">路由规则</dt>
+              <dd class="min-w-0 truncate font-medium">
+                {{ selectedRoutingRuleSetName }}
+                <span class="text-base-content/50 font-normal">
+                  / {{ routingRuleSets.length }} 个可用
+                </span>
+              </dd>
             </dl>
 
-            <div class="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-2">
-              <div
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span
                 v-for="stat in repositoryStats"
                 :key="stat.label"
-                class="border-base-300 rounded-lg border p-3"
+                class="badge badge-outline h-6 gap-0.5 px-1.5 text-[11px]"
               >
-                <div class="text-base-content/50 text-xs">{{ stat.label }}</div>
-                <div class="mt-1 text-lg font-semibold">{{ stat.value }}</div>
-              </div>
+                <span class="text-base-content/55">{{ stat.label }}</span>
+                <span class="font-semibold">{{ stat.value }}</span>
+              </span>
             </div>
 
-            <div class="mt-5 flex flex-wrap gap-2">
+            <div class="mt-4 flex flex-wrap gap-2">
               <button
                 class="btn btn-primary btn-sm"
                 @click="router.push({ name: ROUTE_NAME.configManagement })"
@@ -217,12 +238,54 @@
           </template>
         </aside>
       </section>
+
+      <section class="border-base-300 bg-base-100 rounded-xl border p-4 shadow-sm sm:p-5">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-semibold">运行概览</h2>
+            <div class="text-base-content/55 mt-1 text-sm">
+              连接、流量和拓扑卡片已经并入首页，作为统一的运行面板。
+            </div>
+          </div>
+
+          <button
+            class="btn btn-outline btn-sm"
+            @click="showOverviewCardSettingsDialog = true"
+          >
+            <Cog6ToothIcon class="h-4 w-4" />
+            卡片设置
+          </button>
+        </div>
+
+        <div class="mt-5 flex flex-col gap-3">
+          <component
+            v-for="item in visibleOverviewCards"
+            :key="item.card"
+            :is="overviewCardComponents[item.card]"
+          />
+        </div>
+      </section>
+
+      <ConnectionStatsCard v-if="showConnectionStatsCard" />
     </main>
+
+    <OverviewCardSettingsDialog v-model="showOverviewCardSettingsDialog" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ROUTE_NAME } from '@/constant'
+import OverviewCardSettingsDialog from '@/components/overview/OverviewCardSettingsDialog.vue'
+import ChartsCard from '@/components/overview/ChartsCard.vue'
+import ConnectionStatsCard from '@/components/overview/ConnectionStatsCard.vue'
+import NetworkCard from '@/components/overview/NetworkCard.vue'
+import ProviderTrafficOverview from '@/components/overview/ProviderTrafficOverview.vue'
+import RuleHitCountCard from '@/components/overview/RuleHitCountCard.vue'
+import TopologyCharts from '@/components/overview/TopologyCharts.vue'
+import { disconnectByIdAPI, isSingBox } from '@/api'
+import { OVERVIEW_CARD, ROUTE_NAME } from '@/constant'
+import { showNotification } from '@/helper/notification'
+import { configs, fetchConfigs, updateConfigs } from '@/store/config'
+import { activeConnections } from '@/store/connections'
 import {
   fastProxyBootstrap,
   fastProxyRepository,
@@ -238,16 +301,19 @@ import {
   selectFastProxyRuntimeCore,
 } from '@/store/fastproxyRepository'
 import { initRuntimePanelData, stopRuntimePanelData } from '@/store/runtimePanel'
+import { automaticDisconnection, overviewCardOrder } from '@/store/settings'
 import { activeBackendFlavor } from '@/store/setup'
 import type { FastProxyCoreId } from '@/types/fastproxy'
-import { ArrowPathIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
-import { showNotification } from '@/helper/notification'
+import { ArrowPathIcon, CheckCircleIcon, Cog6ToothIcon } from '@heroicons/vue/24/outline'
+import type { Component } from 'vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const runtimeAction = ref<'start' | 'stop' | 'restart' | 'restart-and-apply' | null>(null)
 const runtimeError = ref('')
+const proxyModeUpdating = ref(false)
+const showOverviewCardSettingsDialog = ref(false)
 const isFastProxy = computed(() => activeBackendFlavor.value === 'fastproxy')
 const bootstrap = computed(() => fastProxyBootstrap.value)
 const selectedCore = computed(() => fastProxySelectedCore.value)
@@ -263,6 +329,25 @@ const pendingCoreSwitch = computed(() =>
 const pendingRestart = computed(
   () => Boolean(fastProxyRuntimeStatus.value?.pendingRestart) || pendingCoreSwitch.value,
 )
+const defaultProxyModes = ['direct', 'rule', 'global']
+const currentProxyMode = computed(() => configs.value.mode || 'rule')
+const proxyModeList = computed(() => {
+  const configuredModes = configs.value?.['mode-list']?.length
+    ? configs.value['mode-list']
+    : configs.value?.modes
+
+  return configuredModes?.length ? configuredModes : defaultProxyModes
+})
+const shouldTranslateProxyModes = computed(() =>
+  proxyModeList.value.every((mode) => defaultProxyModes.includes(mode.toLowerCase())),
+)
+const proxyModeLabel = (mode: string) => {
+  if (!shouldTranslateProxyModes.value) return mode
+  if (mode.toLowerCase() === 'direct') return '直连'
+  if (mode.toLowerCase() === 'rule') return '规则'
+  if (mode.toLowerCase() === 'global') return '全局'
+  return mode
+}
 const isRoutingRuleSetSupported = (supportedCores?: FastProxyCoreId[]) => {
   return !supportedCores?.length || supportedCores.includes(selectedCore.value)
 }
@@ -292,23 +377,6 @@ const selectedRoutingRuleSetName = computed(() => {
     '已绑定的路由规则集不在当前仓库中'
   )
 })
-const repositorySummary = computed(() => [
-  {
-    label: '运行配置',
-    value: selectedCore.value,
-    description: 'SQLite 全局配置',
-  },
-  {
-    label: '数据目录',
-    value: bootstrap.value?.dataDir || '-',
-    description: 'FastProxy 本地工作区',
-  },
-  {
-    label: '路由规则',
-    value: selectedRoutingRuleSetName.value,
-    description: `${routingRuleSets.value.length} 个当前内核可用规则集`,
-  },
-])
 const repositoryStats = computed(() => {
   const repository = fastProxyRepository.value
   return [
@@ -320,6 +388,23 @@ const repositoryStats = computed(() => {
 })
 
 const statusTitle = computed(() => (isFastProxy.value ? '仓库概览' : '控制器状态'))
+const showConnectionStatsCard = computed(() =>
+  overviewCardOrder.value.some(
+    (card) => card.card === OVERVIEW_CARD.ConnectionHistory && card.visible,
+  ),
+)
+const visibleOverviewCards = computed(() =>
+  overviewCardOrder.value.filter(
+    (card) => card.visible && card.card !== OVERVIEW_CARD.ConnectionHistory,
+  ),
+)
+const overviewCardComponents: Partial<Record<OVERVIEW_CARD, Component>> = {
+  [OVERVIEW_CARD.ChartsCard]: ChartsCard,
+  [OVERVIEW_CARD.NetworkCard]: NetworkCard,
+  [OVERVIEW_CARD.ProviderTrafficOverview]: ProviderTrafficOverview,
+  [OVERVIEW_CARD.TopologyCharts]: TopologyCharts,
+  [OVERVIEW_CARD.RuleHitCountCard]: RuleHitCountCard,
+}
 
 const handleCoreChange = async (event: Event) => {
   const core = (event.target as HTMLSelectElement).value as FastProxyCoreId
@@ -365,6 +450,37 @@ const handleRuntimeToggle = async (event: Event) => {
   await runRuntimeAction(checked ? 'start' : 'stop')
 }
 
+const handleProxyModeChange = async (mode: string) => {
+  if ((configs.value.mode || 'rule') === mode || proxyModeUpdating.value) return
+
+  const previousMode = configs.value.mode
+  proxyModeUpdating.value = true
+  runtimeError.value = ''
+  configs.value = { ...configs.value, mode }
+  try {
+    await updateConfigs({ mode })
+    if (isSingBox.value && automaticDisconnection.value) {
+      activeConnections.value.forEach((connection) => {
+        if (connection.rule.includes('clash_mode')) {
+          disconnectByIdAPI(connection.id)
+        }
+      })
+    }
+    showNotification({ content: `已切换到${proxyModeLabel(mode)}模式`, type: 'alert-success' })
+  } catch (error) {
+    configs.value = { ...configs.value, mode: previousMode }
+    runtimeError.value = error instanceof Error ? error.message : '切换代理模式失败'
+    showNotification({ content: runtimeError.value, type: 'alert-error' })
+  } finally {
+    proxyModeUpdating.value = false
+  }
+}
+
+const loadRuntimeConfigs = async () => {
+  if (!runtimeSwitchChecked.value) return
+  await fetchConfigs().catch(() => undefined)
+}
+
 const runRuntimeAction = async (action: 'start' | 'stop' | 'restart' | 'restart-and-apply') => {
   runtimeAction.value = action
   runtimeError.value = ''
@@ -373,6 +489,7 @@ const runRuntimeAction = async (action: 'start' | 'stop' | 'restart' | 'restart-
     showNotification({ content: runtimeActionLabel(action) + '已完成', type: 'alert-success' })
     await Promise.all([loadFastProxyWorkspace(), loadFastProxyCoreInventory()])
     if (status.state === 'running') {
+      await loadRuntimeConfigs()
       await initRuntimePanelData()
     } else {
       stopRuntimePanelData()
@@ -424,10 +541,15 @@ watch(
   { immediate: true },
 )
 
+watch(runtimeSwitchChecked, () => {
+  loadRuntimeConfigs()
+})
+
 onMounted(async () => {
   if (isFastProxy.value) {
     await Promise.all([loadFastProxyWorkspace(), loadFastProxyCoreInventory()])
     await ensureDefaultRoutingRuleSet()
+    await loadRuntimeConfigs()
   }
 })
 </script>

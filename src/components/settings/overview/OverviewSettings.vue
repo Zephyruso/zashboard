@@ -1,27 +1,11 @@
 <template>
-  <!-- overview -->
-  <template v-if="!splitOverviewPage">
-    <OverviewCard />
-  </template>
+  <OverviewCard />
 
   <div
     v-if="hasVisibleItems"
     class="flex flex-col gap-3 text-sm"
   >
     <div class="settings-grid">
-      <div
-        v-if="isVisibleSplitOverviewPage"
-        class="setting-item"
-      >
-        <div class="setting-item-label">
-          {{ $t('splitOverviewPage') }}
-        </div>
-        <input
-          class="toggle"
-          type="checkbox"
-          v-model="splitOverviewPage"
-        />
-      </div>
       <div
         v-if="isVisibleAutoIPCheckWhenStart"
         class="setting-item"
@@ -94,12 +78,10 @@ import {
   autoIPCheck,
   numberOfChartsInSidebar,
   showStatisticsWhenSidebarCollapsed,
-  splitOverviewPage,
 } from '@/store/settings'
 import OverviewCard from './OverviewCard.vue'
 
 const k = OVERVIEW_ITEM_KEYS
-const isVisibleSplitOverviewPage = useIsSettingVisible(k.splitOverviewPage)
 const isVisibleAutoIPCheckWhenStart = useIsSettingVisible(k.autoIPCheckWhenStart)
 const isVisibleAutoConnectionCheckWhenStart = useIsSettingVisible(k.autoConnectionCheckWhenStart)
 const isVisibleShowStatisticsWhenSidebarCollapsed = useIsSettingVisible(

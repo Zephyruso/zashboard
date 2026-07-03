@@ -97,7 +97,6 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
     items: [
       { key: `${SETTINGS_MENU_KEY.overview}.overviewCard`, label: 'chartsCard' },
       { key: `${SETTINGS_MENU_KEY.overview}.networkCard`, label: 'networkCard' },
-      { key: `${SETTINGS_MENU_KEY.overview}.splitOverviewPage`, label: 'splitOverviewPage' },
       {
         key: `${SETTINGS_MENU_KEY.overview}.autoIPCheckWhenStart`,
         label: 'autoIPCheckWhenStart',

@@ -1,98 +1,151 @@
 <template>
-  <section class="base-container w-full p-5">
-    <div class="flex items-start justify-between gap-4">
-      <div class="flex min-w-0 flex-1 items-center gap-3">
-        <Bars3Icon
-          class="rule-card-drag-handle text-base-content/45 h-4 w-4 shrink-0 cursor-grab"
-        />
-        <button
-          class="flex min-w-0 flex-1 items-center gap-3 text-left"
-          type="button"
-          @click="$emit('toggle-card', card.id)"
-        >
-          <ChevronRightIcon
-            class="h-4 w-4 shrink-0 transition-transform"
-            :class="!isCollapsed && 'rotate-90'"
-          />
-          <div class="flex min-w-0 items-center gap-2">
-            <h2 class="truncate text-lg font-semibold">{{ cardTitle }}</h2>
-            <span class="text-base-content/55 shrink-0 text-xs tabular-nums">
-              {{ card.rules.length }}
+  <section
+    class="group base-container collapse w-full"
+    :class="isCollapsed ? 'collapse-close' : 'collapse-open'"
+  >
+    <div
+      class="collapse-title cursor-pointer p-5"
+      @click="$emit('toggle-card', card.id)"
+    >
+      <div class="relative flex w-full items-start gap-3 overflow-hidden">
+        <div class="flex min-w-0 flex-1 flex-col gap-3">
+          <div class="flex min-w-0 items-center gap-3">
+            <Bars3Icon
+              class="rule-card-drag-handle text-base-content/45 h-4 w-4 shrink-0 cursor-grab"
+            />
+            <ChevronRightIcon
+              class="h-4 w-4 shrink-0 transition-transform"
+              :class="!isCollapsed && 'rotate-90'"
+            />
+            <div class="min-w-0 flex-1">
+              <div class="flex min-w-0 items-center gap-2 overflow-hidden">
+                <h2 class="truncate text-base font-semibold">{{ cardTitle }}</h2>
+                <span class="text-base-content/60 shrink-0 text-xs tabular-nums">
+                  · Rule · {{ card.rules.length }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-for="rule in visibleRulePreview"
+              :key="rule.id"
+              class="badge h-5 min-h-5 max-w-full justify-start rounded-md px-1.5 text-[10px] leading-none"
+              :class="
+                isSingBoxUnsupported(rule)
+                  ? 'badge-warning badge-outline'
+                  : 'badge-success badge-outline'
+              "
+              :title="singBoxSupportTitle(rule)"
+            >
+              <span class="truncate">{{ formatRulePreviewLabel(rule) }}</span>
+            </span>
+            <span
+              v-if="hiddenRulePreviewCount > 0"
+              class="badge badge-ghost h-5 min-h-5 rounded-md px-1.5 text-[10px] leading-none"
+            >
+              +{{ hiddenRulePreviewCount }}
+            </span>
+            <span
+              v-if="card.rules.length === 0"
+              class="text-base-content/50 text-xs"
+            >
+              暂无规则
             </span>
           </div>
-        </button>
-      </div>
+        </div>
 
-      <div class="flex shrink-0 flex-wrap items-center justify-end gap-2">
-        <button
-          class="btn btn-sm btn-outline max-w-56 justify-start"
-          type="button"
-          @click="openOutboundDialog"
+        <div
+          class="absolute top-0 right-0 flex items-center gap-1"
+          @click.stop
         >
-          选择出站
-        </button>
-        <button
-          class="btn btn-sm btn-outline"
-          type="button"
-          @click="$emit('edit-card', card.id)"
-        >
-          编辑
-        </button>
-        <button
-          class="btn btn-sm btn-outline"
-          type="button"
-          @click="$emit('delete-card', card.id)"
-        >
-          删除
-        </button>
-        <button
-          class="btn btn-sm btn-outline"
-          type="button"
-          @click="openAddRuleDialog"
-        >
-          添加规则
-        </button>
-        <label class="flex items-center">
-          <input
-            :checked="card.enabled"
-            class="toggle toggle-primary toggle-sm"
-            type="checkbox"
-            @change="emit('update-enabled', card.id, ($event.target as HTMLInputElement).checked)"
-          />
-        </label>
+          <button
+            class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-base-content opacity-0 transition-all duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
+            type="button"
+            title="选择出站"
+            @click="openOutboundDialog"
+          >
+            <ArrowRightCircleIcon class="h-3.5 w-3.5" />
+          </button>
+          <button
+            class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-base-content opacity-0 transition-all duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
+            type="button"
+            title="编辑规则卡片"
+            @click="$emit('edit-card', card.id)"
+          >
+            <PencilSquareIcon class="h-3.5 w-3.5" />
+          </button>
+          <button
+            class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-base-content opacity-0 transition-all duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
+            type="button"
+            title="添加规则"
+            @click="openAddRuleDialog"
+          >
+            <PlusIcon class="h-3.5 w-3.5" />
+          </button>
+          <button
+            class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-error opacity-0 transition-all duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
+            type="button"
+            title="删除规则卡片"
+            @click="$emit('delete-card', card.id)"
+          >
+            <TrashIcon class="h-3.5 w-3.5" />
+          </button>
+          <label class="ml-1 flex items-center">
+            <input
+              :checked="card.enabled"
+              class="toggle toggle-primary toggle-sm"
+              type="checkbox"
+              @change="emit('update-enabled', card.id, ($event.target as HTMLInputElement).checked)"
+            />
+          </label>
+        </div>
       </div>
     </div>
 
     <div
-      v-if="!isCollapsed"
-      class="mt-4 space-y-3"
+      class="collapse-content p-0"
+      @transitionend="handleCollapseTransitionEnd"
     >
-      <div class="space-y-3">
-        <div
-          v-for="rule in card.rules"
-          :key="rule.id"
-          class="border-base-300/50 bg-base-200/35 rounded-2xl border p-4"
-        >
-          <div class="flex items-center justify-between gap-3">
-            <div class="min-w-0 truncate text-sm font-medium">
-              {{ formatRuleSummary(rule) }}
+      <div
+        v-if="showCollapseContent"
+        class="px-5 pb-5"
+      >
+        <div class="space-y-3">
+          <div
+            v-for="rule in card.rules"
+            :key="rule.id"
+            class="border-base-300/50 bg-base-200/35 rounded-2xl border p-4"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <div class="min-w-0 truncate text-sm font-medium">
+                {{ formatRuleSummary(rule) }}
+              </div>
+              <span
+                class="badge badge-outline badge-sm shrink-0"
+                :class="isSingBoxUnsupported(rule) ? 'badge-warning' : 'badge-success'"
+                :title="singBoxSupportTitle(rule)"
+              >
+                {{ isSingBoxUnsupported(rule) ? 'sing-box 不支持' : 'sing-box 支持' }}
+              </span>
+              <button
+                class="btn btn-circle btn-ghost btn-xs shrink-0"
+                type="button"
+                @click="$emit('remove-rule', card.id, rule.id)"
+              >
+                <XMarkIcon class="h-3.5 w-3.5" />
+              </button>
             </div>
-            <button
-              class="btn btn-circle btn-ghost btn-xs shrink-0"
-              type="button"
-              @click="$emit('remove-rule', card.id, rule.id)"
-            >
-              <XMarkIcon class="h-3.5 w-3.5" />
-            </button>
           </div>
         </div>
-      </div>
 
-      <div
-        v-if="card.rules.length === 0"
-        class="text-base-content/55 py-8 text-center text-sm"
-      >
-        暂无规则
+        <div
+          v-if="card.rules.length === 0"
+          class="text-base-content/55 py-8 text-center text-sm"
+        >
+          暂无规则
+        </div>
       </div>
     </div>
 
@@ -211,9 +264,17 @@
 
         <div class="space-y-2">
           <div class="label-text text-sm font-medium">生成的 JSON</div>
-          <pre class="bg-base-200 text-base-content overflow-x-auto rounded-2xl p-4 text-xs">{{
-            generatedRuleJson
-          }}</pre>
+          <textarea
+            v-model="editableRuleJson"
+            class="textarea textarea-bordered min-h-40 w-full font-mono text-xs"
+            spellcheck="false"
+          />
+          <div
+            v-if="ruleJsonError"
+            class="text-error text-xs"
+          >
+            {{ ruleJsonError }}
+          </div>
         </div>
 
         <div class="flex justify-end gap-2">
@@ -455,19 +516,25 @@
 <script setup lang="ts">
 import DialogWrapper from '@/components/common/DialogWrapper.vue'
 import type { RoutingItemReference } from '@/components/routing/RoutingRuleGroupBucket.vue'
-import type { FastProxyNormalizedRule } from '@/types/fastproxy'
+import type { FastProxyCoreId, FastProxyNormalizedRule } from '@/types/fastproxy'
 import {
   Bars3Icon,
   ChevronRightIcon,
   MagnifyingGlassIcon,
+  PencilSquareIcon,
+  PlusIcon,
+  TrashIcon,
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 export type RoutingRuleLeaf = {
   condition: string
   id: string
+  sourceRule?: FastProxyNormalizedRule
   target: string
+  unsupportedCores?: FastProxyCoreId[]
+  unsupportedReason?: string
   value: string | string[]
 }
 
@@ -531,6 +598,9 @@ const resourceSearch = ref('')
 const ruleSetSearch = ref('')
 const ruleSetSourceFilter = ref<'all' | RuleSetOption['source']>('built-in')
 const selectedResourceKey = ref('')
+const showCollapseContent = ref(!isCollapsed.value)
+const editableRuleJson = ref('')
+const RULE_PREVIEW_LIMIT = 3
 
 const routeRuleOptions = [
   { value: 'domain', label: 'domain', placeholder: '例如：example.com' },
@@ -540,10 +610,17 @@ const routeRuleOptions = [
   { value: 'geosite', label: 'geosite', placeholder: '例如：geolocation-!cn' },
   { value: 'geoip', label: 'geoip', placeholder: '例如：cn' },
   { value: 'ip_cidr', label: 'ip_cidr', placeholder: '例如：1.1.1.1/32' },
+  { value: 'source_ip_cidr', label: 'source_ip_cidr', placeholder: '例如：192.168.1.0/24' },
   { value: 'rule_set', label: 'rule_set', placeholder: '选择原生规则集名称' },
   { value: 'process_name', label: 'process_name', placeholder: '例如：Safari' },
   { value: 'package_name', label: 'package_name', placeholder: '例如：com.example.app' },
+  { value: 'protocol', label: 'protocol', placeholder: '例如：quic' },
   { value: 'port', label: 'port', placeholder: '例如：443' },
+  {
+    value: 'raw',
+    label: 'raw Clash rule',
+    placeholder: '例如：AND,((NETWORK,UDP),(DST-PORT,443)),REJECT',
+  },
 ] as const
 
 const cardTitle = computed(() => props.card.outboundTarget?.name ?? '未选择出站')
@@ -553,8 +630,12 @@ const selectedRuleOption = computed(() => {
 })
 const isRuleSetField = computed(() => normalizeRuleKey(newRuleField.value) === 'rule_set')
 const canConfirmAddRule = computed(() => {
-  return Boolean(draftOutboundTarget.value?.name && buildRuleValue().length > 0)
+  return Boolean(parsedEditableRule.value.rule)
 })
+const visibleRulePreview = computed(() => props.card.rules.slice(0, RULE_PREVIEW_LIMIT))
+const hiddenRulePreviewCount = computed(() =>
+  Math.max(0, props.card.rules.length - visibleRulePreview.value.length),
+)
 const arrayValuePlaceholder = computed(() => {
   const sample = selectedRuleOption.value?.placeholder ?? 'value-1'
 
@@ -593,25 +674,47 @@ const selectedRuleSetSummary = computed(() => {
 
 const formatRuleSummary = (rule: RoutingRuleLeaf) => {
   const ruleKey = normalizeRuleKey(rule.condition)
+  const ruleValue = Array.isArray(rule.value) ? rule.value.join(',') : rule.value
 
-  return JSON.stringify({
-    [ruleKey]: rule.value,
-    outbound: rule.target,
-  })
+  return `${ruleKey}:${ruleValue}`
 }
 
-const generatedRuleJson = computed(() => {
+const formatRulePreviewLabel = (rule: RoutingRuleLeaf) => normalizeRuleKey(rule.condition)
+const isSingBoxRuleSetValue = (value: string) => {
+  return (
+    value.startsWith('geoip-') ||
+    value.startsWith('geosite-') ||
+    value.startsWith('geo/') ||
+    value.startsWith('geo-lite/')
+  )
+}
+const ruleSetValuesAreSingBoxSupported = (rule: RoutingRuleLeaf) => {
+  const values = Array.isArray(rule.value) ? rule.value : [rule.value]
+  if (values.every(isSingBoxRuleSetValue)) return true
+  if (values.every((value) => ruleSetLookup.value.has(value))) return true
+  return Boolean(rule.sourceRule?.rule_set?.length)
+}
+const isSingBoxUnsupported = (rule: RoutingRuleLeaf) => {
+  if ((rule.unsupportedCores || []).includes('sing-box')) return true
+  if (normalizeRuleKey(rule.condition) !== 'rule_set') return false
+  return !ruleSetValuesAreSingBoxSupported(rule)
+}
+const singBoxSupportTitle = (rule: RoutingRuleLeaf) =>
+  isSingBoxUnsupported(rule)
+    ? rule.unsupportedReason || 'sing-box 不支持这条规则'
+    : 'sing-box 支持这条规则'
+
+const generatedRuleJsonObject = computed(() => {
   const ruleValue = materializeRuleValue()
 
-  return JSON.stringify(
-    {
-      [normalizeRuleKey(newRuleField.value)]: ruleValue,
-      outbound: draftOutboundTarget.value?.name ?? '',
-    },
-    null,
-    2,
-  )
+  return {
+    [normalizeRuleKey(newRuleField.value)]: ruleValue,
+    outbound: draftOutboundTarget.value?.name ?? '',
+  }
 })
+const generatedRuleJson = computed(() => JSON.stringify(generatedRuleJsonObject.value, null, 2))
+const parsedEditableRule = computed(() => parseEditableRuleJson(editableRuleJson.value))
+const ruleJsonError = computed(() => parsedEditableRule.value.error)
 
 const getResourceKey = (resource: RoutingItemReference) => `${resource.type}:${resource.id}`
 const normalizeRuleKey = (value: string) => value.toLowerCase().replaceAll('-', '_')
@@ -634,6 +737,7 @@ const resetAddRuleDialog = () => {
   selectedRuleSetNames.value = []
   draftSelectedRuleSetNames.value = []
   draftOutboundTarget.value = props.card.outboundTarget
+  editableRuleJson.value = generatedRuleJson.value
 }
 
 const openAddRuleDialog = () => {
@@ -642,16 +746,10 @@ const openAddRuleDialog = () => {
 }
 
 const confirmAddRule = () => {
-  if (!draftOutboundTarget.value?.name) return
+  const parsedRule = parsedEditableRule.value.rule
+  if (!parsedRule) return
 
-  const value = materializeRuleValue()
-  if (!value || (Array.isArray(value) && value.length === 0)) return
-
-  emit('add-rule', props.card.id, {
-    condition: normalizeRuleKey(newRuleField.value),
-    target: draftOutboundTarget.value.name,
-    value,
-  })
+  emit('add-rule', props.card.id, parsedRule)
   addRuleDialogOpen.value = false
   resetAddRuleDialog()
 }
@@ -720,6 +818,24 @@ const confirmOutboundTarget = () => {
   outboundDialogOpen.value = false
 }
 
+watch(isCollapsed, (collapsed) => {
+  if (!collapsed) {
+    showCollapseContent.value = true
+  }
+})
+
+watch(generatedRuleJson, (value) => {
+  if (addRuleDialogOpen.value) {
+    editableRuleJson.value = value
+  }
+})
+
+const handleCollapseTransitionEnd = () => {
+  if (isCollapsed.value) {
+    showCollapseContent.value = false
+  }
+}
+
 function buildRuleValue() {
   if (isRuleSetField.value) {
     return draftSelectedRuleSetNames.value
@@ -735,5 +851,80 @@ function buildRuleValue() {
 function materializeRuleValue() {
   const value = buildRuleValue()
   return Array.isArray(value) ? value : value.trim()
+}
+
+function parseEditableRuleJson(jsonText: string): { rule?: RoutingRuleDraft; error: string } {
+  let parsed: unknown
+
+  try {
+    parsed = JSON.parse(jsonText)
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'JSON 格式不正确' }
+  }
+
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return { error: 'JSON 必须是对象' }
+  }
+
+  const ruleJson = parsed as Record<string, unknown>
+  const ruleEntries = Object.entries(ruleJson).filter(
+    ([key]) => normalizeRuleKey(key) !== 'outbound',
+  )
+  if (ruleEntries.length !== 1) {
+    return { error: 'JSON 必须且只能包含一个规则字段' }
+  }
+
+  const [condition, rawValue] = ruleEntries[0]
+  const normalizedCondition = normalizeRuleKey(condition)
+  if (!routeRuleOptions.some((option) => option.value === normalizedCondition)) {
+    return { error: `不支持的规则字段：${condition}` }
+  }
+
+  const outbound = ruleJson.outbound
+  if (
+    normalizedCondition !== 'raw' &&
+    (typeof outbound !== 'string' || outbound.trim().length === 0)
+  ) {
+    return { error: 'JSON 必须包含非空 outbound' }
+  }
+  const target = typeof outbound === 'string' ? outbound.trim() : ''
+
+  if (typeof rawValue === 'string') {
+    const value = rawValue.trim()
+    if (!value) {
+      return { error: '规则值不能为空' }
+    }
+
+    return {
+      rule: {
+        condition: normalizedCondition,
+        target,
+        value,
+      },
+      error: '',
+    }
+  }
+
+  if (Array.isArray(rawValue)) {
+    const value = rawValue
+      .filter((item): item is string => typeof item === 'string')
+      .map((item) => item.trim())
+      .filter(Boolean)
+
+    if (value.length !== rawValue.length || value.length === 0) {
+      return { error: '数组规则值必须全部是非空字符串' }
+    }
+
+    return {
+      rule: {
+        condition: normalizedCondition,
+        target,
+        value,
+      },
+      error: '',
+    }
+  }
+
+  return { error: '规则值必须是字符串或字符串数组' }
 }
 </script>

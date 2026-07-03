@@ -177,7 +177,6 @@ const zhTW: LANG_MESSAGE = {
   networkInfo: '網路資訊',
   autoSwitchTheme: '自動切換主題',
   customBackgroundURL: '面板背景',
-  splitOverviewPage: '分離概覽頁',
   manageHiddenGroup: '管理隱藏代理組',
   transparent: '透明度',
   proxyGroupIconSize: '策略組圖示尺寸',

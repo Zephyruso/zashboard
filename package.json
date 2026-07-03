@@ -1,7 +1,7 @@
 {
-  "name": "zashboard",
-  "version": "3.7.1",
-  "description": "A Dashboard Using Clash API",
+  "name": "fastproxy",
+  "version": "1.0.0",
+  "description": "FastProxy dashboard and local runtime server",
   "license": "MIT",
   "type": "module",
   "scripts": {

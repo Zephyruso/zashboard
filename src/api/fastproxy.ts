@@ -12,20 +12,26 @@ import type {
   FastProxyHealthCheckSample,
   FastProxyImportResult,
   FastProxyManagedInbound,
+  FastProxyMihomoRuleProviderPage,
   FastProxyMihomoRuleProviderResource,
   FastProxyNodeCachePage,
   FastProxyNodeSetFile,
   FastProxyNodeSetResource,
   FastProxyNormalizedNode,
+  FastProxyNormalizedRule,
   FastProxyOperationEventPage,
   FastProxyProfileResource,
   FastProxyRepositoryBootstrap,
   FastProxyRuleSetResource,
   FastProxyRuleSourceIndex,
   FastProxyRuleSourceRepository,
+  FastProxyRuleSourceRepositoryPage,
   FastProxyRuleSourceSelectableFiles,
   FastProxyRuleSourceTree,
+  FastProxyRuntimeResource,
+  FastProxyRuntimeResourceInventory,
   FastProxyRuntimeStatus,
+  FastProxySingBoxRuleSetPage,
   FastProxySingBoxRuleSetResource,
   FastProxySubscriptionResource,
 } from '@/types/fastproxy'
@@ -127,9 +133,12 @@ export const updateCoreAPI = (core: FastProxyCoreId) => {
   })
 }
 
-export const uploadCoreAPI = (core: FastProxyCoreId, file: File) => {
+export const uploadCoreAPI = (core: FastProxyCoreId, file: File, version?: string) => {
   const data = new FormData()
   data.append('file', file)
+  if (version) {
+    data.append('version', version)
+  }
   return fastProxyRequest({
     method: 'POST',
     url: fastProxyPath(`/cores/${encodeURIComponent(core)}/upload`),
@@ -164,6 +173,26 @@ export const selectRuntimeCoreAPI = (core: FastProxyCoreId) => {
     method: 'PUT',
     url: fastProxyPath('/runtime/core'),
     data: { core },
+  })
+}
+
+export const fetchRuntimeResourcesAPI = () => {
+  return fastProxyRequest<FastProxyRuntimeResourceInventory>({
+    method: 'GET',
+    url: fastProxyPath('/runtime/resources'),
+  })
+}
+
+export const uploadRuntimeResourceAPI = (file: File, name?: string) => {
+  const data = new FormData()
+  data.append('file', file)
+  if (name?.trim()) {
+    data.append('name', name.trim())
+  }
+  return fastProxyRequest<FastProxyRuntimeResource>({
+    method: 'POST',
+    url: fastProxyPath('/runtime/resources/upload'),
+    data,
   })
 }
 
@@ -319,10 +348,52 @@ export const fetchSingBoxRuleSetsAPI = () => {
   })
 }
 
+export const querySingBoxRuleSetsAPI = (options?: {
+  offset?: number
+  limit?: number
+  q?: string
+}) => {
+  const query = new URLSearchParams()
+  if (typeof options?.offset === 'number') {
+    query.set('offset', String(options.offset))
+  }
+  if (typeof options?.limit === 'number') {
+    query.set('limit', String(options.limit))
+  }
+  if (options?.q?.trim()) {
+    query.set('q', options.q.trim())
+  }
+  return fastProxyRequest<FastProxySingBoxRuleSetPage>({
+    method: 'GET',
+    url: `${fastProxyPath('/repository/sing-box-rule-sets/page')}${query.toString() ? `?${query.toString()}` : ''}`,
+  })
+}
+
 export const fetchMihomoRuleProvidersAPI = () => {
   return fastProxyRequest<FastProxyMihomoRuleProviderResource[]>({
     method: 'GET',
     url: fastProxyPath('/repository/mihomo-rule-providers'),
+  })
+}
+
+export const queryMihomoRuleProvidersAPI = (options?: {
+  offset?: number
+  limit?: number
+  q?: string
+}) => {
+  const query = new URLSearchParams()
+  if (typeof options?.offset === 'number') {
+    query.set('offset', String(options.offset))
+  }
+  if (typeof options?.limit === 'number') {
+    query.set('limit', String(options.limit))
+  }
+  if (options?.q?.trim()) {
+    query.set('q', options.q.trim())
+  }
+  return fastProxyRequest<FastProxyMihomoRuleProviderPage>({
+    method: 'GET',
+    url: `${fastProxyPath('/repository/mihomo-rule-providers/page')}${query.toString() ? `?${query.toString()}` : ''}`,
   })
 }
 
@@ -337,6 +408,27 @@ export const fetchRuleSourceRepositoriesAPI = () => {
   return fastProxyRequest<FastProxyRuleSourceRepository[]>({
     method: 'GET',
     url: fastProxyPath('/repository/rule-source-repositories'),
+  })
+}
+
+export const queryRuleSourceRepositoriesAPI = (options?: {
+  offset?: number
+  limit?: number
+  q?: string
+}) => {
+  const query = new URLSearchParams()
+  if (typeof options?.offset === 'number') {
+    query.set('offset', String(options.offset))
+  }
+  if (typeof options?.limit === 'number') {
+    query.set('limit', String(options.limit))
+  }
+  if (options?.q?.trim()) {
+    query.set('q', options.q.trim())
+  }
+  return fastProxyRequest<FastProxyRuleSourceRepositoryPage>({
+    method: 'GET',
+    url: `${fastProxyPath('/repository/rule-source-repositories/page')}${query.toString() ? `?${query.toString()}` : ''}`,
   })
 }
 
@@ -380,7 +472,7 @@ export const browseRuleSourceRepositoryTreeAPI = (id: string, core: string, path
 export const fetchRuleSourceRepositoryIndexAPI = (
   id: string,
   path?: string,
-  options?: { offset?: number; limit?: number },
+  options?: { offset?: number; limit?: number; flat?: boolean },
 ) => {
   const query = new URLSearchParams()
   if (path?.trim()) {
@@ -391,6 +483,9 @@ export const fetchRuleSourceRepositoryIndexAPI = (
   }
   if (typeof options?.limit === 'number') {
     query.set('limit', String(options.limit))
+  }
+  if (options?.flat) {
+    query.set('flat', 'true')
   }
   return fastProxyRequest<FastProxyRuleSourceIndex>({
     method: 'GET',
@@ -453,6 +548,22 @@ export const refreshRuleSourceSelectableFilesAPI = (id: string, core: string) =>
   return fastProxyRequest<FastProxyRuleSourceSelectableFiles>({
     method: 'POST',
     url: `${fastProxyPath(`/repository/rule-source-repositories/${encodeURIComponent(id)}/selectable-files/refresh`)}?${query.toString()}`,
+  })
+}
+
+export const fetchRemoteTextAPI = (url: string) => {
+  return fastProxyRequest<{ content: string }>({
+    method: 'POST',
+    url: fastProxyPath('/repository/remote-text/fetch'),
+    data: { url },
+  })
+}
+
+export const expandRemoteRuleSetAPI = (source: string, outbound: string) => {
+  return fastProxyRequest<{ rules?: FastProxyNormalizedRule[]; warnings?: string[] }>({
+    method: 'POST',
+    url: fastProxyPath('/repository/remote-rule-set/expand'),
+    data: { source, outbound },
   })
 }
 

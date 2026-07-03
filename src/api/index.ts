@@ -3,7 +3,12 @@ import { showNotification } from '@/helper/notification'
 import { getApiBaseUrl, getWebSocketBaseUrl } from '@/helper/utils'
 import router from '@/router'
 import { autoUpgradeCore, checkUpgradeCore } from '@/store/settings'
-import { activeBackend, activeBackendFlavor, activeUuid, setActiveBackendFlavor } from '@/store/setup'
+import {
+  activeBackend,
+  activeBackendFlavor,
+  activeUuid,
+  setActiveBackendFlavor,
+} from '@/store/setup'
 import type {
   Backend,
   Config,
@@ -110,7 +115,7 @@ export const mihomo = computed<[MIHOMO, string] | undefined>(() => {
     }
   }
 })
-export const zashboardVersion = ref(__APP_VERSION__)
+export const appVersion = ref(__APP_VERSION__)
 
 watch(
   activeBackend,
@@ -331,10 +336,9 @@ export const deleteStorageAPI = () => {
 }
 
 const createWebSocket = <T>(url: string, searchParams?: Record<string, string>) => {
-  const path =
-    shouldUseFastProxyControllerProxy()
-      ? fastProxyControllerProxyPath(url)
-      : `/${url.replace(/^\/+/, '')}`
+  const path = shouldUseFastProxyControllerProxy()
+    ? fastProxyControllerProxyPath(url)
+    : `/${url.replace(/^\/+/, '')}`
   const resurl = new URL(`${getWebSocketBaseUrl(activeBackend.value)}${path}`)
   const token = shouldUseFastProxyControllerProxy() ? '' : activeBackend.value?.password || ''
 
@@ -437,11 +441,11 @@ async function fetchWithLocalCache<T>(url: string, version: string): Promise<T> 
 export const fetchIsUIUpdateAvailable = async () => {
   try {
     const { tag_name } = await fetchWithLocalCache<{ tag_name: string }>(
-      'https://api.github.com/repos/Zephyruso/zashboard/releases/latest',
-      zashboardVersion.value,
+      'https://api.github.com/repos/atlantis-mk/FastProxy/releases/latest',
+      appVersion.value,
     )
 
-    return Boolean(tag_name && tag_name !== `v${zashboardVersion.value}`)
+    return Boolean(tag_name && tag_name !== `v${appVersion.value}`)
   } catch (error) {
     console.warn('Failed to check UI update availability', error)
     return false

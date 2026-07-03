@@ -177,7 +177,6 @@ const en = {
   networkInfo: 'Network info',
   autoSwitchTheme: 'Auto-switch theme',
   customBackgroundURL: 'Background',
-  splitOverviewPage: 'Split overview page',
   manageHiddenGroup: 'Manage hidden groups',
   transparent: 'Transparency',
   proxyGroupIconSize: 'Proxy group icon size',

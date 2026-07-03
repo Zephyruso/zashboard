@@ -177,7 +177,6 @@ const zh: LANG_MESSAGE = {
   networkInfo: '网络信息',
   autoSwitchTheme: '自动切换主题',
   customBackgroundURL: '面板背景',
-  splitOverviewPage: '分离概览页',
   manageHiddenGroup: '管理隐藏代理组',
   transparent: '透明度',
   proxyGroupIconSize: '策略组图标尺寸',

@@ -179,7 +179,6 @@ const ru: LANG_MESSAGE = {
   networkInfo: 'Информация о сети',
   autoSwitchTheme: 'Автоматический темы',
   customBackgroundURL: 'URL фона',
-  splitOverviewPage: 'Разделить страницу с обзором',
   manageHiddenGroup: 'Управление скрытыми группами',
   transparent: 'Прозрачность',
   proxyGroupIconSize: 'Размер иконки группы прокси',
