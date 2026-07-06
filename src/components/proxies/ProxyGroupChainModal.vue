@@ -1,14 +1,14 @@
 <template>
   <DialogWrapper
-    v-model="isOpen"
-    :title="rootName"
+    v-model="proxyGroupChainModalOpen"
+    :title="proxyGroupChainTarget"
     :no-padding="true"
     box-class="max-w-160"
   >
     <div class="flex max-h-[70dvh] flex-col overflow-hidden">
-      <div class="shrink-0 p-3">
+      <div class="shrink-0 p-3 pb-0">
         <ProxyChainPath
-          :proxy="rootName"
+          :proxy="proxyGroupChainTarget"
           :selected="selectedProxy"
           :show-now-node="true"
           :show-latency="true"
@@ -17,7 +17,7 @@
       </div>
       <div class="flex flex-1 flex-col overflow-y-auto">
         <ProxyGroup
-          :name="selectedProxy || rootName"
+          :name="selectedProxy || proxyGroupChainTarget"
           :force-open="true"
           class="transparent-collapse rounded-none!"
         />
@@ -30,26 +30,24 @@
 import DialogWrapper from '@/components/common/DialogWrapper.vue'
 import ProxyChainPath from '@/components/common/ProxyChainPath.vue'
 import ProxyGroup from '@/components/proxies/ProxyGroup.vue'
-import { closeProxyGroupChain, proxyGroupChainTarget } from '@/composables/proxyGroupChain'
-import { computed, ref, watch } from 'vue'
+import {
+  closeProxyGroupChain,
+  proxyGroupChainModalOpen,
+  proxyGroupChainTarget,
+} from '@/composables/proxyGroupChain'
+import { ref, watch } from 'vue'
+import { proxyMap } from '@/assembly/proxies'
 
-const rootName = computed(() => proxyGroupChainTarget.value)
 const selectedProxy = ref('')
 
-const isOpen = computed({
-  get: () => Boolean(proxyGroupChainTarget.value),
-  set: (val: boolean) => {
-    if (!val) {
+watch(
+  () => proxyGroupChainModalOpen.value,
+  (isOpen) => {
+    if (!isOpen) {
       closeProxyGroupChain()
+    } else {
+      selectedProxy.value = proxyMap.value[proxyGroupChainTarget.value]?.now
     }
   },
-})
-
-watch(
-  rootName,
-  (name) => {
-    selectedProxy.value = name || ''
-  },
-  { immediate: true },
 )
 </script>
