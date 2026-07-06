@@ -126,31 +126,6 @@ export const findScrollableParent = (el: HTMLElement | null): HTMLElement | null
   return parent ? findScrollableParent(parent) : null
 }
 
-export const PROXIES_PAGE = 'proxies-scrollable-page'
-
-export const scrollToGroup = (groupName: string) => {
-  const el = document.querySelector(`[data-group-name="${groupName}"]`) as HTMLElement | null
-
-  if (!el) return
-  el.classList.remove('highlight-flash')
-  el.classList.add('highlight-flash')
-  el.addEventListener('animationend', () => el.classList.remove('highlight-flash'), { once: true })
-
-  const scrollableParent = document.getElementById(PROXIES_PAGE)
-
-  if (!scrollableParent) return
-
-  const parentRect = scrollableParent.getBoundingClientRect()
-  const elRect = el.getBoundingClientRect()
-  const offset = elRect.top - parentRect.top + scrollableParent.scrollTop
-  const centerOffset = offset - scrollableParent.clientHeight / 2 + el.clientHeight / 2
-
-  scrollableParent.scrollTo({
-    top: centerOffset,
-    behavior: 'smooth',
-  })
-}
-
 export const getBackendFromUrl = () => {
   const query = new URLSearchParams(
     window.location.search || location.hash.match(/\?.*$/)?.[0]?.replace('?', ''),

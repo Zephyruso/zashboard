@@ -8,7 +8,6 @@
       class="max-md:scrollbar-hidden relative h-full min-w-0 flex-1"
       :class="disableProxiesPageScroll ? 'overflow-y-hidden' : 'overflow-y-scroll'"
       :style="padding"
-      :id="PROXIES_PAGE"
       ref="proxiesRef"
       @scroll.passive="handleScroll"
     >
@@ -61,7 +60,7 @@ import {
   renderProxiesPageItems,
 } from '@/composables/proxies'
 import { PROXY_TAB_TYPE } from '@/constant'
-import { isMiddleScreen, PROXIES_PAGE } from '@/helper/utils'
+import { isMiddleScreen } from '@/helper/utils'
 import { fetchProxies } from '@/assembly/proxies'
 import { proxiesTabShow } from '@/assembly/proxies'
 import { disableProxiesPageTextSelect, twoColumnProxyGroup } from '@/store/settings'
