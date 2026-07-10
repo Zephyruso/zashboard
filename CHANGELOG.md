@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [3.15.0](https://github.com/Zephyruso/zashboard/compare/v3.14.0...v3.15.0) (2026-07-10)
+
+
+### Features
+
+* **overview:** aggregate traffic by proxy group ([2b70b72](https://github.com/Zephyruso/zashboard/commit/2b70b72a5eeafa96d162374768b18aed1c81803f))
+
+
+### Bug Fixes
+
+* resolve proxy group truncation in modal ([0fc4738](https://github.com/Zephyruso/zashboard/commit/0fc4738a2324792dd600622d51e7f6bfdda9a6e8))
+* **settings:** remove duplicate text between labels and action buttons ([a918f54](https://github.com/Zephyruso/zashboard/commit/a918f5498b3d38c2c735cff69553f39987a89d9b))
+* **settings:** update backend settings actions and improve visibility logic ([629be82](https://github.com/Zephyruso/zashboard/commit/629be82ebd66682d4c817054216f3a5747089b68))
+* **theme:** update light-neutral color palette for improved contrast ([dffcc2b](https://github.com/Zephyruso/zashboard/commit/dffcc2b6871de77baa2fb8e6a1a10b288e4a0b07))
+
 ## [3.14.0](https://github.com/Zephyruso/zashboard/compare/v3.13.1...v3.14.0) (2026-07-09)
 
 
