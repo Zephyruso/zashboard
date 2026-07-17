@@ -3,7 +3,7 @@ import { useStorage } from '@vueuse/core'
 import { ref } from 'vue'
 
 // 完整的 logs ref 与流控状态(暂停 / 级别)由组装层维护并组装,store 仅直接引用,不再参与组装。
-export { initLogs, isPaused, logLevel, logs } from '@/assembly/logs'
+export { initLogs, isPaused, logLevel, logs, stopLogs } from '@/assembly/logs'
 
 // 纯视图侧的筛选状态(在 LogsPage 中过滤渲染,不参与日志组装)。
 export const logFilter = ref('')

@@ -56,7 +56,7 @@ export const isPaused = ref(false)
 export const downloadTotal = ref(0)
 export const uploadTotal = ref(0)
 
-let cancel: () => void
+let cancel: (() => void) | undefined
 
 export const initConnections = () => {
   cancel?.()
@@ -106,6 +106,11 @@ export const initConnections = () => {
     unwatch()
     ws.close()
   }
+}
+
+export const stopConnections = () => {
+  cancel?.()
+  cancel = undefined
 }
 
 const isDesc = computed(() => {

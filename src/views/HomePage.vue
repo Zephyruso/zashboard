@@ -111,9 +111,9 @@ import { renderRoutes } from '@/helper'
 import { showNotification } from '@/helper/notification'
 import { getLabelFromBackend, isMiddleScreen } from '@/helper/utils'
 import { fetchConfigs } from '@/assembly/config'
-import { initConnections } from '@/store/connections'
-import { initLogs } from '@/store/logs'
-import { initSatistic } from '@/store/overview'
+import { initConnections, stopConnections } from '@/store/connections'
+import { initLogs, stopLogs } from '@/store/logs'
+import { initSatistic, stopSatistic } from '@/store/overview'
 import { fetchProxies, resetProxies } from '@/assembly/proxies'
 import { proxiesTabShow } from '@/assembly/proxies'
 import { fetchRules, rulesTabShow } from '@/assembly/rules'
@@ -163,7 +163,14 @@ watch(
   activeUuid,
   async () => {
     await resetProxies()
-    if (!activeUuid.value) return
+    if (!activeUuid.value) {
+      // 后端被清空(登出 / 401 / 新增后端)时关闭常驻流,
+      // 否则它们会以无主状态留在 Setup 页继续运行并无限重连。
+      stopConnections()
+      stopLogs()
+      stopSatistic()
+      return
+    }
     rulesTabShow.value = RULE_TAB_TYPE.RULES
     proxiesTabShow.value = PROXY_TAB_TYPE.PROXIES
     fetchConfigs()

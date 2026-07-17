@@ -30,3 +30,8 @@ export const initLogs = () => {
     subscription.close()
   }
 }
+
+export const stopLogs = () => {
+  cancel?.()
+  cancel = undefined
+}
