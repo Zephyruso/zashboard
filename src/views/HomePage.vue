@@ -111,9 +111,9 @@ import { renderRoutes } from '@/helper'
 import { showNotification } from '@/helper/notification'
 import { getLabelFromBackend, isMiddleScreen } from '@/helper/utils'
 import { fetchConfigs } from '@/assembly/config'
-import { initConnections, stopConnections } from '@/store/connections'
+import { initConnections, resumeConnections, stopConnections } from '@/store/connections'
 import { initLogs, stopLogs } from '@/store/logs'
-import { initSatistic, stopSatistic } from '@/store/overview'
+import { initSatistic, resumeSatistic, stopSatistic } from '@/store/overview'
 import { fetchProxies, resetProxies } from '@/assembly/proxies'
 import { proxiesTabShow } from '@/assembly/proxies'
 import { fetchRules, rulesTabShow } from '@/assembly/rules'
@@ -129,7 +129,8 @@ const { swiperRef } = useSwipeRouter()
 const sidebarLayoutCollapsed = ref(isSidebarCollapsed.value)
 
 const dockRef = ref<HTMLDivElement>()
-const { top: dockRefTop } = useElementBounding(dockRef)
+// dock 为 fixed 定位,top 只随视口/键盘变化;windowScroll:false 免去滚动逐帧读 gBCR
+const { top: dockRefTop } = useElementBounding(dockRef, { windowScroll: false })
 
 const syncSidebarLayoutState = () => {
   sidebarLayoutCollapsed.value = isSidebarCollapsed.value
@@ -252,7 +253,18 @@ watch(
 )
 
 watch(documentVisible, () => {
-  if (documentVisible.value !== 'visible') return
+  if (!activeUuid.value) {
+    return
+  }
+  if (documentVisible.value !== 'visible') {
+    // 后台标签页停掉秒级流(连接/traffic/memory):其解析与 Vue 响应链不受 rAF 节流,
+    // 挂机一晚就是数万轮全量处理。日志流保留避免丢历史;store 数据不清,回前台无缝续读。
+    stopConnections()
+    stopSatistic()
+    return
+  }
+  resumeConnections()
+  resumeSatistic()
   fetchProxies()
 })
 

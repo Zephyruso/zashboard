@@ -1,7 +1,7 @@
 <template>
   <div
     ref="topBarRef"
-    class="bg-base-100 md:bg-base-100/80 need-blur border-base-300/50 sticky z-10 flex min-w-0 items-center gap-1 overflow-hidden shadow backdrop-blur-xl transition-all duration-300"
+    class="bg-base-100 md:bg-base-100/80 need-blur border-base-300/50 sticky z-10 flex min-w-0 items-center gap-1 overflow-hidden shadow transition-all duration-300 md:backdrop-blur-xl"
     :class="isStuck ? 'm-0 rounded-none px-4 pt-2 pb-1.5' : 'mx-3 mt-3 rounded-xl p-1'"
     :style="{ top: isMiddleScreen ? '-1px' : `${ctrlsBottom - 1}px` }"
     @touchstart="disableSwipe = true"

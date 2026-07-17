@@ -15,13 +15,13 @@
 import { isMiddleScreen } from '@/helper/utils'
 import { timeSaved, type HistoryPoint } from '@/store/overview'
 import { font, theme } from '@/store/settings'
-import { useElementSize } from '@vueuse/core'
+import { useDocumentVisibility, useElementSize, useElementVisibility } from '@vueuse/core'
 import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { debounce } from 'lodash'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 
 echarts.use([LineChart, GridComponent, TooltipComponent, CanvasRenderer])
 
@@ -69,16 +69,14 @@ const updateFontFamily = () => {
   fontFamily = getComputedStyle(colorRef.value).fontFamily
 }
 
-const seriesColor = computed(() => (props.color === 'info' ? colorSet.info60 : colorSet.primary60))
-const areaColor = computed(() => (props.color === 'info' ? colorSet.info30 : colorSet.primary30))
-
-const options = computed(() => {
-  // 时间窗锚定最新数据点,保证最新点钉在右缘;缓冲点落在左缘外被 clip 裁掉
-  const latest = props.data.at(-1)?.name ?? Date.now()
+// 静态 option 只在 init 与主题/字体变化时下发,每拍只推 series data 与时间窗;
+// 动画关闭(1s 过渡 × 1s 更新间隔 = 常驻逐帧重绘)。
+const buildStaticOptions = () => {
+  const seriesColor = props.color === 'info' ? colorSet.info60 : colorSet.primary60
+  const areaColor = props.color === 'info' ? colorSet.info30 : colorSet.primary30
 
   return {
-    animationDurationUpdate: 1000,
-    animationEasingUpdate: 'linear' as const,
+    animation: false,
     grid: { left: 0, top: 0, right: props.labelFormatter ? 30 : 0, bottom: 0 },
     tooltip: props.tooltipFormatter
       ? {
@@ -99,8 +97,6 @@ const options = computed(() => {
     xAxis: {
       type: 'time' as const,
       show: false,
-      min: latest - (timeSaved - 1) * 1000,
-      max: latest - 1 * 1000,
     },
     yAxis: {
       type: 'value' as const,
@@ -131,34 +127,78 @@ const options = computed(() => {
         symbol: 'none',
         smooth: true,
         lineStyle: { width: 1.5 },
-        data: props.data,
-        color: seriesColor.value,
+        color: seriesColor,
         emphasis: { disabled: true },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: seriesColor.value },
-            { offset: 1, color: areaColor.value },
+            { offset: 0, color: seriesColor },
+            { offset: 1, color: areaColor },
           ]),
         },
       },
     ],
   }
-})
+}
 
 let myChart: echarts.ECharts | null = null
 let touchEndHandler: ((e: TouchEvent) => void) | null = null
 
+const chartVisible = useElementVisibility(chartRef)
+const documentVisibility = useDocumentVisibility()
+let pendingUpdate = false
+
+const applyData = () => {
+  if (!myChart) {
+    return
+  }
+  if (!chartVisible.value || documentVisibility.value !== 'visible') {
+    pendingUpdate = true
+    return
+  }
+  pendingUpdate = false
+  // 时间窗锚定最新数据点,保证最新点钉在右缘;缓冲点落在左缘外被 clip 裁掉
+  const latest = props.data.at(-1)?.name ?? Date.now()
+
+  myChart.setOption(
+    {
+      xAxis: {
+        min: latest - (timeSaved - 1) * 1000,
+        max: latest - 1 * 1000,
+      },
+      series: [{ data: props.data }],
+    },
+    { lazyUpdate: true },
+  )
+}
+
+const applyStaticOptions = () => {
+  if (!myChart) {
+    return
+  }
+  myChart.setOption(buildStaticOptions())
+  applyData()
+}
+
 onMounted(() => {
   updateColorSet()
   updateFontFamily()
-  watch(theme, updateColorSet)
-  watch(font, updateFontFamily)
+  watch(theme, () => {
+    updateColorSet()
+    applyStaticOptions()
+  })
+  watch(font, () => {
+    updateFontFamily()
+    applyStaticOptions()
+  })
 
   myChart = echarts.init(chartRef.value)
-  myChart.setOption(options.value)
+  applyStaticOptions()
 
-  watch(options, () => {
-    myChart?.setOption(options.value)
+  watch(() => props.data, applyData)
+  watch([chartVisible, documentVisibility], () => {
+    if (pendingUpdate && chartVisible.value && documentVisibility.value === 'visible') {
+      applyData()
+    }
   })
 
   const { width } = useElementSize(chartRef)

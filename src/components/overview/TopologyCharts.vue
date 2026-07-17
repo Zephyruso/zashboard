@@ -102,7 +102,7 @@ import { SankeyChart } from 'echarts/charts'
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { debounce } from 'lodash'
+import { debounce, throttle } from 'lodash'
 import { twMerge } from 'tailwind-merge'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -381,10 +381,23 @@ onMounted(() => {
     isPaused.value = false
   })
 
-  const updateChartData = debounce((newData: typeof sankeyData.value) => {
+  // 拓扑无需秒级刷新:throttle 3s(leading 立即出图)替代 debounce 300ms 的附加延迟;
+  // 结构签名相同的拍直接跳过 setOption(sankey 每次 render 全量销毁重建,空闲时是纯浪费)
+  let lastSignature = ''
+  const updateChartData = throttle((newData: typeof sankeyData.value) => {
     if (isPaused.value) {
       return
     }
+
+    const signature =
+      newData.nodes.map((node) => node.name).join(',') +
+      '|' +
+      newData.links.map((link) => `${link.source}>${link.target}:${link.value}`).join(',')
+
+    if (signature === lastSignature) {
+      return
+    }
+    lastSignature = signature
 
     if (myChart && newData.nodes.length > 0) {
       myChart.setOption(options.value)
@@ -411,9 +424,10 @@ onMounted(() => {
         }
       })
     }
-  }, 300)
+  }, 3000)
 
-  watch(sankeyData, updateChartData, { deep: true })
+  // computed 每拍必换新引用,deep 遍历纯属浪费
+  watch(sankeyData, updateChartData)
 
   watch([theme, font], () => {
     if (myChart) {

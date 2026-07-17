@@ -6,6 +6,7 @@ import {
 import { CONNECTION_TAB_TYPE, SORT_DIRECTION, SORT_TYPE } from '@/constant'
 import {
   getChainsStringFromConnection,
+  getConnectionChains,
   getConnectionDownload,
   getConnectionNetwork,
   getConnectionRule,
@@ -60,14 +61,9 @@ export const uploadTotal = ref(0)
 
 let cancel: (() => void) | undefined
 
-export const initConnections = () => {
+// active(已带瞬时速率)与 closed(本拍新关闭增量)均由各后端 assembly 算好,store 只消费。
+const startConnectionsStream = () => {
   cancel?.()
-  activeConnections.value = []
-  closedConnections.value = []
-  downloadTotal.value = 0
-  uploadTotal.value = 0
-  initAggregatedDataMap()
-  // active(已带瞬时速率)与 closed(本拍新关闭增量)均由各后端 assembly 算好,store 只消费。
   const ws = fetchConnectionsAPI()
   const unwatch = watch(ws.data, (snapshot) => {
     if (!snapshot) return
@@ -89,6 +85,20 @@ export const initConnections = () => {
     }
   })
 
+  cancel = () => {
+    unwatch()
+    ws.close()
+  }
+}
+
+export const initConnections = () => {
+  activeConnections.value = []
+  closedConnections.value = []
+  downloadTotal.value = 0
+  uploadTotal.value = 0
+  initAggregatedDataMap()
+  startConnectionsStream()
+
   if (autoDisconnectIdleUDP.value) {
     watchOnce(activeConnections, () => {
       activeConnections.value
@@ -103,11 +113,12 @@ export const initConnections = () => {
         })
     })
   }
+}
 
-  cancel = () => {
-    unwatch()
-    ws.close()
-  }
+// 从后台恢复:只重建流,不清 store(闭合列表/累计量保留,重连首拍自然拿到全量快照;
+// 新建的 previousMap 为空,首拍速率为 0,不会出现跨隐藏期的速率尖刺)
+export const resumeConnections = () => {
+  startConnectionsStream()
 }
 
 export const stopConnections = () => {
@@ -148,6 +159,27 @@ export const connections = computed(() => {
   return connectionTabShow.value === CONNECTION_TAB_TYPE.ACTIVE
     ? activeConnections.value
     : closedConnections.value
+})
+
+// 各代理组/节点的实时速率聚合:每拍一次 O(连接数×链长) 构建,消费方 O(1) 查表 ——
+// 替代每个组头各自每秒全量过滤 activeConnections(几十组 × 每秒几十万次数组操作)。
+export const chainTrafficMap = computed(() => {
+  const map = new Map<string, { download: number; upload: number }>()
+
+  for (const conn of activeConnections.value) {
+    for (const name of getConnectionChains(conn)) {
+      let entry = map.get(name)
+
+      if (!entry) {
+        entry = { download: 0, upload: 0 }
+        map.set(name, entry)
+      }
+      entry.download += conn.downloadSpeed
+      entry.upload += conn.uploadSpeed
+    }
+  }
+
+  return map
 })
 
 export const renderConnections = computed(() => {

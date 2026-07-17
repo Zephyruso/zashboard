@@ -25,13 +25,13 @@ import { isMiddleScreen } from '@/helper/utils'
 import { timeSaved, type HistoryPoint } from '@/store/overview'
 import { font, theme } from '@/store/settings'
 import { PauseCircleIcon, PlayCircleIcon } from '@heroicons/vue/24/outline'
-import { useElementSize } from '@vueuse/core'
+import { useDocumentVisibility, useElementSize, useElementVisibility } from '@vueuse/core'
 import { LineChart } from 'echarts/charts'
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { debounce } from 'lodash'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 
 echarts.use([LineChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer])
 
@@ -74,13 +74,12 @@ const updateFontFamily = () => {
   fontFamily = baseColorStyle.fontFamily
 }
 
-const options = computed(() => {
-  // 时间窗锚定最新数据点,保证最新点钉在右缘;缓冲点落在左缘外被 clip 裁掉
-  const latest = props.data[0]?.data.at(-1)?.name ?? Date.now()
-
+// 静态 option(布局/样式/渐变)只在 init 与主题/字体变化时下发;每拍只推 series data
+// 与时间窗。原实现每秒全量重建 option + 1s 线性过渡动画,更新间隔恰为 1s,等于每个
+// 图表 60fps 持续重绘永不停 —— 这是面板空闲耗电的最大头,动画一并关闭。
+const buildStaticOptions = () => {
   return {
-    animationDurationUpdate: 1000,
-    animationEasingUpdate: 'linear' as const,
+    animation: false,
     legend: {
       bottom: 0,
       data: props.data.map((item) => item.name),
@@ -113,8 +112,6 @@ const options = computed(() => {
     },
     xAxis: {
       type: 'time',
-      min: latest - (timeSaved - 1) * 1000,
-      max: latest - 1 * 1000,
       axisLine: { show: false },
       axisLabel: { show: false },
       splitLine: { show: false },
@@ -156,7 +153,6 @@ const options = computed(() => {
         lineStyle: {
           width: 1,
         },
-        data: item.data,
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             {
@@ -175,27 +171,74 @@ const options = computed(() => {
       }
     }),
   }
-})
+}
 
 let myChart: echarts.ECharts | null = null
 let touchEndHandler: ((e: TouchEvent) => void) | null = null
+
+const chartVisible = useElementVisibility(chart)
+const documentVisibility = useDocumentVisibility()
+// 离屏/后台期间跳过的更新,回到可见时补一拍
+let pendingUpdate = false
+
+const applyData = () => {
+  if (!myChart || isPaused.value) {
+    return
+  }
+  if (!chartVisible.value || documentVisibility.value !== 'visible') {
+    pendingUpdate = true
+    return
+  }
+  pendingUpdate = false
+  // 时间窗锚定最新数据点,保证最新点钉在右缘;缓冲点落在左缘外被 clip 裁掉
+  const latest = props.data[0]?.data.at(-1)?.name ?? Date.now()
+
+  myChart.setOption(
+    {
+      xAxis: {
+        min: latest - (timeSaved - 1) * 1000,
+        max: latest - 1 * 1000,
+      },
+      series: props.data.map((item) => ({ data: item.data })),
+    },
+    { lazyUpdate: true },
+  )
+}
+
+const applyStaticOptions = () => {
+  if (!myChart) {
+    return
+  }
+  myChart.setOption(buildStaticOptions())
+  applyData()
+}
 
 onMounted(() => {
   updateColorSet()
   updateFontFamily()
 
-  watch(theme, updateColorSet)
-  watch(font, updateFontFamily)
+  watch(theme, () => {
+    updateColorSet()
+    applyStaticOptions()
+  })
+  watch(font, () => {
+    updateFontFamily()
+    applyStaticOptions()
+  })
 
   myChart = echarts.init(chart.value)
+  applyStaticOptions()
 
-  myChart.setOption(options.value)
-
-  watch(options, () => {
-    if (isPaused.value) {
-      return
+  watch(() => props.data, applyData)
+  watch(isPaused, (paused) => {
+    if (!paused) {
+      applyData()
     }
-    myChart?.setOption(options.value)
+  })
+  watch([chartVisible, documentVisibility], () => {
+    if (pendingUpdate && chartVisible.value && documentVisibility.value === 'visible') {
+      applyData()
+    }
   })
 
   const { width } = useElementSize(chart)

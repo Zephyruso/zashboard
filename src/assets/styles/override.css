@@ -209,6 +209,8 @@
 
 @for $i from 0 to 40 {
   .blur-intensity-$(i) {
+    /* 注意:不要把 .btn 加进模糊清单 —— 每个按钮独立成模糊合成层(连接页一屏上百个),
+       且按钮叠在已整面模糊的容器上,按元素模糊视觉上纯冗余、GPU 每帧数 ms 白烧 */
     .card,
     .collapse,
     .sidebar,
@@ -217,14 +219,14 @@
     .need-blur,
     .settings-grid,
     .base-container,
-    .btn,
     .table thead {
       /* prettier-ignore */
       backdrop-filter: blur($(i)px);
     }
 
     .pinned-td {
-      @apply bg-transparent! backdrop-blur-xl;
+      /* 逐行独立模糊层同理太贵,半透实色即可保证 pin 列可读性 */
+      background-color: color-mix(in srgb, var(--color-base-100) 88%, transparent) !important;
     }
 
     .table tbody::before {
