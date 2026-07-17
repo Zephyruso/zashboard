@@ -109,6 +109,11 @@ export const updateBackend = (uuid: string, backend: Omit<Backend, 'uuid'>) => {
 }
 
 export const removeBackend = (uuid: string) => {
+  if (uuid === activeUuid.value) {
+    // 删除当前活跃后端必须清空选中:否则流对已删除后端继续跑,
+    // 连接历史落进空 uuid 键(模块级 watcher 会随之关流)
+    activeUuid.value = null
+  }
   backendList.value = backendList.value.filter((end) => end.uuid !== uuid)
   sourceIPLabelList.value.forEach((label) => {
     if (label.scope && label.scope.includes(uuid)) {

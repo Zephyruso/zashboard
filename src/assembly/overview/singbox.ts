@@ -67,8 +67,14 @@ const createSingboxStat = <T>(kind: 'memory' | 'traffic'): SingboxStream<T> => {
         }))
 
   if (!sub) return { data, close: () => {} }
-  watch(sub.data, (value) => (data.value = value as T), { immediate: true })
-  return { data, close: sub.close }
+  const stopWatch = watch(sub.data, (value) => (data.value = value as T), { immediate: true })
+  return {
+    data,
+    close: () => {
+      stopWatch()
+      sub.close()
+    },
+  }
 }
 
 export const fetchMemoryAPI = <T>() => createSingboxStat<T>('memory')

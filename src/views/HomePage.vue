@@ -106,17 +106,14 @@ import SideBar from '@/components/sidebar/SideBar.vue'
 import { dockTop } from '@/composables/paddingViews'
 import { checkUIUpdate } from '@/assembly/version'
 import { useSwipeRouter } from '@/composables/swipe'
-import { PROXY_TAB_TYPE, ROUTE_ICON_MAP, RULE_TAB_TYPE } from '@/constant'
+import { ROUTE_ICON_MAP } from '@/constant'
 import { renderRoutes } from '@/helper'
 import { showNotification } from '@/helper/notification'
 import { getLabelFromBackend, isMiddleScreen } from '@/helper/utils'
-import { fetchConfigs } from '@/assembly/config'
-import { initConnections, resumeConnections, stopConnections } from '@/store/connections'
-import { initLogs, stopLogs } from '@/store/logs'
-import { initSatistic, resumeSatistic, stopSatistic } from '@/store/overview'
+import { restartBackendSession, stopBackendSession } from '@/composables/backendSession'
+import { resumeConnections, stopConnections } from '@/store/connections'
+import { resumeSatistic, stopSatistic } from '@/store/overview'
 import { fetchProxies, resetProxies } from '@/assembly/proxies'
-import { proxiesTabShow } from '@/assembly/proxies'
-import { fetchRules, rulesTabShow } from '@/assembly/rules'
 import { isSidebarCollapsed } from '@/store/settings'
 import { activeBackend, activeUuid, backendList } from '@/store/setup'
 import type { Backend } from '@/types'
@@ -166,21 +163,11 @@ watch(
     if (!activeUuid.value) {
       // 后端被清空(登出 / 401 / 新增后端)时先关常驻流、再做其余清理,
       // 否则它们会以无主状态留在 Setup 页继续运行并无限重连。
-      stopConnections()
-      stopLogs()
-      stopSatistic()
+      stopBackendSession()
       await resetProxies()
       return
     }
-    await resetProxies()
-    rulesTabShow.value = RULE_TAB_TYPE.RULES
-    proxiesTabShow.value = PROXY_TAB_TYPE.PROXIES
-    fetchConfigs()
-    fetchProxies()
-    fetchRules()
-    initConnections()
-    initLogs()
-    initSatistic()
+    await restartBackendSession()
   },
   {
     immediate: true,

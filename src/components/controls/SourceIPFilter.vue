@@ -22,30 +22,63 @@ import * as ipaddr from 'ipaddr.js'
 import { isEqual, uniq } from 'lodash'
 import { computed, ref, watch } from 'vue'
 
+// IP 解析缓存:比较器里每次比较 2 次 isValid + 2 次 parse + 2 次 toByteArray,
+// 等效每比较 4-6 次完整字符串解析
+const parsedIPBytes = new Map<string, number[] | null>()
+const ipBytes = (ip: string) => {
+  let bytes = parsedIPBytes.get(ip)
+
+  if (bytes === undefined) {
+    try {
+      bytes = ipaddr.parse(ip).toByteArray()
+    } catch {
+      bytes = null
+    }
+    if (parsedIPBytes.size > 512) {
+      parsedIPBytes.clear()
+    }
+    parsedIPBytes.set(ip, bytes)
+  }
+  return bytes
+}
+
+// 集合签名短路:源 IP 集合只在设备增减时才变,每拍全量重排 + 下游深比较是纯白算;
+// 返回缓存引用可让下游 watch 完全不触发
+let lastSignature = ''
+let lastSorted: string[] = []
 const sourceIPs = computed(() => {
-  return uniq(connections.value.map(getConnectionSourceIP)).sort((a, b) => {
-    if (!ipaddr.isValid(a)) return -1
-    if (!ipaddr.isValid(b)) return 1
+  const unique = uniq(connections.value.map(getConnectionSourceIP))
+  const signature = [...unique].sort().join(',')
 
-    const preIP = ipaddr.parse(a)
-    const nextIP = ipaddr.parse(b)
+  if (signature === lastSignature) {
+    return lastSorted
+  }
 
-    const isPreIPv4 = preIP.kind() === 'ipv4'
-    const isNextIPv4 = nextIP.kind() === 'ipv4'
+  const sorted = [...unique].sort((a, b) => {
+    const aBytes = ipBytes(a)
+    const bBytes = ipBytes(b)
 
-    if (!isPreIPv4 && isNextIPv4) return 1
-    if (!isNextIPv4 && isPreIPv4) return -1
+    if (!aBytes) return -1
+    if (!bBytes) return 1
 
-    const preIPBytes = preIP.toByteArray()
-    const nextIPBytes = nextIP.toByteArray()
+    const isAIPv4 = aBytes.length === 4
+    const isBIPv4 = bBytes.length === 4
 
-    for (let i = 0; i < preIPBytes.length; i++) {
-      if (preIPBytes[i] !== nextIPBytes[i]) {
-        return preIPBytes[i] - nextIPBytes[i]
+    if (!isAIPv4 && isBIPv4) return 1
+    if (!isBIPv4 && isAIPv4) return -1
+
+    for (let i = 0; i < aBytes.length; i++) {
+      if (aBytes[i] !== bBytes[i]) {
+        return aBytes[i] - bBytes[i]
       }
     }
     return 0
   })
+
+  lastSignature = signature
+  lastSorted = sorted
+
+  return sorted
 })
 const sourceIPOpts = ref<{ label: string; value: string[] }[]>([])
 

@@ -6,7 +6,7 @@
 import { fetchClashVersion, restartCoreAPI, upgradeCoreAPI, upgradeUIAPI } from '@/api/clash'
 import { MIHOMO, MIHOMO_CHANNEL } from '@/constant'
 import { autoUpgradeCore, autoUpgradeDashboard, checkUpgradeCore } from '@/store/settings'
-import { activeBackend } from '@/store/setup'
+import { activeBackend, activeUuid } from '@/store/setup'
 import { computed, ref, watch } from 'vue'
 import { isSingboxBackend } from './backend'
 
@@ -73,14 +73,20 @@ watch(
   activeBackend,
   async (val) => {
     if (val) {
+      // 代际守卫:快速切换后端时,旧后端的慢响应会脏写 version(翻转 isSingBoxCore
+      // 影响内核操作可见性/测速参数),每个 await 后复核
+      const backendUuid = val.uuid
       const { data } = await fetchVersionAPI()
 
+      if (backendUuid !== activeUuid.value) return
       version.value = data?.version || ''
       startedAt.value = isSingboxBackend.value ? await fetchSingboxStartedAt() : 0
+      if (backendUuid !== activeUuid.value) return
       if (isSingBoxCore.value || !checkUpgradeCore.value || activeBackend.value?.disableUpgradeCore)
         return
       isCoreUpdateAvailable.value = await fetchBackendUpdateAvailableAPI()
 
+      if (backendUuid !== activeUuid.value) return
       if (isCoreUpdateAvailable.value && autoUpgradeCore.value) {
         upgradeCoreAPI('auto')
       }

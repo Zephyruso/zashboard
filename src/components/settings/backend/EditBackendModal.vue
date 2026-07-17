@@ -121,7 +121,8 @@ import DialogWrapper from '@/components/common/DialogWrapper.vue'
 import TextInput from '@/components/common/TextInput.vue'
 import { showNotification } from '@/helper/notification'
 import { getLabelFromBackend } from '@/helper/utils'
-import { activeBackend, backendList, updateBackend } from '@/store/setup'
+import { restartBackendSession } from '@/composables/backendSession'
+import { activeBackend, activeUuid, backendList, updateBackend } from '@/store/setup'
 import type { Backend } from '@/types'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -212,6 +213,10 @@ const handleSave = async () => {
     }
 
     updateBackend(selectedBackend.value.uuid, composed)
+    // 就地编辑当前活跃后端(uuid 不变):流固化着旧 URL/token,必须整套重建
+    if (selectedBackend.value.uuid === activeUuid.value) {
+      restartBackendSession()
+    }
     showNotification({ content: t('backendConfigSaved'), type: 'alert-success' })
     isVisible.value = false
     reset()
