@@ -4,7 +4,7 @@ import { watchDebounced } from '@vueuse/core'
 import { Buffer } from 'buffer'
 import * as ipaddr from 'ipaddr.js'
 import type { AsnResponse, CountryResponse, Reader } from 'mmdb-lib'
-import { reactive } from 'vue'
+import { shallowRef } from 'vue'
 
 // mmdb-lib relies on the global Buffer at module-eval time.
 if (!(globalThis as { Buffer?: unknown }).Buffer) {
@@ -388,8 +388,14 @@ const EMPTY_GEOIP_INFO: IPInfo = {
 // Cap the resolved-info cache; a session may touch many distinct IPs, and each
 // entry is tiny, so this only guards against unbounded growth.
 const GEOIP_INFO_CACHE_MAX = 4096
-const geoInfoCache = reactive(new Map<string, IPInfo>())
+// 普通 Map + 版本号做粗粒度失效:reactive Map 会在 renderConnections 的热路径里
+// 逐 IP 建依赖追踪(每拍数千 key),回填任一 IP 还会整表失效。
+const geoInfoCache = new Map<string, IPInfo>()
+const geoCacheVersion = shallowRef(0)
 const geoInfoPending = new Set<string>()
+// isValid 是异常驱动的完整解析,结果按 IP 缓存
+const invalidIPs = new Set<string>()
+const INVALID_IP_CACHE_MAX = 4096
 
 /**
  * Reactive, synchronous GeoIP lookup for render paths (e.g. table cells).
@@ -399,7 +405,10 @@ const geoInfoPending = new Set<string>()
  * views re-render.
  */
 export const getGeoIPInfoSync = (ip: string): IPInfo => {
-  if (!ip || !ipaddr.isValid(ip)) {
+  // 版本号必须在命中路径也读:依赖它的 computed 才能在异步回填后重算
+  void geoCacheVersion.value
+
+  if (!ip || invalidIPs.has(ip)) {
     return EMPTY_GEOIP_INFO
   }
 
@@ -409,14 +418,21 @@ export const getGeoIPInfoSync = (ip: string): IPInfo => {
     return cached
   }
 
+  if (!ipaddr.isValid(ip)) {
+    if (invalidIPs.size >= INVALID_IP_CACHE_MAX) {
+      invalidIPs.clear()
+    }
+    invalidIPs.add(ip)
+    return EMPTY_GEOIP_INFO
+  }
+
   if (!geoInfoPending.has(ip)) {
     geoInfoPending.add(ip)
     getGeoIPInfo(ip)
       .then((info) => {
         geoInfoCache.set(ip, info)
 
-        // Evict oldest entries beyond the cap (FIFO; safe here since this runs
-        // in a microtask, not during a render read of the reactive cache).
+        // Evict oldest entries beyond the cap (FIFO; runs in a microtask).
         while (geoInfoCache.size > GEOIP_INFO_CACHE_MAX) {
           const oldest = geoInfoCache.keys().next().value
 
@@ -426,6 +442,8 @@ export const getGeoIPInfoSync = (ip: string): IPInfo => {
 
           geoInfoCache.delete(oldest)
         }
+        // 微任务里批量回填后 bump 一次,Vue flush 合并为单次重算
+        geoCacheVersion.value++
       })
       .catch(() => {})
       .finally(() => geoInfoPending.delete(ip))
@@ -445,6 +463,8 @@ watchDebounced(
     readerCache.clear()
     geoInfoCache.clear()
     geoInfoPending.clear()
+    invalidIPs.clear()
+    geoCacheVersion.value++
   },
   { debounce: 800 },
 )

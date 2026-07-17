@@ -50,9 +50,19 @@ const fetchSingboxConnections = (): {
     }
     newlyClosed = []
   }
-  const scheduleEmit = () => {
+  // 合并窗口 500ms:事件风暴时原 100ms 窗口让整条渲染管线以设计负载 10 倍运行;
+  // reset(重连初始快照)立即 emit 保证切换即时。
+  const scheduleEmit = (immediate = false) => {
+    if (immediate) {
+      if (timer) {
+        clearTimeout(timer)
+        timer = null
+      }
+      emit()
+      return
+    }
     if (timer) return
-    timer = setTimeout(emit, 100)
+    timer = setTimeout(emit, 500)
   }
 
   const handle = subscribeStream<ConnectionEvents>('connections', (msg) => {
@@ -78,21 +88,17 @@ const fetchSingboxConnections = (): {
             else conns.set(event.id, enrich(event.connection, downDelta, upDelta))
           } else {
             // 仅 delta:沿用上次的连接,累加总量,速率取本拍 delta。
+            // 单次 spread 合并(3 对象→1),保持不可变语义(卡片/详情快照依赖引用变化)。
             const prev = conns.get(event.id)
             if (prev) {
               const s = asSingbox(prev)
-              conns.set(
-                event.id,
-                enrich(
-                  {
-                    ...s,
-                    uplinkTotal: s.uplinkTotal + event.uplinkDelta,
-                    downlinkTotal: s.downlinkTotal + event.downlinkDelta,
-                  },
-                  downDelta,
-                  upDelta,
-                ),
-              )
+              conns.set(event.id, {
+                ...s,
+                uplinkTotal: s.uplinkTotal + event.uplinkDelta,
+                downlinkTotal: s.downlinkTotal + event.downlinkDelta,
+                downloadSpeed: downDelta,
+                uploadSpeed: upDelta,
+              } as Connection)
             }
           }
           break
@@ -105,7 +111,7 @@ const fetchSingboxConnections = (): {
         }
       }
     }
-    scheduleEmit()
+    scheduleEmit(msg.reset)
   })
 
   return {

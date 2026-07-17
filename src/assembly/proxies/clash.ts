@@ -34,6 +34,7 @@ import {
   getNowProxyNodeName,
   getTestUrl,
   IPv6Map,
+  mergeProxyMap,
   proxyGroupList,
   proxyMap,
   proxyProviederList,
@@ -56,31 +57,6 @@ const setProxyNodeFields = (name: string, fields: Partial<Proxy>) => {
     return
   }
   setProxyNode(name, { ...node, ...fields })
-}
-
-// 按 name diff 合并:内容未变的节点复用旧对象引用,订阅该节点的卡片/LatencyTag
-// 的 computed 求值后得到同一引用,子树更新被 Vue 跳过 —— 这是"任何测速/刷新都
-// 全页几百张卡片重渲染"的根治点。
-const mergeProxyMap = (next: Record<string, Proxy>) => {
-  const prev = proxyMap.value
-  const nextKeys = Object.keys(next)
-  let changed = Object.keys(prev).length !== nextKeys.length
-  const merged: Record<string, Proxy> = {}
-
-  for (const name of nextKeys) {
-    const oldNode = prev[name]
-
-    if (oldNode && JSON.stringify(oldNode) === JSON.stringify(next[name])) {
-      merged[name] = oldNode
-    } else {
-      merged[name] = next[name]
-      changed = true
-    }
-  }
-
-  if (changed) {
-    proxyMap.value = merged
-  }
 }
 
 const doFetchProxies = async () => {

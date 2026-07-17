@@ -25,6 +25,30 @@ export const proxyProviederList = shallowRef<ProxyProvider[]>([])
 export const batchTestingCount = ref(0)
 export const isBatchLatencyTesting = computed(() => batchTestingCount.value > 0)
 
+// 按 name diff 合并进 proxyMap:内容未变的节点复用旧对象引用,订阅节点的组件
+// props 恒等、子树更新被 Vue 跳过 —— 两种后端的"整棵替换→全页重渲染"共用根治点。
+export const mergeProxyMap = (next: Record<string, Proxy>) => {
+  const prev = proxyMap.value
+  const nextKeys = Object.keys(next)
+  let changed = Object.keys(prev).length !== nextKeys.length
+  const merged: Record<string, Proxy> = {}
+
+  for (const name of nextKeys) {
+    const oldNode = prev[name]
+
+    if (oldNode && JSON.stringify(oldNode) === JSON.stringify(next[name])) {
+      merged[name] = oldNode
+    } else {
+      merged[name] = next[name]
+      changed = true
+    }
+  }
+
+  if (changed) {
+    proxyMap.value = merged
+  }
+}
+
 export const speedtestUrlWithDefault = computed(() => {
   return speedtestUrl.value || TEST_URL
 })
