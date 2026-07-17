@@ -1,3 +1,4 @@
+/// <reference types="vite-plugin-pwa/client" />
 declare const __APP_VERSION__: string
 declare const __COMMIT_ID__: string
 // Build-time font selection: all | cdn | firasans | misans | pingfang | sarasa | none

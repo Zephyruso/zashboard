@@ -38,12 +38,26 @@ export default defineConfig({
     vue(),
     vueJsx(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // prompt 模式:autoUpdate 的 skipWaiting 会热替换 SW 并清掉旧 precache,
+      // 常开数天的面板里未加载过的懒 chunk 会因引用旧 hash 直接加载失败;
+      // 改为页面内横幅提示用户刷新(见 App.vue)。
+      registerType: 'prompt',
       includeAssets: ['favicon.svg', 'favicon-dark.svg'],
       workbox: {
-        // The bundle is above Workbox's 2 MiB default because sing-box native
-        // API support and the Tools page are always bundled.
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+        // Tools 页与 xterm 多数用户从不打开,不进 precache(首装省 ~400KB),
+        // 首次访问时走运行时缓存
+        globIgnores: ['**/xterm-*.js', '**/ToolsPage-*.js'],
+        runtimeCaching: [
+          {
+            urlPattern: /assets\/(xterm|ToolsPage)-[^/]*\.js$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'lazy-tools',
+              expiration: { maxEntries: 8 },
+            },
+          },
+        ],
       },
       manifest: {
         name: 'zashboard',

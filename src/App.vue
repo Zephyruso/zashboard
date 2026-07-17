@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { RouterView } from 'vue-router'
 import ConfirmDialogHost from './components/common/ConfirmDialogHost.vue'
+import { registerSW } from 'virtual:pwa-register'
 import { useKeyboard } from './composables/keyboard'
 import { EMOJIS, FONTS } from './constant'
 import {
@@ -199,12 +200,21 @@ onMounted(async () => {
   }
 })
 
+// PWA prompt 模式:新版本就绪时出横幅让用户主动刷新(autoUpdate 的热替换会让
+// 常开面板的未加载懒 chunk 因旧 hash 失效)
+const needRefresh = ref(false)
+const updateServiceWorker = registerSW({
+  onNeedRefresh() {
+    needRefresh.value = true
+  },
+})
+
 const blurClass = computed(() => {
   if (!backgroundImage.value || blurIntensity.value === 0) {
     return ''
   }
 
-  return `blur-intensity-${blurIntensity.value}`
+  return 'custom-blur'
 })
 
 useKeyboard()
@@ -217,11 +227,17 @@ useKeyboard()
     :class="[
       'bg-base-100 flex w-screen overflow-hidden',
       fontClassName,
-      backgroundImage &&
-        `custom-background-${dashboardTransparent} custom-background bg-cover bg-center`,
+      backgroundImage && 'custom-background bg-cover bg-center',
       blurClass,
     ]"
-    :style="[backgroundImage, { height: 'var(--app-height, 100dvh)' }]"
+    :style="[
+      backgroundImage,
+      {
+        height: 'var(--app-height, 100dvh)',
+        '--dashboard-alpha': `${dashboardTransparent}%`,
+        '--blur-px': `${blurIntensity}px`,
+      },
+    ]"
   >
     <RouterView />
     <ConfirmDialogHost />
@@ -229,5 +245,12 @@ useKeyboard()
       ref="toast"
       class="toast-sm toast toast-end toast-top z-[100000] max-w-80 text-sm md:max-w-96 md:translate-y-8"
     />
+    <button
+      v-if="needRefresh"
+      class="btn btn-primary btn-sm fixed bottom-4 left-1/2 z-[100001] -translate-x-1/2 shadow-lg"
+      @click="updateServiceWorker(true)"
+    >
+      {{ $t('refreshToUpdate') }}
+    </button>
   </div>
 </template>

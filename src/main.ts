@@ -7,8 +7,9 @@ import App from './App.vue'
 import { loadFonts } from './assets/load-fonts'
 import './assets/main.css'
 import { applyCustomThemes, applyKsuTheme } from './helper'
-import { i18n } from './i18n'
+import { i18n, setLocale } from './i18n'
 import router from './router'
+import { language } from './store/settings'
 
 const isEdge = /Edg\//.test(navigator.userAgent)
 
@@ -28,4 +29,7 @@ const app = createApp(App)
 
 app.use(router)
 app.use(i18n)
-app.mount('#app')
+// 非英语用户先装载所选语言包(LAN 场景一个小 chunk 的往返),避免键名闪烁
+setLocale(language.value).finally(() => {
+  app.mount('#app')
+})

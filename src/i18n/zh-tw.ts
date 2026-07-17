@@ -160,6 +160,7 @@ const zhTW: LANG_MESSAGE = {
   memoryUsage: '記憶體使用',
   goroutines: 'Goroutines',
   noData: '暫無資料',
+  refreshToUpdate: '新版本已就緒,點擊重新整理',
 
   // Backend actions and feedback
   flushFakeIP: '清空Fake IP',

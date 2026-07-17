@@ -6,11 +6,28 @@ import type { Connection } from '@/types'
 import pLimit from 'p-limit'
 import type { ConnectionDisplayOptions, ConnectionsSnapshot } from './accessor'
 import * as clash from './clash'
-import * as singbox from './singbox'
 
 export type { ConnectionsSnapshot }
 
-const backend = () => (isSingboxBackend.value ? singbox : clash)
+// sing-box 实现(连同 gRPC 栈 ~130KB)按需加载,clash 用户不再买单。
+// 访问器是同步热路径,故用「init 前预载 + 同步委派」而非逐调用动态 import。
+let singboxModule: typeof import('./singbox') | null = null
+
+export const preloadConnectionsBackend = async () => {
+  if (isSingboxBackend.value && !singboxModule) {
+    singboxModule = await import('./singbox')
+  }
+}
+
+const backend = () => {
+  if (!isSingboxBackend.value) {
+    return clash
+  }
+  if (!singboxModule) {
+    throw new Error('sing-box connections backend not preloaded')
+  }
+  return singboxModule
+}
 
 export const disconnectByIdAPI = (id: string) => backend().disconnectByIdAPI(id)
 

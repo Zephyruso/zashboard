@@ -161,6 +161,7 @@ const ru: LANG_MESSAGE = {
   memoryUsage: 'Память',
   goroutines: 'Goroutines',
   noData: 'Нет данных',
+  refreshToUpdate: 'Доступна новая версия — нажмите, чтобы обновить',
 
   // Backend actions and feedback
   flushFakeIP: 'Очистить Fake IP',

@@ -55,8 +55,11 @@
     <div
       v-if="isFullScreen"
       class="bg-base-100 custom-background fixed inset-0 z-[9999] h-screen w-screen bg-cover bg-center"
-      :class="`blur-intensity-${blurIntensity} custom-background-${dashboardTransparent}`"
-      :style="backgroundImage"
+      :class="blurIntensity > 0 ? 'custom-blur' : ''"
+      :style="[
+        backgroundImage,
+        { '--dashboard-alpha': `${dashboardTransparent}%`, '--blur-px': `${blurIntensity}px` },
+      ]"
     >
       <div
         ref="fullScreenChart"

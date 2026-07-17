@@ -14,8 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import DOMPurify from 'dompurify'
-import { computed } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -42,8 +41,19 @@ const isDom = computed(() => {
   return props.icon.startsWith(DOM_STARTS_WITH)
 })
 
-const pureDom = computed(() => {
-  if (!isDom.value) return
-  return DOMPurify.sanitize(props.icon.replace(DOM_STARTS_WITH, ''))
+// dompurify(29KB)按需加载:仅配置了 SVG 图标时才需要
+const pureDom = ref('')
+
+watchEffect(async () => {
+  if (!isDom.value) {
+    pureDom.value = ''
+    return
+  }
+  const raw = props.icon.replace(DOM_STARTS_WITH, '')
+  const { default: DOMPurify } = await import('dompurify')
+
+  if (props.icon.startsWith(DOM_STARTS_WITH) && props.icon.replace(DOM_STARTS_WITH, '') === raw) {
+    pureDom.value = DOMPurify.sanitize(raw)
+  }
 })
 </script>

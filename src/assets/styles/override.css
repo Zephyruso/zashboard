@@ -144,100 +144,109 @@
   @apply text-sm;
 }
 
-@for $i from 0 to 100 {
-  .custom-background.custom-background-$(i) {
-    .bg-base-100,
-    .bg-primary,
-    .card,
-    .collapse,
-    .input,
-    .select,
-    .toggle,
-    .settings-menu,
-    .ctrls-bar,
-    .settings-grid,
-    .base-container,
-    .btn:not(.btn-ghost, .btn-neutral, .btn-primary),
-    .tabs {
-      @apply bg-base-100/$(i);
-    }
+/* 变量驱动替代逐档枚举:原先两个 @for 循环展开出 1531 条规则 / 413KB(占样式表 60%),
+   同一时刻只命中 2 档;--dashboard-alpha 由 App.vue / TopologyCharts 以内联样式下发。
+   color-mix + max() 与 Tailwind v4 的 /N 修饰符及原 @if 下限分支严格等价。 */
+.custom-background {
+  .bg-base-100,
+  .bg-primary,
+  .card,
+  .collapse,
+  .input,
+  .select,
+  .toggle,
+  .settings-menu,
+  .ctrls-bar,
+  .settings-grid,
+  .base-container,
+  .btn:not(.btn-ghost, .btn-neutral, .btn-primary),
+  .tabs {
+    background-color: color-mix(
+      in oklab,
+      var(--color-base-100) var(--dashboard-alpha, 100%),
+      transparent
+    );
+  }
 
-    .btn.btn-neutral {
-      @apply bg-neutral/$(i);
-    }
+  .btn.btn-neutral {
+    background-color: color-mix(
+      in oklab,
+      var(--color-neutral) var(--dashboard-alpha, 100%),
+      transparent
+    );
+  }
 
-    option,
-    optgroup {
-      @apply backdrop-blur-sm;
-    }
+  option,
+  optgroup {
+    @apply backdrop-blur-sm;
+  }
 
-    .bg-base-150,
-    .bg-base-200,
-    .dock {
-      @apply bg-base-200/$(i);
-    }
+  .bg-base-150,
+  .bg-base-200,
+  .dock {
+    background-color: color-mix(
+      in oklab,
+      var(--color-base-200) var(--dashboard-alpha, 100%),
+      transparent
+    );
+  }
 
-    .modal-box {
-      @if $i > 70 {
-        @apply bg-base-100/$(i);
-      } @else  {
-        @apply bg-base-100/70;
-      }
-    }
+  .modal-box {
+    background-color: color-mix(
+      in oklab,
+      var(--color-base-100) max(var(--dashboard-alpha, 100%), 70%),
+      transparent
+    );
+  }
 
-    .bg-primary:not(.tab.tab-active) {
-      @if $i > 60 {
-        @apply bg-primary/$(i);
-      } @else  {
-        @apply bg-primary/60;
-      }
-    }
+  .bg-primary:not(.tab.tab-active) {
+    background-color: color-mix(
+      in oklab,
+      var(--color-primary) max(var(--dashboard-alpha, 100%), 60%),
+      transparent
+    );
+  }
 
-    .bg-primary .latency-tag {
-      @if $i > 90 {
-        @apply bg-base-100/$(i);
-      } @else  {
-        @apply bg-base-100/90;
-      }
-    }
+  .bg-primary .latency-tag {
+    background-color: color-mix(
+      in oklab,
+      var(--color-base-100) max(var(--dashboard-alpha, 100%), 90%),
+      transparent
+    );
+  }
 
-    .home-page.bg-base-200 {
-      background-color: transparent;
-    }
+  .home-page.bg-base-200 {
+    background-color: transparent;
   }
 }
 
-@for $i from 0 to 40 {
-  .blur-intensity-$(i) {
-    /* 注意:不要把 .btn 加进模糊清单 —— 每个按钮独立成模糊合成层(连接页一屏上百个),
-       且按钮叠在已整面模糊的容器上,按元素模糊视觉上纯冗余、GPU 每帧数 ms 白烧 */
-    .card,
-    .collapse,
-    .sidebar,
-    .nav-bar,
-    .modal-box,
-    .need-blur,
-    .settings-grid,
-    .base-container,
-    .table thead {
-      /* prettier-ignore */
-      backdrop-filter: blur($(i)px);
-    }
+.custom-blur {
+  /* 注意:不要把 .btn 加进模糊清单 —— 每个按钮独立成模糊合成层(连接页一屏上百个),
+     且按钮叠在已整面模糊的容器上,按元素模糊视觉上纯冗余、GPU 每帧数 ms 白烧 */
+  .card,
+  .collapse,
+  .sidebar,
+  .nav-bar,
+  .modal-box,
+  .need-blur,
+  .settings-grid,
+  .base-container,
+  .table thead {
+    backdrop-filter: blur(var(--blur-px, 0px));
+  }
 
-    .pinned-td {
-      /* 逐行独立模糊层同理太贵,半透实色即可保证 pin 列可读性 */
-      background-color: color-mix(in srgb, var(--color-base-100) 88%, transparent) !important;
-    }
+  .pinned-td {
+    /* 逐行独立模糊层同理太贵,半透实色即可保证 pin 列可读性 */
+    background-color: color-mix(in srgb, var(--color-base-100) 88%, transparent) !important;
+  }
 
-    .table tbody::before {
-      position: absolute;
-      content: '';
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      /* prettier-ignore */
-      backdrop-filter: blur($(i)px);
-    }
+  .table tbody::before {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(var(--blur-px, 0px));
   }
 }

@@ -159,6 +159,7 @@ const en = {
   memoryUsage: 'Memory usage',
   goroutines: 'Goroutines',
   noData: 'No data',
+  refreshToUpdate: 'New version ready — tap to reload',
 
   // Backend actions and feedback
   flushFakeIP: 'Flush fake IP',

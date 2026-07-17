@@ -8,13 +8,28 @@ import { useStorage } from '@vueuse/core'
 import { ref, shallowRef } from 'vue'
 import { createLogsAccumulator } from './accumulator'
 import * as clash from './clash'
-import * as singbox from './singbox'
 
 export const logs = shallowRef<LogWithSeq[]>([])
 export const isPaused = ref(false)
 export const logLevel = useStorage<string>('config/log-level', LOG_LEVEL.Info)
 
-const backend = () => (isSingboxBackend.value ? singbox : clash)
+let singboxModule: typeof import('./singbox') | null = null
+
+export const preloadLogsBackend = async () => {
+  if (isSingboxBackend.value && !singboxModule) {
+    singboxModule = await import('./singbox')
+  }
+}
+
+const backend = () => {
+  if (!isSingboxBackend.value) {
+    return clash
+  }
+  if (!singboxModule) {
+    throw new Error('sing-box logs backend not preloaded')
+  }
+  return singboxModule
+}
 
 let cancel: (() => void) | undefined
 
