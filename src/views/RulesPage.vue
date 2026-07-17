@@ -22,7 +22,7 @@
               v-for="rule in renderRules"
               :key="rule.payload"
               :rule="rule"
-              :index="rules.indexOf(rule) + 1"
+              :index="ruleIndexMap.get(rule) ?? 0"
             />
           </div>
         </template>
@@ -40,7 +40,7 @@
         <RuleCard
           :key="rule.payload"
           :rule="rule"
-          :index="rules.indexOf(rule) + 1"
+          :index="ruleIndexMap.get(rule) ?? 0"
         />
       </template>
     </VirtualScroller>
@@ -70,4 +70,8 @@ const { padding } = usePaddingForViews({
 const isVirtualScroller = computed(() => {
   return rulesTabShow.value === RULE_TAB_TYPE.RULES && renderRules.value.length > 200
 })
+
+// 行号查表:模板里 rules.indexOf(rule) 是每渲染行对全量规则的 O(N) 身份线性扫,
+// 过滤后走非虚拟路径全部挂载时是 200×O(N)
+const ruleIndexMap = computed(() => new Map(rules.value.map((rule, index) => [rule, index + 1])))
 </script>

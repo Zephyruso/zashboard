@@ -23,12 +23,27 @@ export const createLogsAccumulator = (
   let logsTemp: LogWithSeq[] = []
 
   const flush = throttle(() => {
-    logs.value = logsTemp.concat(logs.value).slice(0, logRetentionLimit.value)
+    // 批内 push(O(1))+ flush 时一次 reverse,保持"最新在前";原 unshift 单批 O(k²)
+    logs.value = logsTemp.reverse().concat(logs.value).slice(0, logRetentionLimit.value)
     logsTemp = []
   }, 500)
 
+  // 秒级时间串缓存:高频日志下每条 dayjs().format 是纯浪费
+  let lastSecond = 0
+  let lastTimeText = ''
+  const currentTimeText = () => {
+    const second = Math.floor(Date.now() / 1000)
+
+    if (second !== lastSecond) {
+      lastSecond = second
+      lastTimeText = dayjs().format('HH:mm:ss')
+    }
+    return lastTimeText
+  }
+
   // source-ip 标签替换规则,随 sourceIPLabelList / 当前后端变化重建。
-  const ipSourceMatchs: [RegExp, string][] = []
+  // keyLower 供大小写不敏感的 includes 快筛,免去每条日志跑全部全局正则。
+  const ipSourceMatchs: [RegExp, string, string][] = []
   const restructMatchs = () => {
     ipSourceMatchs.length = 0
     for (const { key, label, scope } of sourceIPLabelList.value) {
@@ -37,10 +52,10 @@ export const createLogsAccumulator = (
 
       if (key.includes(':')) {
         const regex = new RegExp(`${key}]:`, 'ig')
-        ipSourceMatchs.push([regex, `${key}] (${label}) :`])
+        ipSourceMatchs.push([regex, `${key}] (${label}) :`, key.toLowerCase()])
       } else {
         const regex = new RegExp(`${key}:`, 'ig')
-        ipSourceMatchs.push([regex, `${key} (${label}) :`])
+        ipSourceMatchs.push([regex, `${key} (${label}) :`, key.toLowerCase()])
       }
     }
   }
@@ -60,14 +75,21 @@ export const createLogsAccumulator = (
       }
 
       let payload = data.payload
-      for (const [regex, label] of ipSourceMatchs) {
-        payload = payload.replace(regex, label)
+
+      if (ipSourceMatchs.length) {
+        const payloadLower = payload.toLowerCase()
+
+        for (const [regex, label, keyLower] of ipSourceMatchs) {
+          if (payloadLower.includes(keyLower)) {
+            payload = payload.replace(regex, label)
+          }
+        }
       }
 
-      logsTemp.unshift({
+      logsTemp.push({
         ...data,
         payload,
-        time: dayjs().format('HH:mm:ss'),
+        time: currentTimeText(),
         seq: idx++,
       })
     }

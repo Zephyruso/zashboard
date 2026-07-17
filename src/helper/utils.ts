@@ -10,15 +10,36 @@ export const isPWA = (() => {
   return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone
 })()
 
+const PRETTY_BYTES_DEFAULTS: Options = { binary: false }
+
 export const prettyBytesHelper = (bytes: number, opts?: Options) => {
-  return prettyBytes(bytes, {
-    binary: false,
-    ...opts,
-  })
+  return prettyBytes(bytes, opts ? { binary: false, ...opts } : PRETTY_BYTES_DEFAULTS)
 }
 
+// 秒桶缓存:同一秒内同一时间戳的相对时间必然相同;连接页每拍对每行调用,
+// 逐次 dayjs 实例化 + locale 格式化是每秒数千次的纯浪费。
+let fromNowCacheSecond = 0
+const fromNowCache = new Map<string | number, string>()
+
 export const fromNow = (timestamp: string | number) => {
-  return dayjs(timestamp).fromNow()
+  const second = Math.floor(Date.now() / 1000)
+
+  if (second !== fromNowCacheSecond) {
+    fromNowCacheSecond = second
+    fromNowCache.clear()
+  }
+
+  const cached = fromNowCache.get(timestamp)
+
+  if (cached !== undefined) {
+    return cached
+  }
+
+  const result = dayjs(timestamp).fromNow()
+
+  fromNowCache.set(timestamp, result)
+
+  return result
 }
 
 export const getDashboardSettingsFromStorage = () => {

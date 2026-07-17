@@ -247,6 +247,7 @@ export default defineComponent({
             v-model={proxiesFilter.value}
             placeholder={searchPlaceholder}
             clearable={true}
+            debounce={200}
             inputClass="pl-7"
           />
         </div>

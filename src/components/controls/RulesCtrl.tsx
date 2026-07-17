@@ -102,6 +102,7 @@ export default defineComponent({
           v-model={rulesFilter.value}
           placeholder={`${t('search')} | Regex`}
           clearable={true}
+          debounce={200}
         />
       )
 

@@ -3,6 +3,7 @@
     <VirtualScroller
       :data="renderLogs"
       :size="44"
+      :get-item-key="logItemKey"
     >
       <template v-slot:before>
         <LogsCtrl />
@@ -84,6 +85,10 @@ const renderLogs = computed(() => {
 
   return renderLogs
 })
+
+// 以 seq 作虚拟行身份键:日志头部插入时 index 键会让全部可见行错位重渲染,
+// seq 稳定后未变行 props 恒等,每次 flush 只渲染新增行
+const logItemKey = (index: number) => renderLogs.value[index]?.seq ?? index
 
 const connectionLogID = ref('')
 const connectionLogsDialogVisible = ref(false)

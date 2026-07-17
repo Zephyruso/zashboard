@@ -103,8 +103,11 @@ const select = (value: string) => {
   emit('update:modelValue', value)
 }
 
-watch(() => [props.modelValue, props.options, width.value], updateIndicator, {
+// 只按选项值集合/选中项/容器宽响应:options 里嵌着实时计数(每拍新数组),
+// deep watch 会让指示器每拍 nextTick 后读 offset*,每秒一次强制 reflow
+const optionsSignature = computed(() => props.options.map((option) => option.value).join('|'))
+
+watch([() => props.modelValue, optionsSignature, width], updateIndicator, {
   immediate: true,
-  deep: true,
 })
 </script>

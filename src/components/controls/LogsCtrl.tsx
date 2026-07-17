@@ -64,45 +64,33 @@ export default defineComponent({
     })
 
     const logFilterOptions = computed(() => {
-      const types: string[] = []
-      const levels: string[] = []
+      const types = new Set<string>()
+      const levels = new Set<string>()
 
       if (isSingBoxCore.value) {
         for (const log of logs.value) {
           const startIndex = log.payload.startsWith('[') ? log.payload.indexOf(']') + 2 : 0
           const endIndex = log.payload.indexOf(':', startIndex)
-          const type = log.payload.slice(startIndex, endIndex + 1)
 
-          if (!types.includes(type)) {
-            types.push(type)
-          }
-
-          if (!levels.includes(log.type)) {
-            levels.push(log.type)
-          }
+          types.add(log.payload.slice(startIndex, endIndex + 1))
+          levels.add(log.type)
         }
       } else {
         for (const log of logs.value) {
           const index = log.payload.indexOf(' ')
-          const type = index === -1 ? log.payload : log.payload.slice(0, index)
 
-          if (!types.includes(type)) {
-            types.push(type)
-          }
-
-          if (!levels.includes(log.type)) {
-            levels.push(log.type)
-          }
+          types.add(index === -1 ? log.payload : log.payload.slice(0, index))
+          levels.add(log.type)
         }
       }
 
       return {
-        levels: levels.sort((a, b) => {
+        levels: Array.from(levels).sort((a, b) => {
           const aIdx = logLevels.value.indexOf(a as LOG_LEVEL)
           const bIdx = logLevels.value.indexOf(b as LOG_LEVEL)
           return aIdx - bIdx
         }),
-        types: types.sort(),
+        types: Array.from(types).sort(),
       }
     })
 
@@ -153,6 +141,7 @@ export default defineComponent({
         <TextInput
           v-model={logFilter.value}
           beforeClose={true}
+          debounce={200}
           class="flex-1"
           placeholder={`${t('search')} | Regex`}
           clearable={true}

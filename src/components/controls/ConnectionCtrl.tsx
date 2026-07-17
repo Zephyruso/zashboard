@@ -153,6 +153,7 @@ export default defineComponent({
           placeholder={`${t('search')} | Regex`}
           clearable={true}
           before-close={true}
+          debounce={200}
           class={isLargeCtrlsBar.value ? 'w-32 max-w-80 flex-1' : 'w-full'}
         />
       )

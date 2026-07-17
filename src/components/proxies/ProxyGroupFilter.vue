@@ -36,7 +36,8 @@
 <script setup lang="ts">
 import { proxyGroupFilterMap } from '@/store/settings'
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import { computed, nextTick, ref } from 'vue'
+import { watchDebounced } from '@vueuse/core'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
@@ -46,11 +47,25 @@ const props = defineProps<{
 
 const { t } = useI18n()
 const inputRef = ref<HTMLInputElement | null>(null)
-const keyword = computed({
-  get: () => proxyGroupFilterMap.value[props.groupName] ?? '',
-  set: (value: string) => {
-    proxyGroupFilterMap.value[props.groupName] = value
+// 输入绑本地 ref,写入组过滤 map 走 200ms 防抖 —— 每 keystroke 全组重算太贵
+const storedKeyword = computed(() => proxyGroupFilterMap.value[props.groupName] ?? '')
+const keyword = ref(storedKeyword.value)
+
+watchDebounced(
+  keyword,
+  (value) => {
+    if (value) {
+      proxyGroupFilterMap.value[props.groupName] = value
+    } else {
+      delete proxyGroupFilterMap.value[props.groupName]
+    }
   },
+  { debounce: 200 },
+)
+watch(storedKeyword, (value) => {
+  if (value !== keyword.value) {
+    keyword.value = value
+  }
 })
 const showInput = ref(Boolean(keyword.value.trim()))
 
@@ -62,7 +77,6 @@ const handlerShowInput = async () => {
 
 const handlerReset = () => {
   keyword.value = ''
-  delete proxyGroupFilterMap.value[props.groupName]
   showInput.value = false
 }
 

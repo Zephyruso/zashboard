@@ -85,9 +85,14 @@ watch(
 let touchStartX = 0
 let touchStartY = 0
 
+// 手势级缓存:滚动容器在一次手势内不变,原实现每个 touchmove(60-120 次/秒)
+// 都沿祖先链逐层 getComputedStyle + 布局读,拖动期间几乎每事件强制样式重算
+let gestureScrollable: HTMLElement | null | undefined
+
 const onTouchStart = (event: TouchEvent) => {
   touchStartX = event.touches[0].clientX
   touchStartY = event.touches[0].clientY
+  gestureScrollable = undefined
 }
 
 const findScrollableY = (target: EventTarget | null) => {
@@ -110,7 +115,10 @@ const onTouchMove = (event: TouchEvent) => {
   // Leave horizontal gestures (e.g. swiping a horizontally-scrollable table) be.
   if (Math.abs(deltaY) <= Math.abs(deltaX)) return
 
-  const el = findScrollableY(event.target)
+  if (gestureScrollable === undefined) {
+    gestureScrollable = findScrollableY(event.target)
+  }
+  const el = gestureScrollable
   if (!el) {
     event.preventDefault()
     return
@@ -124,11 +132,14 @@ const onTouchMove = (event: TouchEvent) => {
   }
 }
 
+// 无触摸能力的设备不挂 non-passive 监听(它会让合成器每个滚动帧同步等主线程)
+const supportsTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+
 watch(
   disablePullToRefresh,
   () => {
     const body = document.body
-    if (disablePullToRefresh.value) {
+    if (disablePullToRefresh.value && supportsTouch) {
       body.style.overscrollBehavior = 'none'
       body.style.overflow = 'hidden'
       document.addEventListener('touchstart', onTouchStart, { passive: true })

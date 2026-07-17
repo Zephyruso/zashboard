@@ -8,7 +8,7 @@
       <XMarkIcon class="h-3 w-3" />
     </button>
     <input
-      v-model="inputValue"
+      v-model="localValue"
       ref="inputRef"
       type="text"
       :class="['input input-sm join-item w-full', inputClass, { 'pr-6': clearable }]"
@@ -16,8 +16,8 @@
       :name="name || ''"
       :autocomplete="autocomplete || ''"
       @click="handlerSearchInputClick"
-      @input="(emits('input', inputValue || ''), hideTip())"
-      @change="emits('change', inputValue || '')"
+      @input="(emits('input', localValue || ''), hideTip())"
+      @change="emits('change', localValue || '')"
     />
     <button
       v-if="!beforeClose && clearable"
@@ -32,7 +32,8 @@
 <script lang="ts" setup>
 import { useTooltip } from '@/helper/tooltip'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
-import { createApp, defineComponent, h, ref } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
+import { createApp, defineComponent, h, ref, watch } from 'vue'
 
 const emits = defineEmits<{
   (e: 'input', value: string): void
@@ -49,9 +50,25 @@ const props = defineProps<{
   inputClass?: string
   menus?: string[]
   menusDeleteable?: boolean
+  // 输入防抖(ms):过滤框每 keystroke 会触发下游全量重算,搜索类输入应传 ~200
+  debounce?: number
 }>()
 
 const inputValue = defineModel<string>()
+// 输入元素绑定本地值;向外提交可选防抖。外部写入(清空/切换)立即同步回本地。
+const localValue = ref(inputValue.value ?? '')
+const commit = (value: string | undefined) => {
+  inputValue.value = value
+}
+const debouncedCommit = props.debounce ? useDebounceFn(commit, props.debounce) : commit
+
+watch(localValue, (value) => debouncedCommit(value))
+watch(inputValue, (value) => {
+  if ((value ?? '') !== localValue.value) {
+    localValue.value = value ?? ''
+  }
+})
+
 const clearInput = () => {
   inputValue.value = ''
 }

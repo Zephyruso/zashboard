@@ -8,7 +8,13 @@ export type SearchTextPart = {
   matched: boolean
 }
 
-export const toSearchRegexes = (filter: string): RegExp[] | null => {
+// 按 filter 串记忆化:同一关键字在每行/每 cell 的调用里反复 new RegExp 是纯浪费
+// (虚拟列表滚动 + 每键全量过滤时每秒数百上千次编译)。'i' 正则无状态,可安全复用。
+const CACHE_LIMIT = 64
+const regexesCache = new Map<string, RegExp[] | null>()
+const matcherCache = new Map<string, SearchMatcher | null>()
+
+const buildSearchRegexes = (filter: string): RegExp[] | null => {
   const normalizedFilter = filter.trim()
 
   if (!normalizedFilter) {
@@ -33,17 +39,40 @@ export const toSearchRegexes = (filter: string): RegExp[] | null => {
   return regexes
 }
 
+export const toSearchRegexes = (filter: string): RegExp[] | null => {
+  if (regexesCache.has(filter)) {
+    return regexesCache.get(filter)!
+  }
+
+  const regexes = buildSearchRegexes(filter)
+
+  if (regexesCache.size >= CACHE_LIMIT) {
+    regexesCache.clear()
+  }
+  regexesCache.set(filter, regexes)
+
+  return regexes
+}
+
 export const toSearchRegex = (filter: string): SearchMatcher | null => {
+  if (matcherCache.has(filter)) {
+    return matcherCache.get(filter)!
+  }
+
   const regexes = toSearchRegexes(filter)
+  const matcher: SearchMatcher | null = regexes
+    ? {
+        test: (value) => regexes.every((r) => r.test(value)),
+        testAny: (values) => regexes.every((r) => values.some((v) => r.test(v))),
+      }
+    : null
 
-  if (!regexes) {
-    return null
+  if (matcherCache.size >= CACHE_LIMIT) {
+    matcherCache.clear()
   }
+  matcherCache.set(filter, matcher)
 
-  return {
-    test: (value) => regexes.every((r) => r.test(value)),
-    testAny: (values) => regexes.every((r) => values.some((v) => r.test(v))),
-  }
+  return matcher
 }
 
 export const getSearchTextParts = (value: string, filter: string): SearchTextPart[] => {
