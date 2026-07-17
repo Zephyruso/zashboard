@@ -4,7 +4,7 @@ import { subscribeStream } from '@/api/singbox/subscriptions'
 import type { Status } from '@/gen/daemon/started_service_pb'
 import { ref, watch, type Ref } from 'vue'
 
-interface SingboxStream<T> {
+export interface SingboxStream<T> {
   data: Ref<T | undefined>
   close: () => void
 }

@@ -222,7 +222,7 @@ import {
   type SortingState,
 } from '@tanstack/vue-table'
 import { useVirtualizer } from '@tanstack/vue-virtual'
-import { useStorage } from '@vueuse/core'
+import { refThrottled, useStorage } from '@vueuse/core'
 import dayjs from 'dayjs'
 import { computed, h, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -251,8 +251,10 @@ const aggregationType = useStorage<ConnectionHistoryType>(
   ConnectionHistoryType.SourceIP,
 )
 const historicalData = computed(() => aggregatedDataMap.value[aggregationType.value])
+// 活跃连接以 3s 节流参与聚合:该表数据秒级抖动无意义,却每拍带动全量聚合+merge+tanstack 重排
+const throttledActiveConnections = refThrottled(activeConnections, 3000)
 const aggregatedData = computed<ConnectionHistoryData[]>(() => {
-  const currentData = aggregateConnections(activeConnections.value, aggregationType.value)
+  const currentData = aggregateConnections(throttledActiveConnections.value, aggregationType.value)
 
   return mergeAggregatedData(historicalData.value, currentData)
 })

@@ -9,7 +9,7 @@ import {
   type Connection as PbConnection,
 } from '@/gen/daemon/started_service_pb'
 import type { Connection } from '@/types'
-import { ref, type Ref } from 'vue'
+import { shallowRef, type Ref } from 'vue'
 import {
   createGetConnectionDisplayValue,
   createGetConnectionVisibleSearchValues,
@@ -21,7 +21,7 @@ const fetchSingboxConnections = (): {
   data: Ref<ConnectionsSnapshot | undefined>
   close: () => void
 } => {
-  const data = ref<ConnectionsSnapshot>()
+  const data = shallowRef<ConnectionsSnapshot>()
 
   // 活跃连接表,条目已带瞬时速率。每次变更都整体替换条目(immutable),不就地改写,
   // 因此 emit 直接产出表内引用即可,无需再拷贝。

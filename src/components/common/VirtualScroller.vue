@@ -58,12 +58,15 @@ const props = withDefaults(
     size?: number
     overscan?: number
     contentClass?: string
+    // 行身份键(如日志 seq):头部插入型列表必须传,否则 index 键使全部可见行随平移重渲染
+    getItemKey?: (index: number) => string | number
   }>(),
   {
     data: () => [],
     size: 64,
-    overscan: 24,
+    overscan: 8,
     contentClass: '',
+    getItemKey: undefined,
   },
 )
 
@@ -75,6 +78,7 @@ const virutalOptions = computed(() => {
     overscan: props.overscan,
     paddingStart: paddingTop.value,
     paddingEnd: paddingBottom.value + 24,
+    ...(props.getItemKey ? { getItemKey: props.getItemKey } : {}),
   }
 })
 

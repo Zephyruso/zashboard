@@ -5,12 +5,12 @@ import { isSingboxBackend } from '@/assembly/backend'
 import { LOG_LEVEL } from '@/constant'
 import type { LogWithSeq } from '@/types'
 import { useStorage } from '@vueuse/core'
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { createLogsAccumulator } from './accumulator'
 import * as clash from './clash'
 import * as singbox from './singbox'
 
-export const logs = ref<LogWithSeq[]>([])
+export const logs = shallowRef<LogWithSeq[]>([])
 export const isPaused = ref(false)
 export const logLevel = useStorage<string>('config/log-level', LOG_LEVEL.Info)
 
