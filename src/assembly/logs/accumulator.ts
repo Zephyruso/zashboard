@@ -6,7 +6,7 @@ import { logRetentionLimit, sourceIPLabelList } from '@/store/settings'
 import { activeBackend } from '@/store/setup'
 import type { Log, LogWithSeq } from '@/types'
 import dayjs from 'dayjs'
-import { throttle } from 'lodash'
+import { throttle } from 'lodash-es'
 import { watch, type Ref } from 'vue'
 
 export interface LogsAccumulator {

@@ -79,6 +79,40 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        // 稳定的 vendor 分层:业务改一行不再让用户重下整个单体 entry。
+        // 只钉共享大件与强隔离件(xterm/grpc 只被各自的懒消费方引用,
+        // 命名 chunk 不会被别的入口拉下来),其余交给 rollup 按使用点自动分。
+        manualChunks(id: string) {
+          if (!id.includes('node_modules')) return undefined
+          if (id.includes('echarts') || id.includes('zrender')) return 'echarts'
+          if (id.includes('@xterm')) return 'xterm'
+          if (id.includes('vue-i18n') || id.includes('@intlify')) return 'i18n'
+          if (id.includes('@bufbuild') || id.includes('@connectrpc')) return 'grpc'
+          if (
+            id.includes('/@vue/') ||
+            id.includes('/vue/') ||
+            id.includes('vue-router') ||
+            id.includes('@vueuse')
+          ) {
+            return 'vue-stack'
+          }
+          if (
+            id.includes('lodash') ||
+            id.includes('axios') ||
+            id.includes('dayjs') ||
+            id.includes('@heroicons') ||
+            id.includes('tailwind-merge')
+          ) {
+            return 'vendor-core'
+          }
+          return undefined
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

@@ -7,7 +7,7 @@ import { NOT_CONNECTED, PROXY_TAB_TYPE, PROXY_TYPE, TEST_URL } from '@/constant'
 import { groupTestUrls, independentLatencyTest, speedtestUrl } from '@/store/settings'
 import type { Proxy, ProxyProvider } from '@/types'
 import { useStorage } from '@vueuse/core'
-import { last } from 'lodash'
+import { last } from 'lodash-es'
 import { computed, ref, shallowRef } from 'vue'
 
 export const proxiesFilter = ref('')
@@ -160,8 +160,17 @@ interface ProxiesBackend {
   allProxiesLatencyTest: () => Promise<unknown>
 }
 
-const load = (): Promise<ProxiesBackend> =>
-  isSingboxBackend.value ? import('./singbox') : import('./clash')
+// 记录本会话是否触达过 sing-box 实现:resetProxies 据此避免无条件 import('./singbox')
+// (clash 用户的启动管线否则会白等一次 singbox chunk 的网络往返,还抵消 gRPC 栈的分包收益)
+let singboxTouched = false
+
+const load = (): Promise<ProxiesBackend> => {
+  if (isSingboxBackend.value) {
+    singboxTouched = true
+    return import('./singbox')
+  }
+  return import('./clash')
+}
 
 export const fetchProxies = async (options?: { maxAge?: number }) =>
   (await load()).fetchProxies(options)
@@ -183,6 +192,9 @@ export const allProxiesLatencyTest = async () => (await load()).allProxiesLatenc
 
 // 后端切换 / 登出时丢弃 sing-box 订阅(clash 无需处理)。
 export const resetProxies = async () => {
+  if (!singboxTouched) {
+    return
+  }
   const m = await import('./singbox')
   m.resetProxies()
 }

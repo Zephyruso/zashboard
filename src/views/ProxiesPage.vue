@@ -47,7 +47,10 @@
 
 <script setup lang="ts">
 import ProxiesCtrl from '@/components/controls/ProxiesCtrl'
-import FolderManagerPanel from '@/components/proxies/folders/FolderManagerPanel.vue'
+// vuedraggable(CJS,还拖着 Vue 模板编译器)只有文件夹管理面板用,异步化移出默认页
+const FolderManagerPanel = defineAsyncComponent(
+  () => import('@/components/proxies/folders/FolderManagerPanel.vue'),
+)
 import FolderTopBar from '@/components/proxies/folders/FolderTopBar.vue'
 import ProxyGroup from '@/components/proxies/ProxyGroup.vue'
 import ProxyGroupForMobile from '@/components/proxies/ProxyGroupForMobile.vue'
@@ -66,7 +69,7 @@ import { proxiesTabShow } from '@/assembly/proxies'
 import { disableProxiesPageTextSelect, twoColumnProxyGroup } from '@/store/settings'
 import { folderManagerOpen, isProxyFolderModeActive } from '@/store/proxyFolders'
 import { useSessionStorage } from '@vueuse/core'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue'
 
 const { padding } = usePaddingForViews({
   offsetTop: 0,

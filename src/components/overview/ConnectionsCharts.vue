@@ -12,7 +12,9 @@ import { connectionsHistory } from '@/store/overview'
 import dayjs from 'dayjs'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import BasicCharts from './BasicCharts.vue'
+import { defineAsyncComponent } from 'vue'
+
+const BasicCharts = defineAsyncComponent(() => import('./BasicCharts.vue'))
 
 const { t } = useI18n()
 const chartsData = computed(() => {

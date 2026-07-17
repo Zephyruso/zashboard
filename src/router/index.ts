@@ -4,13 +4,10 @@ import { renderRoutes } from '@/helper'
 import { i18n } from '@/i18n'
 import { language } from '@/store/settings'
 import { activeBackend } from '@/store/setup'
-import ConnectionsPage from '@/views/ConnectionsPage.vue'
 import HomePage from '@/views/HomePage.vue'
-import LogsPage from '@/views/LogsPage.vue'
-import OverviewPage from '@/views/OverviewPage.vue'
+// 默认路由同步保证首屏;其余页面全部懒加载(原先 8 页只有 Tools 懒,
+// echarts/tanstack/设置组件全被塞进单体 entry)
 import ProxiesPage from '@/views/ProxiesPage.vue'
-import RulesPage from '@/views/RulesPage.vue'
-import SettingsPage from '@/views/SettingsPage.vue'
 import SetupPage from '@/views/SetupPage.vue'
 import { useTitle } from '@vueuse/core'
 import { watch } from 'vue'
@@ -25,22 +22,22 @@ const childrenRouter = [
   {
     path: 'overview',
     name: ROUTE_NAME.overview,
-    component: OverviewPage,
+    component: () => import('@/views/OverviewPage.vue'),
   },
   {
     path: 'connections',
     name: ROUTE_NAME.connections,
-    component: ConnectionsPage,
+    component: () => import('@/views/ConnectionsPage.vue'),
   },
   {
     path: 'logs',
     name: ROUTE_NAME.logs,
-    component: LogsPage,
+    component: () => import('@/views/LogsPage.vue'),
   },
   {
     path: 'rules',
     name: ROUTE_NAME.rules,
-    component: RulesPage,
+    component: () => import('@/views/RulesPage.vue'),
   },
   {
     path: 'tools',
@@ -50,7 +47,7 @@ const childrenRouter = [
   {
     path: 'settings',
     name: ROUTE_NAME.settings,
-    component: SettingsPage,
+    component: () => import('@/views/SettingsPage.vue'),
   },
 ]
 

@@ -77,7 +77,9 @@
 </template>
 
 <script setup lang="ts">
-import MiniSparkline from '@/components/overview/MiniSparkline.vue'
+import { defineAsyncComponent } from 'vue'
+
+const MiniSparkline = defineAsyncComponent(() => import('@/components/overview/MiniSparkline.vue'))
 import { hasSingboxChannel } from '@/assembly/backend'
 import { getToolTipForParams } from '@/helper'
 import { prettyBytesHelper } from '@/helper/utils'

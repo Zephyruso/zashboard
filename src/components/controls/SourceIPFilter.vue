@@ -19,7 +19,7 @@ import { getIPLabelFromMap } from '@/helper/sourceip'
 import { getConnectionSourceIP } from '@/helper'
 import { connections, sourceIPFilter } from '@/store/connections'
 import * as ipaddr from 'ipaddr.js'
-import { isEqual, uniq } from 'lodash'
+import { isEqual, uniq } from 'lodash-es'
 import { computed, ref, watch } from 'vue'
 
 // IP 解析缓存:比较器里每次比较 2 次 isValid + 2 次 parse + 2 次 toByteArray,

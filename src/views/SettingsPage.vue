@@ -125,7 +125,7 @@ import {
   ServerIcon,
 } from '@heroicons/vue/24/outline'
 import { useElementSize } from '@vueuse/core'
-import { throttle } from 'lodash'
+import { throttle } from 'lodash-es'
 import type { Component } from 'vue'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'

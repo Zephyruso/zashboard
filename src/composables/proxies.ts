@@ -11,7 +11,7 @@ import { GLOBAL, PROXY_TAB_TYPE } from '@/constant'
 import { isHiddenGroup } from '@/helper'
 import { groupsInActiveFolder, isProxyFolderModeActive } from '@/store/proxyFolders'
 import { customGlobalNode, displayGlobalByMode, manageHiddenGroup } from '@/store/settings'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { computed, ref } from 'vue'
 import {
   isProxyNodeSearchMode,

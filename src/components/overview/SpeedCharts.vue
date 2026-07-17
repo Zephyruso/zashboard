@@ -14,7 +14,10 @@ import { prettyBytesHelper } from '@/helper/utils'
 import { downloadSpeedHistory, uploadSpeedHistory } from '@/store/overview'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import BasicCharts from './BasicCharts.vue'
+import { defineAsyncComponent } from 'vue'
+
+// echarts 经「侧栏常驻图表」同步链进 entry(573KB raw):组件层异步化才能把它切出去
+const BasicCharts = defineAsyncComponent(() => import('./BasicCharts.vue'))
 
 const chartRef = ref()
 const { t } = useI18n()

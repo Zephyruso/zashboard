@@ -23,7 +23,7 @@ import {
   NoSymbolIcon,
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
-import { first, last } from 'lodash'
+import { first, last } from 'lodash-es'
 import { computed, defineComponent } from 'vue'
 import type { JSX } from 'vue/jsx-runtime'
 import HighlightText from '../common/HighlightText.vue'

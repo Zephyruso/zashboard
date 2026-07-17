@@ -31,13 +31,16 @@
 
 <script setup lang="ts">
 import DialogWrapper from '@/components/common/DialogWrapper.vue'
-import BackendSettings from '@/components/settings/backend/BackendSettings.vue'
+// 常驻侧栏引用的设置弹窗子树 ~19KB,异步化移出 entry
+const BackendSettings = defineAsyncComponent(
+  () => import('@/components/settings/backend/BackendSettings.vue'),
+)
 import { useTooltip } from '@/helper/tooltip'
 import { getLabelFromBackend } from '@/helper/utils'
 import { isSidebarCollapsed } from '@/store/settings'
 import { activeBackend, showBackendSettingsDialog } from '@/store/setup'
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon, ServerIcon } from '@heroicons/vue/24/outline'
-import { computed } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 
 const { showTip } = useTooltip()
 

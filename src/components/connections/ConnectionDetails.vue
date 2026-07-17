@@ -161,7 +161,7 @@ import {
   ServerIcon,
 } from '@heroicons/vue/24/outline'
 import * as ipaddr from 'ipaddr.js'
-import { last } from 'lodash'
+import { last } from 'lodash-es'
 import { twMerge } from 'tailwind-merge'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

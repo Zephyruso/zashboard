@@ -24,7 +24,7 @@ import {
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
 import dayjs from 'dayjs'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CtrlsBar from '../common/CtrlsBar.vue'

@@ -3,7 +3,7 @@ import { createClashWebSocket, disconnectAllClashAPI, disconnectClashByIdAPI } f
 import { proxyMap } from '@/assembly/proxies'
 import { PROXY_TYPE } from '@/constant'
 import type { ClashConnectionRawMessage, Connection } from '@/types'
-import { head } from 'lodash'
+import { head } from 'lodash-es'
 import { shallowRef, watch } from 'vue'
 import {
   createGetConnectionDisplayValue,

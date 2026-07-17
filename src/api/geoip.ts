@@ -1,15 +1,9 @@
 import { IP_INFO_API, LANG } from '@/constant'
 import { geoipASNDatabaseURL, geoipCountryDatabaseURL, IPInfoAPI, language } from '@/store/settings'
 import { watchDebounced } from '@vueuse/core'
-import { Buffer } from 'buffer'
 import * as ipaddr from 'ipaddr.js'
 import type { AsnResponse, CountryResponse, Reader } from 'mmdb-lib'
 import { shallowRef } from 'vue'
-
-// mmdb-lib relies on the global Buffer at module-eval time.
-if (!(globalThis as { Buffer?: unknown }).Buffer) {
-  ;(globalThis as { Buffer?: unknown }).Buffer = Buffer
-}
 
 export interface IPInfo {
   ip: string
@@ -291,6 +285,14 @@ const loadReader = async (url: string): Promise<Reader<GeoIPResponse>> => {
         throw error
       }
     }
+  }
+
+  // Buffer polyfill(26KB)与 mmdb-lib 同段动态加载:本文件被连接访问器静态引用,
+  // 顶层 import 会把它拖进 entry;mmdb-lib 依赖模块求值期的全局 Buffer。
+  const { Buffer } = await import('buffer')
+
+  if (!(globalThis as { Buffer?: unknown }).Buffer) {
+    ;(globalThis as { Buffer?: unknown }).Buffer = Buffer
   }
 
   const { Reader } = await import('mmdb-lib')

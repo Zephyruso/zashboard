@@ -25,7 +25,7 @@ import {
 } from '@/store/settings'
 import { initSmartWeights } from '@/store/smart'
 import type { Proxy } from '@/types'
-import { last } from 'lodash'
+import { last } from 'lodash-es'
 import pLimit from 'p-limit'
 import { isSingBoxCore } from '../version'
 import {

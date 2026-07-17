@@ -4,7 +4,7 @@ import { showNotification } from '@/helper/notification'
 import { applyDashboardSettingsToStorage } from '@/helper/utils'
 import { i18n } from '@/i18n'
 import { useStorage } from '@vueuse/core'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 const IMPORT_SETTINGS_URL_KEY = 'config/import-settings-url'
 
 export const DEFAULT_SETTINGS_URL = './zashboard-settings.json'
