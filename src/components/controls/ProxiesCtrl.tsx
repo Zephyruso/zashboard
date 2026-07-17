@@ -1,5 +1,5 @@
 import { configs, updateConfigs } from '@/assembly/config'
-import { disconnectByIdAPI } from '@/assembly/connections'
+import { disconnectConnections } from '@/assembly/connections'
 import {
   allProxiesLatencyTest,
   fetchProxies,
@@ -94,11 +94,11 @@ export default defineComponent({
       const mode = (e.target as HTMLSelectElement).value
       updateConfigs({ mode })
       if (isSingBoxCore.value && automaticDisconnection.value) {
-        activeConnections.value.forEach((connection) => {
-          if (connection.rule.includes('clash_mode')) {
-            disconnectByIdAPI(connection.id)
-          }
-        })
+        const matching = activeConnections.value.filter((connection) =>
+          connection.rule.includes('clash_mode'),
+        )
+
+        disconnectConnections(matching, activeConnections.value.length)
       }
     }
 

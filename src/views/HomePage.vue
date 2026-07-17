@@ -265,7 +265,8 @@ watch(documentVisible, () => {
   }
   resumeConnections()
   resumeSatistic()
-  fetchProxies()
+  // 回前台补拉走 in-flight 去重 + 新鲜窗口,不再每次全量重下 MB 级代理数据
+  fetchProxies({ maxAge: 5000 })
 })
 
 checkUIUpdate()

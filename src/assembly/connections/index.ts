@@ -3,6 +3,7 @@
 import { isSingboxBackend } from '@/assembly/backend'
 import { CONNECTIONS_TABLE_ACCESSOR_KEY } from '@/constant'
 import type { Connection } from '@/types'
+import pLimit from 'p-limit'
 import type { ConnectionDisplayOptions, ConnectionsSnapshot } from './accessor'
 import * as clash from './clash'
 import * as singbox from './singbox'
@@ -14,6 +15,30 @@ const backend = () => (isSingboxBackend.value ? singbox : clash)
 export const disconnectByIdAPI = (id: string) => backend().disconnectByIdAPI(id)
 
 export const disconnectAllAPI = () => backend().disconnectAllAPI()
+
+const disconnectLimiter = pLimit(12)
+
+// 批量断开的统一入口:匹配集即全量时直接走批量端点;否则并发池限流 ——
+// 逐条无限流的断开(自动断开/禁用规则/关闭全部)一次可瞬发上千请求,
+// 把同源 HTTP/1.1 六并发队列塞死数秒。
+export const disconnectConnections = async (conns: Connection[], totalActive?: number) => {
+  if (!conns.length) {
+    return
+  }
+
+  if (totalActive !== undefined && totalActive > 0 && conns.length === totalActive) {
+    await disconnectAllAPI()
+    return
+  }
+
+  await Promise.allSettled(
+    conns.map((conn) =>
+      disconnectLimiter(async () => {
+        await disconnectByIdAPI(conn.id)
+      }),
+    ),
+  )
+}
 
 export const fetchConnectionsAPI = () => backend().fetchConnectionsAPI()
 

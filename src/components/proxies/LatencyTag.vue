@@ -29,7 +29,7 @@
 import { NOT_CONNECTED } from '@/constant'
 import { getColorForLatency } from '@/helper'
 import { useTooltip } from '@/helper/tooltip'
-import { getHistoryByName, getLatencyByName } from '@/assembly/proxies'
+import { getHistoryByName, getLatencyByName, isBatchLatencyTesting } from '@/assembly/proxies'
 import { BoltIcon } from '@heroicons/vue/24/outline'
 import { CountUp } from 'countup.js'
 import dayjs from 'dayjs'
@@ -40,7 +40,7 @@ const { showTip } = useTooltip()
 const handlerHistoryTip = (e: Event) => {
   const history = getHistoryByName(props.name ?? '', props.groupName)
 
-  if (!history.length) return
+  if (!history?.length) return
 
   const historyList = document.createElement('div')
 
@@ -77,6 +77,11 @@ let countUp: CountUp | null = null
 
 onMounted(() => {
   watch(latency, (value, OldValue) => {
+    // 批量测速潮里几百个并行 CountUp rAF 动画会掉帧:让 Vue 直接更新文本,不起动画
+    if (isBatchLatencyTesting.value) {
+      countUp = null
+      return
+    }
     if (!countUp) {
       nextTick(() => {
         countUp = new CountUp(latencyRef.value, latency.value, {

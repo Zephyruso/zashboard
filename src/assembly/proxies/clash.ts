@@ -7,9 +7,10 @@ import {
   fetchProxyLatencyAPI,
   fetchProxyProviderAPI,
   fetchProxyProviderLatencyAPI,
+  fetchSingleProxyAPI,
   selectProxyAPI,
 } from '@/api/clash'
-import { disconnectByIdAPI } from '@/assembly/connections'
+import { disconnectConnections } from '@/assembly/connections'
 import { GLOBAL, IPV6_TEST_URL, NOT_CONNECTED, PROXY_TYPE, SPEEDTEST_MODE } from '@/constant'
 import { getConnectionChains, isProxyGroup } from '@/helper'
 import { showNotification } from '@/helper/notification'
@@ -28,7 +29,7 @@ import { last } from 'lodash'
 import pLimit from 'p-limit'
 import { isSingBoxCore } from '../version'
 import {
-  getHistoryByName,
+  batchTestingCount,
   getLatencyByName,
   getNowProxyNodeName,
   getTestUrl,
@@ -40,8 +41,49 @@ import {
 } from './index'
 
 let fetchTime = 0
+let lastFetchDoneAt = 0
+let inflightFetch: Promise<void> | null = null
 
-export const fetchProxies = async () => {
+// 单节点/单组的不可变更新:换外层引用触发 shallowRef,未涉及的节点保持引用稳定。
+const setProxyNode = (name: string, node: Proxy) => {
+  proxyMap.value = { ...proxyMap.value, [name]: node }
+}
+
+const setProxyNodeFields = (name: string, fields: Partial<Proxy>) => {
+  const node = proxyMap.value[name]
+
+  if (!node) {
+    return
+  }
+  setProxyNode(name, { ...node, ...fields })
+}
+
+// 按 name diff 合并:内容未变的节点复用旧对象引用,订阅该节点的卡片/LatencyTag
+// 的 computed 求值后得到同一引用,子树更新被 Vue 跳过 —— 这是"任何测速/刷新都
+// 全页几百张卡片重渲染"的根治点。
+const mergeProxyMap = (next: Record<string, Proxy>) => {
+  const prev = proxyMap.value
+  const nextKeys = Object.keys(next)
+  let changed = Object.keys(prev).length !== nextKeys.length
+  const merged: Record<string, Proxy> = {}
+
+  for (const name of nextKeys) {
+    const oldNode = prev[name]
+
+    if (oldNode && JSON.stringify(oldNode) === JSON.stringify(next[name])) {
+      merged[name] = oldNode
+    } else {
+      merged[name] = next[name]
+      changed = true
+    }
+  }
+
+  if (changed) {
+    proxyMap.value = merged
+  }
+}
+
+const doFetchProxies = async () => {
   const nowTime = Date.now()
 
   fetchTime = nowTime
@@ -67,10 +109,31 @@ export const fetchProxies = async () => {
     }
   }
 
-  proxyMap.value = {
+  const next: Record<string, Proxy> = {
     ...allProviderProxies,
     ...proxyData.proxies,
   }
+
+  const smartGroups: string[] = []
+
+  // 图标回填/IPv6/smart 收集都在合并前的新对象上完成,保证 merge 的内容比较有效
+  Object.entries(next).forEach(([name, proxy]) => {
+    const iconReflect = iconReflectList.value.find((icon) => icon.name === name)
+
+    if (iconReflect) {
+      proxy.icon = iconReflect.icon
+    }
+    if (IPv6test.value && getIPv6FromExtra(proxy)) {
+      IPv6Map.value[name] = true
+    }
+
+    if (proxy.type.toLowerCase() === PROXY_TYPE.Smart) {
+      smartGroups.push(name)
+    }
+  })
+
+  mergeProxyMap(next)
+
   proxyGroupList.value = Object.values(proxyData.proxies)
     .filter((proxy) => proxy.all?.length && proxy.name !== GLOBAL)
     .sort((prev, next) => {
@@ -93,46 +156,65 @@ export const fetchProxies = async () => {
 
   proxyProviederList.value = providers
 
-  const smartGroups: string[] = []
-
-  Object.entries(proxyMap.value).forEach(([name, proxy]) => {
-    const iconReflect = iconReflectList.value.find((icon) => icon.name === name)
-
-    if (iconReflect) {
-      proxyMap.value[name].icon = iconReflect.icon
-    }
-    if (IPv6test.value && getIPv6FromExtra(proxy)) {
-      IPv6Map.value[name] = true
-    }
-
-    if (proxy.type.toLowerCase() === PROXY_TYPE.Smart) {
-      smartGroups.push(name)
-    }
-  })
-
   if (smartGroups.length > 0) {
     initSmartWeights(smartGroups)
+  }
+}
+
+// in-flight 去重 + 可选新鲜度窗口:启动双拉、导航重拉、回前台重拉共用同一入口,
+// 不再并发发出多份 MB 级全量请求。
+export const fetchProxies = async (options?: { maxAge?: number }) => {
+  if (inflightFetch) {
+    return inflightFetch
+  }
+  if (options?.maxAge && Date.now() - lastFetchDoneAt < options.maxAge) {
+    return
+  }
+
+  inflightFetch = doFetchProxies().finally(() => {
+    inflightFetch = null
+    lastFetchDoneAt = Date.now()
+  })
+
+  return inflightFetch
+}
+
+// 点选后只刷新该组(GET /proxies/{name},1-2KB):原实现每次点选 fire-and-forget
+// 全量重拉 /proxies + /providers/proxies(千节点 0.5~3MB),且"已选中"分支读的是
+// 重拉前捕获的旧对象引用,判断恒真、重拉结果从未被使用。
+const refreshSingleProxy = async (name: string) => {
+  try {
+    const { data } = await fetchSingleProxyAPI(name)
+    const oldNode = proxyMap.value[name]
+
+    if (!oldNode || JSON.stringify(oldNode) !== JSON.stringify(data)) {
+      setProxyNode(name, data)
+    }
+  } catch {
+    // 忽略,下一次全量刷新自然对齐
   }
 }
 
 export const handlerProxySelect = async (proxyGroupName: string, proxyName: string) => {
   const proxyGroup = proxyMap.value[proxyGroupName]
 
-  if (proxyGroup.type.toLowerCase() === PROXY_TYPE.LoadBalance) return
+  if (!proxyGroup || proxyGroup.type.toLowerCase() === PROXY_TYPE.LoadBalance) return
   if (proxyGroup.now === proxyName) {
-    await fetchProxies()
-    if (proxyGroup.now === proxyName) return
+    await refreshSingleProxy(proxyGroupName)
+    if (proxyMap.value[proxyGroupName]?.now === proxyName) return
   }
 
   await selectProxyAPI(proxyGroupName, proxyName)
-  proxyMap.value[proxyGroupName].now = proxyName
+  setProxyNodeFields(proxyGroupName, { now: proxyName })
 
   if (automaticDisconnection.value) {
-    activeConnections.value
-      .filter((c) => getConnectionChains(c).includes(proxyGroupName))
-      .forEach((c) => disconnectByIdAPI(c.id))
+    const matching = activeConnections.value.filter((c) =>
+      getConnectionChains(c).includes(proxyGroupName),
+    )
+
+    disconnectConnections(matching, activeConnections.value.length)
   }
-  fetchProxies()
+  refreshSingleProxy(proxyGroupName)
 }
 
 const getProviderNameByProxy = (proxyName: string) => {
@@ -206,14 +288,63 @@ export const proxyLatencyTest = async (
   }
 }
 
-const setHistory = (proxyName: string, delay: number) => {
-  const history = getHistoryByName(proxyName)
-  const now = new Date()
+// 测速结果先进非响应式缓冲,200ms 批量 flush 成一次不可变 map 更新:
+// 并发 5 的测速流下,原先每个结果到达都级联全部相关组 O(N) 重算(整轮 O(N²))。
+type PendingLatency = { name: string; url: string; delay: number }
+let pendingLatencies: PendingLatency[] = []
+let latencyFlushTimer: ReturnType<typeof setTimeout> | null = null
 
-  history.push({
-    time: now.toISOString(),
-    delay,
-  })
+const flushLatencies = () => {
+  latencyFlushTimer = null
+  if (!pendingLatencies.length) {
+    return
+  }
+  const batch = pendingLatencies
+
+  pendingLatencies = []
+
+  const next = { ...proxyMap.value }
+  const time = new Date().toISOString()
+  let touched = false
+
+  for (const { name, url, delay } of batch) {
+    const entry = { time, delay }
+
+    if (independentLatencyTest.value && !isSingBoxCore.value) {
+      const node = next[name]
+
+      if (!node) continue
+      const bucket = node.extra?.[url] ?? { history: [], alive: true }
+
+      next[name] = {
+        ...node,
+        extra: {
+          ...(node.extra ?? {}),
+          [url]: { ...bucket, history: [...(bucket.history ?? []), entry] },
+        },
+      }
+      touched = true
+    } else {
+      // 非独立模式与原实现一致:写入链路解析后的终端节点
+      const targetName = getNowProxyNodeName(name)
+      const node = next[targetName]
+
+      if (!node) continue
+      next[targetName] = { ...node, history: [...(node.history ?? []), entry] }
+      touched = true
+    }
+  }
+
+  if (touched) {
+    proxyMap.value = next
+  }
+}
+
+const setHistory = (proxyName: string, delay: number, url: string) => {
+  pendingLatencies.push({ name: proxyName, url, delay })
+  if (!latencyFlushTimer) {
+    latencyFlushTimer = setTimeout(flushLatencies, 200)
+  }
 }
 
 const TIP_KEY = 'testLatencyOneByOneWithTip'
@@ -227,32 +358,37 @@ const testLatencyOneByOneWithTip = async (
   let testDone = 0
   let testFailed = 0
 
-  await Promise.allSettled(
-    nodes.map((name) =>
-      limiter(async () => {
-        const res = await latencyTestForSingle(name, url, Math.min(2000, speedtestTimeout.value))
+  batchTestingCount.value++
+  try {
+    await Promise.allSettled(
+      nodes.map((name) =>
+        limiter(async () => {
+          const res = await latencyTestForSingle(name, url, Math.min(2000, speedtestTimeout.value))
 
-        if (res.status !== 200) {
-          testFailed++
-          setHistory(name, NOT_CONNECTED)
-        } else {
-          setHistory(name, res.data.delay)
-        }
-        testDone++
-        showNotification({
-          content: 'testFinishedTip',
-          key: TIP_KEY + proxyGroupName,
-          params: {
-            name: getNameForNotification(proxyGroupName, url),
-            total: total.toString(),
-            number: testDone.toString(),
-          },
-          type: 'alert-info',
-          timeout: 0,
-        })
-      }),
-    ),
-  )
+          if (res.status !== 200) {
+            testFailed++
+            setHistory(name, NOT_CONNECTED, url)
+          } else {
+            setHistory(name, res.data.delay, url)
+          }
+          testDone++
+          showNotification({
+            content: 'testFinishedTip',
+            key: TIP_KEY + proxyGroupName,
+            params: {
+              name: getNameForNotification(proxyGroupName, url),
+              total: total.toString(),
+              number: testDone.toString(),
+            },
+            type: 'alert-info',
+            timeout: 0,
+          })
+        }),
+      ),
+    )
+  } finally {
+    batchTestingCount.value--
+  }
   showNotification({
     content: 'testFinishedResultTip',
     key: TIP_KEY + proxyGroupName,
@@ -286,25 +422,30 @@ export const proxyGroupLatencyTest = async (proxyGroupName: string) => {
 
   const timeout = Math.max(5000, speedtestTimeout.value)
 
-  if (IPv6test.value) {
-    try {
-      const { data: ipv6LatencyResult } = await fetchProxyGroupLatencyAPI(
-        proxyGroupName,
-        IPV6_TEST_URL,
-        timeout,
-      )
+  batchTestingCount.value++
+  try {
+    if (IPv6test.value) {
+      try {
+        const { data: ipv6LatencyResult } = await fetchProxyGroupLatencyAPI(
+          proxyGroupName,
+          IPV6_TEST_URL,
+          timeout,
+        )
 
-      all?.forEach((name) => {
-        IPv6Map.value[getNowProxyNodeName(name)] = ipv6LatencyResult[name] > NOT_CONNECTED
-      })
-    } catch {
-      all?.forEach((name) => {
-        IPv6Map.value[getNowProxyNodeName(name)] = false
-      })
+        all?.forEach((name) => {
+          IPv6Map.value[getNowProxyNodeName(name)] = ipv6LatencyResult[name] > NOT_CONNECTED
+        })
+      } catch {
+        all?.forEach((name) => {
+          IPv6Map.value[getNowProxyNodeName(name)] = false
+        })
+      }
     }
+    await fetchProxyGroupLatencyAPI(proxyGroupName, url, timeout)
+    await fetchProxies()
+  } finally {
+    batchTestingCount.value--
   }
-  await fetchProxyGroupLatencyAPI(proxyGroupName, url, timeout)
-  await fetchProxies()
 
   const total = all.length
   const testFailed = all.filter(

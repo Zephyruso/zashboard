@@ -101,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { disconnectByIdAPI } from '@/assembly/connections'
+import { disconnectConnections } from '@/assembly/connections'
 import { useBounceOnVisible } from '@/composables/bouncein'
 import { getConnectionRulePayload } from '@/helper'
 import { useTooltip } from '@/helper/tooltip'
@@ -229,7 +229,7 @@ const toggleRuleDisabledHandler = async () => {
       })
 
       if (matchingConnections.length > 0) {
-        matchingConnections.forEach((conn) => disconnectByIdAPI(conn.id))
+        await disconnectConnections(matchingConnections, activeConnections.value.length)
       }
     }
 

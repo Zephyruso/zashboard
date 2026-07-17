@@ -117,7 +117,8 @@ onMounted(() => {
     isProxiesPageMounted.value = true
     nextTick(() => {
       waitTickUntilReady()
-      fetchProxies()
+      // 启动初拉由 HomePage 统一负责;导航进入只在数据超过新鲜窗口时补拉
+      fetchProxies({ maxAge: 5000 })
     })
   })
 })

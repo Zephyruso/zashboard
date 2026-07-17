@@ -130,6 +130,22 @@ const setAlert = (
   return progressBar
 }
 
+// 同 key 更新只改类名与文本:原实现每次重建 innerHTML 并重复挂 mouseenter/mouseleave,
+// 一次组测速会在同一元素上累积上千个监听器。
+const updateAlert = (
+  alert: HTMLElement,
+  content: string,
+  params: Record<string, string>,
+  type: string,
+) => {
+  alert.className = `alert flex p-2 pr-5 relative ${type}`
+  const contentDiv = alert.firstElementChild as HTMLElement | null
+
+  if (contentDiv) {
+    contentDiv.textContent = t(content, params)
+  }
+}
+
 export const showNotification = ({
   content,
   params = {},
@@ -146,11 +162,11 @@ export const showNotification = ({
   const alertKey = key || content
 
   if (alertKey && alertMap.has(alertKey)) {
-    const { alert, timer } = alertMap.get(alertKey)!
-    clearTimeout(timer)
+    const entry = alertMap.get(alertKey)!
 
-    const progressBar = setAlert(alert, content, params, type, alertKey)
-    setTimer(alert, timeout, alertKey, progressBar)
+    clearTimeout(entry.timer)
+    updateAlert(entry.alert, content, params, type)
+    setTimer(entry.alert, timeout, alertKey, entry.progressBar)
     return
   }
 

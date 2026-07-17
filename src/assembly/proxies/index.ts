@@ -8,16 +8,22 @@ import { groupTestUrls, independentLatencyTest, speedtestUrl } from '@/store/set
 import type { Proxy, ProxyProvider } from '@/types'
 import { useStorage } from '@vueuse/core'
 import { last } from 'lodash'
-import { computed, ref } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
 
 export const proxiesFilter = ref('')
 export const proxiesTabShow = ref(PROXY_TAB_TYPE.PROXIES)
 
-export const proxyGroupList = ref<string[]>([])
-export const proxyMap = ref<Record<string, Proxy>>({})
+// 整体替换 + 节点对象不可变的写入模式(见 clash.ts 的 mergeProxyMap/setProxyNode):
+// shallowRef 免去为几百个节点对象建深代理;未变节点保持引用稳定,下游组件不重渲染。
+export const proxyGroupList = shallowRef<string[]>([])
+export const proxyMap = shallowRef<Record<string, Proxy>>({})
 export const IPv6Map = useStorage<Record<string, boolean>>('cache/ipv6-map', {})
 export const hiddenGroupMap = useStorage<Record<string, boolean>>('config/hidden-group-map', {})
-export const proxyProviederList = ref<ProxyProvider[]>([])
+export const proxyProviederList = shallowRef<ProxyProvider[]>([])
+
+// 批量测速进行中的计数(组测速/全量测速)。LatencyTag 据此在测速潮里跳过 CountUp 动画。
+export const batchTestingCount = ref(0)
+export const isBatchLatencyTesting = computed(() => batchTestingCount.value > 0)
 
 export const speedtestUrlWithDefault = computed(() => {
   return speedtestUrl.value || TEST_URL
@@ -50,27 +56,14 @@ export const getLatencyByName = (proxyName: string, groupName?: string) => {
   return getLatencyFromHistory(history)
 }
 
+// 纯读:不再在读路径上补建 extra 结构(那会使写入者 computed 自失效、整组双倍求值;
+// 结构补齐移到了 clash.ts 的测速写路径里)。
 export const getHistoryByName = (proxyName: string, groupName?: string) => {
   if (independentLatencyTest.value && !isSingBoxCore.value) {
     const proxyNode = proxyMap.value[proxyName]
     const url = getTestUrl(groupName)
 
-    if (!proxyNode) {
-      return []
-    }
-
-    if (!proxyNode?.extra) {
-      proxyNode.extra = {}
-    }
-
-    if (!proxyNode.extra?.[url]) {
-      proxyNode.extra[url] = {
-        history: [],
-        alive: true,
-      }
-    }
-
-    return proxyNode?.extra?.[url]?.history
+    return proxyNode?.extra?.[url]?.history ?? []
   }
 
   const nowNode = proxyMap.value[getNowProxyNodeName(proxyName)]
@@ -131,7 +124,7 @@ export const hasSmartGroup = computed(() => {
 // ---------- 按后端路由的组装动作 ----------
 
 interface ProxiesBackend {
-  fetchProxies: () => Promise<unknown>
+  fetchProxies: (options?: { maxAge?: number }) => Promise<unknown>
   handlerProxySelect: (proxyGroupName: string, proxyName: string) => Promise<unknown>
   proxyLatencyTest: (
     proxyName: string,
@@ -146,7 +139,8 @@ interface ProxiesBackend {
 const load = (): Promise<ProxiesBackend> =>
   isSingboxBackend.value ? import('./singbox') : import('./clash')
 
-export const fetchProxies = async () => (await load()).fetchProxies()
+export const fetchProxies = async (options?: { maxAge?: number }) =>
+  (await load()).fetchProxies(options)
 
 export const handlerProxySelect = async (proxyGroupName: string, proxyName: string) =>
   (await load()).handlerProxySelect(proxyGroupName, proxyName)
