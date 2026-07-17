@@ -144,16 +144,23 @@ export const createGetConnectionDisplayValue =
     }
   }
 
-export const createGetConnectionVisibleSearchValues =
-  (accessor: ConnectionAccessor) =>
-  (
+export const createGetConnectionVisibleSearchValues = (accessor: ConnectionAccessor) => {
+  // getDisplayValue 在工厂层建一次、keys 过滤结果按引用缓存 —— 二者原先都在
+  // 每条连接的每次调用里重建,每拍数千次纯浪费。
+  const getDisplayValue = createGetConnectionDisplayValue(accessor)
+  let lastKeys: CONNECTIONS_TABLE_ACCESSOR_KEY[] | null = null
+  let visibleKeys: CONNECTIONS_TABLE_ACCESSOR_KEY[] = []
+
+  return (
     connection: Connection,
     keys: CONNECTIONS_TABLE_ACCESSOR_KEY[],
     options: ConnectionDisplayOptions,
   ) => {
-    const getDisplayValue = createGetConnectionDisplayValue(accessor)
+    if (keys !== lastKeys) {
+      lastKeys = keys
+      visibleKeys = keys.filter((key) => key !== CONNECTIONS_TABLE_ACCESSOR_KEY.Close)
+    }
 
-    return keys
-      .filter((key) => key !== CONNECTIONS_TABLE_ACCESSOR_KEY.Close)
-      .map((key) => getDisplayValue(connection, key, options))
+    return visibleKeys.map((key) => getDisplayValue(connection, key, options))
   }
+}

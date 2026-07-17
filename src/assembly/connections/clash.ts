@@ -4,7 +4,7 @@ import { proxyMap } from '@/assembly/proxies'
 import { PROXY_TYPE } from '@/constant'
 import type { ClashConnectionRawMessage, Connection } from '@/types'
 import { head } from 'lodash'
-import { ref, watch } from 'vue'
+import { shallowRef, watch } from 'vue'
 import {
   createGetConnectionDisplayValue,
   createGetConnectionVisibleSearchValues,
@@ -26,7 +26,7 @@ export const fetchConnectionsAPI = () => {
     memory: number
   }>('connections')
 
-  const data = ref<ConnectionsSnapshot>()
+  const data = shallowRef<ConnectionsSnapshot>()
   let previousMap = new Map<string, Connection>()
 
   const unwatch = watch(ws.data, (raw) => {

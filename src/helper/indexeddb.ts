@@ -13,23 +13,9 @@ const useIndexedDB = (dbKey: string) => {
           db.createObjectStore(dbKey, { keyPath: 'key' })
         }
       }
-      request.onsuccess = () => {
-        const db = request.result
-        const store = db.transaction(dbKey, 'readonly').objectStore(dbKey)
-        const cursorRequest = store.openCursor()
-
-        cursorRequest.onsuccess = (event) => {
-          const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result
-
-          if (cursor) {
-            cacheMap.set(cursor.key as string, cursor.value.value)
-            cursor.continue()
-          } else {
-            resolve(request.result)
-          }
-        }
-        cursorRequest.onerror = () => reject(cursorRequest.error)
-      }
+      // 不做启动即全库预载(多后端历史会常驻数 MB~数十 MB 内存);
+      // get 时按 key 惰性读 + 会话内缓存。
+      request.onsuccess = () => resolve(request.result)
       request.onerror = () => reject(request.error)
     })
 
@@ -62,8 +48,18 @@ const useIndexedDB = (dbKey: string) => {
   }
 
   const get = async (key: string) => {
-    await dbPromise
-    return cacheMap.get(key)
+    if (cacheMap.has(key)) {
+      return cacheMap.get(key)
+    }
+    const row = await executeTransaction<{ key: string; value: string } | undefined>(
+      'readonly',
+      (store) => store.get(key) as IDBRequest<{ key: string; value: string } | undefined>,
+    )
+
+    if (row !== undefined) {
+      cacheMap.set(key, row.value)
+    }
+    return row?.value
   }
 
   const clear = async () => {
@@ -73,8 +69,7 @@ const useIndexedDB = (dbKey: string) => {
   }
 
   const isExists = async (key: string) => {
-    await dbPromise
-    return cacheMap.has(key)
+    return (await get(key)) !== undefined
   }
 
   const del = async (key: string) => {
@@ -84,8 +79,9 @@ const useIndexedDB = (dbKey: string) => {
   }
 
   const getAllKeys = async () => {
-    await dbPromise
-    return Array.from(cacheMap.keys())
+    const keys = await executeTransaction<IDBValidKey[]>('readonly', (store) => store.getAllKeys())
+
+    return keys.map(String)
   }
 
   return {

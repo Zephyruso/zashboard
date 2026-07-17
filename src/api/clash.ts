@@ -11,9 +11,8 @@ import type {
   RuleProvider,
 } from '@/types'
 import axios from 'axios'
-import { debounce } from 'lodash'
 import ReconnectingWebSocket from 'reconnectingwebsocket'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
 export const fetchClashVersion = () => axios.get<{ version: string }>('/version')
 
@@ -213,10 +212,15 @@ export const createClashWebSocket = <T>(url: string, searchParams?: Record<strin
     })
   }
 
-  const data = ref<T>()
+  const data = shallowRef<T>()
   const websocket = new ReconnectingWebSocket(resurl.toString())
 
   const close = () => {
+    // reconnectingwebsocket 在重连退避窗内 close() 只置 forcedClose,pending 的重连
+    // 定时器无句柄不可清,到点仍会重建连接 —— 覆写 onopen 让复活连接立即自杀,
+    // 并摘掉 onmessage 防止死 ref 再被写入。
+    websocket.onmessage = () => {}
+    websocket.onopen = () => websocket.close()
     websocket.close()
   }
 
@@ -224,7 +228,7 @@ export const createClashWebSocket = <T>(url: string, searchParams?: Record<strin
     data.value = JSON.parse(message)
   }
 
-  websocket.onmessage = url === 'logs' ? messageHandler : debounce(messageHandler, 100)
+  websocket.onmessage = messageHandler
 
   return {
     data,
