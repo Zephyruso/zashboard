@@ -6,6 +6,7 @@
     <select
       class="select select-sm w-48"
       v-model="language"
+      @change="() => (locale = language)"
     >
       <option
         v-for="opt in Object.values(LANG)"
@@ -23,7 +24,9 @@ import SettingItem from '@/components/settings/SettingItem.vue'
 import { GENERAL_ITEM_KEYS } from '@/config/settingsItems'
 import { LANG } from '@/constant'
 import { language } from '@/store/settings'
+import { useI18n } from 'vue-i18n'
 
+const { locale } = useI18n()
 const langLabelMap = {
   [LANG.EN_US]: 'English',
   [LANG.ZH_CN]: '简体中文',
