@@ -280,7 +280,7 @@ const en = {
   customTheme: 'Custom theme',
   unavailableProxy: 'Hide unavailable proxies',
   protocolTips:
-    'You are trying to connect to an HTTP backend, but zashboard is provided via HTTPS. This may cause connection errors. Please allow insecure content in your browser settings or use the HTTP version of zashboard, such as http://board.zash.run.place.',
+    'You are trying to connect to an HTTP backend, but Desire is provided via HTTPS. This may cause connection errors. Please allow insecure content in your browser settings or use the HTTP version of Desire, such as http://board.zash.run.place.',
   global: 'Global',
   direct: 'Direct',
   lowLatencyDesc: 'Yellow threshold',
@@ -346,7 +346,7 @@ const en = {
   // Page controls and interaction
   independentLatencyTest: 'Independent latency test',
   independentLatencyTestTip:
-    "When enabled, the latency test will use URLs specified in the configuration file instead of zashboard's URL settings. Latency will be displayed independently based on the URLs set in policy groups.",
+    "When enabled, the latency test will use URLs specified in the configuration file instead of Desire's URL settings. Latency will be displayed independently based on the URLs set in policy groups.",
   search: 'Search',
   searchProxyGroup: 'Search proxy groups',
   searchProxyNode: 'Search proxy nodes',
@@ -432,7 +432,7 @@ const en = {
   flushSmartWeights: 'Clear smart weights',
   IPInfoAPI: 'IP info API',
   IPInfoAPITip:
-    "This API is used to look up global node IP information during IP checks, and for IP geolocation lookups in connection details and zashboard's DNS query feature.",
+    "This API is used to look up global node IP information during IP checks, and for IP geolocation lookups in connection details and Desire's DNS query feature.",
   general: 'General',
   groupProxiesByProvider: 'Group proxies by provider',
   useSmartGroupSort: 'Sort smart groups by usage frequency',
@@ -440,7 +440,7 @@ const en = {
   autoDisconnectIdleUDP: 'Auto-disconnect idle UDP connections',
   autoDisconnectIdleUDPTime: 'UDP idle time',
   autoDisconnectIdleUDPTip:
-    "When enabled, opening zashboard will close UDP connections that have been idle longer than the configured time. This can help with UDP connections that don't disconnect automatically.",
+    "When enabled, opening Desire will close UDP connections that have been idle longer than the configured time. This can help with UDP connections that don't disconnect automatically.",
   customGlobalNode: 'Custom global node',
   connectionTopology: 'Connection topology',
   editBackend: 'Edit backend',
@@ -456,7 +456,7 @@ const en = {
   importFailed: 'Import failed, please check the URL: {url}',
   autoImportFromUrl: 'Auto-import',
   autoImportFromUrlTip:
-    'When enabled, settings will be automatically imported from the URL when opening zashboard. If the hash differs from the last imported hash, settings will be re-imported and the page will be refreshed.',
+    'When enabled, settings will be automatically imported from the URL when opening Desire. If the hash differs from the last imported hash, settings will be re-imported and the page will be refreshed.',
   getting: 'Getting...',
   mmdbSizeTip: 'If you are using MMDB-format GEO files, this number will be 0.',
   displayFinalOutbound: 'Show final outbound node',
@@ -471,7 +471,7 @@ const en = {
   proxyChainExit: 'Proxy chain exit',
   nodeType: 'Node type',
   connectionCount: 'Connection count',
-  zashboardSettings: 'Dashboard settings',
+  DesireSettings: 'Dashboard settings',
   backendSettings: 'Backend settings',
   generalSettings: 'General settings',
   overviewSettings: 'Overview settings',

@@ -220,6 +220,18 @@
   }
 }
 
+/* Desire 品牌字标:意式斜体衬线 + 品牌渐变(与 favicon / logs.beiyingma.com 同源) */
+.desire-wordmark {
+  font-family: Didot, 'Bodoni 72', 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: linear-gradient(105deg, #635bff 0%, #a855f7 48%, #ec4899 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .custom-blur {
   /* 注意:不要把 .btn 加进模糊清单 —— 每个按钮独立成模糊合成层(连接页一屏上百个),
      且按钮叠在已整面模糊的容器上,按元素模糊视觉上纯冗余、GPU 每帧数 ms 白烧 */

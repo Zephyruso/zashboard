@@ -281,7 +281,7 @@ const zhTW: LANG_MESSAGE = {
   customTheme: '自訂主題',
   unavailableProxy: '隱藏不可用節點',
   protocolTips:
-    '您正在嘗試連接一個http後端但zashboard是通過https提供的，這可能會導致連接錯誤，請在瀏覽器設定中允許不安全的內容，或者使用http版本面板例如http://board.zash.run.place',
+    '您正在嘗試連接一個http後端但Desire是通過https提供的，這可能會導致連接錯誤，請在瀏覽器設定中允許不安全的內容，或者使用http版本面板例如http://board.zash.run.place',
   global: '全域',
   direct: '直連',
   lowLatencyDesc: '黃色的閾值',
@@ -431,7 +431,7 @@ const zhTW: LANG_MESSAGE = {
   autoDisconnectIdleUDP: '自動斷開空閒UDP',
   autoDisconnectIdleUDPTime: 'UDP空閒時間',
   autoDisconnectIdleUDPTip:
-    '啟用後，開啟zashboard時將關閉持續時間超過配置分鐘數的UDP連接，這可能對某些無法正常自動斷開的UDP連接帶來幫助。(這是作者自己的私貨，你大概率不需要開啟它)',
+    '啟用後，開啟Desire時將關閉持續時間超過配置分鐘數的UDP連接，這可能對某些無法正常自動斷開的UDP連接帶來幫助。(這是作者自己的私貨，你大概率不需要開啟它)',
   customGlobalNode: '自訂全域節點',
   connectionTopology: '連接拓撲',
   editBackend: '編輯後端',
@@ -447,7 +447,7 @@ const zhTW: LANG_MESSAGE = {
   importFailed: '匯入失敗，請檢查url {url}',
   autoImportFromUrl: '自動匯入',
   autoImportFromUrlTip:
-    '啟用後，每次開啟zashboard時會自動從url設定匯入並計算hash，如果hash與上次匯入的hash不同，則重新匯入並重新整理頁面。',
+    '啟用後，每次開啟Desire時會自動從url設定匯入並計算hash，如果hash與上次匯入的hash不同，則重新匯入並重新整理頁面。',
   getting: '獲取中...',
   mmdbSizeTip: 'mmdb等格式的geo檔案無法統計數量，因此數量為0',
   displayFinalOutbound: '顯示最終出口節點',
@@ -462,7 +462,7 @@ const zhTW: LANG_MESSAGE = {
   proxyChainExit: '代理鏈出口',
   nodeType: '節點類型',
   connectionCount: '連接數',
-  zashboardSettings: '面板設置',
+  DesireSettings: '面板設置',
   backendSettings: '後端設置',
   generalSettings: '常規設置',
   overviewSettings: '概覽設置',

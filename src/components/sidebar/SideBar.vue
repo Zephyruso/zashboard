@@ -7,6 +7,12 @@
   >
     <div :class="twMerge('flex h-full flex-col gap-2', isSidebarCollapsed ? 'w-18 px-0' : 'w-60')">
       <div
+        class="desire-wordmark flex shrink-0 items-center justify-center pt-2 select-none"
+        :class="isSidebarCollapsed ? 'text-xl' : 'text-3xl'"
+      >
+        {{ isSidebarCollapsed ? 'D' : 'Desire' }}
+      </div>
+      <div
         ref="navRef"
         class="relative flex-1"
       >

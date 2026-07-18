@@ -80,8 +80,8 @@ const migrateLegacyConnectionDisplayStyle = () => {
 migrateLegacyConnectionDisplayStyle()
 
 // global
-export const defaultTheme = useStorage<string>('config/default-theme', 'light')
-export const darkTheme = useStorage<string>('config/dark-theme', 'dark')
+export const defaultTheme = useStorage<string>('config/default-theme', 'desire')
+export const darkTheme = useStorage<string>('config/dark-theme', 'desire-dark')
 export const autoTheme = useStorage<boolean>('config/auto-theme', true)
 export const theme = computed(() => {
   if (autoTheme.value && isPreferredDark.value) {
@@ -101,8 +101,8 @@ const replaceLegacyTheme = (theme: string, defaultTheme: string) => {
   return defaultTheme
 }
 
-defaultTheme.value = replaceLegacyTheme(defaultTheme.value, 'light')
-darkTheme.value = replaceLegacyTheme(darkTheme.value, 'dark')
+defaultTheme.value = replaceLegacyTheme(defaultTheme.value, 'desire')
+darkTheme.value = replaceLegacyTheme(darkTheme.value, 'desire-dark')
 
 export const language = useStorage<LANG>(
   'config/language',

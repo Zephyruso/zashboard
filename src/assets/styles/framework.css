@@ -56,6 +56,74 @@
   }
 }
 
+/* Desire 品牌主题:取自 logs.beiyingma.com —— Stripe 系冷灰蓝底 + 墨蓝文字 +
+   靛蓝→紫→粉品牌渐变(#635bff → #a855f7 → #ec4899),白卡浅影,深红作错误色 */
+@plugin 'daisyui/theme' {
+  name: 'desire';
+  color-scheme: light;
+  --color-primary: #635bff;
+  --color-primary-content: #ffffff;
+  --color-secondary: #a855f7;
+  --color-secondary-content: #ffffff;
+  --color-accent: #ec4899;
+  --color-accent-content: #ffffff;
+  --color-neutral: #1a1f36;
+  --color-neutral-content: #f6f9fc;
+  --color-base-100: #ffffff;
+  --color-base-200: #f6f9fc;
+  --color-base-300: #e3e8ee;
+  --color-base-content: #1a1f36;
+  --color-info: #3b82f6;
+  --color-info-content: #ffffff;
+  --color-success: #16a34a;
+  --color-success-content: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-content: #1a1f36;
+  --color-error: #e11d48;
+  --color-error-content: #ffffff;
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@plugin 'daisyui/theme' {
+  name: 'desire-dark';
+  color-scheme: dark;
+  --color-primary: #7a73ff;
+  --color-primary-content: #ffffff;
+  --color-secondary: #b975f9;
+  --color-secondary-content: #ffffff;
+  --color-accent: #f472b6;
+  --color-accent-content: #1a1f36;
+  --color-neutral: #e6e9f2;
+  --color-neutral-content: #151a30;
+  --color-base-100: #1a1f36;
+  --color-base-200: #12162a;
+  --color-base-300: #2c3352;
+  --color-base-content: #e6e9f2;
+  --color-info: #60a5fa;
+  --color-info-content: #0b1020;
+  --color-success: #4ade80;
+  --color-success-content: #0b1020;
+  --color-warning: #fbbf24;
+  --color-warning-content: #1a1f36;
+  --color-error: #fb7185;
+  --color-error-content: #1a1f36;
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
 @plugin 'daisyui/theme' {
   name: 'light-monet';
   --color-primary: var(--primary, oklch(49.12% 0.3096 275.75));

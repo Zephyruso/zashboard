@@ -60,9 +60,9 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: 'zashboard',
-        short_name: 'zashboard',
-        description: 'a dashboard using clash api',
+        name: 'Desire',
+        short_name: 'Desire',
+        description: 'Desire - a clash/mihomo dashboard',
         theme_color: '#000000',
         icons: [
           {

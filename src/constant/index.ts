@@ -228,6 +228,8 @@ export const DETAILED_CARD_STYLE = [
 ]
 
 export const ALL_THEME = [
+  'desire',
+  'desire-dark',
   'light',
   'dark',
   'light-neutral',
