@@ -140,7 +140,9 @@ async function fetchWithLocalCache<T>(url: string, version: string): Promise<T> 
 
 export const fetchIsUIUpdateAvailable = async () => {
   const { tag_name } = await fetchWithLocalCache<{ tag_name: string }>(
-    'https://api.github.com/repos/Zephyruso/zashboard/releases/latest',
+    // 定制版:升级检测指向自己的仓库,面板更新只跟随我们自己发布的 release,
+    // 上游官方发版不会再触发/覆盖(下载源见路由器 mihomo 配置的 external-ui-url)
+    'https://api.github.com/repos/wawnnzxd/zashboard/releases/latest',
     zashboardVersion.value,
   )
 
