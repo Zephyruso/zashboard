@@ -12,14 +12,15 @@
         <a
           href="https://github.com/wawnnzxd/zashboard"
           target="_blank"
-          class="desire-wordmark text-lg font-semibold"
+          class="text-lg font-semibold"
         >
-          Desire
-          <span class="text-sm font-normal opacity-50">
+          <!-- 渐变字标只作用于品牌名;版本号普通无衬线、极小号、低灰度,勉强可见即可 -->
+          <span class="desire-wordmark">Desire</span>
+          <span class="text-base-content/35 ml-1 align-middle font-sans text-[10px] font-normal">
             {{ zashboardVersion }}
             <span
               v-if="commitId"
-              class="text-xs"
+              class="text-[9px]"
             >
               {{ commitId }}
             </span>
