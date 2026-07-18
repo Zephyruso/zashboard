@@ -471,7 +471,7 @@ const en = {
   proxyChainExit: 'Proxy chain exit',
   nodeType: 'Node type',
   connectionCount: 'Connection count',
-  DesireSettings: 'Dashboard settings',
+  zashboardSettings: 'Dashboard settings',
   backendSettings: 'Backend settings',
   generalSettings: 'General settings',
   overviewSettings: 'Overview settings',

@@ -462,7 +462,7 @@ const zhTW: LANG_MESSAGE = {
   proxyChainExit: '代理鏈出口',
   nodeType: '節點類型',
   connectionCount: '連接數',
-  DesireSettings: '面板設置',
+  zashboardSettings: '面板設置',
   backendSettings: '後端設置',
   generalSettings: '常規設置',
   overviewSettings: '概覽設置',

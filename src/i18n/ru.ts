@@ -473,7 +473,7 @@ const ru: LANG_MESSAGE = {
   proxyChainExit: 'Выход из цепочки прокси',
   nodeType: 'Тип узла',
   connectionCount: 'Количество соединений',
-  DesireSettings: 'Настройки панели',
+  zashboardSettings: 'Настройки панели',
   backendSettings: 'Настройки бэкенда',
   generalSettings: 'Общие настройки',
   overviewSettings: 'Настройки обзора',

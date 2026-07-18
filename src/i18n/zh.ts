@@ -462,7 +462,7 @@ const zh: LANG_MESSAGE = {
   proxyChainExit: '代理链出口',
   nodeType: '节点类型',
   connectionCount: '连接数',
-  DesireSettings: '面板设置',
+  zashboardSettings: '面板设置',
   backendSettings: '后端设置',
   generalSettings: '常规设置',
   overviewSettings: '概览设置',
