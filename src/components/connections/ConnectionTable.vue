@@ -263,41 +263,33 @@ import {
   type SortingState,
 } from '@tanstack/vue-table'
 import { useVirtualizer } from '@tanstack/vue-virtual'
-import { debounceFilter, useStorage } from '@vueuse/core'
+import { useStorage } from '@vueuse/core'
+import dayjs from 'dayjs'
 import { twMerge } from 'tailwind-merge'
 import { computed, h, ref, type VNode } from 'vue'
 import { useI18n } from 'vue-i18n'
 import HighlightText from '../common/HighlightText.vue'
 import ProxyName from '../proxies/ProxyName.vue'
 const { handlerInfo } = useConnections()
-const columnWidthMap = useStorage(
-  'config/table-column-width',
-  {
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.Close]: 50,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.Host]: 320,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.Chains]: 320,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.Rule]: 200,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.Download]: 80,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed]: 80,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.Upload]: 80,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed]: 80,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.Outbound]: 80,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.Type]: 150,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.Process]: 150,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.SourceIP]: 150,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.SourcePort]: 100,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.SniffHost]: 200,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.Destination]: 150,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.GeoIP]: 200,
-    [CONNECTIONS_TABLE_ACCESSOR_KEY.ConnectTime]: 100,
-  } as Record<CONNECTIONS_TABLE_ACCESSOR_KEY, number>,
-  localStorage,
-  {
-    // onChange 列宽拖拽的每个 pointermove 都会整对象序列化写 localStorage
-    // 并广播 StorageEvent,写侧防抖断根
-    eventFilter: debounceFilter(300),
-  },
-)
+const columnWidthMap = useStorage('config/table-column-width', {
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.Close]: 50,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.Host]: 320,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.Chains]: 320,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.Rule]: 200,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.Download]: 80,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed]: 80,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.Upload]: 80,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed]: 80,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.Outbound]: 80,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.Type]: 150,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.Process]: 150,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.SourceIP]: 150,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.SourcePort]: 100,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.SniffHost]: 200,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.Destination]: 150,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.GeoIP]: 200,
+  [CONNECTIONS_TABLE_ACCESSOR_KEY.ConnectTime]: 100,
+} as Record<CONNECTIONS_TABLE_ACCESSOR_KEY, number>)
 
 const isManualTable = computed(() => tableWidthMode.value === TABLE_WIDTH_MODE.MANUAL)
 const { t } = useI18n()
@@ -454,11 +446,9 @@ const columns: ColumnDef<Connection>[] = [
     accessorFn: (original) =>
       getTableDisplayValue(original, CONNECTIONS_TABLE_ACCESSOR_KEY.ConnectTime),
     cell: highlightedCell(CONNECTIONS_TABLE_ACCESSOR_KEY.ConnectTime),
-    sortingFn: (prev, next) => {
-      const result = connectStartValue(next.original) - connectStartValue(prev.original)
-
-      return result === 0 ? (prev.original.id < next.original.id ? -1 : 1) : result
-    },
+    sortingFn: (prev, next) =>
+      dayjs(getConnectionStart(next.original)).valueOf() -
+      dayjs(getConnectionStart(prev.original)).valueOf(),
   },
   {
     header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed),
@@ -580,35 +570,6 @@ const columnPinning = useStorage<ColumnPinningState>('config/table-column-pinnin
   right: [],
 })
 
-// clash 的 start 是 ISO 串、sing-box 是数值时间戳;逐比较建 dayjs 太贵,数值化处理
-const connectStartValue = (connection: Connection) => {
-  const start = getConnectionStart(connection)
-
-  if (typeof start === 'number') {
-    return start
-  }
-  const parsed = Date.parse(start)
-
-  return Number.isNaN(parsed) ? 0 : parsed
-}
-
-// tanstack 内部 memo 依赖 state.columnVisibility 的引用稳定性;getter 每次访问造新对象
-// 会打穿 row.getVisibleCells 一族的 memo,提为 computed 让引用只在依赖变化时更新
-const columnVisibility = computed(() => {
-  return {
-    ...Object.fromEntries(Object.values(CONNECTIONS_TABLE_ACCESSOR_KEY).map((key) => [key, false])),
-    ...Object.fromEntries(
-      connectionTableColumns.value
-        .filter(
-          (key) =>
-            key !== CONNECTIONS_TABLE_ACCESSOR_KEY.Close ||
-            connectionTabShow.value !== CONNECTION_TAB_TYPE.CLOSED,
-        )
-        .map((key) => [key, true]),
-    ),
-  }
-})
-
 const tanstackTable = useVueTable({
   get data() {
     return renderConnections.value
@@ -621,7 +582,20 @@ const tanstackTable = useVueTable({
       return connectionTableColumns.value
     },
     get columnVisibility() {
-      return columnVisibility.value
+      return {
+        ...Object.fromEntries(
+          Object.values(CONNECTIONS_TABLE_ACCESSOR_KEY).map((key) => [key, false]),
+        ),
+        ...Object.fromEntries(
+          connectionTableColumns.value
+            .filter(
+              (key) =>
+                key !== CONNECTIONS_TABLE_ACCESSOR_KEY.Close ||
+                connectionTabShow.value !== CONNECTION_TAB_TYPE.CLOSED,
+            )
+            .map((key) => [key, true]),
+        ),
+      }
     },
     get grouping() {
       return grouping.value
@@ -691,7 +665,7 @@ const rowVirtualizerOptions = computed(() => {
     count: rows.value.length,
     getScrollElement: () => parentRef.value,
     estimateSize: () => 36,
-    overscan: 8,
+    overscan: 24,
   }
 })
 

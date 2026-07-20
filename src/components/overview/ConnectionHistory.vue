@@ -195,7 +195,7 @@
 </template>
 
 <script setup lang="ts">
-import { ConnectionHistoryType, clearConnectionHistoryFromIndexedDB } from '@/helper/indexeddb'
+import { ConnectionHistoryType } from '@/helper/indexeddb'
 import { showNotification } from '@/helper/notification'
 import { getIPLabelFromMap } from '@/helper/sourceip'
 import { useTooltip } from '@/helper/tooltip'
@@ -203,7 +203,7 @@ import { prettyBytesHelper } from '@/helper/utils'
 import {
   aggregateConnections,
   aggregatedDataMap,
-  initAggregatedDataMap,
+  clearConnectionHistory,
   mergeAggregatedData,
 } from '@/store/connHistory'
 import { activeConnections } from '@/store/connections'
@@ -222,7 +222,7 @@ import {
   type SortingState,
 } from '@tanstack/vue-table'
 import { useVirtualizer } from '@tanstack/vue-virtual'
-import { refThrottled, useStorage } from '@vueuse/core'
+import { useStorage } from '@vueuse/core'
 import dayjs from 'dayjs'
 import { computed, h, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -251,10 +251,8 @@ const aggregationType = useStorage<ConnectionHistoryType>(
   ConnectionHistoryType.SourceIP,
 )
 const historicalData = computed(() => aggregatedDataMap.value[aggregationType.value])
-// 活跃连接以 3s 节流参与聚合:该表数据秒级抖动无意义,却每拍带动全量聚合+merge+tanstack 重排
-const throttledActiveConnections = refThrottled(activeConnections, 3000)
 const aggregatedData = computed<ConnectionHistoryData[]>(() => {
-  const currentData = aggregateConnections(throttledActiveConnections.value, aggregationType.value)
+  const currentData = aggregateConnections(activeConnections.value, aggregationType.value)
 
   return mergeAggregatedData(historicalData.value, currentData)
 })
@@ -428,8 +426,7 @@ const checkAndPerformAutoCleanup = async () => {
 
   if (timeSinceLastCleanup >= intervalMs) {
     try {
-      await clearConnectionHistoryFromIndexedDB()
-      await initAggregatedDataMap()
+      await clearConnectionHistory()
       startTime.value = now
     } catch (error) {
       console.error('Failed to perform auto cleanup:', error)
@@ -439,8 +436,7 @@ const checkAndPerformAutoCleanup = async () => {
 
 const handleClearHistory = async () => {
   try {
-    await clearConnectionHistoryFromIndexedDB()
-    await initAggregatedDataMap()
+    await clearConnectionHistory()
     startTime.value = Date.now()
     showClearDialog.value = false
     showNotification({

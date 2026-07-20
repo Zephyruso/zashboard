@@ -7,6 +7,7 @@ import {
   getProcessFromConnection,
 } from '@/helper'
 import {
+  clearConnectionHistoryFromIndexedDB,
   ConnectionHistoryType,
   getConnectionHistoryFromIndexedDB,
   saveConnectionHistoryToIndexedDB,
@@ -18,7 +19,7 @@ import { shallowRef } from 'vue'
 import { activeBackend } from './setup'
 
 const uuid = () => activeBackend.value?.uuid || ''
-const allHistoryTypes = [
+const allHistoryTypes: ConnectionHistoryType[] = [
   ConnectionHistoryType.SourceIP,
   ConnectionHistoryType.Destination,
   ConnectionHistoryType.Process,
@@ -26,15 +27,19 @@ const allHistoryTypes = [
   ConnectionHistoryType.ProxyGroup,
 ]
 
+type AggregationMaps = Record<ConnectionHistoryType, Map<string, ConnectionHistoryData>>
+
 // 内存态:每类型一个 Map,关闭连接到达时原地累加。非响应式 —— 原实现每拍对 5 张表
 // 全量克隆 merge + JSON.stringify + IndexedDB 事务,这是常驻 CPU/磁盘的最大项之一。
-const aggMaps = {
+const createAggregationMaps = (): AggregationMaps => ({
   [ConnectionHistoryType.SourceIP]: new Map<string, ConnectionHistoryData>(),
   [ConnectionHistoryType.Destination]: new Map<string, ConnectionHistoryData>(),
   [ConnectionHistoryType.Process]: new Map<string, ConnectionHistoryData>(),
   [ConnectionHistoryType.Outbound]: new Map<string, ConnectionHistoryData>(),
   [ConnectionHistoryType.ProxyGroup]: new Map<string, ConnectionHistoryData>(),
-} as Record<ConnectionHistoryType, Map<string, ConnectionHistoryData>>
+})
+
+let aggMaps = createAggregationMaps()
 
 const emptyView = (): Record<ConnectionHistoryType, ConnectionHistoryData[]> => ({
   [ConnectionHistoryType.SourceIP]: [],
@@ -56,10 +61,37 @@ const TRIM_KEEP = 1500
 
 let ready = false
 let sessionUuid = ''
+let sessionGeneration = 0
 let initEpoch = 0
-let pendingClosed: Connection[] = []
-let dirtySinceFlush = false
+let lastClearEpoch = 0
+let dirty = false
 const dirtyTypes = new Set<ConnectionHistoryType>()
+
+interface InitContext {
+  epoch: number
+  uuid: string
+  pending: Connection[]
+}
+
+let currentContext: InitContext | undefined
+let persistenceQueue: Promise<void> = Promise.resolve()
+
+const enqueuePersistence = <T>(operation: () => Promise<T>) => {
+  const result = persistenceQueue.then(operation)
+
+  persistenceQueue = result.then(
+    () => undefined,
+    () => undefined,
+  )
+  return result
+}
+
+const markAllTypesDirty = () => {
+  dirtyTypes.clear()
+  for (const type of allHistoryTypes) {
+    dirtyTypes.add(type)
+  }
+}
 
 const refreshView = () => {
   if (!dirtyTypes.size) {
@@ -74,11 +106,11 @@ const refreshView = () => {
   aggregatedDataMap.value = next
 }
 
-const trimMap = (type: ConnectionHistoryType) => {
-  const map = aggMaps[type]
+const trimMap = (maps: AggregationMaps, type: ConnectionHistoryType) => {
+  const map = maps[type]
 
   if (map.size <= TRIM_THRESHOLD) {
-    return
+    return false
   }
   const kept = Array.from(map.values())
     .sort((a, b) => b.download - a.download)
@@ -88,28 +120,63 @@ const trimMap = (type: ConnectionHistoryType) => {
   for (const item of kept) {
     map.set(item.key, item)
   }
-  dirtyTypes.add(type)
+  return true
 }
 
-const flushToIDB = async (targetUuid: string) => {
-  if (!targetUuid || !dirtySinceFlush) {
-    return
-  }
-  dirtySinceFlush = false
+const snapshotMaps = (
+  maps: AggregationMaps,
+): Record<ConnectionHistoryType, ConnectionHistoryData[]> =>
+  Object.fromEntries(
+    allHistoryTypes.map((type) => [type, Array.from(maps[type].values(), (item) => ({ ...item }))]),
+  ) as Record<ConnectionHistoryType, ConnectionHistoryData[]>
+
+const saveSnapshot = async (
+  targetUuid: string,
+  snapshot: Record<ConnectionHistoryType, ConnectionHistoryData[]>,
+) => {
+  let success = true
 
   for (const type of allHistoryTypes) {
     try {
-      trimMap(type)
-      await saveConnectionHistoryToIndexedDB(targetUuid, type, Array.from(aggMaps[type].values()))
+      await saveConnectionHistoryToIndexedDB(targetUuid, type, snapshot[type])
     } catch (error) {
+      success = false
       console.error(`Failed to save connection history for ${type}:`, error)
     }
   }
+  return success
 }
 
-const accumulate = (connections: Connection[]) => {
+const flushCurrentSession = () => {
+  if (!sessionUuid || !dirty) {
+    return Promise.resolve()
+  }
+
   for (const type of allHistoryTypes) {
-    const map = aggMaps[type]
+    if (trimMap(aggMaps, type)) {
+      dirtyTypes.add(type)
+    }
+  }
+
+  // 在第一个 await 之前同时捕获 UUID 与全部数据,避免切后端时从共享 Map
+  // 读到新会话的部分状态。对象也要克隆,因为后续累加会原地修改它们。
+  const targetUuid = sessionUuid
+  const targetGeneration = sessionGeneration
+  const snapshot = snapshotMaps(aggMaps)
+
+  dirty = false
+  return enqueuePersistence(async () => {
+    const success = await saveSnapshot(targetUuid, snapshot)
+
+    if (!success && sessionUuid === targetUuid && sessionGeneration === targetGeneration) {
+      dirty = true
+    }
+  })
+}
+
+const accumulateInto = (maps: AggregationMaps, connections: Connection[]) => {
+  for (const type of allHistoryTypes) {
+    const map = maps[type]
 
     for (const item of aggregateConnections(connections, type)) {
       const existing = map.get(item.key)
@@ -122,9 +189,60 @@ const accumulate = (connections: Connection[]) => {
         map.set(item.key, item)
       }
     }
-    dirtyTypes.add(type)
   }
-  dirtySinceFlush = true
+}
+
+const accumulateCurrent = (connections: Connection[]) => {
+  accumulateInto(aggMaps, connections)
+  markAllTypesDirty()
+  dirty = true
+}
+
+const loadHistoryMaps = async (targetUuid: string) => {
+  const maps = createAggregationMaps()
+
+  for (const type of allHistoryTypes) {
+    let data = await getConnectionHistoryFromIndexedDB(targetUuid, type)
+
+    if (data.length > TRIM_THRESHOLD) {
+      data = data.sort((a, b) => b.download - a.download).slice(0, TRIM_KEEP)
+      await saveConnectionHistoryToIndexedDB(targetUuid, type, data)
+    }
+
+    for (const item of data) {
+      maps[type].set(item.key, item)
+    }
+  }
+  return maps
+}
+
+const resetCurrentSession = (targetUuid: string) => {
+  ready = false
+  sessionUuid = targetUuid
+  sessionGeneration++
+  aggMaps = createAggregationMaps()
+  dirty = false
+  viewTick = 0
+  markAllTypesDirty()
+  aggregatedDataMap.value = emptyView()
+}
+
+const settleStaleContext = async (context: InitContext, maps: AggregationMaps) => {
+  if (!context.pending.length || context.epoch < lastClearEpoch) {
+    return
+  }
+
+  const pending = context.pending.splice(0)
+
+  if (currentContext && currentContext !== context && currentContext.uuid === context.uuid) {
+    currentContext.pending.push(...pending)
+    return
+  }
+
+  accumulateInto(maps, pending)
+  const snapshot = snapshotMaps(maps)
+
+  await enqueuePersistence(() => saveSnapshot(context.uuid, snapshot).then(() => undefined))
 }
 
 let viewTick = 0
@@ -135,67 +253,78 @@ setInterval(() => {
   refreshView()
   if (++viewTick >= FLUSH_EVERY_TICKS) {
     viewTick = 0
-    flushToIDB(sessionUuid)
+    flushCurrentSession()
   }
 }, VIEW_REFRESH_MS)
 
 document.addEventListener('visibilitychange', () => {
   if (document.hidden && ready) {
-    flushToIDB(sessionUuid)
+    flushCurrentSession()
   }
 })
 window.addEventListener('pagehide', () => {
   if (ready) {
-    flushToIDB(sessionUuid)
+    flushCurrentSession()
   }
 })
 
 export const initAggregatedDataMap = async () => {
-  const epoch = ++initEpoch
-  const previousUuid = sessionUuid
+  flushCurrentSession()
 
-  ready = false
-  // 旧后端的未落盘增量先写掉(uuid 用旧会话捕获值,避免切换瞬间串库)
-  await flushToIDB(previousUuid)
-  if (epoch !== initEpoch) {
+  const context: InitContext = {
+    epoch: ++initEpoch,
+    uuid: uuid(),
+    pending: [],
+  }
+
+  currentContext = context
+  resetCurrentSession(context.uuid)
+
+  const loadedMaps = await enqueuePersistence(() => loadHistoryMaps(context.uuid))
+
+  if (context.epoch !== initEpoch) {
+    await settleStaleContext(context, loadedMaps)
     return
   }
 
-  pendingClosed = []
-  sessionUuid = uuid()
-  for (const type of allHistoryTypes) {
-    aggMaps[type].clear()
-    dirtyTypes.add(type)
+  aggMaps = loadedMaps
+  ready = true
+  if (context.pending.length) {
+    accumulateCurrent(context.pending.splice(0))
+  }
+  if (currentContext === context) {
+    currentContext = undefined
+  }
+  markAllTypesDirty()
+  refreshView()
+}
+
+export const clearConnectionHistory = async () => {
+  const context: InitContext = {
+    epoch: ++initEpoch,
+    uuid: uuid(),
+    pending: [],
   }
 
-  for (const type of allHistoryTypes) {
-    let data = await getConnectionHistoryFromIndexedDB(sessionUuid, type)
+  lastClearEpoch = context.epoch
+  currentContext = context
+  resetCurrentSession(context.uuid)
 
-    if (epoch !== initEpoch) {
-      return
-    }
+  // 清理与所有已排队的落盘/加载串行:先前的写入最多先完成,随后会被这次 clear
+  // 统一删除,不会在 clear 之后又把旧快照写回。
+  await enqueuePersistence(() => clearConnectionHistoryFromIndexedDB())
 
-    if (data.length > TRIM_THRESHOLD) {
-      data = data.sort((a, b) => b.download - a.download).slice(0, TRIM_KEEP)
-      await saveConnectionHistoryToIndexedDB(sessionUuid, type, data)
-      if (epoch !== initEpoch) {
-        return
-      }
-    }
-
-    const map = aggMaps[type]
-
-    for (const item of data) {
-      map.set(item.key, item)
-    }
+  if (context.epoch !== initEpoch) {
+    await settleStaleContext(context, createAggregationMaps())
+    return
   }
 
   ready = true
-  if (pendingClosed.length) {
-    const buffered = pendingClosed
-
-    pendingClosed = []
-    accumulate(buffered)
+  if (context.pending.length) {
+    accumulateCurrent(context.pending.splice(0))
+  }
+  if (currentContext === context) {
+    currentContext = undefined
   }
   refreshView()
 }
@@ -280,11 +409,15 @@ export const saveConnectionHistory = (newClosedConnections: Connection[]) => {
     return
   }
 
-  if (!ready) {
+  const targetUuid = uuid()
+
+  if (!ready || targetUuid !== sessionUuid) {
     // init 加载期间到达的关闭连接先缓冲,加载完成后统一并入,不丢数据
-    pendingClosed.push(...newClosedConnections)
+    if (currentContext?.uuid === targetUuid) {
+      currentContext.pending.push(...newClosedConnections)
+    }
     return
   }
 
-  accumulate(newClosedConnections)
+  accumulateCurrent(newClosedConnections)
 }

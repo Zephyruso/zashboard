@@ -206,14 +206,13 @@ export const renderConnections = computed(() => {
 
     if (typeof keyA === 'number') {
       result = keyA - (keyB as number)
-    } else if (keyA < (keyB as string)) {
-      result = -1
-    } else if (keyA > (keyB as string)) {
-      result = 1
+    } else {
+      // 保留原 localeCompare 的语义(含大小写/非 ASCII 代理名),只移除比较器内的键构建。
+      result = keyA.localeCompare(keyB as string)
     }
 
     if (result === 0) {
-      result = a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0
+      result = a[1].localeCompare(b[1])
     }
 
     return result

@@ -162,16 +162,15 @@ watch(
 watch(
   activeUuid,
   async () => {
+    await resetProxies()
     if (!activeUuid.value) {
-      // 后端被清空(登出 / 401 / 新增后端)时先关常驻流、再做其余清理,
+      // 后端被清空(登出 / 401 / 新增后端)时关闭常驻流,
       // 否则它们会以无主状态留在 Setup 页继续运行并无限重连。
       stopConnections()
       stopLogs()
       stopSatistic()
-      await resetProxies()
       return
     }
-    await resetProxies()
     rulesTabShow.value = RULE_TAB_TYPE.RULES
     proxiesTabShow.value = PROXY_TAB_TYPE.PROXIES
     fetchConfigs()
