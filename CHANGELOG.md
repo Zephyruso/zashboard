@@ -2,6 +2,24 @@
 
 # Changelog
 
+## [3.16.0](https://github.com/Zephyruso/zashboard/compare/v3.15.0...v3.16.0) (2026-07-22)
+
+
+### Features
+
+* add "don't ask again" option to settings override confirm ([af704c2](https://github.com/Zephyruso/zashboard/commit/af704c211ae611e125c06c2f850a101eafd752f0)), closes [#728](https://github.com/Zephyruso/zashboard/issues/728)
+* align with the upstream sing-box API ([f90e9e7](https://github.com/Zephyruso/zashboard/commit/f90e9e77236af98f7c0d6321f615c83184f1f40f))
+
+
+### Bug Fixes
+
+* stop backend streams when active backend is cleared ([#724](https://github.com/Zephyruso/zashboard/issues/724)) ([6676351](https://github.com/Zephyruso/zashboard/commit/66763518d462326c031561995aed2feb10c09335))
+
+
+### Performance Improvements
+
+* overhaul connections page hot path ([#727](https://github.com/Zephyruso/zashboard/issues/727)) ([d6211f2](https://github.com/Zephyruso/zashboard/commit/d6211f21cf3649909a227963e75bced36d3af9c0))
+
 ## [3.15.0](https://github.com/Zephyruso/zashboard/compare/v3.14.0...v3.15.0) (2026-07-10)
 
 
