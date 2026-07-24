@@ -1,0 +1,1 @@
+import{R as e,n as t,z as n}from"./index-qhvt8-Uk.js";var r=async()=>{t.value=(await e()).data},i=async e=>{await n(e),r()};export{r as fetchConfigs,i as updateConfigs};
