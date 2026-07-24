@@ -1,0 +1,1 @@
+import{a as e,i as t}from"./index-p5U2VQ_f.js";var n=async()=>{e.value=[],t.value=[]};export{n as fetchRules};
