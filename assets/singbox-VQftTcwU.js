@@ -1,0 +1,1 @@
+import{a as e,i as t}from"./index-DgGaghM7.js";var n=async()=>{e.value=[],t.value=[]};export{n as fetchRules};
