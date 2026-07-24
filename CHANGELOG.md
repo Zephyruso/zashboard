@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [3.16.1](https://github.com/Zephyruso/zashboard/compare/v3.16.0...v3.16.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* prevent clear button from submitting the enclosing form ([0fb5daf](https://github.com/Zephyruso/zashboard/commit/0fb5daf369f0c61d0bb41e989b6c8a08904f5e3c)), closes [#591](https://github.com/Zephyruso/zashboard/issues/591)
+
 ## [3.16.0](https://github.com/Zephyruso/zashboard/compare/v3.15.0...v3.16.0) (2026-07-22)
 
 
