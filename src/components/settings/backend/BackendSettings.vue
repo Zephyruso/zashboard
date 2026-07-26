@@ -40,141 +40,77 @@
       </SettingItem>
 
       <template v-if="!isSingboxBackend">
-        <SettingItem
-          :setting-key="k.upgradeCore"
-          :when="canShowCoreActions && !activeBackend?.disableUpgradeCore"
+        <div
+          v-if="canShowCoreActions || hasSmartGroup"
+          class="setting-item grid grid-cols-1 gap-2 px-4 py-3 md:grid-cols-2"
         >
-          <div class="setting-item-label">
-            {{ $t('upgradeCore') }}
-          </div>
           <button
+            v-if="!activeBackend?.disableUpgradeCore"
             class="btn btn-neutral btn-sm"
             @click="showUpgradeCoreModal = true"
           >
-            <ArrowUpCircleIcon class="h-4 w-4" />
-            <span class="ml-1">{{ $t('upgradeCore') }}</span>
+            {{ $t('upgradeCore') }}
           </button>
-        </SettingItem>
-        <SettingItem
-          :setting-key="k.restartCore"
-          :when="canShowCoreActions"
-        >
-          <div class="setting-item-label">
-            {{ $t('restartCore') }}
-          </div>
           <button
+            v-if="canShowCoreActions"
             class="btn btn-sm"
             @click="handlerClickRestartCore"
           >
             <span
               v-if="isCoreRestarting"
-              class="loading loading-spinner h-4 w-4"
+              class="loading loading-spinner loading-md"
             ></span>
-            <ArrowPathRoundedSquareIcon
-              v-else
-              class="h-4 w-4"
-            />
-            <span class="ml-1">{{ $t('restartCore') }}</span>
+            {{ $t('restartCore') }}
           </button>
-        </SettingItem>
-        <SettingItem
-          :setting-key="k.reloadConfigs"
-          :when="canShowCoreActions"
-        >
-          <div class="setting-item-label">
-            {{ $t('reloadConfigs') }}
-          </div>
           <button
+            v-if="canShowCoreActions"
             class="btn btn-sm"
             @click="handlerClickReloadConfigs"
           >
             <span
               v-if="isConfigReloading"
-              class="loading loading-spinner h-4 w-4"
+              class="loading loading-spinner loading-md"
             ></span>
-            <ArrowPathIcon
-              v-else
-              class="h-4 w-4"
-            />
-            <span class="ml-1">{{ $t('reloadConfigs') }}</span>
+            {{ $t('reloadConfigs') }}
           </button>
-        </SettingItem>
-        <SettingItem
-          :setting-key="k.updateConfigs"
-          :when="canShowCoreActions && !isSingBoxCore"
-        >
-          <div class="setting-item-label">
-            {{ $t('updateConfigs') }}
-          </div>
           <button
+            v-if="canShowCoreActions && !isSingBoxCore"
             class="btn btn-sm"
             @click="showUpdateConfigModal = true"
           >
-            <PencilSquareIcon class="h-4 w-4" />
-            <span class="ml-1">{{ $t('updateConfigs') }}</span>
+            {{ $t('updateConfigs') }}
           </button>
-        </SettingItem>
-        <SettingItem
-          :setting-key="k.updateGeoDatabase"
-          :when="canShowCoreActions"
-        >
-          <div class="setting-item-label">
-            {{ $t('updateGeoDatabase') }}
-          </div>
           <button
+            v-if="canShowCoreActions"
             class="btn btn-sm"
             @click="handlerClickUpdateGeo"
           >
             <span
               v-if="isGeoUpdating"
-              class="loading loading-spinner h-4 w-4"
+              class="loading loading-spinner loading-md"
             ></span>
-            <ArrowDownTrayIcon
-              v-else
-              class="h-4 w-4"
-            />
-            <span class="ml-1">{{ $t('updateGeoDatabase') }}</span>
+            {{ $t('updateGeoDatabase') }}
           </button>
-        </SettingItem>
-        <SettingItem :setting-key="k.flushDNSCache">
-          <div class="setting-item-label">
-            {{ $t('flushDNSCache') }}
-          </div>
           <button
             class="btn btn-sm"
             @click="handleFlushDNSCache"
           >
-            <TrashIcon class="h-4 w-4" />
-            <span class="ml-1">{{ $t('flushDNSCache') }}</span>
+            {{ $t('flushDNSCache') }}
           </button>
-        </SettingItem>
-        <SettingItem :setting-key="k.flushFakeIP">
-          <div class="setting-item-label">
-            {{ $t('flushFakeIP') }}
-          </div>
           <button
             class="btn btn-sm"
             @click="handleFlushFakeIP"
           >
-            <TrashIcon class="h-4 w-4" />
-            <span class="ml-1">{{ $t('flushFakeIP') }}</span>
+            {{ $t('flushFakeIP') }}
           </button>
-        </SettingItem>
-        <SettingItem
-          :setting-key="k.flushSmartWeights"
-          :when="hasSmartGroup"
-        >
-          <div class="setting-item-label">
-            {{ $t('flushSmartWeights') }}
-          </div>
           <button
+            v-if="hasSmartGroup"
             class="btn btn-sm"
             @click="handleFlushSmartWeights"
           >
-            <TrashIcon class="h-4 w-4" />
-            <span class="ml-1">{{ $t('flushSmartWeights') }}</span>
+            {{ $t('flushSmartWeights') }}
           </button>
-        </SettingItem>
+        </div>
       </template>
 
       <SettingItem
