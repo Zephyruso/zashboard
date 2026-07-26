@@ -40,30 +40,21 @@
       </SettingItem>
 
       <template v-if="!isSingboxBackend">
-        <SettingItem
-          :setting-key="k.upgradeCore"
-          :when="canShowCoreActions && !activeBackend?.disableUpgradeCore"
+        <div
+          v-if="canShowCoreActions || hasSmartGroup"
+          class="setting-item flex flex-col gap-2 px-4 py-3"
         >
-          <div class="setting-item-label">
-            {{ $t('upgradeCore') }}
-          </div>
           <button
-            class="btn btn-neutral btn-sm"
+            v-if="!activeBackend?.disableUpgradeCore"
+            class="btn btn-neutral btn-sm w-full justify-start"
             @click="showUpgradeCoreModal = true"
           >
             <ArrowUpCircleIcon class="h-4 w-4" />
             <span class="ml-1">{{ $t('upgradeCore') }}</span>
           </button>
-        </SettingItem>
-        <SettingItem
-          :setting-key="k.restartCore"
-          :when="canShowCoreActions"
-        >
-          <div class="setting-item-label">
-            {{ $t('restartCore') }}
-          </div>
           <button
-            class="btn btn-sm"
+            v-if="canShowCoreActions"
+            class="btn btn-sm w-full justify-start"
             @click="handlerClickRestartCore"
           >
             <span
@@ -76,16 +67,9 @@
             />
             <span class="ml-1">{{ $t('restartCore') }}</span>
           </button>
-        </SettingItem>
-        <SettingItem
-          :setting-key="k.reloadConfigs"
-          :when="canShowCoreActions"
-        >
-          <div class="setting-item-label">
-            {{ $t('reloadConfigs') }}
-          </div>
           <button
-            class="btn btn-sm"
+            v-if="canShowCoreActions"
+            class="btn btn-sm w-full justify-start"
             @click="handlerClickReloadConfigs"
           >
             <span
@@ -98,31 +82,17 @@
             />
             <span class="ml-1">{{ $t('reloadConfigs') }}</span>
           </button>
-        </SettingItem>
-        <SettingItem
-          :setting-key="k.updateConfigs"
-          :when="canShowCoreActions && !isSingBoxCore"
-        >
-          <div class="setting-item-label">
-            {{ $t('updateConfigs') }}
-          </div>
           <button
-            class="btn btn-sm"
+            v-if="canShowCoreActions && !isSingBoxCore"
+            class="btn btn-sm w-full justify-start"
             @click="showUpdateConfigModal = true"
           >
             <PencilSquareIcon class="h-4 w-4" />
             <span class="ml-1">{{ $t('updateConfigs') }}</span>
           </button>
-        </SettingItem>
-        <SettingItem
-          :setting-key="k.updateGeoDatabase"
-          :when="canShowCoreActions"
-        >
-          <div class="setting-item-label">
-            {{ $t('updateGeoDatabase') }}
-          </div>
           <button
-            class="btn btn-sm"
+            v-if="canShowCoreActions"
+            class="btn btn-sm w-full justify-start"
             @click="handlerClickUpdateGeo"
           >
             <span
@@ -135,46 +105,29 @@
             />
             <span class="ml-1">{{ $t('updateGeoDatabase') }}</span>
           </button>
-        </SettingItem>
-        <SettingItem :setting-key="k.flushDNSCache">
-          <div class="setting-item-label">
-            {{ $t('flushDNSCache') }}
-          </div>
           <button
-            class="btn btn-sm"
+            class="btn btn-sm w-full justify-start"
             @click="handleFlushDNSCache"
           >
             <TrashIcon class="h-4 w-4" />
             <span class="ml-1">{{ $t('flushDNSCache') }}</span>
           </button>
-        </SettingItem>
-        <SettingItem :setting-key="k.flushFakeIP">
-          <div class="setting-item-label">
-            {{ $t('flushFakeIP') }}
-          </div>
           <button
-            class="btn btn-sm"
+            class="btn btn-sm w-full justify-start"
             @click="handleFlushFakeIP"
           >
             <TrashIcon class="h-4 w-4" />
             <span class="ml-1">{{ $t('flushFakeIP') }}</span>
           </button>
-        </SettingItem>
-        <SettingItem
-          :setting-key="k.flushSmartWeights"
-          :when="hasSmartGroup"
-        >
-          <div class="setting-item-label">
-            {{ $t('flushSmartWeights') }}
-          </div>
           <button
-            class="btn btn-sm"
+            v-if="hasSmartGroup"
+            class="btn btn-sm w-full justify-start"
             @click="handleFlushSmartWeights"
           >
             <TrashIcon class="h-4 w-4" />
             <span class="ml-1">{{ $t('flushSmartWeights') }}</span>
           </button>
-        </SettingItem>
+        </div>
       </template>
 
       <SettingItem
