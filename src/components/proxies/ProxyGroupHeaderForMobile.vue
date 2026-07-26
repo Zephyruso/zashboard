@@ -1,16 +1,18 @@
 <template>
   <div class="relative flex h-18 shrink-0 flex-col justify-between">
     <div
-      class="text-md truncate"
+      class="text-md truncate font-medium"
       :class="proxyGroup.icon && 'pr-10'"
     >
       {{ proxyGroup.name }}
     </div>
     <div
-      class="text-base-content/60 flex min-w-0 items-center gap-2 truncate text-xs"
+      class="text-base-content/40 flex min-w-0 items-center gap-2 truncate text-[11px]"
       :class="proxyGroup.icon && 'pr-12'"
     >
-      <span class="shrink-0 whitespace-nowrap">{{ proxyGroup.type }} · {{ proxiesCount }}</span>
+      <span class="shrink-0 font-medium tracking-wider whitespace-nowrap uppercase tabular-nums">
+        {{ proxyGroup.type }} · {{ proxiesCount }}
+      </span>
       <ProxyGroupFilter
         v-if="displayContent"
         :group-name="name"
@@ -18,27 +20,25 @@
     </div>
     <div class="flex items-center">
       <div class="flex flex-1 items-center gap-1 truncate">
-        <button
+        <VisibilityToggle
           v-if="manageHiddenGroup"
-          class="btn btn-circle btn-xs z-10"
-          @click.stop="handlerGroupToggle"
-        >
-          <EyeIcon
-            v-if="!hiddenGroup"
-            class="h-3 w-3"
-          />
-          <EyeSlashIcon
-            v-else
-            class="h-3 w-3"
-          />
-        </button>
+          :hidden="hiddenGroup"
+          class="z-10"
+          @toggle="handlerGroupToggle"
+        />
         <ProxyGroupNow
           :name="proxyGroup.name"
           :mobile="true"
         />
       </div>
+      <div
+        v-if="!twoColumnProxyGroup || displayContent"
+        class="text-base-content/40 mr-2 min-w-12 shrink-0 text-right text-xs tabular-nums"
+      >
+        {{ prettyBytesHelper(downloadTotal) }}/s
+      </div>
       <LatencyTag
-        :class="twMerge('bg-base-200/50 hover:bg-base-200 z-10')"
+        :class="twMerge('bg-base-200/40 hover:bg-base-200/70 z-10')"
         :loading="isLatencyTesting"
         :name="proxyGroup.now"
         :group-name="proxyGroup.name"
@@ -57,11 +57,14 @@
 
 <script setup lang="ts">
 import { isHiddenGroup } from '@/helper'
-import { hiddenGroupMap, proxyMap } from '@/store/proxies'
-import { manageHiddenGroup } from '@/store/settings'
-import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+import { hiddenGroupMap, proxyMap } from '@/assembly/proxies'
+import { prettyBytesHelper } from '@/helper/utils'
+import { getConnectionChains } from '@/helper'
+import { activeConnections } from '@/store/connections'
+import { manageHiddenGroup, twoColumnProxyGroup } from '@/store/settings'
 import { twMerge } from 'tailwind-merge'
 import { computed } from 'vue'
+import VisibilityToggle from '../common/VisibilityToggle.vue'
 import LatencyTag from './LatencyTag.vue'
 import ProxyGroupFilter from './ProxyGroupFilter.vue'
 import ProxyGroupNow from './ProxyGroupNow.vue'
@@ -80,8 +83,14 @@ const emit = defineEmits<{
 
 const proxyGroup = computed(() => proxyMap.value[props.name])
 
+const downloadTotal = computed(() => {
+  return activeConnections.value
+    .filter((conn) => getConnectionChains(conn).includes(props.name))
+    .reduce((total, conn) => total + conn.downloadSpeed, 0)
+})
+
 const hiddenGroup = computed({
-  get: () => isHiddenGroup(props.name),
+  get: () => Boolean(isHiddenGroup(props.name)),
   set: (value: boolean) => {
     hiddenGroupMap.value[props.name] = value
   },

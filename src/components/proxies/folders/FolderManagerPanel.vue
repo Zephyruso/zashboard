@@ -2,7 +2,7 @@
   <!-- PC: inline slide-out aside -->
   <aside
     v-if="!isMiddleScreen"
-    class="bg-base-100 m-3 flex flex-col overflow-hidden rounded-xl"
+    class="bg-base-100 need-blur m-3 flex flex-col overflow-hidden rounded-xl"
     :class="folderManagerOpen ? 'w-80' : 'w-0'"
   >
     <FolderManagerContent v-if="folderManagerOpen" />

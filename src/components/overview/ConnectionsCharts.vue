@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { connectionsHistory, timeSaved } from '@/store/overview'
+import { connectionsHistory } from '@/store/overview'
 import dayjs from 'dayjs'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -31,14 +31,14 @@ const tooltipFormatter = (value: ToolTipParams[]) => {
   return value
     .map((item) => {
       // fake data
-      if (item.data.name < timeSaved + 1) {
+      if (item.data.init) {
         return
       }
       return `
     <div class="flex items-center my-2 gap-1">
       <div class="w-4 h-4 rounded-full" style="background-color: ${item.color}"></div>
       ${item.seriesName}
-      (${dayjs(item.data.name).format('HH:mm:ss')}): ${item.data.value}
+      (${dayjs(item.data.name).format('HH:mm:ss')}): ${item.data.value[1]}
     </div>`
     })
     .join('\n')

@@ -29,7 +29,7 @@
 import { NOT_CONNECTED } from '@/constant'
 import { getColorForLatency } from '@/helper'
 import { useTooltip } from '@/helper/tooltip'
-import { getHistoryByName, getLatencyByName } from '@/store/proxies'
+import { getHistoryByName, getLatencyByName } from '@/assembly/proxies'
 import { BoltIcon } from '@heroicons/vue/24/outline'
 import { CountUp } from 'countup.js'
 import dayjs from 'dayjs'

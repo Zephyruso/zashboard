@@ -3,7 +3,11 @@
     class="btn btn-sm"
     @click="dashboardSettingsDialogShow = true"
   >
-    {{ $t('dashboardSettings') }}
+    <Cog6ToothIcon
+      v-if="iconOnly"
+      class="h-4 w-4"
+    />
+    <template v-else>{{ $t('dashboardSettings') }}</template>
   </button>
   <DialogWrapper
     v-model="dashboardSettingsDialogShow"
@@ -31,7 +35,7 @@
             :disabled="isStorageSubmitting"
             @click="handlerClickUploadSettings"
           >
-            {{ $t('uploadSettings') }}
+            <ArrowUpTrayIcon class="h-4 w-4" />
           </button>
         </div>
         <div class="setting-item">
@@ -43,7 +47,7 @@
             :disabled="isStorageSubmitting"
             @click="handlerClickSyncSettings"
           >
-            {{ $t('syncSettings') }}
+            <ArrowPathIcon class="h-4 w-4" />
           </button>
         </div>
         <div class="setting-item">
@@ -57,7 +61,7 @@
             :disabled="isStorageSubmitting"
             @click="handlerClickDeleteUploadedSettings"
           >
-            {{ $t('delete') }}
+            <TrashIcon class="h-4 w-4" />
           </button>
         </div>
         <div class="setting-item">
@@ -68,6 +72,21 @@
             v-model="autoSyncSettings"
             type="checkbox"
             class="toggle"
+          />
+        </div>
+        <div
+          v-if="autoSyncSettings || skipSyncSettingsConfirm"
+          class="setting-item"
+        >
+          <div class="setting-item-label">
+            {{ $t('confirmBeforeOverride') }}
+          </div>
+          <input
+            v-model="skipSyncSettingsConfirm"
+            type="checkbox"
+            class="toggle"
+            :true-value="false"
+            :false-value="true"
           />
         </div>
       </div>
@@ -85,7 +104,6 @@
           class="btn btn-sm"
           @click="exportSettings"
         >
-          {{ $t('exportSettings') }}
           <ArrowDownCircleIcon class="h-4 w-4" />
         </button>
       </div>
@@ -97,7 +115,6 @@
           class="btn btn-sm"
           @click="importSettingsFromFile"
         >
-          {{ $t('importFromFile') }}
           <ArrowUpCircleIcon class="h-4 w-4" />
         </button>
       </div>
@@ -160,6 +177,21 @@
           class="toggle"
         />
       </div>
+      <div
+        v-if="autoImportSettings || skipImportSettingsConfirm"
+        class="setting-item"
+      >
+        <div class="setting-item-label">
+          {{ $t('confirmBeforeOverride') }}
+        </div>
+        <input
+          v-model="skipImportSettingsConfirm"
+          type="checkbox"
+          class="toggle"
+          :true-value="false"
+          :false-value="true"
+        />
+      </div>
     </div>
     <input
       ref="inputRef"
@@ -172,13 +204,16 @@
 </template>
 
 <script setup lang="ts">
-import { deleteStorageAPI, isSingBox, setStorageAPI } from '@/api'
+import { deleteStorageAPI, setStorageAPI } from '@/assembly/storage'
+import { isSingBoxCore } from '@/assembly/version'
 import {
   autoImportSettings,
   autoSyncSettings,
   DEFAULT_SETTINGS_URL,
   importSettingsFromUrl,
   importSettingsUrl,
+  skipImportSettingsConfirm,
+  skipSyncSettingsConfirm,
   syncSettingsFromCore,
 } from '@/helper/autoImportSettings'
 import { LOCAL_IMAGE } from '@/helper/indexeddb'
@@ -194,8 +229,12 @@ import { customBackgroundURL, displayAllFeatures } from '@/store/settings'
 import {
   ArrowDownCircleIcon,
   ArrowDownTrayIcon,
+  ArrowPathIcon,
   ArrowUpCircleIcon,
+  ArrowUpTrayIcon,
+  Cog6ToothIcon,
   QuestionMarkCircleIcon,
+  TrashIcon,
 } from '@heroicons/vue/24/outline'
 import { twMerge } from 'tailwind-merge'
 import { computed, ref, watch } from 'vue'
@@ -203,10 +242,18 @@ import { useI18n } from 'vue-i18n'
 import DialogWrapper from './DialogWrapper.vue'
 import TextInput from './TextInput.vue'
 
+withDefaults(
+  defineProps<{
+    /** 仅显示图标的触发按钮，用于左侧已有文字标签的设置行 */
+    iconOnly?: boolean
+  }>(),
+  { iconOnly: false },
+)
+
 const inputRef = ref<HTMLInputElement>()
 const dashboardSettingsDialogShow = ref(false)
 const isStorageSubmitting = ref(false)
-const showSyncSettings = computed(() => !isSingBox.value || displayAllFeatures.value)
+const showSyncSettings = computed(() => !isSingBoxCore.value || displayAllFeatures.value)
 
 const { showTip } = useTooltip()
 const { t } = useI18n()
@@ -237,7 +284,7 @@ const importSettingsFromFile = () => {
 }
 const importSettingsFromUrlHandler = async () => {
   dashboardSettingsDialogShow.value = false
-  await importSettingsFromUrl(true)
+  await importSettingsFromUrl({ force: true })
 }
 
 const handlerClickUploadSettings = async () => {

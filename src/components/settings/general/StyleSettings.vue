@@ -4,10 +4,7 @@
       {{ $t('appearance') }}
     </div>
     <div class="settings-grid">
-      <div
-        v-if="isVisibleAutoSwitchTheme"
-        class="setting-item"
-      >
+      <SettingItem :setting-key="k.autoSwitchTheme">
         <div class="setting-item-label">
           {{ $t('autoSwitchTheme') }}
         </div>
@@ -16,11 +13,8 @@
           v-model="autoTheme"
           class="toggle"
         />
-      </div>
-      <div
-        v-if="isVisibleDefaultTheme"
-        class="setting-item"
-      >
+      </SettingItem>
+      <SettingItem :setting-key="k.defaultTheme">
         <div class="setting-item-label">
           {{ $t('defaultTheme') }}
         </div>
@@ -37,21 +31,18 @@
           </button>
         </div>
         <CustomTheme v-model:value="customThemeModal" />
-      </div>
-      <div
-        v-if="autoTheme && isVisibleDarkTheme"
-        class="setting-item"
+      </SettingItem>
+      <SettingItem
+        :setting-key="k.darkTheme"
+        :when="autoTheme"
       >
         <div class="setting-item-label">
           {{ $t('darkTheme') }}
         </div>
         <ThemeSelector v-model:value="darkTheme" />
-      </div>
+      </SettingItem>
       <BackgroundSettings />
-      <div
-        v-if="isVisibleFonts"
-        class="setting-item"
-      >
+      <SettingItem :setting-key="k.fonts">
         <div class="setting-item-label">
           {{ $t('fonts') }}
         </div>
@@ -67,11 +58,8 @@
             {{ opt }}
           </option>
         </select>
-      </div>
-      <div
-        v-if="isVisibleEmoji"
-        class="setting-item"
-      >
+      </SettingItem>
+      <SettingItem :setting-key="k.emoji">
         <div class="setting-item-label">Emoji</div>
         <select
           class="select select-sm w-48"
@@ -85,12 +73,13 @@
             {{ opt }}
           </option>
         </select>
-      </div>
+      </SettingItem>
     </div>
   </template>
 </template>
 
 <script setup lang="ts">
+import SettingItem from '@/components/settings/SettingItem.vue'
 import { useIsSettingVisible } from '@/composables/settings'
 import { GENERAL_ITEM_KEYS } from '@/config/settingsItems'
 import { EMOJIS, FONTS } from '@/constant'

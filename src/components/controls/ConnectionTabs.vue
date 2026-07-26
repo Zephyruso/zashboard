@@ -1,22 +1,17 @@
 <template>
-  <div class="tabs-box tabs tabs-xs">
-    <a
-      v-for="tab in Object.values(CONNECTION_TAB_TYPE)"
-      :key="tab"
-      role="tab"
-      :class="twMerge('tab', connectionTabShow === tab && 'tab-active', !horizental && 'flex-1')"
-      @click="() => (connectionTabShow = tab)"
-      >{{ $t(tab) }}
-      <template v-if="connectionTabShow === tab"> ({{ connectionsCount }}) </template>
-    </a>
-  </div>
+  <SegmentedControl
+    v-model="connectionTabShow"
+    :options="tabOptions"
+    :block="!horizental"
+  />
 </template>
 
 <script setup lang="ts">
 import { CONNECTION_TAB_TYPE } from '@/constant'
 import { connections, connectionTabShow, renderConnections } from '@/store/connections'
-import { twMerge } from 'tailwind-merge'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import SegmentedControl from '../common/SegmentedControl.vue'
 
 defineProps({
   horizental: {
@@ -24,6 +19,8 @@ defineProps({
     default: true,
   },
 })
+
+const { t } = useI18n()
 const connectionsCount = computed(() => {
   if (renderConnections.value.length !== connections.value.length) {
     return `${renderConnections.value.length} / ${connections.value.length}`
@@ -31,4 +28,12 @@ const connectionsCount = computed(() => {
 
   return connections.value.length
 })
+
+const tabOptions = computed(() =>
+  Object.values(CONNECTION_TAB_TYPE).map((tab) => ({
+    value: tab,
+    label: t(tab),
+    count: connectionTabShow.value === tab ? connectionsCount.value : undefined,
+  })),
+)
 </script>

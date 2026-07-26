@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import HighlightText from '@/components/common/HighlightText.vue'
-import { proxyMap } from '@/store/proxies'
+import { proxyMap } from '@/assembly/proxies'
 import { computed } from 'vue'
 import ProxyIcon from './ProxyIcon.vue'
 

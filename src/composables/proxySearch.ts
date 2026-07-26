@@ -1,6 +1,6 @@
+import { proxiesFilter, proxiesTabShow, proxyMap, proxyProviederList } from '@/assembly/proxies'
 import { PROXY_SEARCH_MODE, PROXY_TAB_TYPE } from '@/constant'
 import { toSearchRegex } from '@/helper/search'
-import { proxiesFilter, proxiesTabShow, proxyMap, proxyProviederList } from '@/store/proxies'
 import { proxyProviderSearchMode, proxySearchMode } from '@/store/settings'
 import { computed } from 'vue'
 

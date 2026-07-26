@@ -147,6 +147,7 @@ export enum ConnectionHistoryType {
   Destination = 'destination',
   Process = 'process',
   Outbound = 'outbound',
+  ProxyGroup = 'proxyGroup',
 }
 
 const connectionHistoryDB = useIndexedDB('connection-history')

@@ -23,12 +23,7 @@
         class="text-base-content/50 max-w-48 shrink-0 truncate text-xs"
         @mouseenter="checkTruncation"
       >
-        {{
-          backendList
-            .filter((b) => sourceIPLabel.scope?.includes(b.uuid))
-            .map(getLabelFromBackend)
-            .join(', ')
-        }}
+        {{ scopedBackendList.map(getLabelFromBackend).join(', ') }}
       </span>
       <div
         v-if="backendList.length > 1"
@@ -51,6 +46,7 @@
 <script setup lang="ts">
 import { checkTruncation, useTooltip } from '@/helper/tooltip'
 import { getLabelFromBackend } from '@/helper/utils'
+import { getConnectionSourceIP } from '@/helper'
 import { connections } from '@/store/connections'
 import { sourceIPLabelList } from '@/store/settings'
 import { backendList } from '@/store/setup'
@@ -67,10 +63,13 @@ const sourceIPLabel = defineModel<Partial<SourceIPLabel>>({
   },
 })
 const sourceList = computed(() => {
-  return uniq(connections.value.map((conn) => conn.metadata.sourceIP))
+  return uniq(connections.value.map(getConnectionSourceIP))
     .filter(Boolean)
     .filter((ip) => !sourceIPLabelList.value.find((item) => item.key === ip))
     .sort()
+})
+const scopedBackendList = computed(() => {
+  return backendList.value.filter((backend) => sourceIPLabel.value.scope?.includes(backend.uuid))
 })
 
 const getScopeValueFromSouceIPByBackendID = (
@@ -85,11 +84,27 @@ const setScopeValueFromSouceIPByBackendID = (
   sourceIP: Partial<SourceIPLabel>,
   value: boolean,
 ) => {
+  const backendUuids = new Set(backendList.value.map((backend) => backend.uuid))
+  const scope = sourceIP.scope?.filter(
+    (item, index, scope) => backendUuids.has(item) && scope.indexOf(item) === index,
+  )
+
+  if (scope?.length) {
+    sourceIP.scope = scope
+  } else {
+    delete sourceIP.scope
+  }
+
   if (value) {
+    if (!backendUuids.has(backendID)) {
+      return
+    }
     if (!sourceIP.scope) {
       sourceIP.scope = []
     }
-    sourceIP.scope?.push(backendID)
+    if (!sourceIP.scope.includes(backendID)) {
+      sourceIP.scope.push(backendID)
+    }
   } else {
     sourceIP.scope = sourceIP.scope?.filter((item) => item !== backendID)
     if (!sourceIP.scope?.length) {
@@ -99,9 +114,7 @@ const setScopeValueFromSouceIPByBackendID = (
 }
 
 const isLocked = computed(() => {
-  return (
-    sourceIPLabel.value.scope?.length && sourceIPLabel.value.scope.length < backendList.value.length
-  )
+  return scopedBackendList.value.length && scopedBackendList.value.length < backendList.value.length
 })
 
 const { showTip } = useTooltip()

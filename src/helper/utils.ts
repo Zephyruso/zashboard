@@ -1,5 +1,5 @@
 import { MIN_PROXY_CARD_WIDTH, PROXY_CARD_SIZE } from '@/constant'
-import type { Backend } from '@/types'
+import type { Backend, BackendType } from '@/types'
 import { useMediaQuery } from '@vueuse/core'
 import dayjs from 'dayjs'
 import prettyBytes, { type Options } from 'pretty-bytes'
@@ -17,7 +17,7 @@ export const prettyBytesHelper = (bytes: number, opts?: Options) => {
   })
 }
 
-export const fromNow = (timestamp: string) => {
+export const fromNow = (timestamp: string | number) => {
   return dayjs(timestamp).fromNow()
 }
 
@@ -61,12 +61,28 @@ export const resetSettings = () => {
   window.location.reload()
 }
 
-export const getUrlFromBackend = (end: Omit<Backend, 'uuid'>) => {
+export const getUrlFromBackend = (end: {
+  protocol: string
+  host: string
+  port: string
+  secondaryPath?: string
+}) => {
   return `${end.protocol}://${end.host}:${end.port}${end.secondaryPath || ''}`
 }
 
+// sing-box native 后端复用顶层连接字段作为 gRPC baseUrl(secondaryPath 留空)。
+export const getSingboxUrlFromBackend = (
+  end: Pick<Backend, 'type' | 'protocol' | 'host' | 'port'>,
+) => {
+  if (end.type !== 'singbox' || !end.host) return ''
+  return `${end.protocol}://${end.host}:${end.port}`
+}
+
+export const getSingboxSecret = (end: Pick<Backend, 'type' | 'password'>) =>
+  end.type === 'singbox' ? end.password || '' : ''
+
 export const getLabelFromBackend = (end: Omit<Backend, 'uuid'>) => {
-  return end.label || getUrlFromBackend(end)
+  return end.label || `${end.host}:${end.port}`
 }
 
 export const getMinCardWidth = (size: PROXY_CARD_SIZE) => {
@@ -110,31 +126,6 @@ export const findScrollableParent = (el: HTMLElement | null): HTMLElement | null
   return parent ? findScrollableParent(parent) : null
 }
 
-export const PROXIES_PAGE = 'proxies-scrollable-page'
-
-export const scrollToGroup = (groupName: string) => {
-  const el = document.querySelector(`[data-group-name="${groupName}"]`) as HTMLElement | null
-
-  if (!el) return
-  el.classList.remove('highlight-flash')
-  el.classList.add('highlight-flash')
-  el.addEventListener('animationend', () => el.classList.remove('highlight-flash'), { once: true })
-
-  const scrollableParent = document.getElementById(PROXIES_PAGE)
-
-  if (!scrollableParent) return
-
-  const parentRect = scrollableParent.getBoundingClientRect()
-  const elRect = el.getBoundingClientRect()
-  const offset = elRect.top - parentRect.top + scrollableParent.scrollTop
-  const centerOffset = offset - scrollableParent.clientHeight / 2 + el.clientHeight / 2
-
-  scrollableParent.scrollTo({
-    top: centerOffset,
-    behavior: 'smooth',
-  })
-}
-
 export const getBackendFromUrl = () => {
   const query = new URLSearchParams(
     window.location.search || location.hash.match(/\?.*$/)?.[0]?.replace('?', ''),
@@ -142,6 +133,8 @@ export const getBackendFromUrl = () => {
 
   if (query.has('hostname')) {
     return {
+      // 后端类型:'singbox' 走 sing-box native gRPC,其余(含缺省)按 'clash' 处理。
+      type: (query.get('type') === 'singbox' ? 'singbox' : 'clash') as BackendType,
       protocol: query.get('http')
         ? 'http'
         : query.get('https')

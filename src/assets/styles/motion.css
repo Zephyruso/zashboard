@@ -46,6 +46,52 @@
   animation: highlightFlash 0.6s ease-out 2;
 }
 
+.sidebar-tab-indicator {
+  border-radius: var(--radius-field);
+  transform-origin: center;
+  will-change: transform, width, height;
+}
+
+.sidebar-tab-indicator-ready {
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1.5, 0.36, 1),
+    width 0.32s cubic-bezier(0.32, 0.72, 0, 1),
+    height 0.32s cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 0.15s ease-out;
+}
+
+.sidebar-tab-active {
+  color: var(--color-neutral-content);
+  transition: color 0.18s ease-out;
+}
+
+.sidebar-route-menu > li > a:hover,
+.sidebar-route-menu > li > a:active,
+.sidebar-route-menu > li > a:focus-visible {
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+}
+
+.ios-segment-indicator {
+  will-change: transform, width;
+}
+
+.ios-segment-indicator-ready {
+  transition:
+    transform 0.4s cubic-bezier(0.32, 0.72, 0, 1),
+    width 0.4s cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 0.15s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-tab-indicator-ready,
+  .sidebar-tab-active,
+  .ios-segment-indicator-ready {
+    transition: none;
+  }
+}
+
 @keyframes progressBar {
   from {
     width: 100%;
@@ -96,4 +142,15 @@
 }
 .slide-right-leave-to {
   transform: translateX(100%);
+}
+
+/* PC route transition: subtle fade, used with mode="out-in" */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.2s ease-in-out;
+  will-change: opacity;
+}
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
 }

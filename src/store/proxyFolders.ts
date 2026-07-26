@@ -1,5 +1,5 @@
+import { proxyGroupList, proxyMap } from '@/assembly/proxies'
 import { FOLDER_MODE, FOLDER_MODE_AUTO_THRESHOLD } from '@/constant'
-import { proxyGroupList, proxyMap } from '@/store/proxies'
 import { proxyFolderMode } from '@/store/settings'
 import { useStorage } from '@vueuse/core'
 import { v4 as uuid } from 'uuid'

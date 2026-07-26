@@ -2,10 +2,12 @@
   <CollapseCard :name="proxyProvider.name">
     <template v-slot:title>
       <div class="flex items-center justify-between gap-2">
-        <div class="flex flex-1 items-center gap-1">
-          <span class="text-base font-semibold tracking-tight">{{ proxyProvider.name }}</span>
-          <span class="text-base-content/60 text-xs tabular-nums">
-            · {{ proxyProvider.vehicleType }} · {{ proxiesCount }}
+        <div class="flex flex-1 items-center gap-2.5">
+          <span class="text-base-content font-medium">{{ proxyProvider.name }}</span>
+          <span
+            class="text-base-content/40 min-w-0 flex-1 truncate text-[11px] font-medium tracking-wider uppercase tabular-nums"
+          >
+            {{ proxyProvider.vehicleType }} · {{ proxiesCount }}
           </span>
         </div>
         <div class="flex items-center gap-1.5">
@@ -68,11 +70,12 @@
 </template>
 
 <script setup lang="ts">
-import { proxyProviderHealthCheckAPI, updateProxyProviderAPI } from '@/api'
+import { proxyProviderHealthCheckAPI, updateProxyProviderAPI } from '@/assembly/proxies'
 import { useBounceOnVisible } from '@/composables/bouncein'
 import { useRenderProxyList } from '@/composables/renderProxies'
 import { fromNow, prettyBytesHelper } from '@/helper/utils'
-import { fetchProxies, proxyProviederList } from '@/store/proxies'
+import { fetchProxies } from '@/assembly/proxies'
+import { proxyProviederList } from '@/assembly/proxies'
 import { ArrowPathIcon, BoltIcon } from '@heroicons/vue/24/outline'
 import dayjs from 'dayjs'
 import { toFinite } from 'lodash'

@@ -43,11 +43,11 @@
 </template>
 
 <script setup lang="ts">
-import { upgradeCoreAPI } from '@/api'
+import { upgradeCoreAPI } from '@/assembly/version'
 import { handlerUpgradeSuccess } from '@/helper'
-import { fetchConfigs } from '@/store/config'
-import { fetchProxies } from '@/store/proxies'
-import { fetchRules } from '@/store/rules'
+import { fetchConfigs } from '@/assembly/config'
+import { fetchProxies } from '@/assembly/proxies'
+import { fetchRules } from '@/assembly/rules'
 import { ref } from 'vue'
 import DialogWrapper from '../../common/DialogWrapper.vue'
 

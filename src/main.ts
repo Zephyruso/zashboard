@@ -1,3 +1,4 @@
+import '@/api/http'
 import '@/helper/dayjs'
 import 'tippy.js/animations/scale.css'
 import 'tippy.js/dist/tippy.css'

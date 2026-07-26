@@ -1,90 +1,17 @@
-import { fetchLogsAPI } from '@/api'
-import { LOG_LEVEL } from '@/constant'
-import type { Log, LogWithSeq } from '@/types'
+import { stripAnsi } from '@/helper/ansi'
 import { useStorage } from '@vueuse/core'
-import dayjs from 'dayjs'
-import { throttle } from 'lodash'
-import { ref, watch } from 'vue'
-import { logRetentionLimit, sourceIPLabelList } from './settings'
-import { activeBackend } from './setup'
+import { ref } from 'vue'
 
-export const logs = ref<LogWithSeq[]>([])
+// 完整的 logs ref 与流控状态(暂停 / 级别)由组装层维护并组装,store 仅直接引用,不再参与组装。
+export { initLogs, isPaused, logLevel, logs, stopLogs } from '@/assembly/logs'
+
+// 纯视图侧的筛选状态(在 LogsPage 中过滤渲染,不参与日志组装)。
 export const logFilter = ref('')
 export const logTypeFilter = ref('')
-export const isPaused = ref(false)
-export const logLevel = useStorage<string>('config/log-level', LOG_LEVEL.Info)
 export const logFilterRegex = useStorage<string>('config/log-filter-regex', '')
 export const logFilterEnabled = useStorage<boolean>('config/log-filter-enabled', false)
 
-let cancel: () => void
-let logsTemp: LogWithSeq[] = []
-
-const sliceLogs = throttle(() => {
-  logs.value = logsTemp.concat(logs.value).slice(0, logRetentionLimit.value)
-  logsTemp = []
-}, 500)
-
-const ipSourceMatchs: [RegExp, string][] = []
-const restructMatchs = () => {
-  ipSourceMatchs.length = 0
-  for (const { key, label, scope } of sourceIPLabelList.value) {
-    if (scope && !scope.includes(activeBackend.value?.uuid as string)) continue
-    if (key.startsWith('/')) continue
-
-    if (key.includes(':')) {
-      const regex = new RegExp(`${key}]:`, 'ig')
-      ipSourceMatchs.push([regex, `${key}] (${label}) :`])
-    } else {
-      const regex = new RegExp(`${key}:`, 'ig')
-      ipSourceMatchs.push([regex, `${key} (${label}) :`])
-    }
-  }
-}
-
-watch(
-  () => [sourceIPLabelList.value, activeBackend.value],
-  () => {
-    restructMatchs()
-  },
-  {
-    immediate: true,
-    deep: true,
-  },
-)
-
-export const initLogs = () => {
-  cancel?.()
-  logs.value = []
-  logsTemp = []
-
-  let idx = 1
-  const ws = fetchLogsAPI<Log>({
-    level: logLevel.value,
-  })
-
-  const unwatch = watch(ws.data, (data) => {
-    if (!data) return
-
-    if (isPaused.value) {
-      idx++
-      return
-    }
-
-    for (const [regex, label] of ipSourceMatchs) {
-      data.payload = data.payload.replace(regex, label)
-    }
-
-    logsTemp.unshift({
-      ...data,
-      time: dayjs().format('HH:mm:ss'),
-      seq: idx++,
-    })
-
-    sliceLogs()
-  })
-
-  cancel = () => {
-    unwatch()
-    ws.close()
-  }
+// sing-box 日志以连接 id 开头,如 [3829292130 5ms] router: match[0]
+export const getLogConnectionID = (payload: string) => {
+  return stripAnsi(payload).match(/^\[(\d+)\s[^\]]*\]/)?.[1] ?? null
 }

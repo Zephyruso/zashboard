@@ -1,4 +1,4 @@
-import { disconnectAllAPI, disconnectByIdAPI } from '@/api'
+import { disconnectAllAPI, disconnectByIdAPI } from '@/assembly/connections'
 import { useCtrlsBar } from '@/composables/useCtrlsBar'
 import { ROUTE_NAME, SETTINGS_MENU_KEY, SORT_DIRECTION, SORT_TYPE } from '@/constant'
 import { useTooltip } from '@/helper/tooltip'
@@ -129,7 +129,7 @@ export default defineComponent({
                   </div>
                   <input
                     type="checkbox"
-                    class="toggle toggle-sm"
+                    class="toggle"
                     v-model={quickFilterEnabled.value}
                   />
                 </div>

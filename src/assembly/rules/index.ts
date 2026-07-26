@@ -1,4 +1,6 @@
-import { fetchRuleProvidersAPI, fetchRulesAPI } from '@/api'
+// 组装层 · rules 门面。持有 rules / ruleProviderList 统一状态与渲染派生,
+// 按后端类型路由到 clash / singbox 实现(sing-box native 不支持 rules)。
+import { isSingboxBackend } from '@/assembly/backend'
 import { RULE_TAB_TYPE } from '@/constant'
 import { toSearchRegex } from '@/helper/search'
 import type { Rule, RuleProvider } from '@/types'
@@ -34,18 +36,13 @@ export const renderRulesProvider = computed(() => {
   })
 })
 
-export const fetchRules = async () => {
-  const { data: ruleData } = await fetchRulesAPI()
-  const { data: providerData } = await fetchRuleProvidersAPI()
+const load = () => (isSingboxBackend.value ? import('./singbox') : import('./clash'))
 
-  rules.value = ruleData.rules.map((rule) => {
-    const proxy = rule.proxy
-    const proxyName = proxy.startsWith('route(') ? proxy.substring(6, proxy.length - 1) : proxy
+export const fetchRules = async () => (await load()).fetchRules()
 
-    return {
-      ...rule,
-      proxy: proxyName,
-    }
-  })
-  ruleProviderList.value = Object.values(providerData.providers)
-}
+// 规则启用 / 规则集更新动作(Clash 专属),经 rules 域门面暴露给 view。
+export {
+  toggleRuleDisabledAPI,
+  toggleRuleDisabledSingBoxAPI,
+  updateRuleProviderAPI,
+} from '@/api/clash'

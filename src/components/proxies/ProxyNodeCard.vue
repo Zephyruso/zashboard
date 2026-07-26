@@ -54,7 +54,8 @@
 import { PROXY_CARD_SIZE, PROXY_SORT_TYPE } from '@/constant'
 import { checkTruncation } from '@/helper/tooltip'
 import { scrollIntoCenter } from '@/helper/utils'
-import { getIPv6ByName, getTestUrl, proxyLatencyTest, proxyMap } from '@/store/proxies'
+import { proxyLatencyTest } from '@/assembly/proxies'
+import { getIPv6ByName, getTestUrl, proxyMap } from '@/assembly/proxies'
 import { IPv6test, proxyCardSize, proxySortType, truncateProxyName } from '@/store/settings'
 import { smartWeightsMap } from '@/store/smart'
 import { twMerge } from 'tailwind-merge'
@@ -98,7 +99,7 @@ const handlerLatencyTest = async () => {
 
   isLatencyTesting.value = true
   try {
-    await proxyLatencyTest(props.name, getTestUrl(props.groupName))
+    await proxyLatencyTest(props.name, getTestUrl(props.groupName), undefined, props.groupName)
     isLatencyTesting.value = false
   } catch {
     isLatencyTesting.value = false

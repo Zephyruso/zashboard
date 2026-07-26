@@ -30,7 +30,7 @@
         <label class="label cursor-pointer gap-2">
           <span class="text-sm">{{ $t('forceUpdate') }}</span>
           <input
-            class="toggle toggle-sm"
+            class="toggle"
             type="checkbox"
             v-model="forceUpdate"
           />
@@ -53,11 +53,11 @@
 </template>
 
 <script setup lang="ts">
-import { updateConfigsAPI } from '@/api'
+import { updateConfigsAPI } from '@/assembly/config'
 import { showNotification } from '@/helper/notification'
-import { fetchConfigs } from '@/store/config'
-import { fetchProxies } from '@/store/proxies'
-import { fetchRules } from '@/store/rules'
+import { fetchConfigs } from '@/assembly/config'
+import { fetchProxies } from '@/assembly/proxies'
+import { fetchRules } from '@/assembly/rules'
 import { ref } from 'vue'
 import DialogWrapper from '../../common/DialogWrapper.vue'
 

@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { isMiddleScreen } from '@/helper/utils'
-import { rules } from '@/store/rules'
+import { rules } from '@/assembly/rules'
 import { font, theme } from '@/store/settings'
 import type { Rule } from '@/types'
 import { PauseCircleIcon, PlayCircleIcon } from '@heroicons/vue/24/outline'

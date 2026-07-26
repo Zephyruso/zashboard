@@ -5,7 +5,6 @@
     @enter="!isSaving && handleSave()"
   >
     <div class="flex flex-col gap-4">
-      <!-- 后端选择器 -->
       <div class="flex flex-col gap-1">
         <label class="text-sm">{{ t('selectBackend') }}</label>
         <select
@@ -23,46 +22,63 @@
       </div>
 
       <div
-        class="flex flex-col gap-3"
         v-if="editForm"
+        class="flex flex-col gap-3"
       >
-        <div class="flex flex-col gap-1">
-          <label class="text-sm">{{ t('protocol') }}</label>
-          <select
-            class="select select-sm w-full"
-            v-model="editForm.protocol"
+        <div class="divider my-0 text-xs">
+          {{ editForm.type === 'singbox' ? t('singboxApi') : t('clashApi') }}
+        </div>
+
+        <div class="flex gap-2">
+          <div class="flex w-24 flex-none flex-col gap-1">
+            <label class="text-sm">{{ t('protocol') }}</label>
+            <select
+              class="select select-sm w-full"
+              v-model="editForm.protocol"
+            >
+              <option value="http">HTTP</option>
+              <option value="https">HTTPS</option>
+            </select>
+          </div>
+          <div class="flex min-w-0 flex-1 flex-col gap-1">
+            <label class="text-sm">{{ t('host') }}</label>
+            <TextInput
+              class="w-full"
+              name="username"
+              v-model="editForm.host"
+              placeholder="127.0.0.1"
+            />
+          </div>
+          <div class="flex w-20 flex-none flex-col gap-1">
+            <label class="text-sm">{{ t('port') }}</label>
+            <TextInput
+              class="w-full"
+              v-model="editForm.port"
+              placeholder="9090"
+            />
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <div
+            v-if="editForm.type === 'clash'"
+            class="flex min-w-0 flex-1 flex-col gap-1"
           >
-            <option value="http">HTTP</option>
-            <option value="https">HTTPS</option>
-          </select>
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label class="text-sm">{{ t('host') }}</label>
-          <TextInput
-            class="w-full"
-            name="username"
-            v-model="editForm.host"
-            placeholder="127.0.0.1"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label class="text-sm">{{ t('port') }}</label>
-          <TextInput
-            class="w-full"
-            v-model="editForm.port"
-            placeholder="9090"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label class="text-sm">{{ $t('secondaryPath') }} ({{ $t('optional') }})</label>
-          <TextInput
-            class="w-full"
-            v-model="editForm.secondaryPath"
-            :placeholder="t('optional')"
-          />
+            <label class="truncate text-sm">{{ t('secondaryPath') }} ({{ t('optional') }})</label>
+            <TextInput
+              class="w-full"
+              v-model="editForm.secondaryPath"
+              :placeholder="t('optional')"
+            />
+          </div>
+          <div class="flex min-w-0 flex-1 flex-col gap-1">
+            <label class="truncate text-sm">{{ t('label') }} ({{ t('optional') }})</label>
+            <TextInput
+              class="w-full"
+              v-model="editForm.label"
+              :placeholder="t('label')"
+            />
+          </div>
         </div>
 
         <div class="flex flex-col gap-1">
@@ -71,15 +87,6 @@
             type="password"
             class="input input-sm w-full"
             v-model="editForm.password"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label class="text-sm">{{ t('label') }} ({{ t('optional') }})</label>
-          <TextInput
-            class="w-full"
-            v-model="editForm.label"
-            :placeholder="t('label')"
           />
         </div>
       </div>
@@ -109,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import { isBackendAvailable } from '@/api'
+import { isBackendAvailable, isSingboxChannelAvailable } from '@/assembly/backend'
 import DialogWrapper from '@/components/common/DialogWrapper.vue'
 import TextInput from '@/components/common/TextInput.vue'
 import { showNotification } from '@/helper/notification'
@@ -131,7 +138,6 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
-
 const { t } = useI18n()
 
 const isVisible = computed({
@@ -140,81 +146,75 @@ const isVisible = computed({
 })
 
 const editForm = ref<Omit<Backend, 'uuid'> | null>(null)
-const selectedBackendUuid = ref<string>('')
+const selectedBackendUuid = ref('')
 const isSaving = ref(false)
 
-const selectedBackend = computed(() => {
-  return backendList.value.find((b) => b.uuid === selectedBackendUuid.value) || null
-})
+const selectedBackend = computed(
+  () => backendList.value.find((backend) => backend.uuid === selectedBackendUuid.value) || null,
+)
 
 watch(
   () => props.modelValue,
   (isOpen) => {
-    if (isOpen) {
-      if (props.defaultBackendUuid) {
-        selectedBackendUuid.value = props.defaultBackendUuid
-      } else if (activeBackend.value) {
-        selectedBackendUuid.value = activeBackend.value.uuid
-      }
-    }
+    if (!isOpen) return
+    selectedBackendUuid.value =
+      props.defaultBackendUuid || activeBackend.value?.uuid || backendList.value[0]?.uuid || ''
   },
 )
 
 watch(
   selectedBackend,
   (backend) => {
-    if (backend) {
-      editForm.value = {
-        protocol: backend.protocol,
-        host: backend.host,
-        port: backend.port,
-        secondaryPath: backend.secondaryPath,
-        password: backend.password,
-        label: backend.label || '',
-        disableUpgradeCore: backend.disableUpgradeCore || false,
-        disableTunMode: backend.disableTunMode || false,
-      }
+    if (!backend) return
+    editForm.value = {
+      type: backend.type,
+      protocol: backend.protocol,
+      host: backend.host,
+      port: backend.port,
+      secondaryPath: backend.secondaryPath,
+      password: backend.password,
+      label: backend.label || '',
+      disableUpgradeCore: backend.disableUpgradeCore || false,
+      disableTunMode: backend.disableTunMode || false,
     }
   },
   { immediate: true },
 )
 
-const handleCancel = () => {
-  isVisible.value = false
+const reset = () => {
   editForm.value = null
   selectedBackendUuid.value = ''
 }
 
+const handleCancel = () => {
+  isVisible.value = false
+  reset()
+}
+
 const handleSave = async () => {
   if (!editForm.value || !selectedBackend.value) return
-
   isSaving.value = true
 
   try {
-    const testBackend: Backend = {
-      uuid: selectedBackend.value.uuid,
-      ...editForm.value,
+    const composed: Omit<Backend, 'uuid'> = { ...editForm.value }
+    const testBackend: Backend = { uuid: selectedBackend.value.uuid, ...composed }
+
+    if (composed.type === 'singbox') {
+      if (!(await isSingboxChannelAvailable(testBackend, 10000))) {
+        showNotification({ content: t('singboxConnectionFailed'), type: 'alert-error' })
+        return
+      }
+    } else {
+      if (!(await isBackendAvailable(testBackend, 10000))) {
+        showNotification({ content: t('backendConnectionFailed'), type: 'alert-error' })
+        return
+      }
     }
 
-    const isAvailable = await isBackendAvailable(testBackend, 10000)
-
-    if (!isAvailable) {
-      showNotification({
-        content: t('backendConnectionFailed'),
-        type: 'alert-error',
-      })
-      return
-    }
-
-    updateBackend(selectedBackend.value.uuid, editForm.value)
-    showNotification({
-      content: t('backendConfigSaved'),
-      type: 'alert-success',
-    })
-
+    updateBackend(selectedBackend.value.uuid, composed)
+    showNotification({ content: t('backendConfigSaved'), type: 'alert-success' })
     isVisible.value = false
-    editForm.value = null
-    selectedBackendUuid.value = ''
+    reset()
     emit('saved')
   } catch (error) {
     showNotification({

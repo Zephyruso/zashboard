@@ -3,30 +3,33 @@ div {
 }
 
 .text-main {
-  @apply text-primary;
+  @apply text-base-content;
 }
 
 .search-highlight {
   @apply rounded-xs bg-yellow-300 text-black;
 }
 
-[data-theme='dark'] .text-main {
-  color: oklch(72% 0.233 277.117);
-}
-[data-theme='lofi'] .text-main,
-[data-theme='wireframe'] .text-main,
-[data-theme='business'] .text-main,
-[data-theme='black'] .text-main {
-  @apply text-info;
+[data-theme='light-neutral'],
+[data-theme='dark-neutral'] {
+  --color-low-latency: oklch(0.551 0.08 167);
+  --color-medium-latency: oklch(0.72 0.14 85);
+  --color-high-latency: oklch(0.56 0.17 22);
 }
 
 .dock {
   @apply absolute right-2 left-2 z-30 rounded-3xl;
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid color-mix(in srgb, var(--color-base-content) 8%, transparent);
+  box-shadow:
+    0 4px 16px color-mix(in srgb, var(--color-base-content) 6%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 35%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, white 6%, transparent);
 }
 
 .settings-section-label {
-  @apply px-1 pt-5 pb-1.5 text-xs font-semibold tracking-wider uppercase first:pt-2;
-  color: color-mix(in srgb, var(--color-base-content) 45%, transparent);
+  @apply px-1 pt-5 pb-2 text-xs font-medium tracking-wider uppercase first:pt-2;
+  color: color-mix(in srgb, var(--color-base-content) 40%, transparent);
 }
 .settings-grid {
   @apply bg-base-100 grid grid-cols-1 overflow-hidden rounded-xl;
@@ -37,9 +40,17 @@ div {
     border-bottom: none;
   }
   .setting-item-label {
-    @apply flex-1 text-sm font-medium;
+    @apply shrink-0 grow text-sm;
     svg {
-      @apply inline-block;
+      @apply text-base-content/40 inline-block;
     }
   }
+}
+
+/* 编辑模式下：已隐藏的设置项整体置灰，仅保留 +/- 控制可交互 */
+.setting-item:has(> .vis-toggle[data-hidden='true']) > :not(.vis-toggle) {
+  @apply pointer-events-none opacity-40;
+}
+.settings-category--hidden > .settings-category-body {
+  @apply pointer-events-none opacity-40;
 }

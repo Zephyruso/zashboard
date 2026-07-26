@@ -5,20 +5,17 @@
       :class="isExpanded ? 'collapse-open' : 'collapse-close'"
     >
       <div
-        class="collapse-title hover:bg-base-200/40 flex items-center gap-2 overflow-hidden px-3 py-[8px] text-sm transition-colors max-md:grid max-md:grid-cols-[1fr_auto] max-md:grid-rows-[auto_auto] max-md:gap-x-2 max-md:gap-y-1 max-md:py-2"
+        class="collapse-title hover:bg-base-200/40 flex min-h-0 flex-col gap-3 overflow-hidden px-3 py-2 text-sm transition-colors"
         :class="{
           'cursor-pointer': isSelectable,
         }"
         @click="clickHandler"
       >
-        <div
-          class="min-w-0 truncate max-md:col-start-1 max-md:row-start-1 md:flex-1"
-          :title="rule.payload ? `${rule.type} : ${rule.payload}` : rule.type"
-        >
+        <div class="min-h-5 leading-5">
           <span class="text-base-content/50 text-xs tabular-nums">
             {{ index }}
           </span>
-          <span class="text-base-content/80 ml-3 text-xs">
+          <span class="text-base-content/55 ml-4 text-xs tracking-wide">
             <HighlightText
               :text="rule.type"
               :filter="rulesFilter"
@@ -26,8 +23,8 @@
             <template v-if="rule.payload"> : </template>
           </span>
           <span
+            class="ml-2"
             v-if="rule.payload"
-            class="ml-1"
           >
             <HighlightText
               :text="rule.payload"
@@ -45,6 +42,18 @@
               @mouseenter="showMMDBSizeTip"
             />
           </span>
+          <button
+            v-if="isUpdateableRuleSet"
+            :class="
+              twMerge(
+                'btn btn-circle btn-ghost btn-xs -mt-[2px] ml-1',
+                isUpdating ? 'animate-spin' : '',
+              )
+            "
+            @click.stop="updateRuleProviderClickHandler"
+          >
+            <ArrowPathIcon class="h-3.5 w-3.5 opacity-60" />
+          </button>
           <InformationCircleIcon
             v-if="rule.extra"
             class="-mt-[2px] ml-1 inline-block h-4 w-4 opacity-60"
@@ -52,74 +61,60 @@
             @click.stop
           />
         </div>
-        <div
-          class="max-w-full min-w-0 max-md:col-start-1 max-md:row-start-2 md:max-w-[50%] md:shrink"
-        >
+        <div class="flex items-center gap-2">
+          <input
+            v-if="rule.uuid || rule.extra"
+            type="checkbox"
+            class="toggle"
+            :checked="!isDisabled"
+            @change="toggleRuleDisabledHandler"
+            @click.stop
+          />
           <ProxyChainPath
             :proxy="rule.proxy"
             :selected="selected"
+            :collapsed="isCollapsed"
             :show-now-node="displayNowNodeInRule"
             :show-latency="displayLatencyInRule"
             :filter="rulesFilter"
+            :interactive="!isCollapsed"
             @update:selected="selected = $event"
           />
         </div>
-        <input
-          v-if="rule.uuid || rule.extra"
-          type="checkbox"
-          class="toggle toggle-sm shrink-0 max-md:col-start-2 max-md:row-start-1 max-md:self-center"
-          :checked="!isDisabled"
-          @change="toggleRuleDisabledHandler"
-          @click.stop
-        />
-        <button
-          :class="
-            twMerge(
-              'btn btn-circle btn-ghost btn-xs shrink-0 max-md:col-start-2 max-md:row-start-2 max-md:self-center',
-              isUpdating ? 'animate-spin' : '',
-              isUpdateableRuleSet ? '' : 'pointer-events-none invisible',
-            )
-          "
-          :aria-hidden="!isUpdateableRuleSet"
-          :tabindex="isUpdateableRuleSet ? 0 : -1"
-          @click.stop="updateRuleProviderClickHandler"
-        >
-          <ArrowPathIcon class="h-3.5 w-3.5 opacity-60" />
-        </button>
       </div>
+
       <div
         class="collapse-content p-0"
-        @transitionend="handlerTransitionEnd"
+        @transitionend="handlerExpandTransitionEnd"
       >
-        <div
-          v-if="showContent"
-          :class="[PROXIES_PARENT_CLASS, !isExpanded && 'opacity-0']"
-        >
+        <template v-if="showExpandedContent">
           <div class="border-base-content/3 border-b"></div>
           <ProxyGroup
             :name="selected"
             :force-open="true"
-            class="transparent-collapse bg-base-200/40! rounded-none!"
+            class="transparent-collapse bg-base-200/30"
           />
-        </div>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { disconnectByIdAPI } from '@/assembly/connections'
+import { useBounceOnVisible } from '@/composables/bouncein'
+import { getConnectionRulePayload } from '@/helper'
+import { useTooltip } from '@/helper/tooltip'
+import { activeConnections } from '@/store/connections'
+import { proxyGroupList } from '@/assembly/proxies'
 import {
-  disconnectByIdAPI,
+  fetchRules,
+  ruleProviderList,
+  rulesFilter,
   toggleRuleDisabledAPI,
   toggleRuleDisabledSingBoxAPI,
   updateRuleProviderAPI,
-} from '@/api'
-import { useBounceOnVisible } from '@/composables/bouncein'
-import { useTooltip } from '@/helper/tooltip'
-import { PROXIES_PARENT_CLASS } from '@/helper/utils'
-import { activeConnections } from '@/store/connections'
-import { proxyGroupList } from '@/store/proxies'
-import { fetchRules, ruleProviderList, rulesFilter } from '@/store/rules'
+} from '@/assembly/rules'
 import {
   disconnectOnRuleDisable,
   displayLatencyInRule,
@@ -149,19 +144,20 @@ const expandedRule = inject<Ref<string | null>>('expandedRule', ref(null))
 const ruleKey = computed(() => `${props.index}-${props.rule.payload}`)
 const isCollapsed = computed(() => expandedRule.value !== ruleKey.value)
 const isSelectable = computed(() => proxyGroupList.value.includes(props.rule.proxy))
-const isExpanded = computed(() => isSelectable.value && !isCollapsed.value)
-const showContent = ref(isExpanded.value)
 const selected = ref('')
+
+const isExpanded = computed(() => isSelectable.value && !isCollapsed.value)
+const showExpandedContent = ref(isExpanded.value)
 
 watch(isExpanded, (value) => {
   if (value) {
-    showContent.value = true
+    showExpandedContent.value = true
   }
 })
 
-const handlerTransitionEnd = () => {
+const handlerExpandTransitionEnd = () => {
   if (!isExpanded.value) {
-    showContent.value = false
+    showExpandedContent.value = false
   }
 }
 
@@ -227,7 +223,8 @@ const toggleRuleDisabledHandler = async () => {
     if (willBeDisabled && disconnectOnRuleDisable.value) {
       const matchingConnections = activeConnections.value.filter((conn) => {
         const ruleTypeMatches = conn.rule === props.rule.type
-        const rulePayloadMatches = (conn.rulePayload || '') === (props.rule.payload || '')
+        const rulePayloadMatches = getConnectionRulePayload(conn) === (props.rule.payload || '')
+
         return ruleTypeMatches && rulePayloadMatches
       })
 

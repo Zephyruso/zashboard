@@ -1,14 +1,14 @@
-import { isSingBox } from '@/api'
-import { GLOBAL, PROXY_TAB_TYPE } from '@/constant'
-import { isHiddenGroup } from '@/helper'
-import { configs } from '@/store/config'
+import { configs } from '@/assembly/config'
 import {
   getProxyGroupChains,
   proxiesTabShow,
   proxyGroupList,
   proxyMap,
   proxyProviederList,
-} from '@/store/proxies'
+} from '@/assembly/proxies'
+import { isSingBoxCore } from '@/assembly/version'
+import { GLOBAL, PROXY_TAB_TYPE } from '@/constant'
+import { isHiddenGroup } from '@/helper'
 import { groupsInActiveFolder, isProxyFolderModeActive } from '@/store/proxyFolders'
 import { customGlobalNode, displayGlobalByMode, manageHiddenGroup } from '@/store/settings'
 import { isEmpty } from 'lodash'
@@ -45,7 +45,9 @@ const getRenderProxyGroups = () => {
   if (displayGlobalByMode.value) {
     if (configs.value?.mode.toUpperCase() === GLOBAL) {
       const globalName =
-        isSingBox.value && proxyMap.value[customGlobalNode.value] ? customGlobalNode.value : GLOBAL
+        isSingBoxCore.value && proxyMap.value[customGlobalNode.value]
+          ? customGlobalNode.value
+          : GLOBAL
 
       return filterProxyGroups(getProxyGroupChains(globalName), false)
     }
@@ -53,7 +55,9 @@ const getRenderProxyGroups = () => {
     return filterProxyGroups(proxyGroupList.value)
   }
 
-  return filterProxyGroups([...proxyGroupList.value, GLOBAL])
+  // sing-box native 没有 GLOBAL 组,仅在其确实存在时才追加,避免渲染空组崩溃。
+  const globalGroups = proxyMap.value[GLOBAL] ? [GLOBAL] : []
+  return filterProxyGroups([...proxyGroupList.value, ...globalGroups])
 }
 
 const getRenderProxyProviders = () => {

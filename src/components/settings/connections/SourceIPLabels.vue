@@ -1,6 +1,22 @@
 <template>
+  <SettingItem
+    v-if="settingKey"
+    :setting-key="settingKey"
+    :when="showTrigger"
+  >
+    <div class="setting-item-label">
+      {{ $t('sourceIPLabels') }}
+      <template v-if="sourceIPLabelList.length"> ({{ sourceIPLabelList.length }}) </template>
+    </div>
+    <button
+      class="btn btn-sm"
+      @click="dialogVisible = true"
+    >
+      <PencilSquareIcon class="h-4 w-4" />
+    </button>
+  </SettingItem>
   <div
-    v-if="showTrigger"
+    v-else-if="showTrigger"
     class="setting-item"
   >
     <div class="setting-item-label">
@@ -75,6 +91,7 @@
 </template>
 
 <script setup lang="ts">
+import SettingItem from '@/components/settings/SettingItem.vue'
 import { disableSwipe } from '@/composables/swipe'
 import { sourceIPLabelList } from '@/store/settings'
 import type { SourceIPLabel } from '@/types'
@@ -97,11 +114,13 @@ const props = withDefaults(
     defaultKey?: string
     modelValue?: boolean
     showTrigger?: boolean
+    settingKey?: string
   }>(),
   {
     defaultKey: '',
     modelValue: undefined,
     showTrigger: true,
+    settingKey: '',
   },
 )
 

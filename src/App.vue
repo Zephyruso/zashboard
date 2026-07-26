@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import { RouterView } from 'vue-router'
+import ConfirmDialogHost from './components/common/ConfirmDialogHost.vue'
 import { useKeyboard } from './composables/keyboard'
 import { EMOJIS, FONTS } from './constant'
 import {
@@ -53,6 +54,8 @@ const fontClassName = computed(() => {
 })
 
 const setThemeColor = () => {
+  if (!app.value) return
+
   const themeColor = getComputedStyle(app.value!).getPropertyValue('background-color').trim()
   const metaThemeColor = document.querySelector('meta[name="theme-color"]')
   if (metaThemeColor) {
@@ -61,6 +64,65 @@ const setThemeColor = () => {
 }
 
 watch(isPreferredDark, setThemeColor)
+watch(
+  theme,
+  () => {
+    document.body.setAttribute('data-theme', theme.value)
+    setThemeColor()
+  },
+  {
+    immediate: true,
+  },
+)
+
+// iOS bounces the whole page when a vertical drag has nowhere left to scroll:
+// either it's over a non-scrollable area (so the drag pans the layout viewport),
+// or it's inside a scroll container already at its top/bottom edge and the
+// leftover scroll chains up to the document. Classic iOS scroll-lock: find the
+// nearest vertically-scrollable ancestor and only let the drag through while
+// that element can still move in the drag direction; otherwise cancel it so
+// nothing reaches the page.
+let touchStartX = 0
+let touchStartY = 0
+
+const onTouchStart = (event: TouchEvent) => {
+  touchStartX = event.touches[0].clientX
+  touchStartY = event.touches[0].clientY
+}
+
+const findScrollableY = (target: EventTarget | null) => {
+  let el = target as HTMLElement | null
+  while (el && el !== document.body && el !== document.documentElement) {
+    const { overflowY } = getComputedStyle(el)
+    if ((overflowY === 'auto' || overflowY === 'scroll') && el.scrollHeight > el.clientHeight) {
+      return el
+    }
+    el = el.parentElement
+  }
+  return null
+}
+
+const onTouchMove = (event: TouchEvent) => {
+  if (event.touches.length > 1) return
+
+  const deltaX = event.touches[0].clientX - touchStartX
+  const deltaY = event.touches[0].clientY - touchStartY
+  // Leave horizontal gestures (e.g. swiping a horizontally-scrollable table) be.
+  if (Math.abs(deltaY) <= Math.abs(deltaX)) return
+
+  const el = findScrollableY(event.target)
+  if (!el) {
+    event.preventDefault()
+    return
+  }
+
+  const atTop = el.scrollTop <= 0
+  const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1
+  // deltaY > 0 means dragging downward (revealing content above).
+  if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
+    event.preventDefault()
+  }
+}
 
 watch(
   disablePullToRefresh,
@@ -69,9 +131,13 @@ watch(
     if (disablePullToRefresh.value) {
       body.style.overscrollBehavior = 'none'
       body.style.overflow = 'hidden'
+      document.addEventListener('touchstart', onTouchStart, { passive: true })
+      document.addEventListener('touchmove', onTouchMove, { passive: false })
     } else {
       body.style.overscrollBehavior = ''
       body.style.overflow = ''
+      document.removeEventListener('touchstart', onTouchStart)
+      document.removeEventListener('touchmove', onTouchMove)
     }
   },
   {
@@ -79,7 +145,7 @@ watch(
   },
 )
 
-const isSameBackend = (b1: Omit<Backend, 'uuid'>, b2: Omit<Backend, 'uuid'>) => {
+const isSameBackend = (b1: Omit<Backend, 'uuid' | 'type'>, b2: Omit<Backend, 'uuid' | 'type'>) => {
   return (
     b1.host === b2.host &&
     b1.port === b2.port &&
@@ -107,6 +173,8 @@ const autoSwitchToURLBackendIfExists = () => {
 autoSwitchToURLBackendIfExists()
 
 onMounted(async () => {
+  setThemeColor()
+
   if (autoImportSettings.value) {
     await importSettingsFromUrl()
   }
@@ -118,17 +186,6 @@ onMounted(async () => {
       console.error('Failed to auto-sync settings on app load:', e)
     }
   }
-
-  watch(
-    theme,
-    () => {
-      document.body.setAttribute('data-theme', theme.value)
-      setThemeColor()
-    },
-    {
-      immediate: true,
-    },
-  )
 })
 
 const blurClass = computed(() => {
@@ -147,15 +204,16 @@ useKeyboard()
     ref="app"
     id="app-content"
     :class="[
-      'bg-base-100 flex h-dvh w-screen overflow-hidden',
+      'bg-base-100 flex w-screen overflow-hidden',
       fontClassName,
       backgroundImage &&
         `custom-background-${dashboardTransparent} custom-background bg-cover bg-center`,
       blurClass,
     ]"
-    :style="backgroundImage"
+    :style="[backgroundImage, { height: 'var(--app-height, 100dvh)' }]"
   >
     <RouterView />
+    <ConfirmDialogHost />
     <div
       ref="toast"
       class="toast-sm toast toast-end toast-top z-[100000] max-w-80 text-sm md:max-w-96 md:translate-y-8"

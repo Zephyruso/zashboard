@@ -2,6 +2,7 @@
   <div class="relative">
     <button
       v-if="beforeClose && clearable"
+      type="button"
       class="btn btn-ghost btn-circle btn-xs absolute top-1/2 right-1 z-10 h-5 min-h-5 w-5 -translate-y-1/2 p-0"
       @click="clearInput"
     >
@@ -21,6 +22,7 @@
     />
     <button
       v-if="!beforeClose && clearable"
+      type="button"
       class="btn btn-ghost btn-circle btn-xs absolute top-1/2 right-1 h-5 min-h-5 w-5 -translate-y-1/2 p-0"
       @click="clearInput"
     >

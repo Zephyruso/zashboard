@@ -17,7 +17,14 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
     label: 'backendSettings',
     items: [
       { key: `${SETTINGS_MENU_KEY.backend}.backendSwitch`, label: 'backend' },
-      { key: `${SETTINGS_MENU_KEY.backend}.actions`, label: 'actions' },
+      { key: `${SETTINGS_MENU_KEY.backend}.upgradeCore`, label: 'upgradeCore' },
+      { key: `${SETTINGS_MENU_KEY.backend}.restartCore`, label: 'restartCore' },
+      { key: `${SETTINGS_MENU_KEY.backend}.reloadConfigs`, label: 'reloadConfigs' },
+      { key: `${SETTINGS_MENU_KEY.backend}.updateConfigs`, label: 'updateConfigs' },
+      { key: `${SETTINGS_MENU_KEY.backend}.updateGeoDatabase`, label: 'updateGeoDatabase' },
+      { key: `${SETTINGS_MENU_KEY.backend}.flushDNSCache`, label: 'flushDNSCache' },
+      { key: `${SETTINGS_MENU_KEY.backend}.flushFakeIP`, label: 'flushFakeIP' },
+      { key: `${SETTINGS_MENU_KEY.backend}.flushSmartWeights`, label: 'flushSmartWeights' },
       { key: `${SETTINGS_MENU_KEY.backend}.dnsQuery`, label: 'DNSQuery' },
       { key: `${SETTINGS_MENU_KEY.backend}.ports`, label: 'ports' },
       { key: `${SETTINGS_MENU_KEY.backend}.tunMode`, label: 'tunMode' },
@@ -71,6 +78,14 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
         label: 'autoDisconnectIdleUDPTime',
       },
       { key: `${SETTINGS_MENU_KEY.general}.IPInfoAPI`, label: 'IPInfoAPI' },
+      {
+        key: `${SETTINGS_MENU_KEY.general}.geoipCountryDatabaseURL`,
+        label: 'geoipCountryDatabaseURL',
+      },
+      {
+        key: `${SETTINGS_MENU_KEY.general}.geoipASNDatabaseURL`,
+        label: 'geoipASNDatabaseURL',
+      },
       {
         key: `${SETTINGS_MENU_KEY.general}.scrollAnimationEffect`,
         label: 'scrollAnimationEffect',

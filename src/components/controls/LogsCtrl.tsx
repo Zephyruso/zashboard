@@ -1,4 +1,4 @@
-import { isSingBox } from '@/api'
+import { isSingBoxCore } from '@/assembly/version'
 import { useCtrlsBar } from '@/composables/useCtrlsBar'
 import { LOG_LEVEL } from '@/constant'
 import { useTooltip } from '@/helper/tooltip'
@@ -57,7 +57,7 @@ export default defineComponent({
     watch(logFilter, insertLogSearchHistory)
 
     const logLevels = computed(() => {
-      if (isSingBox.value) {
+      if (isSingBoxCore.value) {
         return Object.values(LOG_LEVEL)
       }
       return [LOG_LEVEL.Debug, LOG_LEVEL.Info, LOG_LEVEL.Warning, LOG_LEVEL.Error, LOG_LEVEL.Silent]
@@ -67,7 +67,7 @@ export default defineComponent({
       const types: string[] = []
       const levels: string[] = []
 
-      if (isSingBox.value) {
+      if (isSingBoxCore.value) {
         for (const log of logs.value) {
           const startIndex = log.payload.startsWith('[') ? log.payload.indexOf(']') + 2 : 0
           const endIndex = log.payload.indexOf(':', startIndex)
@@ -239,7 +239,7 @@ export default defineComponent({
                   </div>
                   <input
                     type="checkbox"
-                    class="toggle toggle-sm"
+                    class="toggle"
                     v-model={logFilterEnabled.value}
                   />
                 </div>

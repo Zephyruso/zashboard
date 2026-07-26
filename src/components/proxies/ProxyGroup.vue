@@ -45,7 +45,8 @@
 import { useBounceOnVisible } from '@/composables/bouncein'
 import { useRenderProxyList } from '@/composables/renderProxies'
 import { isMiddleScreen } from '@/helper/utils'
-import { handlerProxySelect, proxyGroupLatencyTest, proxyMap } from '@/store/proxies'
+import { handlerProxySelect, proxyGroupLatencyTest } from '@/assembly/proxies'
+import { proxyMap } from '@/assembly/proxies'
 import { groupProxiesByProvider } from '@/store/settings'
 import { computed, ref } from 'vue'
 import CollapseCard from '../common/CollapseCard.vue'
@@ -60,7 +61,7 @@ const props = defineProps<{
   forceOpen?: boolean
 }>()
 const proxyGroup = computed(() => proxyMap.value[props.name])
-const allProxies = computed(() => proxyGroup.value.all ?? [])
+const allProxies = computed(() => proxyGroup.value?.all ?? [])
 const { proxiesCount, renderProxies } = useRenderProxyList(allProxies, props.name)
 const isLatencyTesting = ref(false)
 const handlerLatencyTest = async () => {

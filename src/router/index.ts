@@ -1,3 +1,4 @@
+import { capabilities } from '@/assembly/backend'
 import { ROUTE_NAME } from '@/constant'
 import { renderRoutes } from '@/helper'
 import { i18n } from '@/i18n'
@@ -42,11 +43,22 @@ const childrenRouter = [
     component: RulesPage,
   },
   {
+    path: 'tools',
+    name: ROUTE_NAME.tools,
+    component: () => import('@/views/ToolsPage.vue'),
+  },
+  {
     path: 'settings',
     name: ROUTE_NAME.settings,
     component: SettingsPage,
   },
 ]
+
+// Routes that require a specific channel capability to be visitable.
+const ROUTE_CAPABILITY: Partial<Record<string, keyof typeof capabilities.value>> = {
+  [ROUTE_NAME.rules]: 'rules',
+  [ROUTE_NAME.tools]: 'tools',
+}
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -94,6 +106,13 @@ router.beforeEach((to, from) => {
 
   if (!activeBackend.value && to.name !== ROUTE_NAME.setup) {
     router.push({ name: ROUTE_NAME.setup })
+    return
+  }
+
+  // Block navigation to a page the active backend's channels can't serve.
+  const requiredCap = typeof to.name === 'string' ? ROUTE_CAPABILITY[to.name] : undefined
+  if (requiredCap && !capabilities.value[requiredCap]) {
+    router.push({ name: ROUTE_NAME.proxies })
   }
 })
 
@@ -105,6 +124,14 @@ watch([language, activeBackend], () => {
   setTimeout(() => {
     setTitleByName(router.currentRoute.value.name)
   })
+})
+
+watch(capabilities, (currentCapabilities) => {
+  const routeName = router.currentRoute.value.name
+  const requiredCap = typeof routeName === 'string' ? ROUTE_CAPABILITY[routeName] : undefined
+  if (requiredCap && !currentCapabilities[requiredCap]) {
+    router.push({ name: ROUTE_NAME.proxies })
+  }
 })
 
 export default router

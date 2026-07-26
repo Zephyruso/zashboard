@@ -1,13 +1,14 @@
 import { renderRoutes } from '@/helper'
 import { showNotification } from '@/helper/notification'
 import { getLabelFromBackend } from '@/helper/utils'
-import { isSidebarCollapsed, keyboardShortcuts } from '@/store/settings'
+import { isSidebarCollapsed, keyboardShortcuts, manageHiddenGroup } from '@/store/settings'
 import { activeBackend, switchActiveBackend, toggleBackendSettingsDialog } from '@/store/setup'
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 export enum KEYBOARD_SHORTCUT_ACTION {
   TOGGLE_SIDEBAR = 'sidebar:toggle',
+  TOGGLE_MANAGE_HIDDEN_GROUP = 'proxies:toggle-manage-hidden-group',
   BACKEND_PREVIOUS = 'backend:previous',
   BACKEND_NEXT = 'backend:next',
   BACKEND_OPEN_SETTINGS = 'backend:open-settings',
@@ -43,6 +44,10 @@ export const KEYBOARD_SHORTCUTS = {
   [KEYBOARD_SHORTCUT_ACTION.TOGGLE_SIDEBAR]: {
     defaultKey: 'B',
     label: 'toggleSidebar',
+  },
+  [KEYBOARD_SHORTCUT_ACTION.TOGGLE_MANAGE_HIDDEN_GROUP]: {
+    defaultKey: 'H',
+    label: 'manageHiddenGroup',
   },
   [KEYBOARD_SHORTCUT_ACTION.BACKEND_PREVIOUS]: {
     defaultKey: 'P',
@@ -210,6 +215,12 @@ export const useKeyboard = () => {
     if (action === KEYBOARD_SHORTCUT_ACTION.TOGGLE_SIDEBAR) {
       event.preventDefault()
       isSidebarCollapsed.value = !isSidebarCollapsed.value
+      return
+    }
+
+    if (action === KEYBOARD_SHORTCUT_ACTION.TOGGLE_MANAGE_HIDDEN_GROUP) {
+      event.preventDefault()
+      manageHiddenGroup.value = !manageHiddenGroup.value
       return
     }
 

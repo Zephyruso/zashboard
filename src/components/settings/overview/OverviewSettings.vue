@@ -9,10 +9,7 @@
     class="flex flex-col gap-3 text-sm"
   >
     <div class="settings-grid">
-      <div
-        v-if="isVisibleSplitOverviewPage"
-        class="setting-item"
-      >
+      <SettingItem :setting-key="k.splitOverviewPage">
         <div class="setting-item-label">
           {{ $t('splitOverviewPage') }}
         </div>
@@ -21,11 +18,8 @@
           type="checkbox"
           v-model="splitOverviewPage"
         />
-      </div>
-      <div
-        v-if="isVisibleAutoIPCheckWhenStart"
-        class="setting-item"
-      >
+      </SettingItem>
+      <SettingItem :setting-key="k.autoIPCheckWhenStart">
         <div class="setting-item-label">
           {{ $t('autoIPCheckWhenStart') }}
         </div>
@@ -34,11 +28,8 @@
           type="checkbox"
           v-model="autoIPCheck"
         />
-      </div>
-      <div
-        v-if="isVisibleAutoConnectionCheckWhenStart"
-        class="setting-item"
-      >
+      </SettingItem>
+      <SettingItem :setting-key="k.autoConnectionCheckWhenStart">
         <div class="setting-item-label">
           {{ $t('autoConnectionCheckWhenStart') }}
         </div>
@@ -47,10 +38,10 @@
           type="checkbox"
           v-model="autoConnectionCheck"
         />
-      </div>
-      <div
-        v-if="isVisibleShowStatisticsWhenSidebarCollapsed"
-        class="setting-item max-md:hidden"
+      </SettingItem>
+      <SettingItem
+        :setting-key="k.showStatisticsWhenSidebarCollapsed"
+        class="max-md:hidden"
       >
         <div class="setting-item-label">
           {{ $t('showStatisticsWhenSidebarCollapsed') }}
@@ -60,10 +51,10 @@
           type="checkbox"
           v-model="showStatisticsWhenSidebarCollapsed"
         />
-      </div>
-      <div
-        v-if="isVisibleNumberOfChartsInSidebar"
-        class="setting-item max-md:hidden"
+      </SettingItem>
+      <SettingItem
+        :setting-key="k.numberOfChartsInSidebar"
+        class="max-md:hidden"
       >
         <div class="setting-item-label">
           {{ $t('numberOfChartsInSidebar') }}
@@ -80,13 +71,14 @@
             {{ opt }}
           </option>
         </select>
-      </div>
+      </SettingItem>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useHasAnyVisibleSetting, useIsSettingVisible } from '@/composables/settings'
+import SettingItem from '@/components/settings/SettingItem.vue'
+import { useHasAnyVisibleSetting } from '@/composables/settings'
 import { getItemKeysByCategory, OVERVIEW_ITEM_KEYS } from '@/config/settingsItems'
 import { SETTINGS_MENU_KEY } from '@/constant'
 import {
@@ -99,13 +91,6 @@ import {
 import OverviewCard from './OverviewCard.vue'
 
 const k = OVERVIEW_ITEM_KEYS
-const isVisibleSplitOverviewPage = useIsSettingVisible(k.splitOverviewPage)
-const isVisibleAutoIPCheckWhenStart = useIsSettingVisible(k.autoIPCheckWhenStart)
-const isVisibleAutoConnectionCheckWhenStart = useIsSettingVisible(k.autoConnectionCheckWhenStart)
-const isVisibleShowStatisticsWhenSidebarCollapsed = useIsSettingVisible(
-  k.showStatisticsWhenSidebarCollapsed,
-)
-const isVisibleNumberOfChartsInSidebar = useIsSettingVisible(k.numberOfChartsInSidebar)
 
 const overviewGridKeys = getItemKeysByCategory(SETTINGS_MENU_KEY.overview).slice(2)
 const hasVisibleItems = useHasAnyVisibleSetting(overviewGridKeys)

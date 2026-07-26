@@ -2,6 +2,10 @@
 [data-theme] {
   --color-base-150: color-mix(in oklch, var(--color-base-100) 50%, var(--color-base-200));
   --color-base-border: color-mix(in srgb, var(--color-base-content) 8%, transparent);
+
+  /* 统一各主题的圆角令牌，让所有输入控件风格更现代 */
+  --radius-field: 0.625rem;
+  --radius-selector: 0.5rem;
 }
 
 @theme inline {
@@ -32,12 +36,75 @@
   @apply border-base-border border-t;
 }
 
-@utility badge {
-  @apply bg-base-200/80;
-}
-
 @utility select {
   @apply w-auto;
+  appearance: none;
+}
+
+.input,
+.select,
+.textarea {
+  @apply border-base-border transition-[color,background-color,border-color,box-shadow] duration-200 ease-out;
+  border-width: var(--border, 1px);
+}
+
+.input:hover:not(:focus, :focus-within, :disabled, [disabled]),
+.select:hover:not(:focus, :focus-within, :disabled, [disabled]),
+.textarea:hover:not(:focus, :focus-within, :disabled, [disabled]) {
+  border-color: color-mix(in srgb, var(--color-base-content) 18%, transparent);
+}
+
+.input:focus,
+.input:focus-within,
+.select:focus,
+.select:focus-within,
+.textarea:focus,
+.textarea:focus-within {
+  @apply border-primary;
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.input.input-error,
+.select.select-error,
+.textarea.textarea-error {
+  @apply border-error;
+}
+.input.input-error:focus,
+.input.input-error:focus-within,
+.select.select-error:focus,
+.textarea.textarea-error:focus,
+.textarea.textarea-error:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-error) 16%, transparent);
+}
+
+.checkbox,
+.radio,
+.toggle {
+  @apply border-base-border transition-all duration-200 ease-out;
+}
+.checkbox:focus-visible,
+.radio:focus-visible,
+.toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.toggle {
+  transition:
+    color 0.3s,
+    background-color 0.3s ease-out,
+    border-color 0.3s ease-out,
+    grid-template-columns 0.32s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.toggle::before {
+  transition:
+    background-color 0.2s ease-out,
+    scale 0.18s ease-out;
+}
+.toggle:active::before {
+  /* 按下时滑块横向拉伸，模拟物理开关的挤压反馈 */
+  scale: 1.15 1;
 }
 
 @utility btn {
@@ -97,10 +164,6 @@
 
     .btn.btn-neutral {
       @apply bg-neutral/$(i);
-    }
-
-    .badge {
-      @apply bg-base-200/$(i) border-transparent;
     }
 
     option,

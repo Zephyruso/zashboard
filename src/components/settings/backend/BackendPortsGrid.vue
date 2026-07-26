@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="containerRef"
-    class="border-base-content/8 grid gap-2 border-b p-3 last:border-b-0"
-  >
+  <div ref="containerRef">
     <div :class="gridClass">
       <div
         v-for="(port, index) in ports"
@@ -32,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { configs, updateConfigs } from '@/store/config'
+import { configs, updateConfigs } from '@/assembly/config'
 import { useElementSize } from '@vueuse/core'
 import { computed, ref } from 'vue'
 

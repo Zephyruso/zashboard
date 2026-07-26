@@ -2,39 +2,54 @@
   <div class="relative size-full overflow-x-hidden">
     <VirtualScroller
       :data="renderLogs"
-      :size="38"
+      :size="44"
     >
       <template v-slot:before>
         <LogsCtrl />
       </template>
       <template v-slot="{ item }: { item: LogWithSeq }">
-        <LogsCard :log="item" />
+        <LogsCard
+          :log="item"
+          @connection-click="handlerConnectionClick"
+        />
       </template>
     </VirtualScroller>
-    <LogDetailModal
-      v-model="isDetailOpen"
-      :log="selectedLog"
-    />
+    <DialogWrapper
+      v-model="connectionLogsDialogVisible"
+      no-padding
+      :title="`${t('sameConnectionLogs')} (${connectionLogID})`"
+    >
+      <div class="flex flex-col">
+        <LogsCard
+          v-for="log in connectionLogs"
+          :key="log.seq"
+          :log="log"
+          connection-detail-disabled
+        />
+      </div>
+    </DialogWrapper>
   </div>
 </template>
 
 <script setup lang="ts">
+import DialogWrapper from '@/components/common/DialogWrapper.vue'
 import VirtualScroller from '@/components/common/VirtualScroller.vue'
 import LogsCtrl from '@/components/controls/LogsCtrl.tsx'
-import LogDetailModal from '@/components/logs/LogDetailModal.vue'
 import LogsCard from '@/components/logs/LogsCard.vue'
 import { toSearchRegex } from '@/helper/search'
-import { logFilter, logFilterEnabled, logFilterRegex, logTypeFilter, logs } from '@/store/logs'
+import {
+  getLogConnectionID,
+  logFilter,
+  logFilterEnabled,
+  logFilterRegex,
+  logTypeFilter,
+  logs,
+} from '@/store/logs'
 import type { LogWithSeq } from '@/types'
-import { computed, provide, ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-const selectedLog = ref<LogWithSeq | null>(null)
-const isDetailOpen = ref(false)
-const showLogDetail = (log: LogWithSeq) => {
-  selectedLog.value = log
-  isDetailOpen.value = true
-}
-provide('showLogDetail', showLogDetail)
+const { t } = useI18n()
 
 const renderLogs = computed(() => {
   let renderLogs = logs.value
@@ -69,4 +84,19 @@ const renderLogs = computed(() => {
 
   return renderLogs
 })
+
+const connectionLogID = ref('')
+const connectionLogsDialogVisible = ref(false)
+const connectionLogs = computed(() => {
+  if (!connectionLogID.value) return []
+
+  return logs.value
+    .filter((log) => getLogConnectionID(log.payload) === connectionLogID.value)
+    .reverse()
+})
+
+const handlerConnectionClick = (connectionID: string) => {
+  connectionLogID.value = connectionID
+  connectionLogsDialogVisible.value = true
+}
 </script>

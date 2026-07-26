@@ -45,11 +45,11 @@
 </template>
 
 <script setup lang="ts">
-import { updateRuleProviderAPI } from '@/api'
+import { updateRuleProviderAPI } from '@/assembly/rules'
 import HighlightText from '@/components/common/HighlightText.vue'
 import { useBounceOnVisible } from '@/composables/bouncein'
 import { fromNow } from '@/helper/utils'
-import { fetchRules, rulesFilter } from '@/store/rules'
+import { fetchRules, rulesFilter } from '@/assembly/rules'
 import type { RuleProvider } from '@/types'
 import { ArrowPathIcon } from '@heroicons/vue/24/outline'
 import { twMerge } from 'tailwind-merge'

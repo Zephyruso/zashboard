@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useCalculateMaxProxies } from '@/composables/proxiesScroll'
-import { handlerProxySelect, proxyMap, proxyProviederList } from '@/store/proxies'
+import { handlerProxySelect } from '@/assembly/proxies'
+import { groupProxiesByProviderName } from '@/composables/renderProxies'
 import { computed } from 'vue'
 import ProxyNodeCard from './ProxyNodeCard.vue'
 import ProxyNodeGrid from './ProxyNodeGrid.vue'
@@ -11,36 +12,7 @@ const props = defineProps<{
   renderProxies: string[]
 }>()
 
-const groupedProxies = computed(() => {
-  const groupdProixes: Record<string, string[]> = {}
-  const providerKeys: string[] = []
-
-  for (const proxy of props.renderProxies) {
-    const proxyNode = proxyMap.value[proxy]
-    const providerName =
-      proxyNode['provider-name'] ||
-      (proxyProviederList.value.find((group) => group.proxies.find((node) => node.name === proxy))
-        ?.name ??
-        '')
-
-    if (groupdProixes[providerName]) {
-      groupdProixes[providerName].push(proxy)
-    } else {
-      if (providerName === '') {
-        providerKeys.unshift('')
-      } else {
-        providerKeys.push(providerName)
-      }
-
-      groupdProixes[providerName] = [proxy]
-    }
-  }
-
-  return providerKeys.map((providerName) => ({
-    providerName,
-    proxies: groupdProixes[providerName],
-  }))
-})
+const groupedProxies = computed(() => groupProxiesByProviderName(props.renderProxies))
 
 const activeIndex = groupedProxies.value.reduce((acc, { proxies }) => {
   const index = proxies.indexOf(props.now)

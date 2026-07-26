@@ -1,0 +1,669 @@
+syntax = "proto3";
+
+package daemon;
+option go_package = "github.com/sagernet/sing-box/daemon";
+
+import "google/protobuf/empty.proto";
+
+service StartedService {
+  rpc GetVersion(google.protobuf.Empty) returns(Version) {}
+  rpc SubscribeServiceStatus(google.protobuf.Empty) returns(stream ServiceStatus) {}
+  rpc SubscribeLog(google.protobuf.Empty) returns(stream Log) {}
+  rpc GetDefaultLogLevel(google.protobuf.Empty) returns(DefaultLogLevel) {}
+  rpc ClearLogs(google.protobuf.Empty) returns(google.protobuf.Empty) {}
+  rpc SubscribeStatus(SubscribeStatusRequest) returns(stream Status) {}
+  rpc SubscribeGroups(google.protobuf.Empty) returns(stream Groups) {}
+
+  rpc GetClashModeStatus(google.protobuf.Empty) returns(ClashModeStatus) {}
+  rpc SubscribeClashMode(google.protobuf.Empty) returns(stream ClashMode) {}
+  rpc SetClashMode(ClashMode) returns(google.protobuf.Empty) {}
+
+  rpc URLTest(URLTestRequest) returns(google.protobuf.Empty) {}
+  rpc SelectOutbound(SelectOutboundRequest) returns (google.protobuf.Empty) {}
+  rpc SetGroupExpand(SetGroupExpandRequest) returns (google.protobuf.Empty) {}
+
+  rpc SubscribeConnections(SubscribeConnectionsRequest) returns(stream ConnectionEvents) {}
+  rpc CloseConnection(CloseConnectionRequest) returns(google.protobuf.Empty) {}
+  rpc CloseAllConnections(google.protobuf.Empty) returns(google.protobuf.Empty) {}
+  rpc GetDeprecatedWarnings(google.protobuf.Empty) returns(DeprecatedWarnings) {}
+  rpc GetStartedAt(google.protobuf.Empty) returns(StartedAt) {}
+
+  rpc SubscribeOutbounds(google.protobuf.Empty) returns (stream OutboundList) {}
+  rpc StartNetworkQualityTest(NetworkQualityTestRequest) returns (stream NetworkQualityTestProgress) {}
+  rpc StartSTUNTest(STUNTestRequest) returns (stream STUNTestProgress) {}
+  rpc SubscribeTailscaleStatus(google.protobuf.Empty) returns (stream TailscaleStatusUpdate) {}
+  rpc StartTailscalePing(TailscalePingRequest) returns (stream TailscalePingResponse) {}
+  rpc SetTailscaleExitNode(SetTailscaleExitNodeRequest) returns (google.protobuf.Empty) {}
+  rpc TailscaleLogout(TailscaleLogoutRequest) returns (google.protobuf.Empty) {}
+  rpc StartTailscaleSSHSession(stream TailscaleSSHClientMessage) returns (stream TailscaleSSHServerMessage) {}
+  rpc ProvideUSBDevices(stream USBProviderMessage) returns (stream USBServerMessage) {}
+  rpc SubscribeUSBIPServerStatus(google.protobuf.Empty) returns (stream USBIPServerStatusUpdate) {}
+  rpc SubscribeOpenConnectStatus(google.protobuf.Empty) returns (stream OpenConnectStatusUpdate) {}
+  rpc SubmitOpenConnectAuthResponse(OpenConnectAuthResponseSubmission) returns (google.protobuf.Empty) {}
+  rpc CancelOpenConnectAuthChallenge(OpenConnectAuthChallengeCancel) returns (google.protobuf.Empty) {}
+  rpc SubscribeOpenVPNStatus(google.protobuf.Empty) returns (stream OpenVPNStatusUpdate) {}
+  rpc SubmitOpenVPNChallengeResponse(OpenVPNChallengeSubmission) returns (google.protobuf.Empty) {}
+  rpc CancelOpenVPNChallenge(OpenVPNChallengeCancel) returns (google.protobuf.Empty) {}
+}
+
+message Version {
+  string version = 1;
+  int32 apiVersion = 2;
+}
+
+message ServiceStatus {
+  enum Type {
+    IDLE = 0;
+    STARTING = 1;
+    STARTED = 2;
+    STOPPING = 3;
+    FATAL = 4;
+  }
+  Type status = 1;
+  string errorMessage = 2;
+}
+
+message SubscribeStatusRequest {
+  int64 interval = 1;
+}
+
+enum LogLevel {
+  PANIC = 0;
+  FATAL = 1;
+  ERROR = 2;
+  WARN = 3;
+  INFO = 4;
+  DEBUG = 5;
+  TRACE = 6;
+}
+
+message Log {
+  repeated Message messages = 1;
+  bool reset = 2;
+  message Message {
+    LogLevel level = 1;
+    string message = 2;
+  }
+}
+
+message DefaultLogLevel {
+  LogLevel level = 1;
+}
+
+message Status {
+  uint64 memory = 1;
+  int32 goroutines = 2;
+  int32 connectionsIn = 3;
+  int32 connectionsOut = 4;
+  bool trafficAvailable = 5;
+  int64 uplink = 6;
+  int64 downlink = 7;
+  int64 uplinkTotal = 8;
+  int64 downlinkTotal = 9;
+}
+
+message Groups {
+  repeated Group group = 1;
+}
+
+message Group {
+  string tag = 1;
+  string type = 2;
+  bool selectable = 3;
+  string selected = 4;
+  bool isExpand = 5;
+  repeated GroupItem items = 6;
+}
+
+message GroupItem {
+  string tag = 1;
+  string type = 2;
+  int64 urlTestTime = 3;
+  int32 urlTestDelay = 4;
+}
+
+message URLTestRequest {
+  string outboundTag = 1;
+}
+
+message SelectOutboundRequest {
+  string groupTag = 1;
+  string outboundTag = 2;
+}
+
+message SetGroupExpandRequest {
+  string groupTag = 1;
+  bool isExpand = 2;
+}
+
+message ClashMode {
+  string mode = 3;
+}
+
+message ClashModeStatus {
+  repeated string modeList = 1;
+  string currentMode = 2;
+}
+
+message SubscribeConnectionsRequest {
+  int64 interval = 1;
+}
+
+enum ConnectionEventType {
+  CONNECTION_EVENT_NEW = 0;
+  CONNECTION_EVENT_UPDATE = 1;
+  CONNECTION_EVENT_CLOSED = 2;
+}
+
+message ConnectionEvent {
+  ConnectionEventType type = 1;
+  string id = 2;
+  Connection connection = 3;
+  int64 uplinkDelta = 4;
+  int64 downlinkDelta = 5;
+  int64 closedAt = 6;
+}
+
+message ConnectionEvents {
+  repeated ConnectionEvent events = 1;
+  bool reset = 2;
+}
+
+message Connection {
+  string id = 1;
+  string inbound = 2;
+  string inboundType = 3;
+  int32 ipVersion = 4;
+  string network = 5;
+  string source = 6;
+  string destination = 7;
+  string domain = 8;
+  string protocol = 9;
+  string user = 10;
+  string fromOutbound = 11;
+  int64 createdAt = 12;
+  int64 closedAt = 13;
+  int64 uplink = 14;
+  int64 downlink = 15;
+  int64 uplinkTotal = 16;
+  int64 downlinkTotal = 17;
+  string rule = 18;
+  string outbound = 19;
+  string outboundType = 20;
+  repeated string chainList = 21;
+  ProcessInfo processInfo = 22;
+}
+
+message ProcessInfo {
+  uint32 processId = 1;
+  int32 userId = 2;
+  string userName = 3;
+  string processPath = 4;
+  repeated string packageNames = 5;
+}
+
+message CloseConnectionRequest {
+  string id = 1;
+}
+
+message DeprecatedWarnings {
+  repeated DeprecatedWarning warnings = 1;
+}
+
+message DeprecatedWarning {
+  string message = 1;
+  bool impending = 2;
+  string migrationLink = 3;
+  string description = 4;
+  string deprecatedVersion = 5;
+  string scheduledVersion = 6;
+}
+
+message StartedAt {
+  int64 startedAt = 1;
+}
+
+message OutboundList {
+  repeated GroupItem outbounds = 1;
+}
+
+message NetworkQualityTestRequest {
+  string configURL = 1;
+  string outboundTag = 2;
+  bool serial = 3;
+  int32 maxRuntimeSeconds = 4;
+  bool http3 = 5;
+}
+
+message NetworkQualityTestProgress {
+  int32 phase = 1;
+  int64 downloadCapacity = 2;
+  int64 uploadCapacity = 3;
+  int32 downloadRPM = 4;
+  int32 uploadRPM = 5;
+  int32 idleLatencyMs = 6;
+  int64 elapsedMs = 7;
+  bool isFinal = 8;
+  string error = 9;
+  int32 downloadCapacityAccuracy = 10;
+  int32 uploadCapacityAccuracy = 11;
+  int32 downloadRPMAccuracy = 12;
+  int32 uploadRPMAccuracy = 13;
+}
+
+message STUNTestRequest {
+  string server = 1;
+  string outboundTag = 2;
+}
+
+message STUNTestProgress {
+  int32 phase = 1;
+  string externalAddr = 2;
+  int32 latencyMs = 3;
+  int32 natMapping = 4;
+  int32 natFiltering = 5;
+  bool isFinal = 6;
+  string error = 7;
+  bool natTypeSupported = 8;
+}
+
+message TailscaleStatusUpdate {
+  repeated TailscaleEndpointStatus endpoints = 1;
+}
+
+message TailscaleEndpointStatus {
+  string endpointTag = 1;
+  string backendState = 2;
+  string stateText = 3;
+  string authURL = 4;
+  string networkName = 5;
+  string magicDNSSuffix = 6;
+  TailscalePeer self = 7;
+  repeated TailscaleUserGroup userGroups = 8;
+  TailscalePeer exitNode = 9;
+  bool keyAuth = 10;
+}
+
+message TailscaleUserGroup {
+  int64 userID = 1;
+  string loginName = 2;
+  string displayName = 3;
+  string profilePicURL = 4;
+  repeated TailscalePeer peers = 5;
+}
+
+message TailscalePeer {
+  string hostName = 1;
+  string dnsName = 2;
+  string os = 3;
+  repeated string tailscaleIPs = 4;
+  bool online = 5;
+  bool exitNode = 6;
+  bool exitNodeOption = 7;
+  bool active = 8;
+  int64 rxBytes = 9;
+  int64 txBytes = 10;
+  int64 keyExpiry = 11;
+  string stableID = 12;
+  bool expired = 13;
+  repeated string sshHostKeys = 14;
+  bool shareeNode = 15;
+  int64 lastSeen = 16;
+}
+
+message TailscalePingRequest {
+  string endpointTag = 1;
+  string peerIP = 2;
+}
+
+message TailscalePingResponse {
+  double latencyMs = 1;
+  bool isDirect = 2;
+  string endpoint = 3;
+  int32 derpRegionID = 4;
+  string derpRegionCode = 5;
+  string error = 6;
+}
+
+message SetTailscaleExitNodeRequest {
+  string endpointTag = 1;
+  string stableID = 2;
+}
+
+message TailscaleLogoutRequest {
+  string endpointTag = 1;
+}
+
+message TailscaleSSHClientMessage {
+  oneof message {
+    TailscaleSSHStart start = 1;
+    TailscaleSSHInput input = 2;
+    TailscaleSSHResize resize = 3;
+  }
+}
+
+message TailscaleSSHStart {
+  string endpointTag = 1;
+  string peerAddress = 2;
+  string username = 3;
+  string terminalType = 4;
+  int32 columns = 5;
+  int32 rows = 6;
+  int32 widthPixels = 7;
+  int32 heightPixels = 8;
+  repeated string hostKeys = 9;
+  bool forward_agent = 10;
+}
+
+message TailscaleSSHInput {
+  bytes data = 1;
+}
+
+message TailscaleSSHResize {
+  int32 columns = 1;
+  int32 rows = 2;
+  int32 widthPixels = 3;
+  int32 heightPixels = 4;
+}
+
+message TailscaleSSHServerMessage {
+  oneof message {
+    TailscaleSSHAuthBanner authBanner = 1;
+    TailscaleSSHReady ready = 2;
+    TailscaleSSHOutput output = 3;
+    TailscaleSSHExit exit = 4;
+    TailscaleSSHError error = 5;
+  }
+}
+
+message TailscaleSSHAuthBanner {
+  string message = 1;
+}
+
+message TailscaleSSHReady {
+}
+
+message TailscaleSSHOutput {
+  bytes data = 1;
+}
+
+message TailscaleSSHExit {
+  int32 exitCode = 1;
+  string signal = 2;
+  string errorMessage = 3;
+}
+
+message TailscaleSSHError {
+  string message = 1;
+}
+
+message USBProviderMessage {
+  oneof message {
+    USBDeviceAttach attach = 1;
+    USBDeviceDetach detach = 2;
+    USBURBResponse urbResponse = 3;
+  }
+}
+
+message USBServerMessage {
+  oneof message {
+    USBDeviceReady ready = 1;
+    USBURBRequest urbRequest = 2;
+    USBEndpointAbort abort = 3;
+    USBError error = 4;
+  }
+}
+
+message USBDeviceDescriptor {
+  string deviceId = 1;
+  uint32 busNum = 2;
+  uint32 devNum = 3;
+  uint32 speed = 4;
+  uint32 vendorId = 5;
+  uint32 productId = 6;
+  uint32 bcdDevice = 7;
+  uint32 deviceClass = 8;
+  uint32 deviceSubClass = 9;
+  uint32 deviceProtocol = 10;
+  uint32 configurationValue = 11;
+  uint32 numConfigurations = 12;
+  repeated USBInterface interfaces = 13;
+  string serial = 14;
+  string product = 15;
+}
+
+message USBDeviceAttach {
+  string serverTag = 1;
+  USBDeviceDescriptor descriptor = 2;
+}
+
+message USBInterface {
+  uint32 interfaceClass = 1;
+  uint32 interfaceSubClass = 2;
+  uint32 interfaceProtocol = 3;
+}
+
+message USBDeviceDetach {
+  string deviceId = 1;
+}
+
+message USBDeviceReady {
+  string deviceId = 1;
+  string busId = 2;
+}
+
+message USBURBRequest {
+  string deviceId = 1;
+  uint64 seq = 2;
+  uint32 endpoint = 3;
+  bool directionIn = 4;
+  uint32 transferFlags = 5;
+  bytes setup = 6;
+  uint32 transferBufferLength = 7;
+  bytes outData = 8;
+  int32 numberOfPackets = 9;
+  int32 startFrame = 10;
+  int32 interval = 11;
+  repeated USBIsoPacket isoPackets = 12;
+}
+
+message USBURBResponse {
+  string deviceId = 1;
+  uint64 seq = 2;
+  int32 status = 3;
+  int32 actualLength = 4;
+  bytes inData = 5;
+  repeated USBIsoPacket isoPackets = 6;
+}
+
+message USBIsoPacket {
+  int32 offset = 1;
+  int32 length = 2;
+  int32 actualLength = 3;
+  int32 status = 4;
+}
+
+message USBEndpointAbort {
+  string deviceId = 1;
+  uint32 endpoint = 2;
+}
+
+message USBError {
+  string deviceId = 1;
+  string message = 2;
+}
+
+message USBIPServerStatusUpdate {
+  repeated USBIPServerStatus servers = 1;
+}
+
+message USBIPServerStatus {
+  string serverTag = 1;
+  repeated USBSharedDevice devices = 2;
+}
+
+message USBSharedDevice {
+  USBDeviceDescriptor descriptor = 1;
+  string busId = 2;
+  string stableId = 3;
+  USBBackend backend = 4;
+  USBDeviceState state = 5;
+}
+
+enum USBDeviceState {
+  USB_DEVICE_STATE_IDLE = 0;
+  USB_DEVICE_STATE_ATTACHED = 1;
+  USB_DEVICE_STATE_UNAVAILABLE = 2;
+}
+
+enum USBBackend {
+  USB_BACKEND_UNSPECIFIED = 0;
+  USB_BACKEND_LINUX_SYSFS = 1;
+  USB_BACKEND_DYNAMIC = 2;
+  USB_BACKEND_DARWIN_IOKIT = 3;
+  USB_BACKEND_WINDOWS_VBOXUSB = 4;
+}
+
+message OpenConnectStatusUpdate {
+  repeated OpenConnectEndpointStatus endpoints = 1;
+}
+
+message OpenConnectEndpointStatus {
+  string endpointTag = 1;
+  string state = 2;
+  string stateText = 3;
+  OpenConnectAuthChallenge authChallenge = 4;
+  string error = 5;
+  OpenConnectTunnelInfo tunnelInfo = 6;
+}
+
+message OpenConnectTunnelInfo {
+  string server = 1;
+  string flavor = 2;
+  string transport = 3;
+  repeated string ipv4 = 4;
+  repeated string ipv6 = 5;
+  repeated string dns = 6;
+  uint32 mtu = 7;
+  int64 connectedSince = 8;
+}
+
+message OpenConnectAuthChallenge {
+  string id = 1;
+  string banner = 2;
+  string message = 3;
+  string error = 4;
+  oneof challenge {
+    OpenConnectAuthForm form = 5;
+    OpenConnectBrowserRequest browser = 6;
+  }
+}
+
+message OpenConnectAuthForm {
+  repeated OpenConnectAuthFormField fields = 1;
+}
+
+message OpenConnectAuthFormField {
+  string submissionKey = 1;
+  string name = 2;
+  string label = 3;
+  string kind = 4;
+  string value = 5;
+  repeated OpenConnectAuthFormChoice options = 6;
+}
+
+message OpenConnectAuthFormChoice {
+  string value = 1;
+  string label = 2;
+}
+
+message OpenConnectBrowserRequest {
+  string url = 1;
+  string finalURL = 2;
+  repeated string cookieNames = 3;
+  repeated string headerNames = 4;
+}
+
+message OpenConnectBrowserCookie {
+  string name = 1;
+  string value = 2;
+}
+
+message OpenConnectBrowserHeader {
+  string name = 1;
+  repeated string values = 2;
+}
+
+message OpenConnectAuthFormResponse {
+  map<string, string> values = 1;
+}
+
+message OpenConnectBrowserResult {
+  string finalURL = 1;
+  repeated OpenConnectBrowserCookie cookies = 2;
+  repeated OpenConnectBrowserHeader headers = 3;
+}
+
+message OpenConnectAuthResponseSubmission {
+  string endpointTag = 1;
+  string challengeID = 2;
+  oneof response {
+    OpenConnectAuthFormResponse form = 3;
+    OpenConnectBrowserResult browser = 4;
+  }
+}
+
+message OpenConnectAuthChallengeCancel {
+  string endpointTag = 1;
+  string challengeID = 2;
+}
+
+message OpenVPNStatusUpdate {
+  repeated OpenVPNEndpointStatus endpoints = 1;
+}
+
+message OpenVPNEndpointStatus {
+  string endpointTag = 1;
+  string state = 2;
+  string stateText = 3;
+  OpenVPNChallenge challenge = 4;
+  string error = 5;
+  OpenVPNTunnelInfo tunnelInfo = 6;
+}
+
+message OpenVPNTunnelInfo {
+  string server = 1;
+  reserved 2;
+  string network = 3;
+  repeated string ipv4 = 4;
+  repeated string ipv6 = 5;
+  repeated string dns = 6;
+  uint32 mtu = 7;
+  int64 connectedSince = 8;
+  string cipher = 9;
+}
+
+message OpenVPNChallenge {
+  string id = 1;
+  string kind = 2;
+  string username = 3;
+  string message = 4;
+  string url = 5;
+  string secretMessage = 6;
+  bool echo = 7;
+  string previousError = 8;
+  int64 deadline = 9;
+}
+
+message OpenVPNChallengeSubmission {
+  string endpointTag = 1;
+  string challengeID = 2;
+  string username = 3;
+  string password = 4;
+  string secret = 5;
+}
+
+message OpenVPNChallengeCancel {
+  string endpointTag = 1;
+  string challengeID = 2;
+}

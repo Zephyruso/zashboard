@@ -56,7 +56,7 @@
 import { NOT_CONNECTED, PROXY_PREVIEW_TYPE } from '@/constant'
 import { getColorForLatency } from '@/helper'
 import { useTooltip } from '@/helper/tooltip'
-import { getLatencyByName } from '@/store/proxies'
+import { getLatencyByName } from '@/assembly/proxies'
 import { lowLatency, mediumLatency, proxyPreviewType } from '@/store/settings'
 import { useElementSize } from '@vueuse/core'
 import { computed, ref } from 'vue'

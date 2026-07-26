@@ -16,13 +16,14 @@
 
 <script setup lang="ts">
 import { getIPLabelFromMap } from '@/helper/sourceip'
+import { getConnectionSourceIP } from '@/helper'
 import { connections, sourceIPFilter } from '@/store/connections'
 import * as ipaddr from 'ipaddr.js'
 import { isEqual, uniq } from 'lodash'
 import { computed, ref, watch } from 'vue'
 
 const sourceIPs = computed(() => {
-  return uniq(connections.value.map((conn) => conn.metadata.sourceIP)).sort((a, b) => {
+  return uniq(connections.value.map(getConnectionSourceIP)).sort((a, b) => {
     if (!ipaddr.isValid(a)) return -1
     if (!ipaddr.isValid(b)) return 1
 

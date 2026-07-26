@@ -83,7 +83,7 @@ import {
   getNowProxyNodeName,
   getProxyGroupChains,
   proxyMap,
-} from '@/store/proxies'
+} from '@/assembly/proxies'
 import { ChevronRightIcon } from '@heroicons/vue/24/outline'
 import { computed, ref } from 'vue'
 import ProxyName from '../proxies/ProxyName.vue'

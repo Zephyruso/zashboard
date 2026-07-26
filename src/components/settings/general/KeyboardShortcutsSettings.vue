@@ -48,7 +48,10 @@
     </div>
   </DialogWrapper>
 
-  <div class="setting-item">
+  <SettingItem
+    :setting-key="GENERAL_ITEM_KEYS.keyboardShortcuts"
+    :when="!isMiddleScreen"
+  >
     <div class="setting-item-label">
       {{ $t('keyboardShortcuts') }}
     </div>
@@ -58,7 +61,7 @@
     >
       <PencilSquareIcon class="h-4 w-4" />
     </button>
-  </div>
+  </SettingItem>
 </template>
 
 <script setup lang="ts">
@@ -71,7 +74,10 @@ import {
   serializeShortcutEvent,
   useKeyboardShortcuts,
 } from '@/composables/keyboard'
+import SettingItem from '@/components/settings/SettingItem.vue'
+import { GENERAL_ITEM_KEYS } from '@/config/settingsItems'
 import { renderRoutes } from '@/helper'
+import { isMiddleScreen } from '@/helper/utils'
 import { keyboardShortcuts } from '@/store/settings'
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
 import { computed, ref } from 'vue'
@@ -89,6 +95,12 @@ const shortcuts = computed(() => {
       defaultKey: getDefaultShortcutKey(KEYBOARD_SHORTCUT_ACTION.TOGGLE_SIDEBAR),
       key: getShortcutKey(KEYBOARD_SHORTCUT_ACTION.TOGGLE_SIDEBAR),
       label: KEYBOARD_SHORTCUTS[KEYBOARD_SHORTCUT_ACTION.TOGGLE_SIDEBAR].label,
+    },
+    {
+      action: KEYBOARD_SHORTCUT_ACTION.TOGGLE_MANAGE_HIDDEN_GROUP,
+      defaultKey: getDefaultShortcutKey(KEYBOARD_SHORTCUT_ACTION.TOGGLE_MANAGE_HIDDEN_GROUP),
+      key: getShortcutKey(KEYBOARD_SHORTCUT_ACTION.TOGGLE_MANAGE_HIDDEN_GROUP),
+      label: KEYBOARD_SHORTCUTS[KEYBOARD_SHORTCUT_ACTION.TOGGLE_MANAGE_HIDDEN_GROUP].label,
     },
     {
       action: KEYBOARD_SHORTCUT_ACTION.BACKEND_PREVIOUS,

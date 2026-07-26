@@ -73,7 +73,7 @@
 
 <script setup lang="ts">
 import { prettyBytesHelper } from '@/helper/utils'
-import { proxyProviederList } from '@/store/proxies'
+import { proxyProviederList } from '@/assembly/proxies'
 import { toFinite } from 'lodash'
 import { computed } from 'vue'
 

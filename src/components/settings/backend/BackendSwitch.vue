@@ -18,13 +18,13 @@
       @click="editBackend"
       :disabled="!activeBackend"
     >
-      <PencilIcon class="h-4 w-4" />
+      <PencilSquareIcon class="h-4 w-4" />
     </button>
     <button
       class="btn join-item btn-sm"
       @click="addBackend"
     >
-      <PlusIcon class="h-4 w-4" />
+      <Cog6ToothIcon class="h-4 w-4" />
     </button>
   </div>
 
@@ -37,7 +37,7 @@ import { ROUTE_NAME } from '@/constant'
 import { getLabelFromBackend } from '@/helper/utils'
 import router from '@/router'
 import { activeBackend, activeUuid, backendList } from '@/store/setup'
-import { PencilIcon, PlusIcon } from '@heroicons/vue/24/outline'
+import { Cog6ToothIcon, PencilSquareIcon } from '@heroicons/vue/24/outline'
 import { computed, ref } from 'vue'
 import EditBackendModal from './EditBackendModal.vue'
 
@@ -63,7 +63,7 @@ const showEditModal = ref(false)
 
 const addBackend = () => {
   activeUuid.value = null
-  router.push({ name: ROUTE_NAME.setup })
+  router.push({ name: ROUTE_NAME.setup, query: { setupMode: 'manual' } })
 }
 
 const editBackend = () => {

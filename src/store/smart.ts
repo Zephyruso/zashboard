@@ -1,4 +1,4 @@
-import { fetchSmartGroupWeightsAPI, fetchSmartWeightsAPI } from '@/api'
+import { fetchSmartGroupWeightsAPI, fetchSmartWeightsAPI } from '@/assembly/proxies'
 import type { NodeRank } from '@/types'
 import { ref } from 'vue'
 

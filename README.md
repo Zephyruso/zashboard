@@ -24,6 +24,8 @@ You can access the online zashboard at the following link:
 
 You can download the zashboard files here:
 
+> All builds include sing-box native API support.
+
 release:
 
 - [dist.zip (7.81 MB)](https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip) – Includes better font-loading experience.
@@ -96,5 +98,9 @@ http://host:port/#/setup?hostname=ipordomain&port=9090&secret=123456
 
 7. **`disableTunMode`**
    - Set '1' to hide tun switch
+
+8. **`type`**
+   - Selects the backend API: `clash` (Clash REST/WS) or `singbox` (sing-box native).
+   - Default: `clash`
 
 ### I code just for fun, not for money. If you really want to donate, please consider donating to [UNICEF](https://www.unicef.org/) to help hungry children.

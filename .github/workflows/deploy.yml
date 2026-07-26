@@ -28,12 +28,26 @@ jobs:
   build-and-deploy:
     needs: release-please
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Each font variant is published to its own gh-pages branch.
+        font:
+          - { key: all, suffix: '' }
+          - { key: cdn, suffix: '-cdn-fonts' }
+          - { key: firasans, suffix: '-firasans-only' }
+          - { key: misans, suffix: '-misans-only' }
+          - { key: pingfang, suffix: '-pingfang-only' }
+          - { key: sarasa, suffix: '-sarasa-only' }
+          - { key: none, suffix: '-no-fonts' }
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
       - uses: pnpm/action-setup@v6
 
       - name: Install and Build 🔧
+        env:
+          FONT: ${{ matrix.font.key }}
         run: |
           pnpm i
           pnpm run build
@@ -44,174 +58,41 @@ jobs:
         with:
           github_token: ${{ secrets.PAT }}
           publish_dir: ./dist
-          force_orphan: true
-
-  build-and-deploy-cdn-fonts:
-    needs: release-please
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-      - uses: pnpm/action-setup@v6
-
-      - name: Install and Build cdn-fonts 🔧
-        run: |
-          pnpm i
-          pnpm run build:cdn-fonts
-          echo 'board.zash.run.place' > ./dist/CNAME
-
-      - name: Deploy to gh-pages-cdn-fonts 🚀
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.PAT }}
-          publish_dir: ./dist
-          publish_branch: gh-pages-cdn-fonts
-          force_orphan: true
-
-  build-and-deploy-firasans-only:
-    needs: release-please
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-      - uses: pnpm/action-setup@v6
-
-      - name: Install and Build firasans-only 🔧
-        run: |
-          pnpm i
-          pnpm run build:firasans-only
-          echo 'board.zash.run.place' > ./dist/CNAME
-
-      - name: Deploy to gh-pages-firasans-only 🚀
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.PAT }}
-          publish_dir: ./dist
-          publish_branch: gh-pages-firasans-only
-          force_orphan: true
-
-  build-and-deploy-misans-only:
-    needs: release-please
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-      - uses: pnpm/action-setup@v6
-
-      - name: Install and Build misans-only 🔧
-        run: |
-          pnpm i
-          pnpm run build:misans-only
-          echo 'board.zash.run.place' > ./dist/CNAME
-
-      - name: Deploy to gh-pages-misans-only 🚀
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.PAT }}
-          publish_dir: ./dist
-          publish_branch: gh-pages-misans-only
-          force_orphan: true
-
-  build-and-deploy-pingfang-only:
-    needs: release-please
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-      - uses: pnpm/action-setup@v6
-
-      - name: Install and Build pingfang-only 🔧
-        run: |
-          pnpm i
-          pnpm run build:pingfang-only
-          echo 'board.zash.run.place' > ./dist/CNAME
-
-      - name: Deploy to gh-pages-pingfang-only 🚀
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.PAT }}
-          publish_dir: ./dist
-          publish_branch: gh-pages-pingfang-only
-          force_orphan: true
-
-  build-and-deploy-sarasa-only:
-    needs: release-please
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-      - uses: pnpm/action-setup@v6
-
-      - name: Install and Build sarasa-only 🔧
-        run: |
-          pnpm i
-          pnpm run build:sarasa-only
-          echo 'board.zash.run.place' > ./dist/CNAME
-
-      - name: Deploy to gh-pages-sarasa-only 🚀
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.PAT }}
-          publish_dir: ./dist
-          publish_branch: gh-pages-sarasa-only
-          force_orphan: true
-
-  build-and-deploy-no-fonts:
-    needs: release-please
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-      - uses: pnpm/action-setup@v6
-
-      - name: Install and Build no-fonts 🔧
-        run: |
-          pnpm i
-          pnpm run build:no-fonts
-          echo 'board.zash.run.place' > ./dist/CNAME
-
-      - name: Deploy to gh-pages-no-fonts 🚀
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.PAT }}
-          publish_dir: ./dist
-          publish_branch: gh-pages-no-fonts
+          publish_branch: gh-pages${{ matrix.font.suffix }}
           force_orphan: true
 
   release-dist:
     needs: release-please
     runs-on: ubuntu-latest
     if: ${{ needs.release-please.outputs.release_created }}
+    strategy:
+      fail-fast: false
+      matrix:
+        font:
+          - { key: all, suffix: '' }
+          - { key: cdn, suffix: '-cdn-fonts' }
+          - { key: firasans, suffix: '-firasans-only' }
+          - { key: misans, suffix: '-misans-only' }
+          - { key: pingfang, suffix: '-pingfang-only' }
+          - { key: sarasa, suffix: '-sarasa-only' }
+          - { key: none, suffix: '-no-fonts' }
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
       - uses: pnpm/action-setup@v6
 
-      - name: Install Dependencies
+      - name: Build and Zip the dist folder
+        env:
+          FONT: ${{ matrix.font.key }}
         run: |
           pnpm i
-
-      - name: Build and Zip the dist folder
-        run: |
           pnpm run build
-          zip -r dist.zip dist
-          pnpm run build:cdn-fonts
-          zip -r dist-cdn-fonts.zip dist
-          pnpm run build:firasans-only
-          zip -r dist-firasans-only.zip dist
-          pnpm run build:misans-only
-          zip -r dist-misans-only.zip dist
-          pnpm run build:pingfang-only
-          zip -r dist-pingfang-only.zip dist
-          pnpm run build:sarasa-only
-          zip -r dist-sarasa-only.zip dist
-          pnpm run build:no-fonts
-          zip -r dist-no-fonts.zip dist
+          zip -r dist${{ matrix.font.suffix }}.zip dist
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          files: dist*.zip
+          files: dist${{ matrix.font.suffix }}.zip
           tag_name: ${{ needs.release-please.outputs.tag_name }}
 
   release-image:

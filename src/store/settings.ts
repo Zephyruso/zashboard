@@ -7,6 +7,8 @@ import {
   EMOJIS,
   FOLDER_MODE,
   FONTS,
+  GEOIP_ASN_DATABASE_URL,
+  GEOIP_COUNTRY_DATABASE_URL,
   GLOBAL,
   IP_INFO_API,
   IS_APPLE_DEVICE,
@@ -150,6 +152,14 @@ export const displayAllFeatures = useStorage('config/display-all-features', fals
 export const blurIntensity = useStorage('config/blur-intensity', 10)
 export const scrollAnimationEffect = useStorage('config/scroll-animation-effect', true)
 export const IPInfoAPI = useStorage('config/geoip-info-api', IP_INFO_API.IPSB)
+export const geoipCountryDatabaseURL = useStorage(
+  'config/geoip-country-database-url',
+  GEOIP_COUNTRY_DATABASE_URL,
+)
+export const geoipASNDatabaseURL = useStorage(
+  'config/geoip-asn-database-url',
+  GEOIP_ASN_DATABASE_URL,
+)
 export const autoDisconnectIdleUDP = useStorage('config/auto-disconnect-idle-udp', false)
 export const autoDisconnectIdleUDPTime = useStorage('config/auto-disconnect-idle-udp-time', 300)
 export const keyboardShortcuts = useStorage<Record<string, string>>('config/keyboard-shortcuts', {})

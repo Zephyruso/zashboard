@@ -25,15 +25,18 @@
           >
             <Component :is="Component" />
           </Transition>
-          <Component
+          <Transition
             v-else
-            :is="Component"
-          />
+            name="page"
+            mode="out-in"
+          >
+            <Component :is="Component" />
+          </Transition>
         </div>
 
         <template v-if="isMiddleScreen">
           <div
-            class="bg-base-100/20 dock dock-xs z-10 h-14 w-auto shadow-sm backdrop-blur-sm"
+            class="bg-base-100/20 dock dock-xs z-10 h-14 w-auto"
             :style="{
               padding: '0',
               bottom: 'calc(var(--spacing) * 2 + env(safe-area-inset-bottom))',
@@ -61,11 +64,11 @@
             style="
               background: linear-gradient(
                 to top,
-                rgba(0, 0, 0, 0.3),
-                rgba(0, 0, 0, 0.16),
-                rgba(0, 0, 0, 0.08),
-                rgba(0, 0, 0, 0.02),
-                rgba(0, 0, 0, 0)
+                rgba(0, 0, 0, 0.18) 0%,
+                rgba(0, 0, 0, 0.1) 30%,
+                rgba(0, 0, 0, 0.04) 60%,
+                rgba(0, 0, 0, 0.01) 85%,
+                rgba(0, 0, 0, 0) 100%
               );
               height: env(safe-area-inset-bottom);
             "
@@ -97,22 +100,23 @@
 </template>
 
 <script setup lang="ts">
-import { isBackendAvailable } from '@/api'
+import { isBackendAvailable } from '@/assembly/backend'
 import DialogWrapper from '@/components/common/DialogWrapper.vue'
 import SideBar from '@/components/sidebar/SideBar.vue'
 import { dockTop } from '@/composables/paddingViews'
-import { useSettings } from '@/composables/settings'
+import { checkUIUpdate } from '@/assembly/version'
 import { useSwipeRouter } from '@/composables/swipe'
 import { PROXY_TAB_TYPE, ROUTE_ICON_MAP, RULE_TAB_TYPE } from '@/constant'
 import { renderRoutes } from '@/helper'
 import { showNotification } from '@/helper/notification'
 import { getLabelFromBackend, isMiddleScreen } from '@/helper/utils'
-import { fetchConfigs } from '@/store/config'
-import { initConnections } from '@/store/connections'
-import { initLogs } from '@/store/logs'
-import { initSatistic } from '@/store/overview'
-import { fetchProxies, proxiesTabShow } from '@/store/proxies'
-import { fetchRules, rulesTabShow } from '@/store/rules'
+import { fetchConfigs } from '@/assembly/config'
+import { initConnections, stopConnections } from '@/store/connections'
+import { initLogs, stopLogs } from '@/store/logs'
+import { initSatistic, stopSatistic } from '@/store/overview'
+import { fetchProxies, resetProxies } from '@/assembly/proxies'
+import { proxiesTabShow } from '@/assembly/proxies'
+import { fetchRules, rulesTabShow } from '@/assembly/rules'
 import { isSidebarCollapsed } from '@/store/settings'
 import { activeBackend, activeUuid, backendList } from '@/store/setup'
 import type { Backend } from '@/types'
@@ -157,8 +161,16 @@ watch(
 
 watch(
   activeUuid,
-  () => {
-    if (!activeUuid.value) return
+  async () => {
+    await resetProxies()
+    if (!activeUuid.value) {
+      // 后端被清空(登出 / 401 / 新增后端)时关闭常驻流,
+      // 否则它们会以无主状态留在 Setup 页继续运行并无限重连。
+      stopConnections()
+      stopLogs()
+      stopSatistic()
+      return
+    }
     rulesTabShow.value = RULE_TAB_TYPE.RULES
     proxiesTabShow.value = PROXY_TAB_TYPE.PROXIES
     fetchConfigs()
@@ -242,8 +254,6 @@ watch(documentVisible, () => {
   if (documentVisible.value !== 'visible') return
   fetchProxies()
 })
-
-const { checkUIUpdate } = useSettings()
 
 checkUIUpdate()
 </script>

@@ -86,6 +86,7 @@
 
 <script setup lang="ts">
 import { backgroundImage } from '@/helper/indexeddb'
+import { getConnectionChains, getConnectionRule, getConnectionSourceIP } from '@/helper'
 import { getIPLabelFromMap } from '@/helper/sourceip'
 import { isMiddleScreen } from '@/helper/utils'
 import { activeConnections } from '@/store/connections'
@@ -180,9 +181,9 @@ const sankeyData = computed(() => {
   }
 
   connections.forEach((conn) => {
-    const sourceIP = getIPLabelFromMap(conn.metadata.sourceIP)
-    const rulePayload = conn.rulePayload ? `${conn.rule}: ${conn.rulePayload}` : conn.rule
-    const chains = conn.chains || []
+    const sourceIP = getIPLabelFromMap(getConnectionSourceIP(conn))
+    const rulePayload = getConnectionRule(conn)
+    const chains = getConnectionChains(conn)
 
     if (chains.length === 0) return
 

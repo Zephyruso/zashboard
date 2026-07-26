@@ -1,6 +1,6 @@
+import { getLatencyByName, proxyMap, proxyProviederList } from '@/assembly/proxies'
 import { NOT_CONNECTED, PROXY_SORT_TYPE } from '@/constant'
 import { isProxyGroup } from '@/helper'
-import { getLatencyByName } from '@/store/proxies'
 import {
   hideUnavailableProxies,
   proxyGroupFilterMap,
@@ -12,6 +12,42 @@ import { computed, type ComputedRef } from 'vue'
 import { isProxyNodeSearchMode, matchProxySearchKeyword, proxySearchKeyword } from './proxySearch'
 
 type LatencyMap = Map<string, number>
+
+export type ProxiesProviderSection = {
+  providerName: string
+  proxies: string[]
+}
+
+export const groupProxiesByProviderName = (proxies: string[]): ProxiesProviderSection[] => {
+  const proxiesOfProvider: Record<string, string[]> = {}
+  const providerKeys: string[] = []
+
+  for (const proxy of proxies) {
+    const proxyNode = proxyMap.value[proxy]
+    const providerName =
+      proxyNode['provider-name'] ||
+      (proxyProviederList.value.find((group) => group.proxies.find((node) => node.name === proxy))
+        ?.name ??
+        '')
+
+    if (proxiesOfProvider[providerName]) {
+      proxiesOfProvider[providerName].push(proxy)
+    } else {
+      if (providerName === '') {
+        providerKeys.unshift('')
+      } else {
+        providerKeys.push(providerName)
+      }
+
+      proxiesOfProvider[providerName] = [proxy]
+    }
+  }
+
+  return providerKeys.map((providerName) => ({
+    providerName,
+    proxies: proxiesOfProvider[providerName],
+  }))
+}
 
 export function useRenderProxyList(proxies: ComputedRef<string[]>, groupName?: string) {
   const renderProxies = computed(() => getRenderProxies(proxies.value, groupName))

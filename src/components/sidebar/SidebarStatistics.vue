@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-base-150 grid w-full grid-cols-2 gap-2 rounded-lg p-2">
+  <div class="bg-base-150 grid w-full grid-cols-2 gap-x-2 gap-y-2.5 rounded-lg p-3">
     <div
       v-for="stat in statistics"
       :key="stat.label"
-      class="flex flex-col items-start"
+      class="flex flex-col items-start gap-0.5"
     >
-      <div class="text-base-content/70 text-xs">{{ $t(stat.label) }}</div>
-      <div class="text-sm">{{ stat.value }}</div>
+      <div class="text-base-content/45 text-[11px] leading-tight">{{ $t(stat.label) }}</div>
+      <div class="text-base-content/80 text-sm leading-tight tabular-nums">{{ stat.value }}</div>
     </div>
   </div>
 </template>

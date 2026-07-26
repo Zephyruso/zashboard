@@ -7,7 +7,7 @@
   >
     <div
       v-if="modalMode"
-      class="bg-base-300/50 fixed inset-0 z-40 overflow-hidden"
+      class="fixed inset-0 z-40 overflow-hidden bg-transparent backdrop-blur-sm"
     />
     <div
       class="base-container absolute flex flex-col gap-2 overflow-hidden p-2 transition-[width,transform,max-height] duration-200 ease-out will-change-transform"
@@ -51,9 +51,10 @@ import { useBounceOnVisible } from '@/composables/bouncein'
 import { disableProxiesPageScroll } from '@/composables/proxies'
 import { useRenderProxyList } from '@/composables/renderProxies'
 import { PROXIES_PARENT_CLASS } from '@/helper/utils'
-import { proxyGroupLatencyTest, proxyMap } from '@/store/proxies'
+import { proxyGroupLatencyTest } from '@/assembly/proxies'
+import { proxyMap } from '@/assembly/proxies'
 import { blurIntensity, groupProxiesByProvider } from '@/store/settings'
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, onUnmounted, ref } from 'vue'
 import ProxiesByProvider from './ProxiesByProvider.vue'
 import ProxiesContent from './ProxiesContent.vue'
 import ProxyGroupHeaderForMobile from './ProxyGroupHeaderForMobile.vue'
@@ -195,6 +196,12 @@ const handlerLatencyTest = async () => {
     isLatencyTesting.value = false
   }
 }
+
+onUnmounted(() => {
+  if (modalMode.value) {
+    disableProxiesPageScroll.value = false
+  }
+})
 
 useBounceOnVisible(cardRef)
 </script>

@@ -110,7 +110,7 @@
     class="hidden"
     @change="handleFileSelect"
   />
-  <div class="setting-item">
+  <SettingItem :setting-key="PROXIES_ITEM_KEYS.icon">
     <div class="setting-item-label">
       {{ $t('customIcon') }}
       <template v-if="iconReflectList.length"> ({{ iconReflectList.length }}) </template>
@@ -121,12 +121,14 @@
     >
       <PencilSquareIcon class="h-4 w-4" />
     </button>
-  </div>
+  </SettingItem>
 </template>
 
 <script setup lang="ts">
 import ProxyIcon from '@/components/proxies/ProxyIcon.vue'
-import { proxyGroupList } from '@/store/proxies'
+import SettingItem from '@/components/settings/SettingItem.vue'
+import { PROXIES_ITEM_KEYS } from '@/config/settingsItems'
+import { proxyGroupList } from '@/assembly/proxies'
 import { iconReflectList } from '@/store/settings'
 import {
   ArrowUpTrayIcon,

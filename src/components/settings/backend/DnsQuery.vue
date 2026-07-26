@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts" setup>
-import { queryDNSAPI } from '@/api'
+import { queryDNSAPI } from '@/assembly/config'
 import { getIPInfo, type IPInfo } from '@/api/geoip'
 import type { DNSQuery } from '@/types'
 import { MapPinIcon, ServerIcon } from '@heroicons/vue/24/outline'

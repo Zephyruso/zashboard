@@ -1,7 +1,7 @@
 <template>
-  <div class="base-container w-full p-4">
+  <div class="charts-card base-container w-full p-4">
     <!-- Surge-style stat cards -->
-    <div class="grid grid-cols-2 gap-3 lg:grid-cols-3">
+    <div class="charts-card-grid grid grid-cols-2 gap-3">
       <!-- Upload Speed -->
       <div class="bg-base-200/30 flex flex-col gap-1.5 rounded-xl p-4">
         <div class="text-base-content/60 text-xs font-semibold tracking-wider uppercase">
@@ -46,7 +46,9 @@
       </div>
 
       <!-- Active Connections -->
-      <div class="bg-base-200/30 col-span-2 flex flex-col gap-1.5 rounded-xl p-4 lg:col-span-1">
+      <div
+        class="charts-card-connections bg-base-200/30 col-span-2 flex flex-col gap-1.5 rounded-xl p-4"
+      >
         <div
           class="text-base-content/60 flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
         >
@@ -65,7 +67,10 @@
             :tooltip-formatter="connTooltipFormatter"
           />
         </div>
-        <div class="text-base-content/50 text-xs">{{ $t('memoryUsage') }} {{ memoryStr }}</div>
+        <div class="text-base-content/50 flex items-center justify-between gap-2 text-xs">
+          <span>{{ $t('memoryUsage') }} {{ memoryStr }}</span>
+          <span v-if="hasSingboxChannel">{{ $t('goroutines') }} {{ goroutines }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -73,6 +78,7 @@
 
 <script setup lang="ts">
 import MiniSparkline from '@/components/overview/MiniSparkline.vue'
+import { hasSingboxChannel } from '@/assembly/backend'
 import { getToolTipForParams } from '@/helper'
 import { prettyBytesHelper } from '@/helper/utils'
 import { activeConnections, downloadTotal, uploadTotal } from '@/store/connections'
@@ -80,8 +86,8 @@ import {
   connectionsHistory,
   downloadSpeed,
   downloadSpeedHistory,
+  goroutines,
   memory,
-  timeSaved,
   uploadSpeed,
   uploadSpeedHistory,
 } from '@/store/overview'
@@ -119,14 +125,30 @@ const connLabelFormatter = (value: number) => {
 const connTooltipFormatter = (value: ToolTipParams[]) => {
   return value
     .map((item) => {
-      if (item.data.name < timeSaved + 1) return
+      if (item.data.init) return
       return `
     <div class="flex items-center my-2 gap-1">
       <div class="w-4 h-4 rounded-full" style="background-color: ${item.color}"></div>
       ${item.seriesName}
-      (${dayjs(item.data.name).format('HH:mm:ss')}): ${item.data.value}
+      (${dayjs(item.data.name).format('HH:mm:ss')}): ${item.data.value[1]}
     </div>`
     })
     .join('\n')
 }
 </script>
+
+<style scoped>
+.charts-card {
+  container-type: inline-size;
+}
+
+@container (min-width: 768px) {
+  .charts-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .charts-card-connections {
+    grid-column: span 1 / span 1;
+  }
+}
+</style>
