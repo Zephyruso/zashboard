@@ -41,91 +41,80 @@
 
       <template v-if="!isSingboxBackend">
         <div
+          v-if="isVisibleActions"
+          class="settings-section-label"
+        >
+          {{ $t('actions') }}
+        </div>
+        <div
           v-if="canShowCoreActions || hasSmartGroup"
-          class="setting-item flex flex-col gap-2 px-4 py-3"
+          class="setting-item grid grid-cols-1 gap-2 md:grid-cols-2"
         >
           <button
             v-if="!activeBackend?.disableUpgradeCore"
-            class="btn btn-neutral btn-sm w-full justify-start"
+            class="btn btn-neutral btn-sm"
             @click="showUpgradeCoreModal = true"
           >
-            <ArrowUpCircleIcon class="h-4 w-4" />
-            <span class="ml-1">{{ $t('upgradeCore') }}</span>
+            {{ $t('upgradeCore') }}
           </button>
           <button
             v-if="canShowCoreActions"
-            class="btn btn-sm w-full justify-start"
+            class="btn btn-sm"
             @click="handlerClickRestartCore"
           >
             <span
               v-if="isCoreRestarting"
-              class="loading loading-spinner h-4 w-4"
+              class="loading loading-spinner loading-md"
             ></span>
-            <ArrowPathRoundedSquareIcon
-              v-else
-              class="h-4 w-4"
-            />
-            <span class="ml-1">{{ $t('restartCore') }}</span>
+            {{ $t('restartCore') }}
           </button>
           <button
             v-if="canShowCoreActions"
-            class="btn btn-sm w-full justify-start"
+            class="btn btn-sm"
             @click="handlerClickReloadConfigs"
           >
             <span
               v-if="isConfigReloading"
-              class="loading loading-spinner h-4 w-4"
+              class="loading loading-spinner loading-md"
             ></span>
-            <ArrowPathIcon
-              v-else
-              class="h-4 w-4"
-            />
-            <span class="ml-1">{{ $t('reloadConfigs') }}</span>
+            {{ $t('reloadConfigs') }}
           </button>
           <button
             v-if="canShowCoreActions && !isSingBoxCore"
-            class="btn btn-sm w-full justify-start"
+            class="btn btn-sm"
             @click="showUpdateConfigModal = true"
           >
-            <PencilSquareIcon class="h-4 w-4" />
-            <span class="ml-1">{{ $t('updateConfigs') }}</span>
+            {{ $t('updateConfigs') }}
           </button>
           <button
             v-if="canShowCoreActions"
-            class="btn btn-sm w-full justify-start"
+            class="btn btn-sm"
             @click="handlerClickUpdateGeo"
           >
             <span
               v-if="isGeoUpdating"
-              class="loading loading-spinner h-4 w-4"
+              class="loading loading-spinner loading-md"
             ></span>
-            <ArrowDownTrayIcon
-              v-else
-              class="h-4 w-4"
-            />
-            <span class="ml-1">{{ $t('updateGeoDatabase') }}</span>
+            {{ $t('updateGeoDatabase') }}
           </button>
           <button
-            class="btn btn-sm w-full justify-start"
+            class="btn btn-sm"
             @click="handleFlushDNSCache"
           >
-            <TrashIcon class="h-4 w-4" />
-            <span class="ml-1">{{ $t('flushDNSCache') }}</span>
+            {{ $t('flushDNSCache') }}
           </button>
           <button
-            class="btn btn-sm w-full justify-start"
+            class="btn btn-sm"
             @click="handleFlushFakeIP"
           >
-            <TrashIcon class="h-4 w-4" />
-            <span class="ml-1">{{ $t('flushFakeIP') }}</span>
+            {{ $t('flushFakeIP') }}
           </button>
           <button
             v-if="hasSmartGroup"
-            class="btn btn-sm w-full justify-start"
+            class="btn btn-sm"
             @click="handleFlushSmartWeights"
           >
-            <TrashIcon class="h-4 w-4" />
-            <span class="ml-1">{{ $t('flushSmartWeights') }}</span>
+            {{ $t('flushSmartWeights') }}
           </button>
         </div>
       </template>
