@@ -41,7 +41,7 @@
 
       <template v-if="!isSingboxBackend">
         <div
-          v-if="isVisibleActions"
+          v-if="canShowCoreActions || hasSmartGroup"
           class="grid grid-cols-1 gap-2 px-4 py-3 md:grid-cols-2"
         >
           <button
