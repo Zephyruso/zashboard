@@ -3,8 +3,10 @@ import {
   disconnectByIdAPI,
   fetchProxiesAPI,
   fetchProxyGroupLatencyAPI,
+  fetchProxyHealthCheckAPI,
   fetchProxyLatencyAPI,
   fetchProxyProviderAPI,
+  findProxyProviderAPI,
   isSingBox,
   selectProxyAPI,
 } from '@/api'
@@ -19,6 +21,7 @@ import {
 } from '@/constant'
 import { isProxyGroup } from '@/helper'
 import { showNotification } from '@/helper/notification'
+import { AxiosError } from 'axios'
 import type { Proxy, ProxyProvider } from '@/types'
 import { useStorage } from '@vueuse/core'
 import { last } from 'lodash'
@@ -213,7 +216,25 @@ const latencyTestForSingle = async (proxyName: string, url: string, timeout: num
     }
   }
 
-  return await fetchProxyLatencyAPI(independentLatencyTest.value ? proxyName : now, url, timeout)
+  const targetName = independentLatencyTest.value ? proxyName : now
+
+  try {
+    return await fetchProxyLatencyAPI(targetName, url, timeout)
+  } catch (e) {
+    // mihomo's /proxies/{name}/delay route returns 404 for proxy names
+    // containing emoji / full-width characters. Fall back to the per-provider
+    // healthcheck endpoint, which accepts those names in its URL path.
+    if (!(e instanceof AxiosError) || e.response?.status !== 404) {
+      throw e
+    }
+
+    const providerName = await findProxyProviderAPI(targetName)
+    if (!providerName) {
+      throw e
+    }
+
+    return await fetchProxyHealthCheckAPI(providerName, targetName, url, timeout)
+  }
 }
 
 const getNameForNotification = (name: string, url: string) => {
