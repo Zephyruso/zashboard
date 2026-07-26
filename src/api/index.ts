@@ -168,6 +168,41 @@ export const proxyProviderHealthCheckAPI = (name: string) => {
   )
 }
 
+/**
+ * Find the proxy-provider that owns a given proxy name.
+ * Returns the provider name, or undefined if the proxy is not in any provider.
+ *
+ * Used as a fallback path for single-proxy latency test when mihomo's
+ * /proxies/{name}/delay route returns 404 for emoji/Unicode names.
+ */
+export const findProxyProviderAPI = async (proxyName: string): Promise<string | undefined> => {
+  const { data } = await fetchProxyProviderAPI()
+  return Object.entries(data.providers).find(([, p]) =>
+    (p.proxies || []).some((px: { name: string }) => px.name === proxyName),
+  )?.[0]
+}
+
+/**
+ * Health-check a single proxy inside a specific proxy-provider.
+ * Endpoint: GET /providers/proxies/{providerName}/{proxyName}/healthcheck
+ *
+ * This endpoint handles emoji/Unicode proxy names reliably, unlike
+ * /proxies/{name}/delay which returns 404 for such names on mihomo.
+ */
+export const fetchProxyHealthCheckAPI = (
+  providerName: string,
+  proxyName: string,
+  url: string,
+  timeout: number,
+) => {
+  return axios.get<{ delay: number }>(
+    `/providers/proxies/${encodeURIComponent(providerName)}/${encodeURIComponent(proxyName)}/healthcheck`,
+    {
+      params: { url, timeout },
+    },
+  )
+}
+
 export const fetchRulesAPI = () => {
   return axios.get<{ rules: Rule[] }>('/rules')
 }
