@@ -42,13 +42,7 @@
       <template v-if="!isSingboxBackend">
         <div
           v-if="isVisibleActions"
-          class="settings-section-label"
-        >
-          {{ $t('actions') }}
-        </div>
-        <div
-          v-if="canShowCoreActions || hasSmartGroup"
-          class="setting-item grid grid-cols-1 gap-2 md:grid-cols-2"
+          class="grid grid-cols-1 gap-2 px-4 py-3 md:grid-cols-2"
         >
           <button
             v-if="!activeBackend?.disableUpgradeCore"
