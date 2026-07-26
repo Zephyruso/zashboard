@@ -5,17 +5,20 @@
       :class="isExpanded ? 'collapse-open' : 'collapse-close'"
     >
       <div
-        class="collapse-title hover:bg-base-200/40 flex min-h-0 flex-col gap-3 overflow-hidden px-3 py-2 text-sm transition-colors"
+        class="collapse-title hover:bg-base-200/40 flex items-center gap-2 overflow-hidden px-3 py-[8px] text-sm transition-colors max-md:grid max-md:grid-cols-[1fr_auto] max-md:grid-rows-[auto_auto] max-md:gap-x-2 max-md:gap-y-1 max-md:py-2"
         :class="{
           'cursor-pointer': isSelectable,
         }"
         @click="clickHandler"
       >
-        <div class="min-h-5 leading-5">
+        <div
+          class="min-w-0 truncate max-md:col-start-1 max-md:row-start-1 md:flex-1"
+          :title="rule.payload ? `${rule.type} : ${rule.payload}` : rule.type"
+        >
           <span class="text-base-content/50 text-xs tabular-nums">
             {{ index }}
           </span>
-          <span class="text-base-content/55 ml-4 text-xs tracking-wide">
+          <span class="text-base-content/80 ml-3 text-xs">
             <HighlightText
               :text="rule.type"
               :filter="rulesFilter"
@@ -23,7 +26,7 @@
             <template v-if="rule.payload"> : </template>
           </span>
           <span
-            class="ml-2"
+            class="ml-1"
             v-if="rule.payload"
           >
             <HighlightText
@@ -46,10 +49,13 @@
             v-if="isUpdateableRuleSet"
             :class="
               twMerge(
-                'btn btn-circle btn-ghost btn-xs -mt-[2px] ml-1',
+                'btn btn-circle btn-ghost btn-xs shrink-0 max-md:col-start-2 max-md:row-start-2 max-md:self-center',
                 isUpdating ? 'animate-spin' : '',
+                isUpdateableRuleSet ? '' : 'pointer-events-none invisible',
               )
             "
+            :aria-hidden="!isUpdateableRuleSet"
+            :tabindex="isUpdateableRuleSet ? 0 : -1"
             @click.stop="updateRuleProviderClickHandler"
           >
             <ArrowPathIcon class="h-3.5 w-3.5 opacity-60" />
@@ -61,15 +67,9 @@
             @click.stop
           />
         </div>
-        <div class="flex items-center gap-2">
-          <input
-            v-if="rule.uuid || rule.extra"
-            type="checkbox"
-            class="toggle"
-            :checked="!isDisabled"
-            @change="toggleRuleDisabledHandler"
-            @click.stop
-          />
+        <div
+          class="max-w-full min-w-0 max-md:col-start-1 max-md:row-start-2 md:max-w-[50%] md:shrink"
+        >
           <ProxyChainPath
             :proxy="rule.proxy"
             :selected="selected"
@@ -81,6 +81,14 @@
             @update:selected="selected = $event"
           />
         </div>
+        <input
+          v-if="rule.uuid || rule.extra"
+          type="checkbox"
+          class="toggle toggle-sm shrink-0 max-md:col-start-2 max-md:row-start-1 max-md:self-center"
+          :checked="!isDisabled"
+          @change="toggleRuleDisabledHandler"
+          @click.stop
+        />
       </div>
 
       <div

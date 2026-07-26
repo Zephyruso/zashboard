@@ -52,6 +52,7 @@
             @click="showUpgradeCoreModal = true"
           >
             <ArrowUpCircleIcon class="h-4 w-4" />
+            <span class="ml-1">{{ $t('upgradeCore') }}</span>
           </button>
         </SettingItem>
         <SettingItem
@@ -73,6 +74,7 @@
               v-else
               class="h-4 w-4"
             />
+            <span class="ml-1">{{ $t('restartCore') }}</span>
           </button>
         </SettingItem>
         <SettingItem
@@ -94,6 +96,7 @@
               v-else
               class="h-4 w-4"
             />
+            <span class="ml-1">{{ $t('reloadConfigs') }}</span>
           </button>
         </SettingItem>
         <SettingItem
@@ -108,6 +111,7 @@
             @click="showUpdateConfigModal = true"
           >
             <PencilSquareIcon class="h-4 w-4" />
+            <span class="ml-1">{{ $t('updateConfigs') }}</span>
           </button>
         </SettingItem>
         <SettingItem
@@ -129,6 +133,7 @@
               v-else
               class="h-4 w-4"
             />
+            <span class="ml-1">{{ $t('updateGeoDatabase') }}</span>
           </button>
         </SettingItem>
         <SettingItem :setting-key="k.flushDNSCache">
@@ -140,6 +145,7 @@
             @click="handleFlushDNSCache"
           >
             <TrashIcon class="h-4 w-4" />
+            <span class="ml-1">{{ $t('flushDNSCache') }}</span>
           </button>
         </SettingItem>
         <SettingItem :setting-key="k.flushFakeIP">
@@ -151,6 +157,7 @@
             @click="handleFlushFakeIP"
           >
             <TrashIcon class="h-4 w-4" />
+            <span class="ml-1">{{ $t('flushFakeIP') }}</span>
           </button>
         </SettingItem>
         <SettingItem
@@ -165,6 +172,7 @@
             @click="handleFlushSmartWeights"
           >
             <TrashIcon class="h-4 w-4" />
+            <span class="ml-1">{{ $t('flushSmartWeights') }}</span>
           </button>
         </SettingItem>
       </template>
