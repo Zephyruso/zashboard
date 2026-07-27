@@ -1,6 +1,6 @@
 import { isMiddleScreen } from '@/helper/utils'
 import { font, theme } from '@/store/settings'
-import { useElementSize } from '@vueuse/core'
+import { useDocumentVisibility, useElementSize, useElementVisibility } from '@vueuse/core'
 import { LineChart } from 'echarts/charts'
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
@@ -66,20 +66,64 @@ export const useChartColors = (colorRef: Ref<HTMLElement | undefined>) => {
 export const useEChartsInstance = <T extends echarts.EChartsCoreOption>(
   chartRef: Ref<HTMLElement | undefined>,
   options: ComputedRef<T>,
-  { isPaused }: { isPaused?: Ref<boolean> } = {},
+  {
+    isPaused,
+    dataOptions,
+  }: {
+    isPaused?: Ref<boolean>
+    // 秒级更新走这条数据通道(仅 series data / 轴时间窗),与 options 静态骨架分离:
+    // 骨架只在主题/字体/系列结构变化时才全量下发,免去每拍重建整棵 option 树再全量 merge
+    dataOptions?: ComputedRef<echarts.EChartsCoreOption>
+  } = {},
 ) => {
   let myChart: echarts.ECharts | null = null
   let touchEndHandler: ((e: TouchEvent) => void) | null = null
+
+  // 图表滚出视口或整页退到后台时暂停下发,回到可见补一拍最新值——
+  // 对不可见画布每秒 setOption + 重绘,挂机场景下是持续的 CPU/GPU 白耗
+  const chartVisible = useElementVisibility(chartRef)
+  const documentVisibility = useDocumentVisibility()
+  let pendingStatic = false
+  let pendingData = false
+
+  const hidden = () => !chartVisible.value || documentVisibility.value !== 'visible'
+
+  const applyStatic = () => {
+    if (!myChart) return
+    if (hidden()) {
+      pendingStatic = true
+      return
+    }
+    pendingStatic = false
+    myChart.setOption(options.value)
+  }
+
+  const applyData = () => {
+    if (!myChart || !dataOptions) return
+    if (isPaused?.value) return
+    if (hidden()) {
+      pendingData = true
+      return
+    }
+    pendingData = false
+    myChart.setOption(dataOptions.value, { lazyUpdate: true })
+  }
 
   onMounted(() => {
     if (!chartRef.value) return
 
     myChart = echarts.init(chartRef.value)
     myChart.setOption(options.value)
+    applyData()
 
-    watch(options, () => {
-      if (isPaused?.value) return
-      myChart?.setOption(options.value)
+    watch(options, applyStatic)
+    if (dataOptions) {
+      watch(dataOptions, applyData)
+    }
+    watch([chartVisible, documentVisibility], () => {
+      if (hidden()) return
+      if (pendingStatic) applyStatic()
+      if (pendingData) applyData()
     })
 
     const { width } = useElementSize(chartRef)

@@ -37,13 +37,11 @@ const { colorSet, fontFamily } = useChartColors(colorRef)
 const seriesColor = computed(() => (props.color === 'info' ? colorSet.info60 : colorSet.primary60))
 const areaColor = computed(() => (props.color === 'info' ? colorSet.info30 : colorSet.primary30))
 
+// 静态骨架:仅初始化与主题/字体变化时下发;动画关闭(原 1s 过渡 × 1s 数据间隔
+// = 画布常驻逐帧重绘),曲线滚动观感由时间窗平移承担
 const options = computed(() => {
-  // 时间窗锚定最新数据点,保证最新点钉在右缘;缓冲点落在左缘外被 clip 裁掉
-  const latest = props.data.at(-1)?.name ?? Date.now()
-
   return {
-    animationDurationUpdate: 1000,
-    animationEasingUpdate: 'linear' as const,
+    animation: false,
     grid: { left: 0, top: 0, right: props.labelFormatter ? 30 : 0, bottom: 0 },
     tooltip: props.tooltipFormatter
       ? {
@@ -64,8 +62,6 @@ const options = computed(() => {
     xAxis: {
       type: 'time' as const,
       show: false,
-      min: latest - (timeSaved - 1) * 1000,
-      max: latest - 1 * 1000,
     },
     yAxis: {
       type: 'value' as const,
@@ -96,7 +92,6 @@ const options = computed(() => {
         symbol: 'none',
         smooth: true,
         lineStyle: { width: 1.5 },
-        data: props.data,
         color: seriesColor.value,
         emphasis: { disabled: true },
         areaStyle: {
@@ -110,5 +105,19 @@ const options = computed(() => {
   }
 })
 
-useEChartsInstance(chartRef, options)
+// 每拍只推数据与时间窗;时间窗锚定最新数据点,保证最新点钉在右缘,
+// 缓冲点落在左缘外被 clip 裁掉
+const dataOptions = computed(() => {
+  const latest = props.data.at(-1)?.name ?? Date.now()
+
+  return {
+    xAxis: {
+      min: latest - (timeSaved - 1) * 1000,
+      max: latest - 1 * 1000,
+    },
+    series: [{ data: props.data }],
+  }
+})
+
+useEChartsInstance(chartRef, options, { dataOptions })
 </script>

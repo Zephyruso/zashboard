@@ -54,20 +54,28 @@ const isPaused = ref(false)
 
 const { colorSet, fontFamily } = useChartColors(colorRef)
 
+// 静态骨架只随系列名集合变化;data 数组每拍换新引用,用 prev 保持返回值引用稳定,
+// 避免把整份静态 option 拖回每秒重算(那会退化成每拍全量 setOption)
+const seriesNames = computed<string[]>((prev) => {
+  const names = props.data.map((item) => item.name)
+
+  if (prev && prev.length === names.length && names.every((name, index) => name === prev[index])) {
+    return prev
+  }
+  return names
+})
+
+// 布局/样式/渐变等静态骨架:仅初始化与主题/字体/系列结构变化时下发。
+// 动画整体关闭:原 1s 线性过渡 × 1s 数据间隔 = 画布永远处于动画中、每帧重绘;
+// 时间窗锚定最新点后,曲线滚动观感由窗口平移承担,过渡动画只剩功耗
 const options = computed(() => {
   const isSeconds = props.xAxisMode === 'seconds'
-  // 时间窗锚定最新数据点,保证最新点钉在右缘;缓冲点落在左缘外被 clip 裁掉
-  const lastPoint = props.data[0]?.data.at(-1)
-  const latest = isSeconds
-    ? ((lastPoint as [number, number] | undefined)?.[0] ?? 0)
-    : ((lastPoint as HistoryPoint | undefined)?.name ?? Date.now())
 
   return {
-    animationDurationUpdate: 1000,
-    animationEasingUpdate: 'linear' as const,
+    animation: false,
     legend: {
       bottom: 0,
-      data: props.data.map((item) => item.name),
+      data: seriesNames.value,
       textStyle: {
         color: colorSet.baseContent,
         fontFamily: fontFamily.value,
@@ -95,8 +103,6 @@ const options = computed(() => {
     xAxis: isSeconds
       ? {
           type: 'value' as const,
-          min: latest - props.windowSec,
-          max: latest,
           axisLine: { show: false },
           axisTick: { show: false },
           splitLine: { show: false },
@@ -111,8 +117,6 @@ const options = computed(() => {
         }
       : {
           type: 'time' as const,
-          min: latest - (timeSaved - 1) * 1000,
-          max: latest - 1 * 1000,
           axisLine: { show: false },
           axisTick: { show: false },
           splitLine: { show: false },
@@ -145,12 +149,14 @@ const options = computed(() => {
         ...(isSeconds ? {} : { align: 'left' as const, padding: [0, 0, 0, -35] }),
       },
     },
-    series: props.data.map((item, index) => {
-      const seriesColor = index === props.data.length - 1 ? colorSet.primary60 : colorSet.info60
-      const areaColor = index === props.data.length - 1 ? colorSet.primary30 : colorSet.info30
+    series: seriesNames.value.map((name, index) => {
+      const seriesColor =
+        index === seriesNames.value.length - 1 ? colorSet.primary60 : colorSet.info60
+      const areaColor =
+        index === seriesNames.value.length - 1 ? colorSet.primary30 : colorSet.info30
 
       return {
-        name: item.name,
+        name,
         symbol: 'none',
         emphasis: {
           disabled: true,
@@ -158,7 +164,6 @@ const options = computed(() => {
         lineStyle: {
           width: 1,
         },
-        data: item.data,
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             {
@@ -179,5 +184,22 @@ const options = computed(() => {
   }
 })
 
-useEChartsInstance(chartRef, options, { isPaused })
+// 每拍只推各系列数据与轴时间窗;时间窗锚定最新数据点,保证最新点钉在右缘,
+// 缓冲点落在左缘外被 clip 裁掉
+const dataOptions = computed(() => {
+  const isSeconds = props.xAxisMode === 'seconds'
+  const lastPoint = props.data[0]?.data.at(-1)
+  const latest = isSeconds
+    ? ((lastPoint as [number, number] | undefined)?.[0] ?? 0)
+    : ((lastPoint as HistoryPoint | undefined)?.name ?? Date.now())
+
+  return {
+    xAxis: isSeconds
+      ? { min: latest - props.windowSec, max: latest }
+      : { min: latest - (timeSaved - 1) * 1000, max: latest - 1 * 1000 },
+    series: props.data.map((item) => ({ data: item.data })),
+  }
+})
+
+useEChartsInstance(chartRef, options, { isPaused, dataOptions })
 </script>
