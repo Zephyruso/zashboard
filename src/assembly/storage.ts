@@ -1,19 +1,32 @@
-// 组装层 · storage。/storage/zashboard 为 Clash core 提供的设置同步端点,
-// sing-box native 不支持,故 sing-box 后端下为 no-op。
+// 组装层 · storage。/storage/zashboard 为设置同步端点,是 mihomo 扩展,
+// sing-box 无论走哪条通道都没有,故按 core 轴(syncSettings 能力)门控。
+//
+// 登录后立刻同步设置的调用会早于内核探测完成,此时 core 仍是 'unknown',
+// 直接判定会误伤 mihomo 后端,所以先 coreReady() 等探测有结论再决定。
 import {
   deleteStorageAPI as deleteClashStorageAPI,
   getStorageAPI as getClashStorageAPI,
   setStorageAPI as setClashStorageAPI,
 } from '@/api/clash'
-import { isSingboxBackend } from './backend'
+import { can } from './backend'
+import { coreReady } from './version'
 
-export const getStorageAPI = () =>
-  isSingboxBackend.value
-    ? Promise.reject<{ data: Record<string, unknown> }>('unsupported')
-    : getClashStorageAPI()
+export const getStorageAPI = async () => {
+  await coreReady()
 
-export const setStorageAPI = (value: Record<string, string>) =>
-  isSingboxBackend.value ? Promise.resolve() : setClashStorageAPI(value)
+  if (!can('syncSettings')) return Promise.reject<{ data: Record<string, unknown> }>('unsupported')
 
-export const deleteStorageAPI = () =>
-  isSingboxBackend.value ? Promise.resolve() : deleteClashStorageAPI()
+  return getClashStorageAPI()
+}
+
+export const setStorageAPI = async (value: Record<string, string>) => {
+  await coreReady()
+
+  return can('syncSettings') ? setClashStorageAPI(value) : undefined
+}
+
+export const deleteStorageAPI = async () => {
+  await coreReady()
+
+  return can('syncSettings') ? deleteClashStorageAPI() : undefined
+}

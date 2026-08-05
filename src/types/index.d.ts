@@ -3,7 +3,7 @@ import type { Connection as SingboxConnectionRawMessage } from '@/gen/daemon/sta
 export type BackendType = 'clash' | 'singbox'
 
 export type Backend = {
-  // 后端登录类型:'clash' 走 Clash REST/WS API,'singbox' 走 sing-box native gRPC。
+  // 后端登录类型:'clash' 走 Clash REST/WS API,'singbox' 走 sing-box API(gRPC)。
   // 旧记录缺省按 'clash' 迁移。
   type: BackendType
   protocol: string

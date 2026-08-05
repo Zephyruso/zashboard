@@ -205,7 +205,7 @@
 
 <script setup lang="ts">
 import { deleteStorageAPI, setStorageAPI } from '@/assembly/storage'
-import { isSingBoxCore } from '@/assembly/version'
+import { can } from '@/assembly/backend'
 import {
   autoImportSettings,
   autoSyncSettings,
@@ -225,7 +225,7 @@ import {
   getDashboardSettingsFromStorage,
   resetSettings,
 } from '@/helper/utils'
-import { customBackgroundURL, displayAllFeatures } from '@/store/settings'
+import { customBackgroundURL } from '@/store/settings'
 import {
   ArrowDownCircleIcon,
   ArrowDownTrayIcon,
@@ -253,7 +253,7 @@ withDefaults(
 const inputRef = ref<HTMLInputElement>()
 const dashboardSettingsDialogShow = ref(false)
 const isStorageSubmitting = ref(false)
-const showSyncSettings = computed(() => !isSingBoxCore.value || displayAllFeatures.value)
+const showSyncSettings = computed(() => can('syncSettings'))
 
 const { showTip } = useTooltip()
 const { t } = useI18n()

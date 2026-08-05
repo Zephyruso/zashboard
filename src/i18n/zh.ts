@@ -34,7 +34,7 @@ const zh: LANG_MESSAGE = {
   backendType: '后端类型',
   clashApi: 'Clash API',
   singboxApi: 'sing-box API',
-  singboxConnectionFailed: '无法连接 sing-box 原生 API',
+  singboxConnectionFailed: '无法连接 sing-box API',
   skip: '跳过',
   // 工具页
   networkQuality: '网络质量',
@@ -436,7 +436,7 @@ const zh: LANG_MESSAGE = {
   pressAnyKey: '按下任意键',
   displayAllFeatures: '显示所有功能',
   displayAllFeaturesTip:
-    '显示所有功能，包括sing-box官方版本不支持的功能，如果您使用了fork版本的sing-box支持其中的某些功能，可以尝试启用',
+    '显示所有功能，包括当前内核（sing-box / honk）官方版本不支持的功能，如果您使用的 fork 版本支持其中的某些功能，可以尝试启用',
   blurIntensity: '毛玻璃强度',
   scrollAnimationEffect: '滚动动画效果',
 

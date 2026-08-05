@@ -1,4 +1,4 @@
-import { capabilities } from '@/assembly/backend'
+import { can, type Cap } from '@/assembly/backend'
 import { ROUTE_NAME } from '@/constant'
 import { renderRoutes } from '@/helper'
 import { i18n } from '@/i18n'
@@ -59,8 +59,8 @@ const childrenRouter = [
   },
 ]
 
-// Routes that require a specific channel capability to be visitable.
-const ROUTE_CAPABILITY: Partial<Record<string, keyof typeof capabilities.value>> = {
+// Routes that require a specific capability to be visitable.
+const ROUTE_CAPABILITY: Partial<Record<string, Cap>> = {
   [ROUTE_NAME.rules]: 'rules',
   [ROUTE_NAME.tools]: 'tools',
 }
@@ -116,7 +116,7 @@ router.beforeEach((to, from) => {
 
   // Block navigation to a page the active backend's channels can't serve.
   const requiredCap = typeof to.name === 'string' ? ROUTE_CAPABILITY[to.name] : undefined
-  if (requiredCap && !capabilities.value[requiredCap]) {
+  if (requiredCap && !can(requiredCap)) {
     router.push({ name: ROUTE_NAME.proxies })
   }
 })
@@ -131,10 +131,11 @@ watch([language, activeBackend], () => {
   })
 })
 
-watch(capabilities, (currentCapabilities) => {
+// 能力变化(切后端 / 内核探测出结果)后,把停留在已失效页面的用户送回代理页。
+watch(renderRoutes, () => {
   const routeName = router.currentRoute.value.name
   const requiredCap = typeof routeName === 'string' ? ROUTE_CAPABILITY[routeName] : undefined
-  if (requiredCap && !currentCapabilities[requiredCap]) {
+  if (requiredCap && !can(requiredCap)) {
     router.push({ name: ROUTE_NAME.proxies })
   }
 })

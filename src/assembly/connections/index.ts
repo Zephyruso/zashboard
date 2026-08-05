@@ -1,6 +1,6 @@
 // 组装层 · connections 门面。连接流、断连/封锁动作,以及「原始连接数据 → view 字段」的
 // 访问器与 getConnectionDisplayValue,都按后端类型动态路由到对应实现。
-import { isSingboxBackend } from '@/assembly/backend'
+import { Channel, channel } from '@/assembly/backend'
 import { CONNECTIONS_TABLE_ACCESSOR_KEY } from '@/constant'
 import type { Connection } from '@/types'
 import type { ConnectionDisplayOptions, ConnectionsSnapshot } from './accessor'
@@ -9,7 +9,7 @@ import * as singbox from './singbox'
 
 export type { ConnectionsSnapshot }
 
-const backend = () => (isSingboxBackend.value ? singbox : clash)
+const backend = () => (channel.value === Channel.Singbox ? singbox : clash)
 
 export const disconnectByIdAPI = (id: string) => backend().disconnectByIdAPI(id)
 

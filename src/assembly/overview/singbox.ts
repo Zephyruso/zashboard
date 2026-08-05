@@ -1,4 +1,4 @@
-// sing-box native 后端的概览统计组装:订阅 SubscribeStatus,把一条 Status 扇出给
+// sing-box 后端的概览统计组装:订阅 SubscribeStatus,把一条 Status 扇出给
 // 多个订阅者(memory / traffic),以与 Clash WS 相同的 { data, close } 形状产出。
 import { subscribeStream } from '@/api/singbox/subscriptions'
 import type { Status } from '@/gen/daemon/started_service_pb'

@@ -15,11 +15,7 @@
         </span>
         <a
           class="flex cursor-pointer items-center gap-2 text-lg font-semibold"
-          :href="
-            isSingBoxCore
-              ? 'https://github.com/sagernet/sing-box'
-              : MIHOMO_CHANNEL[mihomo?.[0] ?? MIHOMO.Meta].url
-          "
+          :href="coreBrand.url"
           target="_blank"
         >
           {{ $t('backend') }}
@@ -30,7 +26,7 @@
 
     <div
       class="settings-grid"
-      v-if="hasVisibleActions || isVisibleBackendSwitch || isVisibleDnsQuery"
+      v-if="hasVisibleActions || isVisibleBackendSwitch || showDnsQuery"
     >
       <SettingItem
         :setting-key="k.backend"
@@ -39,10 +35,10 @@
         <BackendSwitch />
       </SettingItem>
 
-      <template v-if="!isSingboxBackend">
+      <template v-if="can('coreActions')">
         <SettingItem
           :setting-key="k.upgradeCore"
-          :when="canShowCoreActions && !activeBackend?.disableUpgradeCore"
+          :when="can('coreUpgrade') && !activeBackend?.disableUpgradeCore"
         >
           <div class="setting-item-label">
             {{ $t('upgradeCore') }}
@@ -56,7 +52,7 @@
         </SettingItem>
         <SettingItem
           :setting-key="k.restartCore"
-          :when="canShowCoreActions"
+          :when="can('coreRestart')"
         >
           <div class="setting-item-label">
             {{ $t('restartCore') }}
@@ -77,7 +73,7 @@
         </SettingItem>
         <SettingItem
           :setting-key="k.reloadConfigs"
-          :when="canShowCoreActions"
+          :when="can('reloadConfigs')"
         >
           <div class="setting-item-label">
             {{ $t('reloadConfigs') }}
@@ -98,7 +94,7 @@
         </SettingItem>
         <SettingItem
           :setting-key="k.updateConfigs"
-          :when="canShowCoreActions && !isSingBoxCore"
+          :when="can('updateConfigs')"
         >
           <div class="setting-item-label">
             {{ $t('updateConfigs') }}
@@ -112,7 +108,7 @@
         </SettingItem>
         <SettingItem
           :setting-key="k.updateGeoDatabase"
-          :when="canShowCoreActions"
+          :when="can('updateGeoDatabase')"
         >
           <div class="setting-item-label">
             {{ $t('updateGeoDatabase') }}
@@ -171,7 +167,7 @@
 
       <SettingItem
         :setting-key="k.DNSQuery"
-        :when="!isSingboxBackend"
+        :when="can('dnsQuery')"
         class="py-3"
       >
         <div class="flex w-full flex-col">
@@ -184,7 +180,7 @@
     </div>
 
     <div
-      v-if="!isSingBoxCore && configs && hasVisibleSettings"
+      v-if="can('configPatch') && configs && hasVisibleSettings"
       class="grid"
     >
       <div class="settings-section-label">
@@ -268,22 +264,21 @@ import {
   reloadConfigsAPI,
   updateGeoDataAPI,
 } from '@/assembly/config'
-import { isCoreUpdateAvailable, isSingBoxCore, mihomo, restartCoreAPI } from '@/assembly/version'
+import { coreBrand, isCoreUpdateAvailable, restartCoreAPI } from '@/assembly/version'
 import BackendVersion from '@/components/common/BackendVersion.vue'
 import BackendPortsGrid from '@/components/settings/backend/BackendPortsGrid.vue'
 import BackendSwitch from '@/components/settings/backend/BackendSwitch.vue'
 import DnsQuery from '@/components/settings/backend/DnsQuery.vue'
-import { isSingboxBackend } from '@/assembly/backend'
+import { can } from '@/assembly/backend'
 import SettingItem from '@/components/settings/SettingItem.vue'
 import { isSettingVisible, useIsSettingVisible } from '@/composables/settings'
 import { BACKEND_ITEM_KEYS } from '@/config/settingsItems'
-import { MIHOMO, MIHOMO_CHANNEL } from '@/constant'
 import { showNotification } from '@/helper/notification'
 import { fetchProxies, flushSmartGroupWeightsAPI } from '@/assembly/proxies'
 import { configs, fetchConfigs, updateConfigs } from '@/assembly/config'
 import { hasSmartGroup } from '@/assembly/proxies'
 import { fetchRules } from '@/assembly/rules'
-import { autoUpgradeCore, checkUpgradeCore, displayAllFeatures } from '@/store/settings'
+import { autoUpgradeCore, checkUpgradeCore } from '@/store/settings'
 import { activeBackend } from '@/store/setup'
 import {
   ArrowDownTrayIcon,
@@ -310,21 +305,19 @@ const canShowTunMode = computed(
 )
 
 /** sing-box 内核下只保留 flush 类操作，除非用户开启了「显示全部功能」 */
-const canShowCoreActions = computed(() => !isSingBoxCore.value || displayAllFeatures.value)
-
 /** 当前后端/内核下实际可渲染的操作项 */
 const renderableActionKeys = computed(() => {
-  if (isSingboxBackend.value) return []
+  if (!can('coreActions')) return []
 
   const keys: string[] = []
 
-  if (canShowCoreActions.value) {
-    if (!activeBackend.value?.disableUpgradeCore) keys.push(k.upgradeCore)
-    keys.push(k.restartCore, k.reloadConfigs)
-    if (!isSingBoxCore.value) keys.push(k.updateConfigs)
-    keys.push(k.updateGeoDatabase)
-  }
-  keys.push(k.flushDNSCache, k.flushFakeIP)
+  if (can('coreUpgrade') && !activeBackend.value?.disableUpgradeCore) keys.push(k.upgradeCore)
+  if (can('coreRestart')) keys.push(k.restartCore)
+  if (can('reloadConfigs')) keys.push(k.reloadConfigs)
+  if (can('updateConfigs')) keys.push(k.updateConfigs)
+  if (can('updateGeoDatabase')) keys.push(k.updateGeoDatabase)
+  if (can('dnsFlush')) keys.push(k.flushDNSCache)
+  if (can('fakeIPFlush')) keys.push(k.flushFakeIP)
   if (hasSmartGroup.value) keys.push(k.flushSmartWeights)
 
   return keys
@@ -332,18 +325,21 @@ const renderableActionKeys = computed(() => {
 
 const hasVisibleActions = computed(() => renderableActionKeys.value.some(isSettingVisible))
 
+// 派生的「有没有东西可显示」必须和条目自身的门控一致,否则会渲染出空容器。
+const showDnsQuery = computed(() => isVisibleDnsQuery.value && can('dnsQuery'))
+
 const hasVisibleItems = computed(() => {
   return (
     isVisibleBackendSwitch.value ||
     hasVisibleSettings.value ||
     hasVisibleActions.value ||
-    isVisibleDnsQuery.value
+    showDnsQuery.value
   )
 })
 
 const hasVisibleSettings = computed(() => {
   return (
-    !isSingBoxCore.value &&
+    can('configPatch') &&
     !!configs.value &&
     (isVisiblePorts.value ||
       (configs.value.tun && canShowTunMode.value) ||

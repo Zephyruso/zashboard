@@ -1,5 +1,5 @@
 // 组装层 · config 门面。持有统一的 configs 状态,按后端类型路由到 clash / singbox 实现。
-import { isSingboxBackend } from '@/assembly/backend'
+import { Channel, channel } from '@/assembly/backend'
 import type { Config } from '@/types'
 import { ref } from 'vue'
 
@@ -24,7 +24,7 @@ export const defaultConfig: Config = {
 export const configs = ref<Config>({ ...defaultConfig })
 
 // 按需动态加载后端实现,避免 clash 后端下也实例化 sing-box gRPC。
-const load = () => (isSingboxBackend.value ? import('./singbox') : import('./clash'))
+const load = () => (channel.value === Channel.Singbox ? import('./singbox') : import('./clash'))
 
 export const fetchConfigs = async () => (await load()).fetchConfigs()
 

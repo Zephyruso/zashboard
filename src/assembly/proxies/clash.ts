@@ -26,7 +26,6 @@ import { initSmartWeights } from '@/store/smart'
 import type { Proxy } from '@/types'
 import { last } from 'lodash'
 import pLimit from 'p-limit'
-import { isSingBoxCore } from '../version'
 import {
   getHistoryByName,
   getLatencyByName,
@@ -152,12 +151,10 @@ const getProviderNameByProxy = (proxyName: string) => {
 // provider 节点走 provider 作用域的 healthcheck 端点,避免节点不在
 // 全局 /proxies 映射(或同名冲突)导致测速失败
 const fetchNodeLatency = (proxyName: string, url: string, timeout: number) => {
-  if (!isSingBoxCore.value) {
-    const providerName = getProviderNameByProxy(proxyName)
+  const providerName = getProviderNameByProxy(proxyName)
 
-    if (providerName) {
-      return fetchProxyProviderLatencyAPI(providerName, proxyName, url, timeout)
-    }
+  if (providerName) {
+    return fetchProxyProviderLatencyAPI(providerName, proxyName, url, timeout)
   }
 
   return fetchProxyLatencyAPI(proxyName, url, timeout)

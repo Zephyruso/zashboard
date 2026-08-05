@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-1 overflow-hidden">
     <img
-      :src="isSingBoxCore ? SingBoxLogo : MetacubexLogo"
+      :src="coreBrand.logo"
       class="h-4 w-4 rounded-xs"
     />
     <span
@@ -14,8 +14,6 @@
 </template>
 
 <script setup lang="ts">
-import { isSingBoxCore, version } from '@/assembly/version'
-import MetacubexLogo from '@/assets/images/metacubex.jpg'
-import SingBoxLogo from '@/assets/images/sing-box.svg'
+import { coreBrand, version } from '@/assembly/version'
 import { checkTruncation } from '@/helper/tooltip'
 </script>

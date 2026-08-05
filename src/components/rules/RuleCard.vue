@@ -111,8 +111,7 @@ import {
   fetchRules,
   ruleProviderList,
   rulesFilter,
-  toggleRuleDisabledAPI,
-  toggleRuleDisabledSingBoxAPI,
+  toggleRuleDisabled,
   updateRuleProviderAPI,
 } from '@/assembly/rules'
 import {
@@ -214,11 +213,7 @@ const toggleRuleDisabledHandler = async () => {
     isTogglingDisabled.value = true
     const willBeDisabled = !isDisabled.value
 
-    if (props.rule.uuid) {
-      await toggleRuleDisabledSingBoxAPI(props.rule.uuid)
-    } else {
-      await toggleRuleDisabledAPI({ [props.rule.index]: willBeDisabled })
-    }
+    await toggleRuleDisabled(props.rule, willBeDisabled)
 
     if (willBeDisabled && disconnectOnRuleDisable.value) {
       const matchingConnections = activeConnections.value.filter((conn) => {

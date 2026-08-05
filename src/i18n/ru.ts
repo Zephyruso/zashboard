@@ -35,7 +35,7 @@ const ru: LANG_MESSAGE = {
   backendType: 'Тип бэкенда',
   clashApi: 'Clash API',
   singboxApi: 'sing-box API',
-  singboxConnectionFailed: 'Не удалось подключиться к нативному API sing-box',
+  singboxConnectionFailed: 'Не удалось подключиться к API sing-box',
   skip: 'Пропустить',
   // Tools
   networkQuality: 'Качество сети',
@@ -445,7 +445,7 @@ const ru: LANG_MESSAGE = {
   pressAnyKey: 'Нажмите клавишу',
   displayAllFeatures: 'Показать все функции',
   displayAllFeaturesTip:
-    'Показать все функции, включая те, которые не поддерживаются официальной версией sing-box. Если вы используете форк sing-box, поддерживающий некоторые из этих функций, вы можете попробовать их включить.',
+    'Показать все функции, включая те, которые не поддерживаются официальной сборкой текущего ядра (sing-box / honk). Если вы используете форк, поддерживающий некоторые из этих функций, вы можете попробовать их включить.',
   blurIntensity: 'Интенсивность размытия',
   scrollAnimationEffect: 'Эффект анимации прокрутки',
 

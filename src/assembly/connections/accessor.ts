@@ -1,5 +1,5 @@
 // 组装层 · connection 字段访问器。
-// 每种后端(clash / sing-box native)各实现一份 ConnectionAccessor,直接从「原始数据」
+// 每种后端(clash / sing-box)各实现一份 ConnectionAccessor,直接从「原始数据」
 // 读取/派生 view 需要的字段 —— 不再把 sing-box 塑造成 clash 形状。
 // createGetConnectionDisplayValue 基于某一份 accessor 生成对应后端的 getConnectionDisplayValue,
 // 由 index.ts 门面按当前后端动态选用。

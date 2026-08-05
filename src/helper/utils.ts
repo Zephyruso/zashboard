@@ -70,7 +70,7 @@ export const getUrlFromBackend = (end: {
   return `${end.protocol}://${end.host}:${end.port}${end.secondaryPath || ''}`
 }
 
-// sing-box native 后端复用顶层连接字段作为 gRPC baseUrl(secondaryPath 留空)。
+// sing-box 后端复用顶层连接字段作为 gRPC baseUrl(secondaryPath 留空)。
 export const getSingboxUrlFromBackend = (
   end: Pick<Backend, 'type' | 'protocol' | 'host' | 'port'>,
 ) => {
@@ -135,7 +135,7 @@ export const getBackendFromUrl = () => {
 
   if (query.has('hostname')) {
     return {
-      // 后端类型:'singbox' 走 sing-box native gRPC,其余(含缺省)按 'clash' 处理。
+      // 后端类型:'singbox' 走 sing-box API(gRPC),其余(含缺省)按 'clash' 处理。
       type: (query.get('type') === 'singbox' ? 'singbox' : 'clash') as BackendType,
       protocol: query.get('http')
         ? 'http'

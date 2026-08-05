@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { getSingboxClient, runStream, serverStream } from '@/assembly/tools'
-import { singboxApiVersion } from '@/assembly/version'
+import { can } from '@/assembly/backend'
 import CtrlsBar from '@/components/common/CtrlsBar.vue'
 import SegmentedControl, { type SegmentOption } from '@/components/common/SegmentedControl.vue'
 import NetworkToolsPanel from '@/components/tools/NetworkToolsPanel.vue'
@@ -80,17 +80,12 @@ enum TOOLS_TAB_TYPE {
   tailscale = 'tailscale',
 }
 
-// usbip requires the sing-box gRPC API version 2 (ProvideUSBDevices stream).
-const USBIP_MIN_API_VERSION = 2
-// OpenVPN requires the sing-box gRPC API version 3 (SubscribeOpenVPNStatus stream).
-const OPENVPN_MIN_API_VERSION = 3
-
 const { t } = useI18n()
 
 const activeTab = ref<string>(TOOLS_TAB_TYPE.network)
 
-const usbipSupported = computed(() => singboxApiVersion.value >= USBIP_MIN_API_VERSION)
-const openvpnSupported = computed(() => singboxApiVersion.value >= OPENVPN_MIN_API_VERSION)
+const usbipSupported = computed(() => can('usbip'))
+const openvpnSupported = computed(() => can('openvpn'))
 
 const tailscaleEndpoints = ref<TailscaleEndpointStatus[]>([])
 const openvpnEndpoints = ref<OpenVPNEndpointStatus[]>([])

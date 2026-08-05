@@ -1,4 +1,4 @@
-// sing-box native(gRPC daemon.StartedService)后端的代理「组装逻辑」。
+// sing-box API(gRPC daemon.StartedService)后端的代理「组装逻辑」。
 // 与 clash 的「拉取式」不同,这里是「流驱动」:订阅 SubscribeGroups / SubscribeOutbounds,
 // 每次推送直接重建门面 index.ts 的共享状态,因此选择/测速后无需手动刷新,
 // 结果会随流自动回填到 UI。
@@ -224,7 +224,7 @@ const runURLTest = async (outboundTag: string, timeout = speedtestTimeout.value)
   }
 }
 
-// sing-box native API 支持直接测试单个 outbound;节点卡片传节点自身的 tag。
+// sing-box API 支持直接测试单个 outbound;节点卡片传节点自身的 tag。
 export const proxyLatencyTest = async (
   proxyName: string,
   _url?: string,

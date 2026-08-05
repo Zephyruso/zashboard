@@ -1,8 +1,7 @@
 // 组装层 · proxies 门面。
-// 持有两种后端(clash / sing-box native)共用的代理「视图状态」与纯读取 helper,
+// 持有两种后端(clash / sing-box)共用的代理「视图状态」与纯读取 helper,
 // 并按后端类型路由到 clash(拉取式)/ singbox(流驱动)的组装实现。
-import { isSingboxBackend } from '@/assembly/backend'
-import { isSingBoxCore } from '@/assembly/version'
+import { can, Channel, channel } from '@/assembly/backend'
 import { NOT_CONNECTED, PROXY_TAB_TYPE, PROXY_TYPE, TEST_URL } from '@/constant'
 import { groupTestUrls, independentLatencyTest, speedtestUrl } from '@/store/settings'
 import type { Proxy, ProxyProvider } from '@/types'
@@ -51,7 +50,7 @@ export const getLatencyByName = (proxyName: string, groupName?: string) => {
 }
 
 export const getHistoryByName = (proxyName: string, groupName?: string) => {
-  if (independentLatencyTest.value && !isSingBoxCore.value) {
+  if (independentLatencyTest.value && can('independentLatency')) {
     const proxyNode = proxyMap.value[proxyName]
     const url = getTestUrl(groupName)
 
@@ -144,7 +143,7 @@ interface ProxiesBackend {
 }
 
 const load = (): Promise<ProxiesBackend> =>
-  isSingboxBackend.value ? import('./singbox') : import('./clash')
+  channel.value === Channel.Singbox ? import('./singbox') : import('./clash')
 
 export const fetchProxies = async () => (await load()).fetchProxies()
 
