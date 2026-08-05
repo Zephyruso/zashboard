@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { OriginOption, OriginSource } from '@/composables/useEarthRoutes'
-import { ArrowPathIcon } from '@heroicons/vue/24/outline'
+import { useTooltip } from '@/helper/tooltip'
+import { ArrowPathIcon, EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 defineProps<{
   activeConnectionCount: number
@@ -13,6 +16,16 @@ defineProps<{
 
 const originSource = defineModel<OriginSource>('originSource', { required: true })
 defineEmits<{ refresh: [] }>()
+
+const { t } = useI18n()
+const showPrivacy = ref(false)
+const { showTip } = useTooltip()
+const handlerShowPrivacyTip = (e: Event) => {
+  showTip(e, t('ipScreenshotTip'))
+}
+
+const getOriginOptionLabel = (option: OriginOption) =>
+  showPrivacy.value ? option.label : option.label.replace(option.ip, '***.***.***.***')
 </script>
 
 <template>
@@ -25,7 +38,7 @@ defineEmits<{ refresh: [] }>()
       </span>
       <select
         v-model="originSource"
-        class="select select-sm min-w-48 flex-1"
+        class="select select-sm min-w-0 flex-1 sm:min-w-48"
         :aria-label="$t('earthOrigin')"
         :disabled="!originOptions.length"
       >
@@ -40,9 +53,24 @@ defineEmits<{ refresh: [] }>()
           :key="option.value"
           :value="option.value"
         >
-          {{ option.label }}
+          {{ getOriginOptionLabel(option) }}
         </option>
       </select>
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm btn-circle"
+        @click="showPrivacy = !showPrivacy"
+        @mouseenter="handlerShowPrivacyTip"
+      >
+        <EyeIcon
+          v-if="showPrivacy"
+          class="size-4"
+        />
+        <EyeSlashIcon
+          v-else
+          class="size-4"
+        />
+      </button>
       <button
         type="button"
         class="btn btn-ghost btn-sm btn-circle"
