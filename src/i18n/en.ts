@@ -8,6 +8,10 @@ const en = {
   logs: 'Logs',
   tools: 'Tools',
   earth: 'Earth',
+  earthOrigin: 'Own IP',
+  earthRelay: 'Relay',
+  earthDestination: 'Destination',
+  earthLocatedConnections: 'Located connections',
   tailscale: 'Tailscale',
   terminal: 'Terminal',
 

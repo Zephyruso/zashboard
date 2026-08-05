@@ -3,7 +3,7 @@ import { geoipASNDatabaseURL, geoipCountryDatabaseURL, IPInfoAPI, language } fro
 import { watchDebounced } from '@vueuse/core'
 import { Buffer } from 'buffer'
 import * as ipaddr from 'ipaddr.js'
-import type { AsnResponse, CountryResponse, Reader } from 'mmdb-lib'
+import type { AsnResponse, CityResponse, CountryResponse, Reader } from 'mmdb-lib'
 import { reactive } from 'vue'
 
 // mmdb-lib relies on the global Buffer at module-eval time.
@@ -18,6 +18,14 @@ export interface IPInfo {
   city: string
   asn: string
   organization: string
+}
+
+export interface GeoIPLocation {
+  ip: string
+  country: string
+  city: string
+  latitude: number
+  longitude: number
 }
 
 // china
@@ -345,6 +353,77 @@ const localizedName = (names?: { en: string; 'zh-CN'?: string }): string => {
   const preferChinese = language.value === LANG.ZH_CN || language.value === LANG.ZH_TW
 
   return preferChinese ? (names['zh-CN'] ?? names.en) : names.en
+}
+
+// The connection globe needs city-level coordinates. Keep this reader separate
+// from the configurable Country / ASN readers above: the database ships with
+// Zashboard, so the browser's HTTP cache is sufficient and we avoid duplicating
+// a roughly 100 MB file in IndexedDB.
+const DBIP_CITY_DATABASE_URL = `${import.meta.env.BASE_URL}dbip-city-lite.mmdb`
+const GEOIP_LOCATION_CACHE_MAX = 8192
+let cityReader: Promise<Reader<CityResponse>> | undefined
+const locationCache = new Map<string, Promise<GeoIPLocation | null>>()
+
+const getCityReader = () => {
+  if (cityReader) return cityReader
+
+  cityReader = fetch(DBIP_CITY_DATABASE_URL)
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error(`Failed to load DB-IP city database: ${response.status}`)
+      }
+
+      const { Reader } = await import('mmdb-lib')
+
+      return new Reader<CityResponse>(Buffer.from(await response.arrayBuffer()))
+    })
+    .catch((error) => {
+      cityReader = undefined
+      throw error
+    })
+
+  return cityReader
+}
+
+/** Resolve an IP to the coordinates used by the connection globe. */
+export const getGeoIPLocation = (ip: string): Promise<GeoIPLocation | null> => {
+  if (!ip || !ipaddr.isValid(ip)) return Promise.resolve(null)
+
+  const cached = locationCache.get(ip)
+
+  if (cached) return cached
+
+  const pending = getCityReader()
+    .then((reader) => {
+      const result = reader.get(ip)
+      const latitude = result?.location?.latitude
+      const longitude = result?.location?.longitude
+
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null
+
+      return {
+        ip,
+        country: localizedName(result?.country?.names),
+        city: localizedName(result?.city?.names),
+        latitude: latitude as number,
+        longitude: longitude as number,
+      }
+    })
+    .catch((error) => {
+      locationCache.delete(ip)
+      throw error
+    })
+
+  locationCache.set(ip, pending)
+
+  while (locationCache.size > GEOIP_LOCATION_CACHE_MAX) {
+    const oldest = locationCache.keys().next().value
+
+    if (oldest === undefined) break
+    locationCache.delete(oldest)
+  }
+
+  return pending
 }
 
 // Look up a single IP. A failure to load the database propagates (so the caller

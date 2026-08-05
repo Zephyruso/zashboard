@@ -10,6 +10,10 @@ const ru: LANG_MESSAGE = {
   logs: 'Журнал',
   tools: 'Инструменты',
   earth: 'Земля',
+  earthOrigin: 'IP устройства',
+  earthRelay: 'Ретранслятор',
+  earthDestination: 'Назначение',
+  earthLocatedConnections: 'Соединения с геопозицией',
   tailscale: 'Tailscale',
   terminal: 'Терминал',
 

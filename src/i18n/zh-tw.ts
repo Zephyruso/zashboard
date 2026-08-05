@@ -10,6 +10,10 @@ const zhTW: LANG_MESSAGE = {
   logs: '日誌',
   tools: '工具',
   earth: '地球',
+  earthOrigin: '本機 IP',
+  earthRelay: '中轉',
+  earthDestination: '目的地',
+  earthLocatedConnections: '已定位連線',
   tailscale: 'Tailscale',
   terminal: '終端',
 

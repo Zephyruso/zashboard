@@ -189,6 +189,42 @@ export const queryDNSAPI = (params: { name: string; type: string }) => {
   })
 }
 
+// Connection-map lookups run automatically and must fail quietly. Use fetch
+// directly so a disabled/unavailable DNS endpoint does not trigger the global
+// axios error notification for every distinct relay hostname.
+export const queryConnectionDNSAPI = async (
+  params: { name: string; type: 'A' | 'AAAA' },
+  timeout = 3000,
+): Promise<DNSQuery> => {
+  const backend = activeBackend.value
+
+  if (!backend) throw new Error('No active backend')
+
+  const url = new URL(`${getUrlFromBackend(backend).replace(/\/$/, '')}/dns/query`)
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+  url.searchParams.set('name', params.name)
+  url.searchParams.set('type', params.type)
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${backend.password}`,
+      },
+      signal: controller.signal,
+    })
+
+    if (!response.ok) {
+      throw new Error(`DNS query failed: ${response.status}`)
+    }
+
+    return (await response.json()) as DNSQuery
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
 export const getStorageAPI = () => {
   return axios.get<Record<string, unknown>>(`/storage/zashboard`)
 }
