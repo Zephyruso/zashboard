@@ -9,6 +9,7 @@ const zh: LANG_MESSAGE = {
   connections: '连接',
   logs: '日志',
   tools: '工具',
+  earth: '地球',
   tailscale: 'Tailscale',
   terminal: '终端',
 

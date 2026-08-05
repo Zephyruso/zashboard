@@ -9,6 +9,7 @@ const ru: LANG_MESSAGE = {
   connections: 'Подключения',
   logs: 'Журнал',
   tools: 'Инструменты',
+  earth: 'Земля',
   tailscale: 'Tailscale',
   terminal: 'Терминал',
 

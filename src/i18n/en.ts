@@ -7,6 +7,7 @@ const en = {
   connections: 'Connections',
   logs: 'Logs',
   tools: 'Tools',
+  earth: 'Earth',
   tailscale: 'Tailscale',
   terminal: 'Terminal',
 

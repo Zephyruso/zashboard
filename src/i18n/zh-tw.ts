@@ -9,6 +9,7 @@ const zhTW: LANG_MESSAGE = {
   connections: '連接',
   logs: '日誌',
   tools: '工具',
+  earth: '地球',
   tailscale: 'Tailscale',
   terminal: '終端',
 
