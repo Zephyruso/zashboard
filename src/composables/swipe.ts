@@ -90,7 +90,8 @@ export const useSwipeRouter = () => {
   }
 
   watch(direction, () => {
-    if (!swipeInPages.value) return
+    // Horizontal drags rotate the globe, so they must not also navigate away.
+    if (!swipeInPages.value || route.name === ROUTE_NAME.earth) return
 
     if (
       document.querySelector('dialog:modal') ||
