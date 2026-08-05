@@ -41,6 +41,7 @@
     "echarts": "^6.1.0",
     "ipaddr.js": "^2.4.0",
     "lodash": "^4.18.1",
+    "maplibre-gl": "^6.1.0",
     "misans": "^4.1.0",
     "mmdb-lib": "^3.0.2",
     "p-limit": "^7.3.0",

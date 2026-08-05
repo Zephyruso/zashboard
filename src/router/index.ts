@@ -5,7 +5,6 @@ import { i18n } from '@/i18n'
 import { language } from '@/store/settings'
 import { activeBackend } from '@/store/setup'
 import ConnectionsPage from '@/views/ConnectionsPage.vue'
-import EarthPage from '@/views/EarthPage.vue'
 import HomePage from '@/views/HomePage.vue'
 import LogsPage from '@/views/LogsPage.vue'
 import OverviewPage from '@/views/OverviewPage.vue'
@@ -51,7 +50,7 @@ const childrenRouter = [
   {
     path: 'earth',
     name: ROUTE_NAME.earth,
-    component: EarthPage,
+    component: () => import('@/views/EarthPage.vue'),
   },
   {
     path: 'settings',
