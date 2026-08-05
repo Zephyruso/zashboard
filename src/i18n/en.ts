@@ -12,6 +12,19 @@ const en = {
   earthRelay: 'Relay',
   earthDestination: 'Destination',
   earthLocatedConnections: 'Located connections',
+  earthGeoDatabaseChecking: 'Checking location database',
+  earthGeoDatabaseCheckingDescription: 'Looking for the city database stored in this browser.',
+  earthGeoDatabaseRequired: 'Resource download',
+  earthGeoDatabaseDescription:
+    'The Earth view needs the DB-IP City Lite database to locate connections. Download it to continue.',
+  earthGeoDatabaseDownloading: 'Downloading and decompressing...',
+  earthGeoDatabaseDownload: 'Download database',
+  earthGeoDatabaseRetry: 'Try again',
+  earthGeoDatabaseDownloadFailed:
+    'The database could not be downloaded or saved. Check your network and browser storage, then try again.',
+  earthGeoDatabaseStorageTip: 'Download size: {size}',
+  earthGeoDatabaseStorageTipLoading: 'Getting download size',
+  earthGeoDatabaseStorageTipUnavailable: 'Download size unavailable',
   tailscale: 'Tailscale',
   terminal: 'Terminal',
 

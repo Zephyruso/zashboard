@@ -355,27 +355,139 @@ const localizedName = (names?: { en: string; 'zh-CN'?: string }): string => {
   return preferChinese ? (names['zh-CN'] ?? names.en) : names.en
 }
 
-// The connection globe needs city-level coordinates. Keep this reader separate
-// from the configurable Country / ASN readers above: the database ships with
-// Zashboard, so the browser's HTTP cache is sufficient and we avoid duplicating
-// a roughly 100 MB file in IndexedDB.
-const DBIP_CITY_DATABASE_URL = `${import.meta.env.BASE_URL}dbip-city-lite.mmdb`
+// The connection globe needs city-level coordinates. This database is opt-in
+// because its decompressed size is large: the Earth page asks the user before
+// downloading it, then keeps the decompressed MMDB in IndexedDB for later visits.
+export const DBIP_CITY_DATABASE_URL =
+  'https://cdn.jsdelivr.net/npm/dbip-city-lite/dbip-city-lite.mmdb.gz'
+const DBIP_CITY_DATABASE_KEY = 'dbip-city-lite.mmdb'
 const GEOIP_LOCATION_CACHE_MAX = 8192
 let cityReader: Promise<Reader<CityResponse>> | undefined
 const locationCache = new Map<string, Promise<GeoIPLocation | null>>()
 
+export interface GeoIPCityDatabaseDownloadProgress {
+  loadedBytes: number
+  totalBytes?: number
+}
+
+const getResponseContentLength = (response: Response) => {
+  const contentLength = Number(response.headers.get('content-length'))
+
+  return Number.isFinite(contentLength) && contentLength > 0 ? contentLength : undefined
+}
+
+/** Read the current archive size from the CDN without downloading its body. */
+export const getGeoIPCityDatabaseDownloadSize = async (
+  signal?: AbortSignal,
+): Promise<number | undefined> => {
+  const response = await fetch(DBIP_CITY_DATABASE_URL, { method: 'HEAD', signal })
+
+  if (!response.ok) {
+    throw new Error(`Failed to read DB-IP city database metadata: ${response.status}`)
+  }
+
+  return getResponseContentLength(response)
+}
+
+const createCityReader = async (buffer: ArrayBuffer) => {
+  const { Reader } = await import('mmdb-lib')
+
+  return new Reader<CityResponse>(Buffer.from(buffer))
+}
+
+/**
+ * Load the downloaded city database into memory when it exists.
+ *
+ * The boolean result lets the Earth page distinguish a missing (or invalid)
+ * database from a ready one without triggering a network request.
+ */
+export const prepareGeoIPCityDatabase = async (): Promise<boolean> => {
+  if (cityReader) {
+    try {
+      await cityReader
+      return true
+    } catch {
+      cityReader = undefined
+    }
+  }
+
+  const cached = await readCachedDatabase(DBIP_CITY_DATABASE_KEY).catch(() => undefined)
+
+  if (!cached?.buffer.byteLength) return false
+
+  const pending = createCityReader(cached.buffer)
+  cityReader = pending
+
+  try {
+    await pending
+    return true
+  } catch {
+    cityReader = undefined
+    return false
+  }
+}
+
+/** Download, gunzip, validate, and persist the city database. */
+export const downloadGeoIPCityDatabase = async (
+  onProgress?: (progress: GeoIPCityDatabaseDownloadProgress) => void,
+  signal?: AbortSignal,
+): Promise<void> => {
+  const response = await fetch(DBIP_CITY_DATABASE_URL, { signal })
+
+  if (!response.ok) {
+    throw new Error(`Failed to download DB-IP city database: ${response.status}`)
+  }
+  if (!response.body) {
+    throw new Error('Failed to download DB-IP city database: empty response body')
+  }
+  if (!('DecompressionStream' in globalThis)) {
+    throw new Error('This browser does not support gzip decompression')
+  }
+
+  const totalBytes = getResponseContentLength(response)
+  let loadedBytes = 0
+
+  onProgress?.({ loadedBytes, totalBytes })
+
+  // Count compressed bytes while piping them through the browser's streaming
+  // gzip decoder. This avoids holding both the archive and the decompressed
+  // database in memory at the same time.
+  const progressStream = new TransformStream<Uint8Array<ArrayBuffer>, BufferSource>({
+    transform(chunk, controller) {
+      loadedBytes += chunk.byteLength
+      onProgress?.({ loadedBytes, totalBytes })
+      controller.enqueue(chunk)
+    },
+  })
+  const decompressedStream = response.body
+    .pipeThrough(progressStream)
+    .pipeThrough(new DecompressionStream('gzip'))
+  const buffer = await new Response(decompressedStream).arrayBuffer()
+
+  signal?.throwIfAborted()
+
+  // Construct the reader before persisting so a truncated or invalid download
+  // can never replace a usable IndexedDB entry.
+  const reader = await createCityReader(buffer)
+  await writeCachedDatabase(DBIP_CITY_DATABASE_KEY, {
+    buffer,
+    updatedAt: Date.now(),
+  })
+
+  locationCache.clear()
+  cityReader = Promise.resolve(reader)
+}
+
 const getCityReader = () => {
   if (cityReader) return cityReader
 
-  cityReader = fetch(DBIP_CITY_DATABASE_URL)
-    .then(async (response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to load DB-IP city database: ${response.status}`)
+  cityReader = readCachedDatabase(DBIP_CITY_DATABASE_KEY)
+    .then((cached) => {
+      if (!cached?.buffer.byteLength) {
+        throw new Error('DB-IP city database has not been downloaded')
       }
 
-      const { Reader } = await import('mmdb-lib')
-
-      return new Reader<CityResponse>(Buffer.from(await response.arrayBuffer()))
+      return createCityReader(cached.buffer)
     })
     .catch((error) => {
       cityReader = undefined

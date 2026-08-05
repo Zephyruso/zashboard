@@ -14,6 +14,19 @@ const ru: LANG_MESSAGE = {
   earthRelay: 'Ретранслятор',
   earthDestination: 'Назначение',
   earthLocatedConnections: 'Соединения с геопозицией',
+  earthGeoDatabaseChecking: 'Проверка базы геолокации',
+  earthGeoDatabaseCheckingDescription: 'Поиск базы городов, сохранённой в этом браузере.',
+  earthGeoDatabaseRequired: 'Загрузка ресурсов',
+  earthGeoDatabaseDescription:
+    'Для отображения соединений на Земле нужна база DB-IP City Lite. Загрузите её, чтобы продолжить.',
+  earthGeoDatabaseDownloading: 'Загрузка и распаковка...',
+  earthGeoDatabaseDownload: 'Загрузить базу',
+  earthGeoDatabaseRetry: 'Повторить загрузку',
+  earthGeoDatabaseDownloadFailed:
+    'Не удалось загрузить или сохранить базу. Проверьте сеть и хранилище браузера, затем повторите попытку.',
+  earthGeoDatabaseStorageTip: 'Размер загрузки: {size}',
+  earthGeoDatabaseStorageTipLoading: 'Получение размера загрузки',
+  earthGeoDatabaseStorageTipUnavailable: 'Размер загрузки недоступен',
   tailscale: 'Tailscale',
   terminal: 'Терминал',
 

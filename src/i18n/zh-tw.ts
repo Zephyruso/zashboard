@@ -14,6 +14,18 @@ const zhTW: LANG_MESSAGE = {
   earthRelay: '中轉',
   earthDestination: '目的地',
   earthLocatedConnections: '已定位連線',
+  earthGeoDatabaseChecking: '正在檢查定位資料庫',
+  earthGeoDatabaseCheckingDescription: '正在尋找儲存在此瀏覽器中的城市資料庫。',
+  earthGeoDatabaseRequired: '資源下載',
+  earthGeoDatabaseDescription:
+    '地球頁面需要 DB-IP City Lite 資料庫來定位連線。下載完成後即可繼續使用。',
+  earthGeoDatabaseDownloading: '正在下載並解壓縮...',
+  earthGeoDatabaseDownload: '下載資料庫',
+  earthGeoDatabaseRetry: '重新下載',
+  earthGeoDatabaseDownloadFailed: '資料庫下載或儲存失敗，請檢查網路和瀏覽器儲存空間後重試。',
+  earthGeoDatabaseStorageTip: '下載大小：{size}',
+  earthGeoDatabaseStorageTipLoading: '正在取得下載大小',
+  earthGeoDatabaseStorageTipUnavailable: '暫時無法取得下載大小',
   tailscale: 'Tailscale',
   terminal: '終端',
 

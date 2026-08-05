@@ -14,6 +14,18 @@ const zh: LANG_MESSAGE = {
   earthRelay: '中转',
   earthDestination: '目的地',
   earthLocatedConnections: '已定位连接',
+  earthGeoDatabaseChecking: '正在检查定位数据库',
+  earthGeoDatabaseCheckingDescription: '正在查找保存在此浏览器中的城市数据库。',
+  earthGeoDatabaseRequired: '资源下载',
+  earthGeoDatabaseDescription:
+    '地球页面需要 DB-IP City Lite 数据库来定位连接。下载完成后即可继续使用。',
+  earthGeoDatabaseDownloading: '正在下载并解压...',
+  earthGeoDatabaseDownload: '下载数据库',
+  earthGeoDatabaseRetry: '重新下载',
+  earthGeoDatabaseDownloadFailed: '数据库下载或保存失败，请检查网络和浏览器存储空间后重试。',
+  earthGeoDatabaseStorageTip: '下载大小：{size}',
+  earthGeoDatabaseStorageTipLoading: '正在获取下载大小',
+  earthGeoDatabaseStorageTipUnavailable: '暂时无法获取下载大小',
   tailscale: 'Tailscale',
   terminal: '终端',
 
