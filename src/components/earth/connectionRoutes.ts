@@ -18,6 +18,8 @@ export interface ConnectionRouteLeg {
 export interface ConnectionRoute {
   id: string
   signature: string
+  upload: number
+  download: number
   legs: ConnectionRouteLeg[]
 }
 
@@ -179,6 +181,7 @@ export const resolveConnectionRoute = async (
   connection: Connection,
   origin: GeoIPLocation,
 ): Promise<ConnectionRoute | null> => {
+  const accessor = connectionAccessor()
   const endpoints = await getRouteEndpoints(connection)
 
   if (!endpoints?.destinationIP && !endpoints?.relayIP) return null
@@ -217,6 +220,8 @@ export const resolveConnectionRoute = async (
   return {
     id: endpoints.id,
     signature: [origin.ip, endpoints.kind, endpoints.relayIP, endpoints.destinationIP].join('|'),
+    upload: Math.max(0, accessor.upload(connection)),
+    download: Math.max(0, accessor.download(connection)),
     legs,
   }
 }

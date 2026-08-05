@@ -10,10 +10,20 @@ const EARTH_RADIUS_METERS = 6_371_008.8
 const MIN_ARC_HEIGHT_METERS = 120_000
 const MAX_ARC_HEIGHT_METERS = 1_500_000
 const SURFACE_CLEARANCE_METERS = 8_000
-const FLOATS_PER_VERTEX = 14
+const FLOATS_PER_VERTEX = 21
+const IDLE_OPACITY = 0.2
+export const ROUTE_FLOW_DURATION = 1_600
+const FLOW_DURATION_SECONDS = ROUTE_FLOW_DURATION / 1_000
+const FLOW_HALF_LENGTH = 0.3
+const BASE_WIDTH_RATIO = 0.1
 
 type Rgb = readonly [number, number, number]
 type ElevatedPosition = readonly [number, number, number]
+
+export interface RouteFlowAnimation {
+  startedAt: number
+  endsAt: number
+}
 
 export interface ElevatedRouteLine {
   id: string
@@ -22,6 +32,10 @@ export interface ElevatedRouteLine {
   color: Rgb
   opacity: number
   progress: number
+  routeStart: number
+  routeEnd: number
+  uploadFlow?: RouteFlowAnimation
+  downloadFlow?: RouteFlowAnimation
 }
 
 interface ProgramBundle {
@@ -33,8 +47,7 @@ interface ProgramBundle {
   fallbackMatrix: WebGLUniformLocation | null
   viewport: WebGLUniformLocation | null
   halfWidth: WebGLUniformLocation | null
-  opacity: WebGLUniformLocation | null
-  softness: WebGLUniformLocation | null
+  time: WebGLUniformLocation | null
 }
 
 const clamp = (value: number, minimum: number, maximum: number) =>
@@ -61,47 +74,20 @@ const greatCircleDistance = (from: RouteCoordinate, to: RouteCoordinate) => {
   return Math.acos(clamp(cosine, -1, 1)) * EARTH_RADIUS_METERS
 }
 
-const elevatedCoordinates = (
-  coordinates: RouteCoordinate[],
-  rawProgress: number,
-): ElevatedPosition[] => {
+const elevatedCoordinates = (coordinates: RouteCoordinate[]): ElevatedPosition[] => {
   if (coordinates.length < 2) return []
-
-  const progress = clamp(rawProgress, 0, 1)
-  if (progress <= 0) return []
 
   const distance = greatCircleDistance(coordinates[0], coordinates.at(-1)!)
   const peakHeight = clamp(distance * 0.16, MIN_ARC_HEIGHT_METERS, MAX_ARC_HEIGHT_METERS)
   const lastIndex = coordinates.length - 1
-  const position = progress * lastIndex
-  const endIndex = Math.floor(position)
-  const result: ElevatedPosition[] = []
 
-  const append = (coordinate: RouteCoordinate, routeProgress: number) => {
+  return coordinates.map((coordinate, index) => {
+    const progress = index / lastIndex
     const [x, y] = mercatorCoordinates(coordinate)
-    const arch = Math.sin(routeProgress * Math.PI) ** 0.82
-    result.push([x, y, SURFACE_CLEARANCE_METERS + peakHeight * arch])
-  }
+    const arch = Math.sin(progress * Math.PI) ** 0.82
 
-  for (let index = 0; index <= endIndex; index += 1) {
-    append(coordinates[index], index / lastIndex)
-  }
-
-  const segmentProgress = position - endIndex
-  if (segmentProgress > 0 && endIndex < lastIndex) {
-    const from = coordinates[endIndex]
-    const to = coordinates[endIndex + 1]
-
-    append(
-      [
-        from[0] + (to[0] - from[0]) * segmentProgress,
-        from[1] + (to[1] - from[1]) * segmentProgress,
-      ],
-      progress,
-    )
-  }
-
-  return result
+    return [x, y, SURFACE_CLEARANCE_METERS + peakHeight * arch]
+  })
 }
 
 const pushVertex = (
@@ -110,18 +96,31 @@ const pushVertex = (
   previous: ElevatedPosition,
   next: ElevatedPosition,
   side: -1 | 1,
-  color: Rgb,
-  opacity: number,
+  route: ElevatedRouteLine,
+  localProgress: number,
 ) => {
+  const routeProgress = route.routeStart + (route.routeEnd - route.routeStart) * localProgress
+  const uploadStartedAt = (route.uploadFlow?.startedAt ?? 0) / 1_000
+  const uploadEndsAt = (route.uploadFlow?.endsAt ?? 0) / 1_000
+  const downloadStartedAt = (route.downloadFlow?.startedAt ?? 0) / 1_000
+  const downloadEndsAt = (route.downloadFlow?.endsAt ?? 0) / 1_000
+
   target.push(
     ...position,
     ...previous,
     ...next,
     side,
-    color[0] / 255,
-    color[1] / 255,
-    color[2] / 255,
-    clamp(opacity, 0, 1),
+    route.color[0] / 255,
+    route.color[1] / 255,
+    route.color[2] / 255,
+    clamp(route.opacity, 0, 1),
+    routeProgress,
+    localProgress,
+    clamp(route.progress, 0, 1),
+    uploadStartedAt,
+    uploadEndsAt,
+    downloadStartedAt,
+    downloadEndsAt,
   )
 }
 
@@ -129,20 +128,23 @@ const buildRouteVertices = (routes: ElevatedRouteLine[]) => {
   const vertices: number[] = []
 
   for (const route of routes) {
-    const positions = elevatedCoordinates(route.coordinates, route.progress)
+    const positions = elevatedCoordinates(route.coordinates)
+    const lastIndex = positions.length - 1
 
-    for (let index = 0; index < positions.length - 1; index += 1) {
+    for (let index = 0; index < lastIndex; index += 1) {
       const from = positions[index]
       const to = positions[index + 1]
       const fromPrevious = positions[Math.max(0, index - 1)]
-      const toNext = positions[Math.min(positions.length - 1, index + 2)]
+      const toNext = positions[Math.min(lastIndex, index + 2)]
+      const fromProgress = index / lastIndex
+      const toProgress = (index + 1) / lastIndex
 
-      pushVertex(vertices, from, fromPrevious, to, -1, route.color, route.opacity)
-      pushVertex(vertices, from, fromPrevious, to, 1, route.color, route.opacity)
-      pushVertex(vertices, to, from, toNext, -1, route.color, route.opacity)
-      pushVertex(vertices, from, fromPrevious, to, 1, route.color, route.opacity)
-      pushVertex(vertices, to, from, toNext, 1, route.color, route.opacity)
-      pushVertex(vertices, to, from, toNext, -1, route.color, route.opacity)
+      pushVertex(vertices, from, fromPrevious, to, -1, route, fromProgress)
+      pushVertex(vertices, from, fromPrevious, to, 1, route, fromProgress)
+      pushVertex(vertices, to, from, toNext, -1, route, toProgress)
+      pushVertex(vertices, from, fromPrevious, to, 1, route, fromProgress)
+      pushVertex(vertices, to, from, toNext, 1, route, toProgress)
+      pushVertex(vertices, to, from, toNext, -1, route, toProgress)
     }
   }
 
@@ -176,12 +178,20 @@ layout(location = 1) in vec3 a_previous;
 layout(location = 2) in vec3 a_next;
 layout(location = 3) in float a_side;
 layout(location = 4) in vec4 a_color;
+layout(location = 5) in vec3 a_progress;
+layout(location = 6) in vec2 a_upload_flow;
+layout(location = 7) in vec2 a_download_flow;
 
 uniform vec2 u_viewport;
 uniform float u_half_width;
 
 out vec4 v_color;
 out float v_edge;
+out float v_route_progress;
+out float v_local_progress;
+out float v_lifecycle_progress;
+out vec2 v_upload_flow;
+out vec2 v_download_flow;
 
 void main() {
   vec4 current = projectTileFor3D(a_position.xy, a_position.z);
@@ -192,6 +202,11 @@ void main() {
     gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
     v_color = vec4(0.0);
     v_edge = 1.0;
+    v_route_progress = 0.0;
+    v_local_progress = 0.0;
+    v_lifecycle_progress = 0.0;
+    v_upload_flow = vec2(0.0);
+    v_download_flow = vec2(0.0);
     return;
   }
 
@@ -217,27 +232,84 @@ void main() {
   gl_Position.xy += pixelOffset * 2.0 / u_viewport * current.w;
   v_color = a_color;
   v_edge = a_side;
+  v_route_progress = a_progress.x;
+  v_local_progress = a_progress.y;
+  v_lifecycle_progress = a_progress.z;
+  v_upload_flow = a_upload_flow;
+  v_download_flow = a_download_flow;
 }`
 
   const fragmentSource = `#version 300 es
 precision highp float;
 
-uniform float u_opacity;
-uniform float u_softness;
+uniform float u_time;
 
 in vec4 v_color;
 in float v_edge;
+in float v_route_progress;
+in float v_local_progress;
+in float v_lifecycle_progress;
+in vec2 v_upload_flow;
+in vec2 v_download_flow;
 out vec4 fragColor;
 
-void main() {
-  float edgeAlpha = 1.0 - smoothstep(
-    max(0.0, 1.0 - u_softness),
-    1.0,
-    abs(v_edge)
+float softLine(float distance, float width) {
+  float antialias = max(fwidth(distance) * 1.5, 0.015);
+  return 1.0 - smoothstep(
+    max(0.0, width - antialias),
+    width + antialias,
+    distance
   );
-  float alpha = v_color.a * u_opacity * edgeAlpha;
+}
+
+float trafficLight(float progress, vec2 timing) {
+  if (timing.y <= timing.x || u_time < timing.x || u_time >= timing.y) {
+    return 0.0;
+  }
+
+  float phase = mod(
+    u_time - timing.x,
+    ${FLOW_DURATION_SECONDS.toFixed(2)}
+  ) / ${FLOW_DURATION_SECONDS.toFixed(2)};
+  float center = mix(
+    -${FLOW_HALF_LENGTH.toFixed(2)},
+    ${(1 + FLOW_HALF_LENGTH).toFixed(2)},
+    phase
+  );
+  float axialDistance = abs(progress - center) / ${FLOW_HALF_LENGTH.toFixed(2)};
+  float axialAntialias = max(fwidth(axialDistance) * 1.5, 0.01);
+  float axialMask = 1.0 - smoothstep(
+    1.0 - axialAntialias,
+    1.0 + axialAntialias,
+    axialDistance
+  );
+  float belly = pow(max(0.0, 1.0 - axialDistance * axialDistance), 0.72);
+  float body = softLine(abs(v_edge), max(0.055, belly));
+
+  return axialMask * body * mix(0.38, 0.94, pow(belly, 0.65));
+}
+
+void main() {
+  float lifecycleEdge = max(fwidth(v_local_progress) * 1.5, 0.006);
+  float lifecycleVisibility = 1.0 - smoothstep(
+    v_lifecycle_progress,
+    v_lifecycle_progress + lifecycleEdge,
+    v_local_progress
+  );
+  float baseAlpha =
+    v_color.a *
+    ${IDLE_OPACITY.toFixed(1)} *
+    softLine(abs(v_edge), ${BASE_WIDTH_RATIO.toFixed(2)}) *
+    lifecycleVisibility;
+
+  float uploadLight = trafficLight(v_route_progress, v_upload_flow);
+  float downloadLight = trafficLight(1.0 - v_route_progress, v_download_flow);
+  float flowAlpha = max(uploadLight, downloadLight);
+  float alpha = max(baseAlpha, flowAlpha);
+
   if (alpha < 0.001) discard;
-  fragColor = vec4(v_color.rgb * alpha, alpha);
+  vec3 color = mix(v_color.rgb, vec3(1.0), flowAlpha * 0.76);
+  fragColor = vec4(color * alpha, alpha);
 }`
 
   const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vertexSource)
@@ -257,7 +329,7 @@ void main() {
   gl.deleteShader(fragmentShader)
 
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    const message = gl.getProgramInfoLog(program) || 'Unknown program error'
+    const message = gl.getProgramInfoLog(program) || 'Unknown shader error'
     gl.deleteProgram(program)
     throw new Error(`Elevated route program linking failed: ${message}`)
   }
@@ -271,8 +343,7 @@ void main() {
     fallbackMatrix: gl.getUniformLocation(program, 'u_projection_fallback_matrix'),
     viewport: gl.getUniformLocation(program, 'u_viewport'),
     halfWidth: gl.getUniformLocation(program, 'u_half_width'),
-    opacity: gl.getUniformLocation(program, 'u_opacity'),
-    softness: gl.getUniformLocation(program, 'u_softness'),
+    time: gl.getUniformLocation(program, 'u_time'),
   } satisfies ProgramBundle
 }
 
@@ -309,11 +380,17 @@ export class ElevatedRouteLayer implements CustomLayerInterface {
   private vertexData = new Float32Array()
   private vertexCount = 0
   private bufferDirty = true
+  private flowAnimationEndsAt = 0
 
   setData(routes: ElevatedRouteLine[]) {
     this.vertexData = buildRouteVertices(routes)
     this.vertexCount = this.vertexData.length / FLOATS_PER_VERTEX
     this.bufferDirty = true
+    this.flowAnimationEndsAt = routes.reduce(
+      (latest, route) =>
+        Math.max(latest, route.uploadFlow?.endsAt ?? 0, route.downloadFlow?.endsAt ?? 0),
+      0,
+    )
     this.map?.triggerRepaint()
   }
 
@@ -353,25 +430,28 @@ export class ElevatedRouteLayer implements CustomLayerInterface {
     gl.vertexAttribPointer(3, 1, gl.FLOAT, false, stride, 9 * 4)
     gl.enableVertexAttribArray(4)
     gl.vertexAttribPointer(4, 4, gl.FLOAT, false, stride, 10 * 4)
+    gl.enableVertexAttribArray(5)
+    gl.vertexAttribPointer(5, 3, gl.FLOAT, false, stride, 14 * 4)
+    gl.enableVertexAttribArray(6)
+    gl.vertexAttribPointer(6, 2, gl.FLOAT, false, stride, 17 * 4)
+    gl.enableVertexAttribArray(7)
+    gl.vertexAttribPointer(7, 2, gl.FLOAT, false, stride, 19 * 4)
 
     bindProjectionUniforms(gl, bundle, input.defaultProjectionData)
     gl.uniform2f(bundle.viewport, gl.drawingBufferWidth, gl.drawingBufferHeight)
 
     const zoomScale = 0.88 + Math.min(this.map?.getZoom() ?? 0, 6) * 0.08
+    const now = performance.now()
     gl.enable(gl.BLEND)
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
     gl.disable(gl.CULL_FACE)
     gl.depthMask(false)
 
-    gl.uniform1f(bundle.halfWidth, 3.2 * zoomScale)
-    gl.uniform1f(bundle.opacity, 0.2)
-    gl.uniform1f(bundle.softness, 1)
+    gl.uniform1f(bundle.halfWidth, 3 * zoomScale)
+    gl.uniform1f(bundle.time, now / 1_000)
     gl.drawArrays(gl.TRIANGLES, 0, this.vertexCount)
 
-    gl.uniform1f(bundle.halfWidth, 0.78 * zoomScale)
-    gl.uniform1f(bundle.opacity, 0.94)
-    gl.uniform1f(bundle.softness, 0.34)
-    gl.drawArrays(gl.TRIANGLES, 0, this.vertexCount)
+    if (now < this.flowAnimationEndsAt) this.map?.triggerRepaint()
   }
 
   onRemove(_map: MapLibreMap, gl: WebGL2RenderingContext) {
@@ -380,5 +460,6 @@ export class ElevatedRouteLayer implements CustomLayerInterface {
     this.programs.clear()
     this.buffer = null
     this.map = null
+    this.flowAnimationEndsAt = 0
   }
 }

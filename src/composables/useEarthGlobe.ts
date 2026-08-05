@@ -1,5 +1,10 @@
 import type { GeoIPLocation } from '@/api/geoip'
-import { ElevatedRouteLayer, type ElevatedRouteLine } from '@/components/earth/ElevatedRouteLayer'
+import {
+  ElevatedRouteLayer,
+  ROUTE_FLOW_DURATION,
+  type ElevatedRouteLine,
+  type RouteFlowAnimation,
+} from '@/components/earth/ElevatedRouteLayer'
 import type {
   ConnectionRoute,
   RouteCoordinate,
@@ -36,6 +41,8 @@ interface AnimatedRoute {
   from: number
   target: 0 | 1
   startedAt: number
+  uploadFlow?: RouteFlowAnimation
+  downloadFlow?: RouteFlowAnimation
 }
 
 interface RoutePointFeature {
@@ -58,6 +65,7 @@ interface UseEarthGlobeOptions {
 const ENTER_DURATION = 420
 const EXIT_DURATION = 320
 const REDUCED_MOTION_DURATION = 160
+const FLOW_HOLD_DURATION = ROUTE_FLOW_DURATION / 2
 
 setWorkerUrl(workerUrl)
 
@@ -110,6 +118,23 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
   const transitionDuration = (target: 0 | 1) =>
     reduceMotion.value ? REDUCED_MOTION_DURATION : target ? ENTER_DURATION : EXIT_DURATION
 
+  const isFlowActive = (flow: RouteFlowAnimation | undefined, now: number) =>
+    !reduceMotion.value && Boolean(flow && now < flow.endsAt)
+
+  const extendFlow = (flow: RouteFlowAnimation | undefined, now: number): RouteFlowAnimation => {
+    if (!flow || now >= flow.endsAt) {
+      return { startedAt: now, endsAt: now + ROUTE_FLOW_DURATION }
+    }
+
+    const minimumEndsAt = now + FLOW_HOLD_DURATION
+    const cycles = Math.ceil((minimumEndsAt - flow.startedAt) / ROUTE_FLOW_DURATION)
+
+    return {
+      startedAt: flow.startedAt,
+      endsAt: Math.max(flow.endsAt, flow.startedAt + cycles * ROUTE_FLOW_DURATION),
+    }
+  }
+
   const presentationProgress = (state: AnimatedRoute, now: number) => {
     if (state.from === state.target) return state.target
 
@@ -119,7 +144,36 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
     return state.from + (state.target - state.from) * amount
   }
 
+  const collapseIdenticalBaseLines = (lines: ElevatedRouteLine[]) => {
+    const visibleLines = new Map<string, ElevatedRouteLine>()
+
+    for (const line of lines) {
+      if (line.opacity <= 0) continue
+
+      const from = line.coordinates[0]
+      const to = line.coordinates.at(-1)!
+      const key = `${line.leg}:${from[0]},${from[1]}:${to[0]},${to[1]}`
+      const visible = visibleLines.get(key)
+
+      if (!visible) {
+        visibleLines.set(key, line)
+        continue
+      }
+
+      if (
+        line.progress > visible.progress ||
+        (line.progress === visible.progress && line.opacity > visible.opacity)
+      ) {
+        visible.opacity = 0
+        visibleLines.set(key, line)
+      } else {
+        line.opacity = 0
+      }
+    }
+  }
+
   const renderRouteData = () => {
+    const now = performance.now()
     const lines: ElevatedRouteLine[] = []
     const pointFeatures = new Map<string, RoutePointFeature>()
 
@@ -144,12 +198,15 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
 
     for (const state of routeStates.values()) {
       const legCount = state.route.legs.length
+      const uploadFlow = isFlowActive(state.uploadFlow, now) ? state.uploadFlow : undefined
+      const downloadFlow = isFlowActive(state.downloadFlow, now) ? state.downloadFlow : undefined
+      const hasTrafficFlow = Boolean(uploadFlow || downloadFlow)
 
       state.route.legs.forEach((leg, index) => {
         const legProgress = clamp(state.progress * legCount - index)
         const opacity = reduceMotion.value ? state.progress : Math.min(1, legProgress * 5)
 
-        if (currentPalette && legProgress > 0 && opacity > 0) {
+        if (currentPalette && ((legProgress > 0 && opacity > 0) || hasTrafficFlow)) {
           lines.push({
             id: `${state.route.id}:${index}`,
             leg: leg.kind,
@@ -157,6 +214,10 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
             color: routeColor(currentPalette, leg.kind),
             opacity,
             progress: reduceMotion.value ? 1 : legProgress,
+            routeStart: index / legCount,
+            routeEnd: (index + 1) / legCount,
+            uploadFlow,
+            downloadFlow,
           })
         }
 
@@ -167,6 +228,9 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
       })
     }
 
+    // Identical routes share one 20% base line. Their traffic animations remain
+    // on the original entries, so upload/download pulses are still independent.
+    collapseIdenticalBaseLines(lines)
     elevatedRouteLayer.setData(lines)
     const pointSource = map?.getSource(POINT_SOURCE_ID) as GeoJSONSource | undefined
     pointSource?.setData({
@@ -222,23 +286,36 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
 
   const animateRoutes = (now: number) => {
     routeFrame = undefined
-    let hasTransition = false
+    let hasAnimation = false
+    let needsRender = false
 
     for (const [id, state] of routeStates) {
+      const previousProgress = state.progress
       state.progress = presentationProgress(state, now)
+      needsRender ||= Math.abs(state.progress - previousProgress) >= 0.001
       const complete = Math.abs(state.progress - state.target) < 0.001
 
       if (complete) {
         state.progress = state.target
         state.from = state.target
-        if (state.target === 0) routeStates.delete(id)
+        if (state.target === 0) {
+          const hasTrafficFlow =
+            isFlowActive(state.uploadFlow, now) || isFlowActive(state.downloadFlow, now)
+
+          if (hasTrafficFlow) {
+            hasAnimation = true
+          } else {
+            routeStates.delete(id)
+            needsRender = true
+          }
+        }
       } else {
-        hasTransition = true
+        hasAnimation = true
       }
     }
 
-    renderRouteData()
-    if (hasTransition) routeFrame = requestAnimationFrame(animateRoutes)
+    if (needsRender) renderRouteData()
+    if (hasAnimation) routeFrame = requestAnimationFrame(animateRoutes)
   }
 
   const scheduleRouteAnimation = () => {
@@ -273,6 +350,13 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
         current.target = 1
         current.startedAt = now
         continue
+      }
+
+      if (!reduceMotion.value && route.upload > current.route.upload) {
+        current.uploadFlow = extendFlow(current.uploadFlow, now)
+      }
+      if (!reduceMotion.value && route.download > current.route.download) {
+        current.downloadFlow = extendFlow(current.downloadFlow, now)
       }
 
       current.route = route
@@ -315,6 +399,7 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
       state.from = state.progress
       state.startedAt = now
     }
+    renderRouteData()
     scheduleRouteAnimation()
   })
 
