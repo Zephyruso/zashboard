@@ -250,7 +250,7 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
     )
     map.setSky(createSky(palette))
     map.setPaintProperty('ocean', 'background-color', palette.ocean)
-    map.setPaintProperty('countries-fill', 'fill-color', [
+    map.setPaintProperty('land', 'fill-color', [
       'interpolate',
       ['linear'],
       ['zoom'],
@@ -260,10 +260,6 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
       palette.landHigh,
     ])
     map.setPaintProperty('geolines', 'line-color', palette.geoline)
-    map.setPaintProperty('countries-glow', 'line-color', palette.glow)
-    map.setPaintProperty('countries-boundary', 'line-color', palette.boundary)
-    map.setPaintProperty('countries-label', 'text-color', palette.label)
-    map.setPaintProperty('countries-label', 'text-halo-color', palette.labelHalo)
 
     if (map.getLayer(POINT_LAYER_ID)) {
       const pointColors = pointColorExpression(palette)

@@ -18,11 +18,7 @@ export interface GlobePalette {
   ocean: string
   landLow: string
   landHigh: string
-  glow: string
-  boundary: string
   geoline: string
-  label: string
-  labelHalo: string
   routeRelay: Rgb
   routeDestination: Rgb
   routeDirect: Rgb
@@ -33,7 +29,6 @@ export const POINT_SOURCE_ID = 'connection-points'
 export const POINT_GLOW_LAYER_ID = 'connection-points-glow'
 export const POINT_LAYER_ID = 'connection-points-circle'
 
-const BLACK: Rgb = [2, 4, 10]
 const WHITE: Rgb = [255, 255, 255]
 const colorCanvas = document.createElement('canvas')
 const colorContext = colorCanvas.getContext('2d', { willReadFrequently: true })
@@ -63,7 +58,6 @@ export const createPalette = (container: HTMLElement): GlobePalette => {
   const base100 = read('--color-base-100', WHITE)
   const base200 = read('--color-base-200', base100)
   const base300 = read('--color-base-300', base200)
-  const baseContent = read('--color-base-content', BLACK)
   const primary = read('--color-primary', [92, 103, 235])
   const secondary = read('--color-secondary', primary)
   const accent = read('--color-accent', secondary)
@@ -77,11 +71,7 @@ export const createPalette = (container: HTMLElement): GlobePalette => {
     ocean: rgb(mix(base200, primary, dark ? 0.18 : 0.24)),
     landLow: rgb(mix(base100, primary, dark ? 0.2 : 0.1)),
     landHigh: rgb(mix(base100, primary, dark ? 0.32 : 0.18)),
-    glow: rgba(primary, dark ? 0.24 : 0.15),
-    boundary: rgba(mix(baseContent, secondary, 0.38), dark ? 0.62 : 0.44),
     geoline: rgba(secondary, dark ? 0.3 : 0.24),
-    label: rgb(mix(baseContent, dark ? WHITE : BLACK, 0.1)),
-    labelHalo: rgba(dark ? mix(base300, BLACK, 0.35) : base100, 0.9),
     routeRelay: primary,
     routeDestination: secondary,
     routeDirect: accent,
@@ -117,7 +107,6 @@ export const createGlobeStyle = (palette: GlobePalette): GlobeStyle => ({
   projection: { type: 'globe' },
   transition: { duration: 220, delay: 0 },
   sky: createSky(palette),
-  glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
   sources: {
     maplibre: {
       type: 'vector',
@@ -131,7 +120,9 @@ export const createGlobeStyle = (palette: GlobePalette): GlobeStyle => ({
       paint: { 'background-color': palette.ocean },
     },
     {
-      id: 'countries-fill',
+      // Country polygons are used only as a uniformly colored land mask. Keep
+      // political boundaries and centroid labels out of this neutral basemap.
+      id: 'land',
       type: 'fill',
       source: 'maplibre',
       'source-layer': 'countries',
@@ -158,49 +149,6 @@ export const createGlobeStyle = (palette: GlobePalette): GlobeStyle => ({
         'line-color': palette.geoline,
         'line-width': 0.7,
         'line-dasharray': [2, 3],
-      },
-    },
-    {
-      id: 'countries-glow',
-      type: 'line',
-      source: 'maplibre',
-      'source-layer': 'countries',
-      layout: { 'line-cap': 'round', 'line-join': 'round' },
-      paint: {
-        'line-color': palette.glow,
-        'line-width': ['interpolate', ['linear'], ['zoom'], 0, 2, 6, 6],
-        'line-blur': 2,
-      },
-    },
-    {
-      id: 'countries-boundary',
-      type: 'line',
-      source: 'maplibre',
-      'source-layer': 'countries',
-      layout: { 'line-cap': 'round', 'line-join': 'round' },
-      paint: {
-        'line-color': palette.boundary,
-        'line-width': ['interpolate', ['linear'], ['zoom'], 0, 0.45, 6, 1.1],
-      },
-    },
-    {
-      id: 'countries-label',
-      type: 'symbol',
-      source: 'maplibre',
-      'source-layer': 'centroids',
-      minzoom: 0.8,
-      layout: {
-        'text-field': ['step', ['zoom'], ['get', 'ABBREV'], 2.4, ['get', 'NAME']],
-        'text-font': ['Open Sans Semibold'],
-        'text-size': ['interpolate', ['linear'], ['zoom'], 0.8, 8, 3, 11, 6, 15],
-        'text-letter-spacing': 0.04,
-        'text-max-width': 8,
-      },
-      paint: {
-        'text-color': palette.label,
-        'text-halo-color': palette.labelHalo,
-        'text-halo-width': ['interpolate', ['linear'], ['zoom'], 0.8, 0.8, 6, 1.5],
-        'text-halo-blur': 0.4,
       },
     },
   ],
