@@ -48,6 +48,8 @@ interface ProgramBundle {
   viewport: WebGLUniformLocation | null
   halfWidth: WebGLUniformLocation | null
   time: WebGLUniformLocation | null
+  uploadColor: WebGLUniformLocation | null
+  downloadColor: WebGLUniformLocation | null
 }
 
 const clamp = (value: number, minimum: number, maximum: number) =>
@@ -243,6 +245,8 @@ void main() {
 precision highp float;
 
 uniform float u_time;
+uniform vec3 u_upload_color;
+uniform vec3 u_download_color;
 
 in vec4 v_color;
 in float v_edge;
@@ -305,10 +309,16 @@ void main() {
   float uploadLight = trafficLight(v_route_progress, v_upload_flow);
   float downloadLight = trafficLight(1.0 - v_route_progress, v_download_flow);
   float flowAlpha = max(uploadLight, downloadLight);
+  float flowWeight = uploadLight + downloadLight;
   float alpha = max(baseAlpha, flowAlpha);
 
   if (alpha < 0.001) discard;
-  vec3 color = mix(v_color.rgb, vec3(1.0), flowAlpha * 0.76);
+  vec3 flowColor = (
+    u_upload_color * uploadLight + u_download_color * downloadLight
+  ) / max(flowWeight, 0.001);
+  float flowCoverage = smoothstep(0.04, 0.32, flowAlpha);
+  vec3 color = mix(v_color.rgb, flowColor, flowCoverage);
+  color = mix(color, vec3(1.0), pow(flowAlpha, 2.0) * 0.14);
   fragColor = vec4(color * alpha, alpha);
 }`
 
@@ -344,6 +354,8 @@ void main() {
     viewport: gl.getUniformLocation(program, 'u_viewport'),
     halfWidth: gl.getUniformLocation(program, 'u_half_width'),
     time: gl.getUniformLocation(program, 'u_time'),
+    uploadColor: gl.getUniformLocation(program, 'u_upload_color'),
+    downloadColor: gl.getUniformLocation(program, 'u_download_color'),
   } satisfies ProgramBundle
 }
 
@@ -381,6 +393,14 @@ export class ElevatedRouteLayer implements CustomLayerInterface {
   private vertexCount = 0
   private bufferDirty = true
   private flowAnimationEndsAt = 0
+  private uploadColor: Rgb = [91, 144, 255]
+  private downloadColor: Rgb = [92, 103, 235]
+
+  setFlowColors(upload: Rgb, download: Rgb) {
+    this.uploadColor = upload
+    this.downloadColor = download
+    this.map?.triggerRepaint()
+  }
 
   setData(routes: ElevatedRouteLine[]) {
     this.vertexData = buildRouteVertices(routes)
@@ -449,6 +469,18 @@ export class ElevatedRouteLayer implements CustomLayerInterface {
 
     gl.uniform1f(bundle.halfWidth, 3 * zoomScale)
     gl.uniform1f(bundle.time, now / 1_000)
+    gl.uniform3f(
+      bundle.uploadColor,
+      this.uploadColor[0] / 255,
+      this.uploadColor[1] / 255,
+      this.uploadColor[2] / 255,
+    )
+    gl.uniform3f(
+      bundle.downloadColor,
+      this.downloadColor[0] / 255,
+      this.downloadColor[1] / 255,
+      this.downloadColor[2] / 255,
+    )
     gl.drawArrays(gl.TRIANGLES, 0, this.vertexCount)
 
     if (now < this.flowAnimationEndsAt) this.map?.triggerRepaint()

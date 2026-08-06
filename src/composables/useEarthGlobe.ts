@@ -85,6 +85,7 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
   const addConnectionLayers = (palette: GlobePalette) => {
     if (!map || map.getSource(POINT_SOURCE_ID)) return
 
+    elevatedRouteLayer.setFlowColors(palette.flowUpload, palette.flowDownload)
     map.addSource(POINT_SOURCE_ID, { type: 'geojson', data: emptyFeatureCollection() })
     map.addLayer(elevatedRouteLayer)
     map.addLayer({
@@ -244,6 +245,7 @@ export const useEarthGlobe = ({ originLocation, routes }: UseEarthGlobeOptions) 
 
     const palette = createPalette(mapContainer.value)
     currentPalette = palette
+    elevatedRouteLayer.setFlowColors(palette.flowUpload, palette.flowDownload)
     mapContainer.value.style.setProperty(
       '--earth-control-icon-filter',
       palette.dark ? 'invert(1)' : 'none',

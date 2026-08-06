@@ -22,6 +22,8 @@ export interface GlobePalette {
   routeRelay: Rgb
   routeDestination: Rgb
   routeDirect: Rgb
+  flowUpload: Rgb
+  flowDownload: Rgb
   routePointStroke: string
 }
 
@@ -61,6 +63,7 @@ export const createPalette = (container: HTMLElement): GlobePalette => {
   const primary = read('--color-primary', [92, 103, 235])
   const secondary = read('--color-secondary', primary)
   const accent = read('--color-accent', secondary)
+  const info = read('--color-info', [91, 144, 255])
   const dark = luminance(base100) < 0.45
 
   return {
@@ -75,6 +78,8 @@ export const createPalette = (container: HTMLElement): GlobePalette => {
     routeRelay: primary,
     routeDestination: secondary,
     routeDirect: accent,
+    flowUpload: info,
+    flowDownload: primary,
     routePointStroke: rgb(base100),
   }
 }
