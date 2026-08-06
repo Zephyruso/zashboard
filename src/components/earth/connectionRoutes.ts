@@ -60,7 +60,13 @@ const getRouteEndpoints = async (connection: Connection): Promise<RouteEndpoints
 
   const [remoteIP, destinationIP] = await Promise.all([
     resolveConnectionIP(accessor.remoteAddress(connection)),
-    Promise.resolve(parseConnectionIP(accessor.destination(connection))),
+    Promise.resolve(
+      parseConnectionIP(accessor.destination(connection)) ||
+        accessor
+          .destinationAddresses(connection)
+          .map(parseConnectionIP)
+          .find((address) => address !== undefined),
+    ),
   ])
 
   if (kind === 'direct') {

@@ -192,6 +192,10 @@ message Connection {
   string outboundType = 20;
   repeated string chainList = 21;
   ProcessInfo processInfo = 22;
+  // Final-destination IP candidates resolved by the core before routing.
+  repeated string destinationAddresses = 23;
+  // Actual remote endpoint reached by the selected outbound after dialing.
+  string remoteDestination = 24;
 }
 
 message ProcessInfo {

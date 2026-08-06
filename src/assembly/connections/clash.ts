@@ -130,6 +130,11 @@ export const connectionAccessor: ConnectionAccessor = {
 
     return clash.metadata.destinationIP || clash.metadata.host
   },
+  destinationAddresses: (connection) => {
+    const destinationIP = asClash(connection).metadata.destinationIP
+
+    return destinationIP ? [destinationIP] : []
+  },
   inboundUser: (connection) => {
     const { metadata } = asClash(connection)
 

@@ -47,6 +47,9 @@ export interface ConnectionAccessor {
   host(connection: Connection): string
   process(connection: Connection): string
   destination(connection: Connection): string
+  // 内核已经解析出的最终目标地址。原目标是域名时,地球页面可据此定位;
+  // 未解析或后端不提供时返回空数组。
+  destinationAddresses(connection: Connection): string[]
   inboundUser(connection: Connection): string
   sniffHost(connection: Connection): string
   remoteAddress(connection: Connection): string

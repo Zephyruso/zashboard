@@ -205,13 +205,16 @@ export const connectionAccessor: ConnectionAccessor = {
 
     return splitHostPort(c.destination)[0] || c.domain
   },
+  destinationAddresses: (connection) => asSingbox(connection).destinationAddresses ?? [],
   inboundUser: (connection) => {
     const c = asSingbox(connection)
 
     return c.user || c.inbound || '-'
   },
   sniffHost: (connection) => asSingbox(connection).domain,
-  remoteAddress: (connection) => asSingbox(connection).destination,
+  // destination 是最终目标,不是代理服务器。新版本 API 在实际拨号完成后
+  // 通过 remoteDestination 单独下发真实远端;旧版本缺省为空,避免误画中转。
+  remoteAddress: (connection) => asSingbox(connection).remoteDestination ?? '',
   protocol: (connection) => asSingbox(connection).protocol,
   outboundType: (connection) => asSingbox(connection).outboundType,
   fromOutbound: (connection) => asSingbox(connection).fromOutbound,
