@@ -2,6 +2,29 @@
 
 # Changelog
 
+## [3.17.0](https://github.com/Zephyruso/zashboard/compare/v3.16.1...v3.17.0) (2026-08-07)
+
+
+### Features
+
+* add "All" connections tab keeping closed connections in place ([80e3410](https://github.com/Zephyruso/zashboard/commit/80e3410e8f818aace8ad09becb32be6cb01dfb98))
+* add EarthRenderer and GeoIP worker for visualizing global network routes ([4efd274](https://github.com/Zephyruso/zashboard/commit/4efd27467f782d628f3599eed8510040b714a3ed))
+* add initial location handling and visibility toggle titles for proxy groups ([ee7d379](https://github.com/Zephyruso/zashboard/commit/ee7d3798b7a8b09da9516c685f3baa268cf3bba5))
+* enhance EarthRenderer with endpoint glow effects and improved scaling ([7f43032](https://github.com/Zephyruso/zashboard/commit/7f430320df1ddf919fc458c15f8583fe1809c935))
+* enhance EarthRenderer with flow visualization and initialization optimizations ([2a45908](https://github.com/Zephyruso/zashboard/commit/2a4590825fdbfe83ce71494d428d298b757945b5))
+* enhance support for honk core and update related components ([80e5657](https://github.com/Zephyruso/zashboard/commit/80e5657714cbad5b924c84d3dfdbe7a3d8ec1b28))
+* implement dialog viewport height management and enhance modal transitions ([35e6881](https://github.com/Zephyruso/zashboard/commit/35e6881d8d1feeb4653a4ce34f96fdf28ee418b2))
+* **proxy-node:** add animations for proxy node transitions and latency highlights ([961fc0f](https://github.com/Zephyruso/zashboard/commit/961fc0fe0adaa4104fe6d7444a2d12dc20ea1415))
+
+
+### Bug Fixes
+
+* bundle size ([75d9624](https://github.com/Zephyruso/zashboard/commit/75d962464eb98b4b845e70caa6d9de781e057573))
+* enhance touch controls for EarthRenderer and prevent browser gestures ([db58640](https://github.com/Zephyruso/zashboard/commit/db58640bfc0f6113f5e17749c063eebe0c044738))
+* handle potential undefined processPath in connectionAccessor ([4cdbd85](https://github.com/Zephyruso/zashboard/commit/4cdbd85deb7aa9ca584da907ea8086fbf95b10d1))
+* LatencyTag component loading state transitions and CountUp optimization ([ebe891f](https://github.com/Zephyruso/zashboard/commit/ebe891f49b82f9d1912c1df32eef633c2563d396))
+* **proxy-node:** ensure accurate visibility check in scrollIntoCenter function ([c9b1e65](https://github.com/Zephyruso/zashboard/commit/c9b1e658966a50059303489061cf367c57eeb41e))
+
 ## [3.16.1](https://github.com/Zephyruso/zashboard/compare/v3.16.0...v3.16.1) (2026-07-31)
 
 
