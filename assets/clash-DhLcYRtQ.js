@@ -1,0 +1,1 @@
+import{G as e,W as t,o as n}from"./index-Cx4-g5yL.js";var r=async()=>{n.value=(await t()).data},i=async t=>{await e(t),r()};export{r as fetchConfigs,i as updateConfigs};
