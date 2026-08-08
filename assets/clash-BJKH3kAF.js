@@ -1,0 +1,1 @@
+import{H as e,U as t,c as n,l as r}from"./index-D4W1clF_.js";var i=async()=>{let{data:i}=await t(),{data:a}=await e();r.value=i.rules.map(e=>{let t=e.proxy,n=t.startsWith(`route(`)?t.substring(6,t.length-1):t;return{...e,proxy:n}}),n.value=Object.values(a.providers)};export{i as fetchRules};

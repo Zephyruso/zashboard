@@ -1,0 +1,1 @@
+import{G as e,W as t,o as n}from"./index-D4W1clF_.js";var r=async()=>{n.value=(await t()).data},i=async t=>{await e(t),r()};export{r as fetchConfigs,i as updateConfigs};
