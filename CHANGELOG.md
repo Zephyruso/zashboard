@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [3.18.0](https://github.com/Zephyruso/zashboard/compare/v3.17.0...v3.18.0) (2026-08-08)
+
+
+### Features
+
+* add visual mode selection for Earth globe and update color schemes ([990c0d1](https://github.com/Zephyruso/zashboard/commit/990c0d1b0068c9b38ef5b9953e2ebf5cf0cdff27))
+
+
+### Bug Fixes
+
+* update coreUpdateCheck assignment and enhance getHistoryByName logic ([9802000](https://github.com/Zephyruso/zashboard/commit/980200083397e04de2ebef0db3aa7a7bd0f41600))
+
 ## [3.17.0](https://github.com/Zephyruso/zashboard/compare/v3.16.1...v3.17.0) (2026-08-07)
 
 
