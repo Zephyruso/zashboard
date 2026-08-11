@@ -37,10 +37,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
 
@@ -56,7 +56,7 @@ jobs:
         run: pnpm exec vite build --outDir dist
 
       - name: Upload frontend dist
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: frontend-dist
           path: dist/
@@ -234,28 +234,28 @@ jobs:
 
       - name: Checkout repository
         if: steps.select.outputs.enabled == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: recursive
 
       - name: Download frontend dist
         if: steps.select.outputs.enabled == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: frontend-dist
           path: FastProxy-Server/internal/webui/dist
 
       - name: Setup Go
         if: steps.select.outputs.enabled == 'true'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: FastProxy-Server/go.mod
           cache-dependency-path: FastProxy-Server/go.sum
 
       - name: Cache downloaded proxy cores
         if: steps.select.outputs.enabled == 'true'
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: build/cache/embedded-cores
           key: embedded-cores-${{ matrix.name }}-${{ hashFiles('scripts/prepare-embedded-cores.sh') }}
@@ -327,7 +327,7 @@ jobs:
 
       - name: Upload packaged artifact
         if: steps.select.outputs.enabled == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: release-fastproxy-${{ matrix.name }}
           path: |
@@ -342,7 +342,7 @@ jobs:
 
     steps:
       - name: Download packaged artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: release-fastproxy-*
           path: release-assets
@@ -358,7 +358,7 @@ jobs:
           test -s checksums.txt
 
       - name: Upload checksums
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: fastproxy-checksums
           path: release-assets/checksums.txt
@@ -372,14 +372,14 @@ jobs:
 
     steps:
       - name: Download packaged artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: release-fastproxy-*
           path: release-assets
           merge-multiple: true
 
       - name: Download checksums
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: fastproxy-checksums
           path: release-assets
