@@ -1,38 +1,34 @@
-name: Build
+name: Build and publish binaries
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: Build version label
+        description: Version label used in artifact names (for example, v1.2.3)
         required: false
         type: string
       target:
-        description: Build target
+        description: Platform family to build
         required: true
         type: choice
         default: All
         options:
           - All
+          - OpenWrt
           - Linux
           - macOS
           - Windows
-      upload-artifact:
-        description: Upload built artifacts
-        required: true
-        type: boolean
-        default: true
   push:
     tags:
       - 'v*'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}-${{ inputs.target }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
-  contents: write
   actions: read
+  contents: write
 
 jobs:
   frontend:
@@ -62,15 +58,16 @@ jobs:
       - name: Upload frontend dist
         uses: actions/upload-artifact@v4
         with:
-          name: fastproxy-frontend-dist
+          name: frontend-dist
           path: dist/
           if-no-files-found: error
+          retention-days: 1
 
   build:
     name: Build ${{ matrix.name }}
     runs-on: ubuntu-latest
-    needs:
-      - frontend
+    needs: frontend
+    timeout-minutes: 45
 
     strategy:
       fail-fast: false
@@ -78,124 +75,335 @@ jobs:
         include:
           - name: linux-amd64
             family: Linux
+            package_os: linux
+            package_arch: amd64
             goos: linux
             goarch: amd64
+            goamd64: v1
+            go386: ''
+            goarm: ''
+            variant: standard
             binary: fastproxy-server
+            archive: tar.gz
           - name: linux-arm64
             family: Linux
+            package_os: linux
+            package_arch: arm64
             goos: linux
             goarch: arm64
+            goamd64: ''
+            go386: ''
+            goarm: ''
+            variant: standard
             binary: fastproxy-server
+            archive: tar.gz
           - name: macos-amd64
             family: macOS
+            package_os: darwin
+            package_arch: amd64
             goos: darwin
             goarch: amd64
+            goamd64: v1
+            go386: ''
+            goarm: ''
+            variant: standard
             binary: fastproxy-server
+            archive: tar.gz
           - name: macos-arm64
             family: macOS
+            package_os: darwin
+            package_arch: arm64
             goos: darwin
             goarch: arm64
+            goamd64: ''
+            go386: ''
+            goarm: ''
+            variant: standard
             binary: fastproxy-server
+            archive: tar.gz
+          - name: openwrt-386-softfloat
+            family: OpenWrt
+            package_os: openwrt
+            package_arch: 386-softfloat
+            goos: linux
+            goarch: '386'
+            goamd64: ''
+            go386: softfloat
+            goarm: ''
+            variant: openwrt
+            binary: fastproxy-server
+            archive: tar.gz
+          - name: openwrt-amd64
+            family: OpenWrt
+            package_os: openwrt
+            package_arch: amd64
+            goos: linux
+            goarch: amd64
+            goamd64: v1
+            go386: ''
+            goarm: ''
+            variant: openwrt
+            binary: fastproxy-server
+            archive: tar.gz
+          - name: openwrt-armv5
+            family: OpenWrt
+            package_os: openwrt
+            package_arch: armv5
+            goos: linux
+            goarch: arm
+            goamd64: ''
+            go386: ''
+            goarm: '5'
+            variant: openwrt
+            binary: fastproxy-server
+            archive: tar.gz
+          - name: openwrt-armv6
+            family: OpenWrt
+            package_os: openwrt
+            package_arch: armv6
+            goos: linux
+            goarch: arm
+            goamd64: ''
+            go386: ''
+            goarm: '6'
+            variant: openwrt
+            binary: fastproxy-server
+            archive: tar.gz
+          - name: openwrt-armv7
+            family: OpenWrt
+            package_os: openwrt
+            package_arch: armv7
+            goos: linux
+            goarch: arm
+            goamd64: ''
+            go386: ''
+            goarm: '7'
+            variant: openwrt
+            binary: fastproxy-server
+            archive: tar.gz
+          - name: openwrt-arm64
+            family: OpenWrt
+            package_os: openwrt
+            package_arch: arm64
+            goos: linux
+            goarch: arm64
+            goamd64: ''
+            go386: ''
+            goarm: ''
+            variant: openwrt
+            binary: fastproxy-server
+            archive: tar.gz
           - name: windows-amd64
             family: Windows
+            package_os: windows
+            package_arch: amd64
             goos: windows
             goarch: amd64
+            goamd64: v1
+            go386: ''
+            goarm: ''
+            variant: standard
             binary: fastproxy-server.exe
+            archive: zip
           - name: windows-arm64
             family: Windows
+            package_os: windows
+            package_arch: arm64
             goos: windows
             goarch: arm64
+            goamd64: ''
+            go386: ''
+            goarm: ''
+            variant: standard
             binary: fastproxy-server.exe
+            archive: zip
 
     steps:
-      - name: Skip unrelated target
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.target != 'All' && inputs.target != matrix.family }}
+      - name: Select requested platform family
+        id: select
+        env:
+          REQUESTED_TARGET: ${{ inputs.target }}
         run: |
-          echo "Skipping ${{ matrix.name }} because target is ${{ inputs.target }}."
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ] || \
+            [ "$REQUESTED_TARGET" = "All" ] || \
+            [ "$REQUESTED_TARGET" = "${{ matrix.family }}" ]; then
+            echo 'enabled=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'enabled=false' >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Checkout repository
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.target == 'All' || inputs.target == matrix.family }}
+        if: steps.select.outputs.enabled == 'true'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
 
       - name: Download frontend dist
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.target == 'All' || inputs.target == matrix.family }}
+        if: steps.select.outputs.enabled == 'true'
         uses: actions/download-artifact@v4
         with:
-          name: fastproxy-frontend-dist
+          name: frontend-dist
           path: FastProxy-Server/internal/webui/dist
 
       - name: Setup Go
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.target == 'All' || inputs.target == matrix.family }}
+        if: steps.select.outputs.enabled == 'true'
         uses: actions/setup-go@v5
         with:
           go-version-file: FastProxy-Server/go.mod
           cache-dependency-path: FastProxy-Server/go.sum
 
+      - name: Cache downloaded proxy cores
+        if: steps.select.outputs.enabled == 'true'
+        uses: actions/cache@v4
+        with:
+          path: build/cache/embedded-cores
+          key: embedded-cores-${{ matrix.name }}-${{ hashFiles('scripts/prepare-embedded-cores.sh') }}
+
+      - name: Prepare target proxy cores
+        if: steps.select.outputs.enabled == 'true'
+        env:
+          FASTPROXY_TARGET_VARIANT: ${{ matrix.variant }}
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          GOAMD64: ${{ matrix.goamd64 }}
+          GO386: ${{ matrix.go386 }}
+          GOARM: ${{ matrix.goarm }}
+        run: |
+          ./scripts/prepare-embedded-cores.sh
+          gzip -t FastProxy-Server/internal/core/embedded_binaries/*.gz
+
       - name: Build binary
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.target == 'All' || inputs.target == matrix.family }}
+        if: steps.select.outputs.enabled == 'true'
         env:
           CGO_ENABLED: '0'
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
+          GOAMD64: ${{ matrix.goamd64 }}
+          GO386: ${{ matrix.go386 }}
+          GOARM: ${{ matrix.goarm }}
         run: |
-          set -eu
-          mkdir -p build/package
+          mkdir -p build/bin
           cd FastProxy-Server
-          go build -trimpath -ldflags="-s -w" -o "../build/package/${{ matrix.binary }}" ./cmd/fastproxy-server
+          go build -trimpath -ldflags='-s -w -buildid=' \
+            -o "../build/bin/${{ matrix.binary }}" \
+            ./cmd/fastproxy-server
 
       - name: Package archive
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.target == 'All' || inputs.target == matrix.family }}
+        if: steps.select.outputs.enabled == 'true'
+        env:
+          ARCHIVE_FORMAT: ${{ matrix.archive }}
+          BINARY_NAME: ${{ matrix.binary }}
+          PACKAGE_ARCH: ${{ matrix.package_arch }}
+          PACKAGE_OS: ${{ matrix.package_os }}
+          VERSION_INPUT: ${{ inputs.version }}
         run: |
-          set -eu
-          version="${{ inputs.version }}"
-          if [ -z "$version" ]; then
-            version="${GITHUB_REF_NAME}"
+          version="$VERSION_INPUT"
+          if [ -z "$version" ] && [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            version="$GITHUB_REF_NAME"
           fi
           if [ -z "$version" ]; then
-            version="${GITHUB_SHA}"
+            version="0.0.0-${GITHUB_SHA::7}"
           fi
           version="${version#v}"
-          package_name="fastproxy-server-${version}-${{ matrix.goos }}-${{ matrix.goarch }}"
-          printf '%s\n' "$version" > build/package/VERSION
-          tar -C build/package -czf "build/${package_name}.tar.gz" .
+          if ! printf '%s' "$version" | grep -Eq '^[0-9A-Za-z][0-9A-Za-z._-]*$'; then
+            echo "Invalid version label: $version" >&2
+            exit 1
+          fi
 
-      - name: Upload artifact
-        if: ${{ (github.event_name != 'workflow_dispatch' || inputs.target == 'All' || inputs.target == matrix.family) && (github.event_name != 'workflow_dispatch' || inputs.upload-artifact) }}
+          package_name="fastproxy-${version}-${PACKAGE_OS}-${PACKAGE_ARCH}"
+          package_dir="build/package/$package_name"
+          mkdir -p "$package_dir"
+          cp "build/bin/$BINARY_NAME" "$package_dir/$BINARY_NAME"
+          cp LICENSE "$package_dir/LICENSE"
+          cp FastProxy-Server/README.md "$package_dir/README.md"
+          printf '%s\n' "$version" > "$package_dir/VERSION"
+
+          if [ "$ARCHIVE_FORMAT" = "zip" ]; then
+            (cd build/package && zip -9 -r "../${package_name}.zip" "$package_name")
+          else
+            tar -C build/package -czf "build/${package_name}.tar.gz" "$package_name"
+          fi
+
+      - name: Upload packaged artifact
+        if: steps.select.outputs.enabled == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: fastproxy-${{ matrix.name }}
-          path: build/fastproxy-server-*-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz
+          name: release-fastproxy-${{ matrix.name }}
+          path: |
+            build/fastproxy-*.tar.gz
+            build/fastproxy-*.zip
           if-no-files-found: error
 
-  release:
-    name: Publish release assets
+  checksums:
+    name: Generate checksums
     runs-on: ubuntu-latest
-    needs:
-      - build
-    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+    needs: build
 
     steps:
       - name: Download packaged artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: fastproxy-*
+          pattern: release-fastproxy-*
           path: release-assets
           merge-multiple: true
 
-      - name: Publish GitHub release assets
+      - name: Generate SHA-256 checksums
+        run: |
+          cd release-assets
+          find . -maxdepth 1 -type f \( -name '*.tar.gz' -o -name '*.zip' \) -print0 \
+            | sort -z \
+            | xargs -0 -r sha256sum \
+            | sed 's#  \./#  #' > checksums.txt
+          test -s checksums.txt
+
+      - name: Upload checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: fastproxy-checksums
+          path: release-assets/checksums.txt
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub release assets
+    runs-on: ubuntu-latest
+    needs: checksums
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Download packaged artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-fastproxy-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Download checksums
+        uses: actions/download-artifact@v4
+        with:
+          name: fastproxy-checksums
+          path: release-assets
+
+      - name: Create or update GitHub release
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          set -eu
+          mapfile -d '' assets < <(
+            find release-assets -maxdepth 1 -type f \
+              \( -name '*.tar.gz' -o -name '*.zip' -o -name 'checksums.txt' \) \
+              -print0 | sort -z
+          )
+          if [ "${#assets[@]}" -eq 0 ]; then
+            echo 'No release assets found.' >&2
+            exit 1
+          fi
+
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            gh release upload "$RELEASE_TAG" release-assets/*.tar.gz --clobber
+            gh release upload "$RELEASE_TAG" "${assets[@]}" --clobber
           else
-            gh release create "$RELEASE_TAG" release-assets/*.tar.gz \
+            gh release create "$RELEASE_TAG" "${assets[@]}" \
               --title "$RELEASE_TAG" \
               --generate-notes
           fi
