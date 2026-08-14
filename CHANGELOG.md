@@ -2,6 +2,27 @@
 
 # Changelog
 
+## [3.19.0](https://github.com/Zephyruso/zashboard/compare/v3.18.0...v3.19.0) (2026-08-14)
+
+
+### Features
+
+* add city labels to earth globe ([df067b3](https://github.com/Zephyruso/zashboard/commit/df067b3fd3d8aa38b462e02cdcf00890dbc46264)), closes [#743](https://github.com/Zephyruso/zashboard/issues/743)
+* add connection filter functionality and enhance topology controls ([58eb346](https://github.com/Zephyruso/zashboard/commit/58eb346b2846d72edc376647d9935bd65556669e))
+* add data-page-swipe-ignore attribute to various components and remove redundant touch event handlers ([fca53bc](https://github.com/Zephyruso/zashboard/commit/fca53bce168bf658b25fd16ebf3fe4f84089cb9f))
+* enhance logs and rules display with table view support ([dac63ed](https://github.com/Zephyruso/zashboard/commit/dac63ed748fba89433e071894b7ef447602bb8d0))
+* improve Earth GeoIP database handling ([271452c](https://github.com/Zephyruso/zashboard/commit/271452caf40640bb6be834c87a80d4d58ba5bd57))
+* integrate theme color scheme into ANSI text parsing and rendering ([ea6ac94](https://github.com/Zephyruso/zashboard/commit/ea6ac9475b99e807f700f785e694bf25b1d12c4f))
+
+
+### Bug Fixes
+
+* ensure correct query parameter handling for background image URL ([2181891](https://github.com/Zephyruso/zashboard/commit/2181891bfc0d4863b9e2917d2f331cc6eceb2f0f))
+* **proxies:** exclude reject outbounds from latency tests ([703bd01](https://github.com/Zephyruso/zashboard/commit/703bd01c092c6c714badc97f8cda832cf9543a21)), closes [#742](https://github.com/Zephyruso/zashboard/issues/742)
+* restore silent log level for sing-box ([f82ae78](https://github.com/Zephyruso/zashboard/commit/f82ae782a499fa5dcde6448d0fc31ae7f6f75790))
+* support silent log level by core ([5e26cc2](https://github.com/Zephyruso/zashboard/commit/5e26cc28ea8f0fbd2b4084aea22978233844c22e)), closes [#744](https://github.com/Zephyruso/zashboard/issues/744)
+* update GeoIP API requests ([fd4a41a](https://github.com/Zephyruso/zashboard/commit/fd4a41a4d65e3aeb739af0f0cead8104c45e1872)), closes [#746](https://github.com/Zephyruso/zashboard/issues/746) [#747](https://github.com/Zephyruso/zashboard/issues/747)
+
 ## [3.18.0](https://github.com/Zephyruso/zashboard/compare/v3.17.0...v3.18.0) (2026-08-08)
 
 
