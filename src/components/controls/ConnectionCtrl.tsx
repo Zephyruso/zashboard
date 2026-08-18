@@ -132,7 +132,6 @@ export default defineComponent({
                 </div>
                 {isConnectionCard.value ? <ConnectionCardSettings /> : <TableSettings />}
               </div>
-              <div class="divider m-0"></div>
               <button
                 class="btn btn-block"
                 onClick={() => {

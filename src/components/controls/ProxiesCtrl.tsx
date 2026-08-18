@@ -333,7 +333,6 @@ export default defineComponent({
                   </div>
                 </div>
               </div>
-              <div class="divider m-0"></div>
               <button
                 class="btn btn-block"
                 onClick={() => {
