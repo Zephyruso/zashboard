@@ -2,6 +2,34 @@
 
 # Changelog
 
+## [3.20.0](https://github.com/Zephyruso/zashboard/compare/v3.19.0...v3.20.0) (2026-08-18)
+
+
+### Features
+
+* add resolveClientHostname setting and implement reverse DNS lookup functionality ([5abb091](https://github.com/Zephyruso/zashboard/commit/5abb09106319fd577d393db07d132fd3c161b107))
+* add Taildrop functionality for file sending and receiving ([cd194c3](https://github.com/Zephyruso/zashboard/commit/cd194c3058adf0db11f417bf9b7ce75eaa60444b))
+* enhance backend reachability and connection diagnostics ([43e471f](https://github.com/Zephyruso/zashboard/commit/43e471f751d2b826025c475123d9b1961bf677ea))
+* enhance BackendSwitch component with compact mode and status indicator ([19c86ef](https://github.com/Zephyruso/zashboard/commit/19c86ef04b13bf42acdecbdd8670076ba990028c))
+* enhance BackendSwitchToast with improved status display and retry functionality ([d87a204](https://github.com/Zephyruso/zashboard/commit/d87a20475f915e289a9bcdcf70b2daa6e3729825))
+* enhance protocol handling in query parameters and update UI components for consistency ([0d045d3](https://github.com/Zephyruso/zashboard/commit/0d045d30c9ed9744b0528d1158ffee7f9628cf29))
+* implement app toast notifications with animations and styles ([0287fb2](https://github.com/Zephyruso/zashboard/commit/0287fb232bf3e8f047e232679877e5fce81b98b2))
+* implement backend session management and connectivity notifications ([ba8bbf2](https://github.com/Zephyruso/zashboard/commit/ba8bbf2df148fefd81b3498c67762ecbfbdee681))
+* Refactor backend management and settings UI ([dd4b6c0](https://github.com/Zephyruso/zashboard/commit/dd4b6c03f26e9893c50f2e98bae22c51c90b0aa4))
+* replace native select elements with custom SelectInput component across various settings and components ([dc743ce](https://github.com/Zephyruso/zashboard/commit/dc743ce24cfbdfdf61bf7fad9ce9c7c40230950a))
+* replace tab navigation with SegmentedControl for improved user experience ([9eaa523](https://github.com/Zephyruso/zashboard/commit/9eaa523d78dd14ed3926ca5c7f4dca56480ed770))
+* replace useStorage imports from vueuse with custom implementation for better default handling ([3544c14](https://github.com/Zephyruso/zashboard/commit/3544c14759e4881d1582e2dbc52c28001fa14947))
+* update color scheme and improve chart themes for better visibility ([e23fd12](https://github.com/Zephyruso/zashboard/commit/e23fd124b5e05af134db0a9213d2901a9018ec5f))
+* update ProxyPreview component styles for improved visual consistency ([22da30d](https://github.com/Zephyruso/zashboard/commit/22da30db355e1ac4712de778b5c54fe56b480cc3))
+
+
+### Bug Fixes
+
+* enhance latency testing by adding group name support and improving history tracking ([57e3460](https://github.com/Zephyruso/zashboard/commit/57e3460f59c3aa6584a46938aba1ef731cc69b02))
+* filter out non-latency testable proxies in allProxiesLatencyTest ([2111ee1](https://github.com/Zephyruso/zashboard/commit/2111ee13f3875eef591de0168361e3c9580b1691))
+* process reader for sing-box API ([3eb8dac](https://github.com/Zephyruso/zashboard/commit/3eb8dac7ef603342844b98e7cf784a0f0ca838d2))
+* update ProxiesContent and ProxyProvider components to handle optional name prop and improve event handling ([677fd5c](https://github.com/Zephyruso/zashboard/commit/677fd5c692be5c91d213b0662abfc8f45834c176))
+
 ## [3.19.0](https://github.com/Zephyruso/zashboard/compare/v3.18.0...v3.19.0) (2026-08-14)
 
 
