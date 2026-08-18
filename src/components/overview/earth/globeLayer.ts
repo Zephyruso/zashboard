@@ -6,6 +6,7 @@ import {
   bumpMap,
   cameraPosition,
   color,
+  instancedBufferAttribute,
   max,
   mix,
   normalize,
@@ -13,6 +14,7 @@ import {
   normalWorldGeometry,
   output,
   positionWorld,
+  shapeCircle,
   step,
   texture,
   uniform,
@@ -21,10 +23,11 @@ import {
   vec4,
 } from 'three/tsl'
 import * as THREE from 'three/webgpu'
+import { DOT_COUNT, DOT_POSITIONS, DOT_TEXTURE_COORDINATES, findNearestDotIndex } from './dotGlobe'
 import { EARTH_RADIUS } from './earthMath'
-import type { EarthColorScheme, EarthVisualMode } from './rendererTypes'
+import type { EarthColorScheme, EarthRenderSnapshot, EarthVisualMode } from './rendererTypes'
 
-const FLAT_GLOBE_PALETTES = {
+const GLOBE_PALETTES = {
   light: {
     ocean: '#dce6f0',
     land: '#65788d',
@@ -45,6 +48,7 @@ interface GlobeLayerOptions {
 }
 
 export interface GlobeLayer {
+  setSnapshot: (snapshot: EarthRenderSnapshot, topologyChanged: boolean) => void
   setVisualMode: (mode: EarthVisualMode) => void
   setColorScheme: (scheme: EarthColorScheme) => void
   setSunDirection: (direction: THREE.Vector3) => void
@@ -132,15 +136,58 @@ export const createGlobeLayer = async (options: GlobeLayerOptions): Promise<Glob
   globeMaterial.normalNode = bumpMap(max(texture(surfaceTexture).r, cloudsStrength))
 
   // The surface texture separates land (green channel) from water (blue channel),
-  // which lets the flat renderer keep the same coastline without photo shading.
-  const flatOceanColor = uniform(new THREE.Color())
-  const flatLandColor = uniform(new THREE.Color())
+  // keeping the same coastline in the flat and dot renderers without photo shading.
+  const oceanColor = uniform(new THREE.Color())
+  const landColor = uniform(new THREE.Color())
   const flatSurface = texture(surfaceTexture, uv())
   const flatLandMask = flatSurface.g.sub(flatSurface.b).smoothstep(0.02, 0.16)
   const flatGlobeMaterial = new THREE.MeshBasicNodeMaterial()
 
-  flatGlobeMaterial.colorNode = mix(flatOceanColor, flatLandColor, flatLandMask)
+  flatGlobeMaterial.colorNode = mix(oceanColor, landColor, flatLandMask)
   flatGlobeMaterial.toneMapped = false
+
+  const dotDestinationColor = uniform(new THREE.Color('#ffb35c'))
+  const dotOriginColor = uniform(new THREE.Color('#ff56d7'))
+  const dotAttributes = {
+    position: new THREE.InstancedBufferAttribute(DOT_POSITIONS, 3),
+    uv: new THREE.InstancedBufferAttribute(DOT_TEXTURE_COORDINATES, 2),
+    endpointRole: new THREE.InstancedBufferAttribute(new Float32Array(DOT_COUNT), 1),
+  }
+  const dotPosition = instancedBufferAttribute(dotAttributes.position)
+  const dotTextureCoordinate = instancedBufferAttribute(dotAttributes.uv)
+  const dotEndpointRole = instancedBufferAttribute<'float'>(dotAttributes.endpointRole, 'float')
+  const dotSurface = texture(surfaceTexture, dotTextureCoordinate)
+  const dotLandMask = dotSurface.g.sub(dotSurface.b).smoothstep(0.02, 0.16)
+  const dotMaterial = new THREE.PointsNodeMaterial({
+    alphaToCoverage: true,
+    sizeAttenuation: false,
+  })
+
+  dotMaterial.positionNode = dotPosition
+  dotMaterial.sizeNode = uniform(2.15)
+  const dotBaseColor = mix(oceanColor, landColor, dotLandMask)
+  const dotEndpointColor = mix(
+    dotBaseColor,
+    dotDestinationColor,
+    dotEndpointRole.smoothstep(0.5, 1),
+  )
+  dotMaterial.colorNode = mix(dotEndpointColor, dotOriginColor, dotEndpointRole.smoothstep(1.5, 2))
+  dotMaterial.opacityNode = shapeCircle()
+  dotMaterial.toneMapped = false
+
+  // Instanced sprites are the documented WebGPU path for points wider than one
+  // physical pixel. The hidden core only writes depth, so the card background stays
+  // visible through the gaps while points and routes on the far side remain occluded.
+  const dotGlobe = new THREE.Sprite(dotMaterial as unknown as THREE.SpriteMaterial)
+  dotGlobe.count = DOT_COUNT
+  dotGlobe.frustumCulled = false
+  const dotDepthMaterial = new THREE.MeshBasicNodeMaterial({ colorWrite: false })
+  const dotDepthGlobe = new THREE.Mesh(
+    new THREE.SphereGeometry(EARTH_RADIUS * 0.998, 48, 32),
+    dotDepthMaterial,
+  )
+  dotDepthGlobe.renderOrder = -1
+  earthGroup.add(dotDepthGlobe, dotGlobe)
 
   const sphereGeometry = new THREE.SphereGeometry(EARTH_RADIUS, 64, 64)
   const globe = new THREE.Mesh<THREE.SphereGeometry, THREE.Material>(sphereGeometry, globeMaterial)
@@ -163,20 +210,24 @@ export const createGlobeLayer = async (options: GlobeLayerOptions): Promise<Glob
   let disposed = false
 
   const applyColorScheme = () => {
-    const palette = FLAT_GLOBE_PALETTES[colorScheme]
+    const palette = GLOBE_PALETTES[colorScheme]
 
-    flatOceanColor.value.set(palette.ocean)
-    flatLandColor.value.set(palette.land)
+    oceanColor.value.set(palette.ocean)
+    landColor.value.set(palette.land)
   }
 
   const applyVisualMode = () => {
-    const flat = visualMode === 'flat'
+    const space = visualMode === 'space'
+    const dots = visualMode === 'dots'
 
-    scene.background = flat ? null : backgroundTexture
-    renderer.toneMapping = flat ? THREE.NoToneMapping : THREE.ACESFilmicToneMapping
-    globe.material = flat ? flatGlobeMaterial : globeMaterial
-    sun.visible = !flat
-    atmosphere.visible = !flat
+    scene.background = space ? backgroundTexture : null
+    renderer.toneMapping = space ? THREE.ACESFilmicToneMapping : THREE.NoToneMapping
+    globe.material = space ? globeMaterial : flatGlobeMaterial
+    globe.visible = !dots
+    dotGlobe.visible = dots
+    dotDepthGlobe.visible = dots
+    sun.visible = space
+    atmosphere.visible = space
   }
 
   const syncSunLight = () => {
@@ -189,6 +240,17 @@ export const createGlobeLayer = async (options: GlobeLayerOptions): Promise<Glob
   syncSunLight()
 
   return {
+    setSnapshot(snapshot, topologyChanged) {
+      if (disposed || !topologyChanged) return
+      const endpointRoles = dotAttributes.endpointRole.array as Float32Array
+
+      endpointRoles.fill(0)
+      for (const endpoint of snapshot.endpoints) {
+        const index = findNearestDotIndex(endpoint.position)
+        endpointRoles[index] = Math.max(endpointRoles[index], endpoint.role === 'origin' ? 2 : 1)
+      }
+      dotAttributes.endpointRole.needsUpdate = true
+    },
     setVisualMode(mode) {
       if (disposed || visualMode === mode) return
       visualMode = mode
@@ -210,11 +272,17 @@ export const createGlobeLayer = async (options: GlobeLayerOptions): Promise<Glob
       disposed = true
       if (scene.background === backgroundTexture) scene.background = null
       scene.remove(sun)
-      earthGroup.remove(globe, atmosphere)
+      earthGroup.remove(globe, atmosphere, dotGlobe, dotDepthGlobe)
       sphereGeometry.dispose()
+      dotDepthGlobe.geometry.dispose()
       globeMaterial.dispose()
       flatGlobeMaterial.dispose()
       atmosphereMaterial.dispose()
+      dotMaterial.dispose()
+      dotDepthMaterial.dispose()
+      dotAttributes.position.dispose()
+      dotAttributes.uv.dispose()
+      dotAttributes.endpointRole.dispose()
       textures.forEach((texture) => texture.dispose())
     },
   }

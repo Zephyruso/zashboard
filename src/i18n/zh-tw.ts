@@ -544,6 +544,7 @@ const zhTW: LANG_MESSAGE = {
   earthVisualStyle: '地球樣式',
   earthVisualStyle_space: '星空',
   earthVisualStyle_flat: '扁平',
+  earthVisualStyle_dots: '點陣',
   earthOriginAPI: '公網 IP 服務',
   earthLocalIP: '本機 IP',
   earthToggleIP: '顯示或隱藏本機 IP',

@@ -18,10 +18,7 @@ export const createEarthRenderSnapshot = (incomingRoutes: readonly EarthRoute[])
   const routes = incomingRoutes
     .map(cloneRoute)
     .sort((left, right) => left.key.localeCompare(right.key))
-  const signature = routes
-    .map(({ key }) => key)
-    .sort()
-    .join('|')
+  const signature = routes.map(({ key }) => key).join('|')
   const endpoints = new Map<string, EarthRenderEndpoint>()
 
   for (const route of routes) {

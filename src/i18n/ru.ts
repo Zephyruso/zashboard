@@ -556,6 +556,7 @@ const ru: LANG_MESSAGE = {
   earthVisualStyle: 'Стиль глобуса',
   earthVisualStyle_space: 'Космос',
   earthVisualStyle_flat: 'Плоский',
+  earthVisualStyle_dots: 'Точки',
   earthOriginAPI: 'Сервис публичного IP',
   earthLocalIP: 'Локальный IP',
   earthToggleIP: 'Показать или скрыть локальный IP',

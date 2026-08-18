@@ -16,6 +16,7 @@
           :options="[
             { value: 'space', label: t('earthVisualStyle_space') },
             { value: 'flat', label: t('earthVisualStyle_flat') },
+            { value: 'dots', label: t('earthVisualStyle_dots') },
           ]"
         />
         <button
@@ -69,7 +70,7 @@
       class="relative mt-2 w-full overflow-hidden rounded-xl"
       :class="[
         expanded ? 'min-h-0 flex-1' : 'h-96',
-        earthVisualMode === 'flat' ? 'bg-base-200/30' : 'bg-black',
+        earthVisualMode === 'space' ? 'bg-black' : 'bg-base-200/30',
       ]"
     >
       <div
@@ -125,11 +126,11 @@
 
       <div
         class="absolute bottom-2 left-2 flex flex-col items-start gap-0.5 text-[10px]"
-        :class="earthVisualMode === 'flat' ? 'text-base-content/55' : 'text-white/65'"
+        :class="earthVisualMode === 'space' ? 'text-white/65' : 'text-base-content/55'"
       >
         <a
           class="hover:underline"
-          :class="earthVisualMode === 'flat' ? 'hover:text-base-content' : 'hover:text-white'"
+          :class="earthVisualMode === 'space' ? 'hover:text-white' : 'hover:text-base-content'"
           href="https://db-ip.com/db/lite.php"
           target="_blank"
           rel="noopener noreferrer"
@@ -138,7 +139,7 @@
         </a>
         <a
           class="hover:underline"
-          :class="earthVisualMode === 'flat' ? 'hover:text-base-content' : 'hover:text-white'"
+          :class="earthVisualMode === 'space' ? 'hover:text-white' : 'hover:text-base-content'"
           href="https://www.solarsystemscope.com/textures/"
           target="_blank"
           rel="noopener noreferrer"

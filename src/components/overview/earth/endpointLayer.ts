@@ -141,6 +141,7 @@ export const createEndpointLayer = (options: EndpointLayerOptions): EndpointLaye
     endpointGlowMesh = new THREE.InstancedMesh(endpointGlowGeometry, endpointGlowMaterial, capacity)
     endpointMesh.count = endpoints.length
     endpointGlowMesh.count = endpoints.length
+    endpointMesh.visible = visualMode !== 'dots'
     endpointGlowMesh.visible = visualMode === 'space'
     endpointRotation.identity()
 
@@ -195,6 +196,7 @@ export const createEndpointLayer = (options: EndpointLayerOptions): EndpointLaye
       visualMode = mode
       if (endpointMesh) {
         endpointMesh.material = mode === 'flat' ? flatEndpointMaterial : endpointMaterial
+        endpointMesh.visible = mode !== 'dots'
       }
       if (endpointGlowMesh) endpointGlowMesh.visible = mode === 'space'
     },
@@ -208,7 +210,9 @@ export const createEndpointLayer = (options: EndpointLayerOptions): EndpointLaye
       endpointPulse.value = 0.82 + Math.sin(pulseTime * 2.1) * 0.18
     },
     hitTest(clientX, clientY, bounds) {
-      if (disposed || !endpointGlowMesh || endpoints.length === 0) return null
+      if (disposed || visualMode === 'dots' || !endpointGlowMesh || endpoints.length === 0) {
+        return null
+      }
 
       pointer.x = ((clientX - bounds.left) / bounds.width) * 2 - 1
       pointer.y = -((clientY - bounds.top) / bounds.height) * 2 + 1

@@ -63,9 +63,13 @@ export const getRealtimeSunDirection = (date = new Date(), target = new THREE.Ve
 
 // Quaternion interpolation follows the shortest spherical path, including paths that
 // cross +/-180 degrees longitude. It also has a deterministic antipodal fallback.
-export const createGreatCircle = (from: EarthLocation, to: EarthLocation) => {
-  const start = toEarthVector(from).normalize()
-  const end = toEarthVector(to).normalize()
+export const createGreatCircleBetweenVectors = (
+  from: THREE.Vector3,
+  to: THREE.Vector3,
+  surfaceRadius = EARTH_RADIUS,
+) => {
+  const start = from.clone().normalize()
+  const end = to.clone().normalize()
   const rotation = new THREE.Quaternion().setFromUnitVectors(start, end)
   const identity = new THREE.Quaternion()
   const angle = Math.acos(THREE.MathUtils.clamp(start.dot(end), -1, 1))
@@ -75,13 +79,16 @@ export const createGreatCircle = (from: EarthLocation, to: EarthLocation) => {
   for (let index = 0; index <= ARC_SEGMENTS; index += 1) {
     const progress = index / ARC_SEGMENTS
     const orientation = new THREE.Quaternion().slerpQuaternions(identity, rotation, progress)
-    const radius = EARTH_RADIUS + Math.sin(Math.PI * progress) * height
+    const radius = surfaceRadius + Math.sin(Math.PI * progress) * height
 
     points.push(start.clone().applyQuaternion(orientation).normalize().multiplyScalar(radius))
   }
 
   return points
 }
+
+export const createGreatCircle = (from: EarthLocation, to: EarthLocation) =>
+  createGreatCircleBetweenVectors(toEarthVector(from), toEarthVector(to))
 
 export const sampleEarthPath = (
   points: readonly THREE.Vector3[],

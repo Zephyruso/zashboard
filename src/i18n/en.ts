@@ -553,6 +553,7 @@ const en = {
   earthVisualStyle: 'Globe style',
   earthVisualStyle_space: 'Space',
   earthVisualStyle_flat: 'Flat',
+  earthVisualStyle_dots: 'Dots',
   earthOriginAPI: 'Public IP service',
   earthLocalIP: 'Local IP',
   earthToggleIP: 'Show or hide local IP',

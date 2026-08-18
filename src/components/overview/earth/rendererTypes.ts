@@ -2,7 +2,7 @@ import type * as THREE from 'three/webgpu'
 import type { EarthEndpointInfo, EarthLocation, EarthRoute } from './types'
 
 export type EarthColorScheme = 'dark' | 'light'
-export type EarthVisualMode = 'flat' | 'space'
+export type EarthVisualMode = 'dots' | 'flat' | 'space'
 
 export interface EarthRendererOptions {
   reducedMotion: boolean

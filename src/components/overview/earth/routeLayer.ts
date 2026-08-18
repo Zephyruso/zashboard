@@ -1,7 +1,13 @@
 import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js'
 import { LineSegments2 } from 'three/addons/lines/webgpu/LineSegments2.js'
 import * as THREE from 'three/webgpu'
-import { createGreatCircle, sampleEarthPath } from './earthMath'
+import { DOT_RADIUS, snapToNearestDot } from './dotGlobe'
+import {
+  createGreatCircle,
+  createGreatCircleBetweenVectors,
+  sampleEarthPath,
+  toEarthVector,
+} from './earthMath'
 import type { EarthColorScheme, EarthRenderSnapshot, EarthVisualMode } from './rendererTypes'
 import type { EarthRoute } from './types'
 
@@ -9,7 +15,7 @@ const FLOW_DURATION_SECONDS = 0.85
 const FLOW_STREAK_LENGTH = 0.14
 const FLOW_STREAK_SEGMENTS = 14
 const FLOW_COLOR = new THREE.Color('#ffffff')
-const FLAT_LIGHT_FLOW_COLOR = new THREE.Color('#5ad9ef')
+const LIGHT_FLOW_COLOR = new THREE.Color('#5ad9ef')
 const LINE_ORIGIN_COLOR = new THREE.Color('#b8f7ff')
 const LINE_DESTINATION_COLOR = new THREE.Color('#4f9dff')
 
@@ -95,6 +101,7 @@ export const createRouteLayer = (options: RouteLayerOptions): RouteLayer => {
   earthGroup.add(flowGlow, flows)
 
   let runtimeRoutes: RuntimeRoute[] = []
+  let currentRoutes: readonly EarthRoute[] = []
   let visualMode = options.visualMode
   let colorScheme = options.colorScheme
   let disposed = false
@@ -107,11 +114,11 @@ export const createRouteLayer = (options: RouteLayerOptions): RouteLayer => {
   const flowEnd = new THREE.Vector3()
 
   const applyVisualMode = () => {
-    const flat = visualMode === 'flat'
+    const space = visualMode === 'space'
 
-    lineGlow.visible = !flat && lines.visible
-    flowGlow.visible = !flat && flows.visible
-    flowMaterial.blending = flat ? THREE.NormalBlending : THREE.AdditiveBlending
+    lineGlow.visible = space && lines.visible
+    flowGlow.visible = space && flows.visible
+    flowMaterial.blending = space ? THREE.AdditiveBlending : THREE.NormalBlending
     flowMaterial.needsUpdate = true
   }
 
@@ -120,7 +127,7 @@ export const createRouteLayer = (options: RouteLayerOptions): RouteLayer => {
 
     let flowSegmentIndex = 0
     const flowColor =
-      visualMode === 'flat' && colorScheme === 'light' ? FLAT_LIGHT_FLOW_COLOR : FLOW_COLOR
+      visualMode !== 'space' && colorScheme === 'light' ? LIGHT_FLOW_COLOR : FLOW_COLOR
 
     for (const runtime of runtimeRoutes) {
       for (const direction of ['upload', 'download'] as const) {
@@ -192,6 +199,17 @@ export const createRouteLayer = (options: RouteLayerOptions): RouteLayer => {
     const positions: number[] = []
     const colors: number[] = []
     runtimeRoutes = []
+    const snappedLocations = new Map<string, THREE.Vector3>()
+    const getSnappedLocation = (location: EarthRoute['path'][number]) => {
+      const key = `${location.latitude.toFixed(6)},${location.longitude.toFixed(6)}`
+      let position = snappedLocations.get(key)
+
+      if (!position) {
+        position = snapToNearestDot(toEarthVector(location))
+        snappedLocations.set(key, position)
+      }
+      return position
+    }
 
     for (const route of routes) {
       const routePoints: THREE.Vector3[] = []
@@ -199,7 +217,14 @@ export const createRouteLayer = (options: RouteLayerOptions): RouteLayer => {
       for (let pathIndex = 0; pathIndex < route.path.length - 1; pathIndex += 1) {
         const from = route.path[pathIndex]
         const to = route.path[pathIndex + 1]
-        const arc = createGreatCircle(from, to)
+        const arc =
+          visualMode === 'dots'
+            ? createGreatCircleBetweenVectors(
+                getSnappedLocation(from),
+                getSnappedLocation(to),
+                DOT_RADIUS,
+              )
+            : createGreatCircle(from, to)
 
         routePoints.push(...(routePoints.length > 0 ? arc.slice(1) : arc))
 
@@ -266,6 +291,7 @@ export const createRouteLayer = (options: RouteLayerOptions): RouteLayer => {
   return {
     setSnapshot(snapshot, topologyChanged) {
       if (disposed) return
+      currentRoutes = snapshot.routes
 
       if (topologyChanged) {
         rebuildGeometry(snapshot.routes)
@@ -287,7 +313,9 @@ export const createRouteLayer = (options: RouteLayerOptions): RouteLayer => {
     },
     setVisualMode(mode) {
       if (disposed || visualMode === mode) return
+      const dotGeometryChanged = visualMode === 'dots' || mode === 'dots'
       visualMode = mode
+      if (dotGeometryChanged) rebuildGeometry(currentRoutes)
       applyVisualMode()
       updateFlows(0, false)
     },
@@ -310,6 +338,7 @@ export const createRouteLayer = (options: RouteLayerOptions): RouteLayer => {
       flowGlowMaterial.dispose()
       flowMaterial.dispose()
       runtimeRoutes = []
+      currentRoutes = []
       flowProgress.clear()
     },
   }

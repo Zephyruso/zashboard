@@ -240,7 +240,10 @@ export const earthOriginSource = useStorage<'global' | 'china'>(
   'config/earth-origin-source',
   'china',
 )
-export const earthVisualMode = useStorage<'flat' | 'space'>('config/earth-visual-mode', 'flat')
+export const earthVisualMode = useStorage<'dots' | 'flat' | 'space'>(
+  'config/earth-visual-mode',
+  'flat',
+)
 export const topologyApplyConnectionFilter = useStorage(
   'config/topology-apply-connection-filter',
   true,

@@ -179,6 +179,12 @@ export const createEarthRenderer = async (
       }
     }
 
+    const clearEndpointInteraction = () => {
+      pinnedEndpoint = false
+      options.onEndpointHover(null)
+      renderer.domElement.style.cursor = ''
+    }
+
     const showEndpoint = (event: PointerEvent, pin = false) => {
       const bounds = renderer.domElement.getBoundingClientRect()
       const endpoint = endpointLayer.hitTest(event.clientX, event.clientY, bounds)
@@ -188,9 +194,7 @@ export const createEarthRenderer = async (
         options.onEndpointHover(endpoint, event.clientX, event.clientY)
         renderer.domElement.style.cursor = 'pointer'
       } else if (!pinnedEndpoint || pin) {
-        pinnedEndpoint = false
-        options.onEndpointHover(null)
-        renderer.domElement.style.cursor = ''
+        clearEndpointInteraction()
       }
     }
     const onPointerMove = (event: PointerEvent) => {
@@ -198,7 +202,7 @@ export const createEarthRenderer = async (
     }
     const onClick = (event: PointerEvent) => showEndpoint(event, true)
     const onPointerLeave = () => {
-      if (!pinnedEndpoint) options.onEndpointHover(null)
+      if (!pinnedEndpoint) clearEndpointInteraction()
     }
     renderer.domElement.addEventListener('pointermove', onPointerMove)
     renderer.domElement.addEventListener('click', onClick)
@@ -260,6 +264,8 @@ export const createEarthRenderer = async (
         const snapshot = createEarthRenderSnapshot(incomingRoutes)
         const topologyChanged = snapshot.signature !== currentSignature
         currentSignature = snapshot.signature
+        if (topologyChanged) clearEndpointInteraction()
+        globeLayer.setSnapshot(snapshot, topologyChanged)
         routeLayer.setSnapshot(snapshot, topologyChanged)
         const endpoints = endpointLayer.setSnapshot(snapshot, topologyChanged)
         cityLabelLayer.setEndpoints(endpoints)
@@ -308,6 +314,7 @@ export const createEarthRenderer = async (
       setVisualMode(mode) {
         if (disposed || visualMode === mode) return
         visualMode = mode
+        if (mode === 'dots') clearEndpointInteraction()
         globeLayer.setVisualMode(mode)
         routeLayer.setVisualMode(mode)
         endpointLayer.setVisualMode(mode)
@@ -318,7 +325,7 @@ export const createEarthRenderer = async (
         colorScheme = scheme
         globeLayer.setColorScheme(scheme)
         routeLayer.setColorScheme(scheme)
-        if (visualMode === 'flat') render()
+        if (visualMode !== 'space') render()
       },
       dispose: disposeResources,
     }
