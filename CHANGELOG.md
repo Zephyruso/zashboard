@@ -2,6 +2,23 @@
 
 # Changelog
 
+## [3.21.0](https://github.com/Zephyruso/zashboard/compare/v3.20.0...v3.21.0) (2026-08-19)
+
+
+### Features
+
+* improve IP lookup API selection ([4ab1879](https://github.com/Zephyruso/zashboard/commit/4ab187937f9200ed09fad9d59b325623c008e922)), closes [#757](https://github.com/Zephyruso/zashboard/issues/757)
+
+
+### Bug Fixes
+
+* add confirmation dialogs for core upgrade and config reload actions ([8cb98d6](https://github.com/Zephyruso/zashboard/commit/8cb98d666767813099d4aeb5849eb5c1bc9df4b4))
+* adjust grid styling for responsive layout in ProviderTrafficOverview component ([5362606](https://github.com/Zephyruso/zashboard/commit/536260633b4dd06f5e3d8d5fd9c72112c3dc5b26))
+* adjust z-index values for backend panel components ([43e2afd](https://github.com/Zephyruso/zashboard/commit/43e2afd91db909fc506526cfad93d10a219fc9e7))
+* bring backend actions back into the sidebar backend menu ([e8a5dd5](https://github.com/Zephyruso/zashboard/commit/e8a5dd5ed404132dc72652d39dfb22d0f9ffa003)), closes [#765](https://github.com/Zephyruso/zashboard/issues/765)
+* replace legacy theme names with new mappings in settings ([c6510fe](https://github.com/Zephyruso/zashboard/commit/c6510fe96200980299a91713f460aab494cd7c52))
+* update backend status color and remove confirmation for config reload ([fe8784b](https://github.com/Zephyruso/zashboard/commit/fe8784bc220002a31c8a762f1fe1ec649ec35c6b))
+
 ## [3.20.0](https://github.com/Zephyruso/zashboard/compare/v3.19.0...v3.20.0) (2026-08-18)
 
 
