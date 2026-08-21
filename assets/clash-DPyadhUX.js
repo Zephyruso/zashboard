@@ -1,0 +1,1 @@
+import{T as e,X as t,Y as n}from"./index-OADR26Fn.js";var r=async()=>{e.value=(await n()).data},i=async e=>{await t(e),r()};export{r as fetchConfigs,i as updateConfigs};
