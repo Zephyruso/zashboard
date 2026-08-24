@@ -2,6 +2,25 @@
 
 # Changelog
 
+## [3.22.0](https://github.com/Zephyruso/zashboard/compare/v3.21.0...v3.22.0) (2026-08-24)
+
+
+### Features
+
+* add deprecation notice for sing-box support ([0ff25c1](https://github.com/Zephyruso/zashboard/commit/0ff25c116c2382e8315e744d859722cd89a18cbf))
+* enhance settings page with new customization options and search functionality ([435043a](https://github.com/Zephyruso/zashboard/commit/435043a2c20c1e98e69c3943fc8da6e9c68a9114))
+* implement settings page transitions and enhance swipe navigation ([fd6e1ed](https://github.com/Zephyruso/zashboard/commit/fd6e1ed8a94b52e09292fc51c4f854830cb386d8))
+
+
+### Bug Fixes
+
+* add need-blur class to enhance backdrop blur effect in settings components ([d11d521](https://github.com/Zephyruso/zashboard/commit/d11d5216dee05a3091e7aafd428604714f72be6d))
+* adjust transition handling for custom backgrounds to preserve backdrop blur in wallpaper mode ([be22920](https://github.com/Zephyruso/zashboard/commit/be229207ed16e4992107a0fca2cdf25343018225))
+* enhance background image handling and caching for improved performance ([952c9e5](https://github.com/Zephyruso/zashboard/commit/952c9e5ed47344c3669c53451edc1a822b289695))
+* improve settings page layout and enhance mobile index handling ([a815ded](https://github.com/Zephyruso/zashboard/commit/a815ded18f3068636af6e6a46332be4e337ad9ff))
+* optimize isProxyGroup function by using a Set for proxy group types ([b8e4322](https://github.com/Zephyruso/zashboard/commit/b8e432261068a9a5a0a09e841a903f2fc55935c8))
+* remove full-screen-mobile prop from DialogWrapper instances in settings components ([4a7d194](https://github.com/Zephyruso/zashboard/commit/4a7d194a4b44f62e60435789532f2e0dacfebc3a))
+
 ## [3.21.0](https://github.com/Zephyruso/zashboard/compare/v3.20.0...v3.21.0) (2026-08-19)
 
 
