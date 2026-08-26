@@ -1,3 +1,4 @@
+import { can } from '@/assembly/backend'
 import { disconnectAllAPI, disconnectByIdAPI } from '@/assembly/connections'
 import { useCtrlsBar } from '@/composables/useCtrlsBar'
 import { ROUTE_NAME, SETTINGS_MENU_KEY, SORT_DIRECTION, SORT_TYPE } from '@/constant'
@@ -186,12 +187,14 @@ export default defineComponent({
           >
             {isPaused.value ? <PlayIcon class="h-4 w-4" /> : <PauseIcon class="h-4 w-4" />}
           </button>
-          <button
-            class="btn btn-circle btn-sm"
-            onClick={handlerClickCloseAll}
-          >
-            <XMarkIcon class="h-4 w-4" />
-          </button>
+          {can('connectionActions') && (
+            <button
+              class="btn btn-circle btn-sm"
+              onClick={handlerClickCloseAll}
+            >
+              <XMarkIcon class="h-4 w-4" />
+            </button>
+          )}
         </>
       )
 

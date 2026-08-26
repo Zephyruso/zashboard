@@ -40,7 +40,7 @@
             :name="node"
             :group-name="name"
             :active="node === proxyGroup.now"
-            @click.stop="handlerProxySelect(name, node)"
+            @click.stop="selectNode(name, node)"
           />
         </ProxyNodeGrid>
       </div>
@@ -49,6 +49,7 @@
 </template>
 
 <script setup lang="ts">
+import { can } from '@/assembly/backend'
 import { handlerProxySelect, proxyGroupLatencyTest, proxyMap } from '@/assembly/proxies'
 import { groupProxiesByProviderName, useRenderProxyList } from '@/composables/renderProxies'
 import { isMiddleScreen } from '@/helper/utils'
@@ -76,6 +77,7 @@ const sections = computed(() => {
 
 const isLatencyTesting = ref(false)
 const handlerLatencyTest = async () => {
+  if (!can('proxyLatencyTest')) return
   if (isLatencyTesting.value) return
 
   isLatencyTesting.value = true
@@ -85,5 +87,12 @@ const handlerLatencyTest = async () => {
   } catch {
     isLatencyTesting.value = false
   }
+}
+
+// 通道不支持选择节点时(dae 的组策略写在配置文件里,API 只读)什么都不做 ——
+// 让门面抛出去只会给用户弹一条他无能为力的错误。
+const selectNode = (groupName: string, nodeName: string) => {
+  if (!can('proxySelect')) return
+  return handlerProxySelect(groupName, nodeName)
 }
 </script>

@@ -63,6 +63,7 @@ import { useBounceOnVisible } from '@/composables/bouncein'
 import { disableProxiesPageScroll } from '@/composables/proxies'
 import { useRenderProxyList } from '@/composables/renderProxies'
 import { PROXIES_PARENT_CLASS } from '@/helper/utils'
+import { can } from '@/assembly/backend'
 import { proxyGroupLatencyTest } from '@/assembly/proxies'
 import { proxyMap } from '@/assembly/proxies'
 import { blurIntensity, groupProxiesByProvider } from '@/store/settings'
@@ -198,6 +199,7 @@ const handlerGroupClick = async () => {
 }
 
 const handlerLatencyTest = async () => {
+  if (!can('proxyLatencyTest')) return
   if (isLatencyTesting.value) return
 
   isLatencyTesting.value = true

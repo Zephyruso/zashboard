@@ -1,6 +1,7 @@
-// 只剩 Clash REST/WS 一种后端。字段保留是为了让旧记录的迁移与 URL 参数解析
-// 有个明确的落点,不必在每处都写字面量。
-export type BackendType = 'clash'
+// 连接通道。'clash' 走 Clash REST/WS API,'dae' 走 dae 的 REST API
+// (全 JSON、无 WebSocket,端点一律带 /api 前缀)。由用户在后端表单里手选,
+// 是确定性事实 —— 不做 /version 嗅探,见 assembly/backend.ts 的两条判别轴。
+export type BackendType = 'clash' | 'dae'
 
 export type Backend = {
   type: BackendType
@@ -8,7 +9,7 @@ export type Backend = {
   host: string
   port: string
   secondaryPath: string
-  password: string // Clash secret
+  password: string // Clash secret / dae API token,两者都以 Bearer 下发
   uuid: string
   label?: string
   disableUpgradeCore?: boolean
@@ -144,7 +145,25 @@ export type ClashConnectionRawMessage = {
   }
 }
 
-export type ConnectionRawMessage = ClashConnectionRawMessage
+// dae GET /api/connections 的单条连接。响应把 tcp / udp 分列在两个数组里,
+// network 是解析时打上的,不是响应字段。
+export type DaeConnectionRawMessage = {
+  // 响应里是 uint64,解析时 String() 化,与 clash 的 id: string 对齐 ——
+  // store 层拿它当 Map 的键,两条通道必须是同一种类型。
+  id: string
+  src: string // ip:port
+  dst: string // ip:port
+  domain: string
+  outbound: string
+  started: string
+  upload_bytes: number
+  download_bytes: number
+  upload_rate: number
+  download_rate: number
+  network: 'tcp' | 'udp'
+}
+
+export type ConnectionRawMessage = ClashConnectionRawMessage | DaeConnectionRawMessage
 
 export type Connection = ConnectionRawMessage & {
   downloadSpeed: number
@@ -157,6 +176,16 @@ export type Log = {
 }
 
 export type LogWithSeq = Log & { seq: number; time: string }
+
+// 两条通道归一后的 DNS 应答记录,由 assembly/config 的各方言产出。
+// type 是**可读标签**(A / AAAA / CNAME / TYPE 65 …)而非数字:Clash 侧返回的是
+// 数字类型码,在方言里转成标签;dae 侧本来就是标签。展示层要的一直是标签。
+export type DNSAnswer = {
+  name: string
+  type: string
+  ttl: number
+  data: string
+}
 
 export type DNSQuery = {
   AD: boolean
@@ -205,4 +234,98 @@ export type HonkStats = {
     download: number
     errors: number
   }[]
+}
+
+// ==========================================================================
+// dae REST API
+// ==========================================================================
+// 与 HonkStats 同样的约定:只声明面板实际用到的字段,
+// 完整 schema 见 dae-api 文档 v0.1.0。
+
+export type DaeVersion = {
+  version: string
+  go_version: string
+  build_time: string
+}
+
+// GET /api/groups。节点的 alive / latency_ms 直接来自这里,
+// 故不再单独打 GET /api/nodes/latency。
+export type DaeGroup = {
+  name: string
+  policy: string
+  nodes: {
+    name: string
+    alive: boolean
+    latency_ms: number
+  }[]
+}
+
+// GET /api/runtime/status。面板只取内存、瞬时速率与累计流量三块。
+export type DaeRuntimeStatus = {
+  memory: {
+    heap_inuse_bytes: number
+  }
+  rates: {
+    upload_rate: number
+    download_rate: number
+  }
+  traffic: {
+    upload_bytes: number
+    download_bytes: number
+  }
+}
+
+// GET /api/connections 的原样响应:id 还是 uint64,network 还没打上。
+export type DaeConnectionResponseItem = Omit<DaeConnectionRawMessage, 'id' | 'network'> & {
+  id: number
+}
+
+export type DaeConnections = {
+  tcp: DaeConnectionResponseItem[]
+  udp: DaeConnectionResponseItem[]
+  total_tcp: number
+  total_udp: number
+}
+
+// GET /api/config。只读,且只有 log_level 能落进面板的 Config。
+export type DaeConfig = {
+  global?: {
+    log_level?: string
+  }
+}
+
+// POST /api/reload | /api/suspend | /api/nodes/check 的统一响应。
+export type DaeActionResult = {
+  ok: boolean
+  message?: string
+  error?: string
+}
+
+// GET /api/dns/query。dae 支持一次问多个 type,应答里的类型是标签而非数字码。
+export type DaeDNSQuery = {
+  domain: string
+  types: string[]
+  cached: boolean
+  upstream: string
+  status: string
+  elapsed_ms: number
+  answers?: {
+    name: string
+    type: string
+    class: string
+    ttl: number
+    data: string
+  }[]
+}
+
+// GET /api/dns/cache。dae v0.1.0 只提供读取,没有清空缓存的端点。
+export type DaeDNSCache = {
+  entries: {
+    domain: string
+    type: string
+    answer: string
+    ttl: number
+    deadline: string
+  }[]
+  total: number
 }

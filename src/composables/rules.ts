@@ -1,7 +1,7 @@
 // 规则行为共用逻辑,卡片视图与表格视图都走这里,避免两套实现跑偏。
 import { disconnectByIdAPI } from '@/assembly/connections'
 import { fetchRules, ruleProviderList, toggleRuleDisabled } from '@/assembly/rules'
-import { getConnectionRulePayload } from '@/helper'
+import { getConnectionRulePayload, getConnectionRuleType } from '@/helper'
 import { activeConnections } from '@/store/connections'
 import { disconnectOnRuleDisable } from '@/store/settings'
 import type { Rule } from '@/types'
@@ -44,7 +44,7 @@ export const toggleRuleDisabledWithSideEffects = async (rule: Rule) => {
 
   if (willBeDisabled && disconnectOnRuleDisable.value) {
     const matchingConnections = activeConnections.value.filter((conn) => {
-      const ruleTypeMatches = conn.rule === rule.type
+      const ruleTypeMatches = getConnectionRuleType(conn) === rule.type
       const rulePayloadMatches = getConnectionRulePayload(conn) === (rule.payload || '')
 
       return ruleTypeMatches && rulePayloadMatches

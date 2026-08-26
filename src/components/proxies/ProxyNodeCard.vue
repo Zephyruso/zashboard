@@ -54,6 +54,7 @@
 import { PROXY_CARD_SIZE, PROXY_SORT_TYPE } from '@/constant'
 import { checkTruncation } from '@/helper/tooltip'
 import { scrollIntoCenter } from '@/helper/utils'
+import { can } from '@/assembly/backend'
 import { proxyLatencyTest } from '@/assembly/proxies'
 import { getIPv6ByName, getTestUrl, proxyMap } from '@/assembly/proxies'
 import { IPv6test, proxyCardSize, proxySortType, truncateProxyName } from '@/store/settings'
@@ -95,6 +96,7 @@ const typeDescription = computed(() => {
 
 const latencyTipAnimationClass = ref<string[]>([])
 const handlerLatencyTest = async () => {
+  if (!can('proxyLatencyTest')) return
   if (isLatencyTesting.value) return
 
   isLatencyTesting.value = true

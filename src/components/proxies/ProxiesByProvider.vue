@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useCalculateMaxProxies } from '@/composables/proxiesScroll'
+import { can } from '@/assembly/backend'
 import { handlerProxySelect } from '@/assembly/proxies'
 import { groupProxiesByProviderName } from '@/composables/renderProxies'
 import { computed } from 'vue'
@@ -43,6 +44,13 @@ const truncatedProxies = computed(() => {
   }
   return truncatedProxies
 })
+
+// 通道不支持选择节点时(dae 的组策略写在配置文件里,API 只读)什么都不做 ——
+// 让门面抛出去只会给用户弹一条他无能为力的错误。
+const selectNode = (groupName: string, nodeName: string) => {
+  if (!can('proxySelect')) return
+  return handlerProxySelect(groupName, nodeName)
+}
 </script>
 
 <template>
@@ -64,7 +72,7 @@ const truncatedProxies = computed(() => {
           :name="node"
           :group-name="name"
           :active="node === now"
-          @click.stop="handlerProxySelect(name, node)"
+          @click.stop="selectNode(name, node)"
         />
       </ProxyNodeGrid>
     </div>

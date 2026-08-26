@@ -1,3 +1,4 @@
+import { can } from '@/assembly/backend'
 import { configs, updateConfigs } from '@/assembly/config'
 import {
   allProxiesLatencyTest,
@@ -148,7 +149,9 @@ export default defineComponent({
           <ArrowPathIcon class={['h-4 w-4', isUpgrading.value && 'animate-spin']} />
         </button>
       )
-      const modeSelect = configs.value && (
+      // 模式切换是 Clash 通道的能力(PATCH /configs)。dae 的策略写在配置文件里,
+      // configs 只是一份 defaultConfig 兜底,渲染出来会是个空选择器。
+      const modeSelect = can('modeSwitch') && configs.value && (
         <SelectInput
           class={['select select-sm', isLargeCtrlsBar.value ? 'min-w-40' : 'min-w-24']}
           modelValue={configs.value.mode}

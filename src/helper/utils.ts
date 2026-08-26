@@ -146,7 +146,8 @@ export const getBackendFromUrl = () => {
 
   if (query.has('hostname')) {
     return {
-      type: 'clash' as BackendType,
+      // 连接通道:'dae' 走 dae 的 REST API,其余(含缺省)按 'clash' 处理。
+      type: (query.get('type') === 'dae' ? 'dae' : 'clash') as BackendType,
       protocol: getProtocolFromQuery(query),
       secondaryPath: query.get('secondaryPath') || '',
       host: query.get('hostname') as string,

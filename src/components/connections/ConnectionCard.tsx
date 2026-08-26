@@ -1,3 +1,4 @@
+import { can } from '@/assembly/backend'
 import {
   blockConnectionByIdAPI,
   disconnectByIdAPI,
@@ -226,8 +227,13 @@ export default defineComponent<{
           {connectionCardLines.value.map((line) => (
             <div class={['flex h-5 items-center gap-1 text-sm', dimmed ? 'opacity-60' : '']}>
               {line
-                // 已关闭的连接关不掉,不给按钮(「已关闭」与「全部」两个 tab 都适用)。
-                .filter((key) => key !== CONNECTIONS_TABLE_ACCESSOR_KEY.Close || !isClosed)
+                // 已关闭的连接关不掉,不给按钮(「已关闭」与「全部」两个 tab 都适用);
+                // dae 通道只读连接表,连活跃连接也没有断连端点。
+                .filter(
+                  (key) =>
+                    key !== CONNECTIONS_TABLE_ACCESSOR_KEY.Close ||
+                    (!isClosed && can('connectionActions')),
+                )
                 .map((key) => {
                   return componentMap[key]()
                 })}

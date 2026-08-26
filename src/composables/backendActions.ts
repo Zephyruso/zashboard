@@ -14,6 +14,7 @@ import {
   flushDNSCacheAPI,
   flushFakeIPAPI,
   reloadConfigsAPI,
+  suspendServiceAPI,
   updateGeoDataAPI,
 } from '@/assembly/config'
 import { fetchProxies, flushSmartGroupWeightsAPI, hasSmartGroup } from '@/assembly/proxies'
@@ -31,6 +32,7 @@ import {
   ArrowPathIcon,
   ArrowPathRoundedSquareIcon,
   ArrowUpCircleIcon,
+  PauseCircleIcon,
   PencilSquareIcon,
   TrashIcon,
 } from '@heroicons/vue/24/outline'
@@ -56,8 +58,9 @@ export const showUpdateConfigModal = ref(false)
 
 const reloadAll = () => {
   fetchConfigs()
-  fetchRules()
   fetchProxies()
+  // 通道没有规则能力时(dae)这个请求打出去必然 404。
+  if (can('rules')) fetchRules()
 }
 
 const isCoreRestarting = ref(false)
@@ -66,6 +69,7 @@ const isGeoUpdating = ref(false)
 const isDNSCacheFlushing = ref(false)
 const isFakeIPFlushing = ref(false)
 const isSmartWeightsFlushing = ref(false)
+const isServiceSuspending = ref(false)
 
 const runOnce = async (
   /** 动作名的 i18n key,用来写「执行中」那条提示 */
@@ -189,24 +193,47 @@ export const backendActions = computed<BackendAction[]>(() => {
     })
   }
 
-  actions.push({
-    key: k.flushDNSCache,
-    label: 'flushDNSCache',
-    icon: TrashIcon,
-    running: isDNSCacheFlushing.value,
-    opensModal: false,
-    run: () =>
-      runOnce('flushDNSCache', isDNSCacheFlushing, flushDNSCacheAPI, 'flushDNSCacheSuccess'),
-  })
+  // dae v0.1.0 的 DNS 缓存只能读,没有清空端点;fakeip 更是 Clash 独有的概念。
+  if (can('dnsFlush')) {
+    actions.push({
+      key: k.flushDNSCache,
+      label: 'flushDNSCache',
+      icon: TrashIcon,
+      running: isDNSCacheFlushing.value,
+      opensModal: false,
+      run: () =>
+        runOnce('flushDNSCache', isDNSCacheFlushing, flushDNSCacheAPI, 'flushDNSCacheSuccess'),
+    })
 
-  actions.push({
-    key: k.flushFakeIP,
-    label: 'flushFakeIP',
-    icon: TrashIcon,
-    running: isFakeIPFlushing.value,
-    opensModal: false,
-    run: () => runOnce('flushFakeIP', isFakeIPFlushing, flushFakeIPAPI, 'flushFakeIPSuccess'),
-  })
+    actions.push({
+      key: k.flushFakeIP,
+      label: 'flushFakeIP',
+      icon: TrashIcon,
+      running: isFakeIPFlushing.value,
+      opensModal: false,
+      run: () => runOnce('flushFakeIP', isFakeIPFlushing, flushFakeIPAPI, 'flushFakeIPSuccess'),
+    })
+  }
+
+  if (can('suspendService')) {
+    actions.push({
+      key: k.suspendService,
+      label: 'suspendService',
+      icon: PauseCircleIcon,
+      running: isServiceSuspending.value,
+      opensModal: false,
+      // 暂停会中断代理服务,而且只能从命令行(dae resume)恢复 —— 必须问一句。
+      run: () =>
+        runOnce(
+          'suspendService',
+          isServiceSuspending,
+          suspendServiceAPI,
+          'suspendServiceSuccess',
+          undefined,
+          { title: 'suspendService', message: 'suspendServiceConfirm' },
+        ),
+    })
+  }
 
   if (hasSmartGroup.value) {
     actions.push({

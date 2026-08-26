@@ -33,7 +33,11 @@ export interface ConnectionAccessor {
   download(connection: Connection): number
   upload(connection: Connection): number
   start(connection: Connection): string | number
+  // 展示用的规则串(Clash 侧是 `type: payload`)。
   rule(connection: Connection): string
+  // 规则类型本身,不含 payload。禁用规则时要拿它与 Rule.type 比对,
+  // 所以不能用上面那个拼好的串。dae 不报告命中规则,返回空串。
+  ruleType(connection: Connection): string
   rulePayload(connection: Connection): string
   sourceIP(connection: Connection): string
   sourcePort(connection: Connection): string

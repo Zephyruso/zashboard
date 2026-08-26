@@ -39,6 +39,13 @@ export const renderRulesProvider = computed(() => {
 
 export const fetchRules = () => clash.fetchRules()
 
+// 通道没有规则能力时(dae)由 session 调用。不清的话,上一个 Clash 后端的规则会留在
+// 内存里冒充新后端的数据 —— /rules 路由虽然已经隐藏,概览页的命中统计卡还读它。
+export const clearRules = () => {
+  rules.value = []
+  ruleProviderList.value = []
+}
+
 // 规则启用切换有两套端点: reFind 的规则带稳定 uuid(PUT /rules/{uuid}),
 // mihomo 按索引批量切换(PATCH /rules/disable)。用哪套由响应数据自己决定 ——
 // rule.uuid 是确定信息,比 core 轴的版本字符串嗅探可靠,故不走能力表。

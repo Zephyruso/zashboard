@@ -1,5 +1,6 @@
 <!--
-  后端连接参数的表单字段。新增与编辑共用同一份 —— 两处字段本就该一致。
+  后端连接参数的表单字段。新增与编辑共用同一份 —— 两处字段本就该一致,
+  分成两份的结果是编辑界面连 type 都改不了。
 
   disableUpgradeCore / disableTunMode 有意不在这里出现:它们是给通过 URL 参数
   下发后端的场景用的(见 getBackendFromUrl),由分发方决定藏掉哪些功能,
@@ -10,6 +11,18 @@
 -->
 <template>
   <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm">{{ $t('backendType') }}</label>
+      <SelectInput
+        class="select select-sm w-full"
+        v-model="model.type"
+        :options="[
+          { value: 'clash', label: $t('clashApi') },
+          { value: 'dae', label: $t('daeApi') },
+        ]"
+      />
+    </div>
+
     <div class="flex gap-2">
       <div class="flex w-24 flex-none flex-col gap-1">
         <label class="text-sm">{{ $t('protocol') }}</label>

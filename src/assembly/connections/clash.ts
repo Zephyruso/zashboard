@@ -96,6 +96,7 @@ export const connectionAccessor: ConnectionAccessor = {
 
     return clash.rulePayload ? `${clash.rule}: ${clash.rulePayload}` : clash.rule
   },
+  ruleType: (connection) => asClash(connection).rule,
   rulePayload: (connection) => asClash(connection).rulePayload,
   sourceIP: (connection) => asClash(connection).metadata.sourceIP,
   sourcePort: (connection) => asClash(connection).metadata.sourcePort,

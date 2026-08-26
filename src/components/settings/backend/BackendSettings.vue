@@ -131,14 +131,22 @@
       </div>
     </template>
 
-    <template v-if="showDnsQuery">
+    <template v-if="hasVisibleDiagnostics">
       <div class="settings-section-label">{{ $t('settingsSectionDiagnostics') }}</div>
       <div class="settings-grid">
         <SettingItem
+          v-if="showDnsQuery"
           :setting-key="k.DNSQuery"
           class="py-3"
         >
           <DnsQuery />
+        </SettingItem>
+        <SettingItem
+          v-if="showDnsCache"
+          :setting-key="k.DNSCache"
+          class="py-3"
+        >
+          <DnsCache />
         </SettingItem>
       </div>
     </template>
@@ -152,6 +160,7 @@ import { coreBrand, isCoreUpdateAvailable } from '@/assembly/version'
 import BackendVersion from '@/components/common/BackendVersion.vue'
 import BackendPortsGrid from '@/components/settings/backend/BackendPortsGrid.vue'
 import BackendSwitch from '@/components/settings/backend/BackendSwitch.vue'
+import DnsCache from '@/components/settings/backend/DnsCache.vue'
 import DnsQuery from '@/components/settings/backend/DnsQuery.vue'
 import SettingItem from '@/components/settings/SettingItem.vue'
 import { backendActions } from '@/composables/backendActions'
@@ -171,6 +180,7 @@ const isVisibleAllowLan = useIsSettingVisible(k.allowLan)
 const isVisibleCheckUpgrade = useIsSettingVisible(k.checkCoreUpgrade)
 const isVisibleAutoUpgrade = useIsSettingVisible(k.autoUpgradeCore)
 const isVisibleDnsQuery = useIsSettingVisible(k.DNSQuery)
+const isVisibleDnsCache = useIsSettingVisible(k.DNSCache)
 const canShowTunMode = computed(
   () => isVisibleTunMode.value && !activeBackend.value?.disableTunMode,
 )
@@ -178,7 +188,11 @@ const canShowTunMode = computed(
 const hasVisibleActions = computed(() =>
   backendActions.value.some((action) => isSettingVisible(action.key)),
 )
+// DNS 查询两条通道都有(应答形状的差异已在 assembly/config 归一),不需要门控。
 const showDnsQuery = isVisibleDnsQuery
+// DNS 缓存只有 dae 能读:Clash 侧只有清空端点,没有读取端点。
+const showDnsCache = computed(() => can('dnsCache') && isVisibleDnsCache.value)
+const hasVisibleDiagnostics = computed(() => showDnsQuery.value || showDnsCache.value)
 const hasVisibleNetworkSettings = computed(
   () =>
     can('configPatch') &&
@@ -200,7 +214,7 @@ const hasVisibleItems = computed(
     hasVisibleActions.value ||
     hasVisibleNetworkSettings.value ||
     hasVisibleUpgradeSettings.value ||
-    showDnsQuery.value,
+    hasVisibleDiagnostics.value,
 )
 
 const handlerCheckUpgradeCoreChange = () => {

@@ -1,5 +1,5 @@
 import { useStorage } from '@/helper/storage'
-import type { Backend } from '@/types'
+import type { Backend, BackendType } from '@/types'
 import { isEqual, omit } from 'lodash'
 import { v4 as uuid } from 'uuid'
 import { computed, ref } from 'vue'
@@ -10,14 +10,25 @@ import { sourceIPLabelList } from './settings'
 // sing-box 支持已移除,两种形态都直接丢弃。
 type LegacyBackend = Omit<Partial<Backend>, 'type'> & { type?: string; singboxChannel?: unknown }
 
+const KNOWN_BACKEND_TYPES: BackendType[] = ['clash', 'dae']
+
+const isKnownBackendType = (type?: string): type is BackendType =>
+  KNOWN_BACKEND_TYPES.includes(type as BackendType)
+
 const isLegacyBackend = (item: LegacyBackend) =>
-  !item.type || 'singboxChannel' in item || item.type === 'singbox'
+  !isKnownBackendType(item.type) || 'singboxChannel' in item
 
 // 一次性迁移:补全 `type`,丢掉 singboxChannel 附属通道与 sing-box 后端条目。
+//
+// 注意逐条判断 —— 整表改写会把合法的 dae 条目一起按成 clash:这个函数是在
+// 「列表里有任意一条旧记录」时对整张表跑的。
 const migrateBackendList = (list: LegacyBackend[]): Backend[] =>
   list
     .filter((item) => item.type !== 'singbox')
-    .map((item) => ({ ...(omit(item, 'singboxChannel') as Backend), type: 'clash' }))
+    .map((item) => ({
+      ...(omit(item, 'singboxChannel') as Backend),
+      type: isKnownBackendType(item.type) ? item.type : 'clash',
+    }))
 
 export const backendList = useStorage<Backend[]>('setup/api-list', [])
 

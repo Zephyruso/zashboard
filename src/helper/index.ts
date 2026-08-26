@@ -1,3 +1,4 @@
+import { can } from '@/assembly/backend'
 import { connectionAccessor } from '@/assembly/connections'
 import { hiddenGroupMap, proxyMap } from '@/assembly/proxies'
 import { NOT_CONNECTED, PROXY_CHAIN_DIRECTION, PROXY_TYPE, ROUTE_NAME } from '@/constant'
@@ -43,6 +44,9 @@ export const getConnectionUpload = (connection: Connection) =>
 export const getConnectionStart = (connection: Connection) => connectionAccessor().start(connection)
 
 export const getConnectionRule = (connection: Connection) => connectionAccessor().rule(connection)
+
+export const getConnectionRuleType = (connection: Connection) =>
+  connectionAccessor().ruleType(connection)
 
 export const getConnectionRulePayload = (connection: Connection) =>
   connectionAccessor().rulePayload(connection)
@@ -111,13 +115,20 @@ export const getColorForLatency = (latency: number) => {
   }
 }
 
-export const renderRoutes = computed(() =>
-  Object.values(ROUTE_NAME).filter((r) => {
+export const renderRoutes = computed(() => {
+  // 通道能力门控:没列在这里的路由一律显示。
+  const routeCapable: Partial<Record<ROUTE_NAME, boolean>> = {
+    [ROUTE_NAME.rules]: can('rules'),
+    [ROUTE_NAME.logs]: can('logStream'),
+  }
+
+  return Object.values(ROUTE_NAME).filter((r) => {
     if (r === ROUTE_NAME.setup) return false
     if (!splitOverviewPage.value && r === ROUTE_NAME.overview) return false
+    if (r in routeCapable && routeCapable[r] === false) return false
     return true
-  }),
-)
+  })
+})
 
 export const applyCustomThemes = () => {
   document.querySelectorAll('.custom-theme').forEach((style) => {

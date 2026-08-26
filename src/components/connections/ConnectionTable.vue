@@ -213,6 +213,7 @@
 </template>
 
 <script setup lang="ts">
+import { can } from '@/assembly/backend'
 import {
   blockConnectionByIdAPI,
   disconnectByIdAPI,
@@ -333,6 +334,11 @@ const columns: ColumnDef<Connection>[] = [
     cell: ({ row }) => {
       // 「全部」tab 下已关闭的连接关不掉,不给按钮。
       if (isClosedConnection(row.original)) {
+        return null
+      }
+
+      // dae 只读连接表,没有断连端点。
+      if (!can('connectionActions')) {
         return null
       }
 

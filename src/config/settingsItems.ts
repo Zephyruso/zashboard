@@ -83,6 +83,18 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
         section: 'settingsSectionCoreOperations',
       },
       {
+        key: `${SETTINGS_MENU_KEY.backend}.suspendService`,
+        label: 'suspendService',
+        section: 'settingsSectionCoreOperations',
+        keywords: ['dae'],
+      },
+      {
+        key: `${SETTINGS_MENU_KEY.backend}.dnsCache`,
+        label: 'DNSCache',
+        section: 'settingsSectionDiagnostics',
+        keywords: ['dns', 'dae'],
+      },
+      {
         key: `${SETTINGS_MENU_KEY.backend}.dnsQuery`,
         label: 'DNSQuery',
         section: 'settingsSectionDiagnostics',

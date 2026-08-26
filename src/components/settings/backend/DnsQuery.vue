@@ -44,13 +44,13 @@
         <div class="min-w-0 flex-1">
           <div class="flex items-center gap-2">
             <span class="bg-base-200 text-base-content/70 rounded-full px-2 py-0.5 text-[11px]">
-              {{ getDnsTypeLabel(item.type) }}
+              {{ item.type }}
             </span>
             <span class="text-base-content truncate text-sm">
               {{ item.name }}
             </span>
           </div>
-          <div class="text-base-content/50 mt-1 text-xs">TTL {{ item.TTL }}</div>
+          <div class="text-base-content/50 mt-1 text-xs">TTL {{ item.ttl }}</div>
         </div>
         <div class="text-base-content max-w-[50%] text-right text-sm leading-5 break-all">
           {{ item.data }}
@@ -83,30 +83,22 @@
 </template>
 
 <script lang="ts" setup>
-import { queryDNSAPI } from '@/assembly/config'
+import { queryDNS } from '@/assembly/config'
 import { getIPInfo, type IPInfo } from '@/api/geoip'
 import { notifyRequestError } from '@/helper/requestError'
 import { useStorage } from '@/helper/storage'
-import type { DNSQuery } from '@/types'
+import type { DNSAnswer } from '@/types'
 import { MagnifyingGlassIcon, MapPinIcon, ServerIcon } from '@heroicons/vue/24/outline'
 import { reactive, ref } from 'vue'
 import TextInput from '../../common/TextInput.vue'
-
-const DNS_TYPE_LABELS: Record<number, string> = {
-  1: 'A',
-  5: 'CNAME',
-  28: 'AAAA',
-  65: 'HTTPS',
-}
 
 const form = reactive({
   name: 'www.google.com',
   type: 'A',
 })
 const details = ref<IPInfo | null>(null)
-const resultList = ref<DNSQuery['Answer']>([])
+const resultList = ref<DNSAnswer[]>([])
 const dnsQueryNameHistory = useStorage<string[]>('cache/dns-query-name-history', [])
-const getDnsTypeLabel = (type: number) => DNS_TYPE_LABELS[type] ?? `TYPE ${type}`
 const updateDnsQueryNameHistory = (history: string[]) => {
   dnsQueryNameHistory.value = history
 }
@@ -128,11 +120,10 @@ const query = async () => {
   saveQueryName(form.name)
 
   try {
-    const { data } = await queryDNSAPI(form)
+    // 两条通道的应答已在 assembly/config 的方言里归一成 DNSAnswer[]。
+    resultList.value = await queryDNS(form.name, form.type)
 
-    resultList.value = data.Answer
-
-    const ipAnswer = resultList.value?.find(({ type }) => type === 1 || type === 28)
+    const ipAnswer = resultList.value.find(({ type }) => type === 'A' || type === 'AAAA')
 
     details.value = ipAnswer ? await getIPInfo(ipAnswer.data) : null
   } catch (e) {

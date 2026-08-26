@@ -1,5 +1,7 @@
+import { can, type Cap } from '@/assembly/backend'
 import { resolvePageTransition } from '@/composables/pageTransition'
 import { ROUTE_NAME } from '@/constant'
+import { renderRoutes } from '@/helper'
 import { i18n } from '@/i18n'
 import { language } from '@/store/settings'
 import { activeBackend } from '@/store/setup'
@@ -48,6 +50,12 @@ const childrenRouter = [
   },
 ]
 
+// 当前通道不提供的页面不可访问。导航栏那份同表在 helper/index.ts 的 renderRoutes。
+const ROUTE_CAPABILITY: Partial<Record<string, Cap>> = {
+  [ROUTE_NAME.rules]: 'rules',
+  [ROUTE_NAME.logs]: 'logStream',
+}
+
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
@@ -85,6 +93,13 @@ router.beforeEach((to, from) => {
 
   if (!activeBackend.value && to.name !== ROUTE_NAME.setup) {
     router.push({ name: ROUTE_NAME.setup })
+    return
+  }
+
+  const requiredCap = typeof to.name === 'string' ? ROUTE_CAPABILITY[to.name] : undefined
+
+  if (requiredCap && !can(requiredCap)) {
+    router.push({ name: ROUTE_NAME.proxies })
   }
 })
 
@@ -96,6 +111,17 @@ watch([language, activeBackend], () => {
   setTimeout(() => {
     setTitleByName(router.currentRoute.value.name)
   })
+})
+
+// 能力变化(切后端)后,把停留在已失效页面的用户送回代理页 —— 光在导航栏里
+// 抹掉入口不够,他可能正站在那一页上。
+watch(renderRoutes, () => {
+  const routeName = router.currentRoute.value.name
+  const requiredCap = typeof routeName === 'string' ? ROUTE_CAPABILITY[routeName] : undefined
+
+  if (requiredCap && !can(requiredCap)) {
+    router.push({ name: ROUTE_NAME.proxies })
+  }
 })
 
 export default router

@@ -5,6 +5,7 @@
 // 用户手动重连,本质都是「结束旧会话、开一条新的」,所以共用 startBackendSession——
 // 重连不需要额外的响应式开关,再调一次就是了。
 
+import { can } from '@/assembly/backend'
 import { PROXY_TAB_TYPE, RULE_TAB_TYPE } from '@/constant'
 import { initConnections, stopConnections } from '@/store/connections'
 import { initSatistic, stopSatistic } from '@/store/overview'
@@ -13,7 +14,7 @@ import { watch } from 'vue'
 import { fetchConfigs } from './config'
 import { initLogs, stopLogs } from './logs'
 import { fetchProxies, proxiesTabShow } from './proxies'
-import { fetchRules, rulesTabShow } from './rules'
+import { clearRules, fetchRules, rulesTabShow } from './rules'
 import { probeActiveBackend } from './version'
 
 export const startBackendSession = () => {
@@ -33,10 +34,17 @@ export const startBackendSession = () => {
   proxiesTabShow.value = PROXY_TAB_TYPE.PROXIES
   fetchConfigs()
   fetchProxies()
-  fetchRules()
   initConnections()
-  initLogs()
   initSatistic()
+
+  // 规则与日志流是硬能力(由通道决定),activeBackend 一变 can() 就是终值,
+  // 不像软能力要等 coreReady()。dae 通道没有这两样,连请求都不该发出去。
+  if (can('rules')) {
+    fetchRules()
+  } else {
+    clearRules()
+  }
+  if (can('logStream')) initLogs()
 }
 
 // 会话跟着 activeBackend 走:换后端要重建,把当前后端的地址 / 密码改掉同样要重建。

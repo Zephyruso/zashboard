@@ -1,7 +1,12 @@
 // 组装层 · 版本与升级。
 // 版本字符串是 core 轴(assembly/backend.ts)的唯一来源:这里探测完成后写入 core,
 // 后端切换的瞬间先重置为 'unknown',避免沿用上一个后端的结论。
+//
+// dae 通道是个例外:它不是 Clash 内核,拿版本串去猜品牌毫无意义,所以那里只写
+// version、不写 core —— core 恒为 Unknown 正是 soft 能力表对 dae 全表为假的依据。
 import { fetchClashVersion, restartCoreAPI, upgradeCoreAPI, upgradeUIAPI } from '@/api/clash'
+import { fetchDaeVersionAPI } from '@/api/dae'
+import DaeLogo from '@/assets/images/dae.png'
 import HonkLogo from '@/assets/images/honk.svg'
 import MetacubexLogo from '@/assets/images/metacubex.jpg'
 import { MIHOMO, MIHOMO_CHANNEL } from '@/constant'
@@ -10,7 +15,7 @@ import { autoUpgradeCore, autoUpgradeDashboard, checkUpgradeCore } from '@/store
 import { activeBackend } from '@/store/setup'
 import type { Backend } from '@/types'
 import { computed, nextTick, ref } from 'vue'
-import { can, core, Core, resetCore } from './backend'
+import { can, Channel, channel, core, Core, resetCore } from './backend'
 
 export const version = ref()
 export const isCoreUpdateAvailable = ref(false)
@@ -37,6 +42,10 @@ const detectCore = (versionString: string): Core => {
 
 // 内核品牌的展示信息(logo / 官网链接)。纯展示,不是能力门控,故允许 view 使用。
 export const coreBrand = computed(() => {
+  if (channel.value === Channel.Dae) {
+    return { logo: DaeLogo, url: 'https://github.com/daeuniverse/dae' }
+  }
+
   switch (core.value) {
     case Core.Honk:
       return { logo: HonkLogo, url: 'https://github.com/Glassyiris/honk' }
@@ -64,7 +73,8 @@ export const mihomo = computed<[MIHOMO, string] | undefined>(() => {
   }
 })
 
-export const fetchVersionAPI = () => fetchClashVersion()
+export const fetchVersionAPI = () =>
+  channel.value === Channel.Dae ? fetchDaeVersionAPI() : fetchClashVersion()
 
 const probeBackend = async (backend: Backend) => {
   const startAt = Date.now()
@@ -88,7 +98,8 @@ const probeBackend = async (backend: Backend) => {
   if (activeBackend.value?.uuid !== backend.uuid) return
 
   version.value = data?.version || ''
-  core.value = detectCore(version.value)
+  // dae 通道不写 core:见文件顶部。
+  core.value = channel.value === Channel.Dae ? Core.Unknown : detectCore(version.value)
   backendProbe.value = {
     uuid: backend.uuid,
     status: 'connected',

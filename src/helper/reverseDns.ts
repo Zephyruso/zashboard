@@ -1,4 +1,4 @@
-import { queryDNSAPI } from '@/assembly/config'
+import { queryDNS } from '@/assembly/config'
 import { resolveClientHostname } from '@/store/settings'
 import { activeBackend } from '@/store/setup'
 import * as ipaddr from 'ipaddr.js'
@@ -165,11 +165,10 @@ async function fetchHostname(ip: string): Promise<string | null> {
   if (!name) return null
 
   try {
-    const { data: result } = await queryDNSAPI({ name, type: 'PTR' })
+    // 应答已在 assembly/config 的方言里归一,两条通道都能反查。
+    const answers = await queryDNS(name, 'PTR')
+    const answer = answers.find(({ type }) => type === 'PTR')?.data
 
-    if (!result) return null
-
-    const answer = result.Answer?.find(({ type }) => type === 12)?.data
     if (!answer) return null
 
     const hostname = answer.trim()
