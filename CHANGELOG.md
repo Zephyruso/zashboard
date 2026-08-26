@@ -2,6 +2,22 @@
 
 # Changelog
 
+## [3.23.0](https://github.com/Zephyruso/zashboard/compare/v3.22.0...v3.23.0) (2026-08-26)
+
+
+### Features
+
+* add Earth projection functionality and related utilities ([cc2e235](https://github.com/Zephyruso/zashboard/commit/cc2e235fab23c21de3738e8fdec8855119e5ae69)), closes [#769](https://github.com/Zephyruso/zashboard/issues/769)
+* add HonkStats integration and related UI components ([1f6ba40](https://github.com/Zephyruso/zashboard/commit/1f6ba40854fca8ee5c0442b860f41b57878a6d33))
+* enhance routing and endpoint handling with direct connection support ([5d3cc03](https://github.com/Zephyruso/zashboard/commit/5d3cc036b2598fc7d41d106b6f913a14402e91c1))
+* implement action pending notifications and enhance error handling ([da5cf23](https://github.com/Zephyruso/zashboard/commit/da5cf23fda8c969897224b2dcc21ff99fa0c5c97))
+* remove sing-box support and related code ([4adb487](https://github.com/Zephyruso/zashboard/commit/4adb4872d90c8ec1b8bfab4b43308cdb2da12c3e))
+
+
+### Bug Fixes
+
+* update viewport handling and dialog dimensions for better keyboard support ([615506f](https://github.com/Zephyruso/zashboard/commit/615506fc093832ab3e2572d03e610e72594abec7))
+
 ## [3.22.0](https://github.com/Zephyruso/zashboard/compare/v3.21.0...v3.22.0) (2026-08-24)
 
 
