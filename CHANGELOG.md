@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [3.24.0](https://github.com/Zephyruso/zashboard/compare/v3.23.0...v3.24.0) (2026-08-28)
+
+
+### Features
+
+* add endpoint legend with color coding and update translations ([eee0252](https://github.com/Zephyruso/zashboard/commit/eee0252ae74827f576cb0038df511b8b86e0f29b))
+* add expand/collapse all button for grouped connection cards ([234b93f](https://github.com/Zephyruso/zashboard/commit/234b93ff5a68e1726e0f309064c5519206462a50))
+* add grouping functionality for connection cards and enhance internationalization support ([d210f59](https://github.com/Zephyruso/zashboard/commit/d210f59378c57e08b7462864457ddd566ed18319)), closes [#759](https://github.com/Zephyruso/zashboard/issues/759)
+* enhance map zoom behavior and camera positioning for 2D projection ([40e68c2](https://github.com/Zephyruso/zashboard/commit/40e68c2ccd42935d7ebaee726aa0bdf3106128cb))
+* enhance sorting functionality with natural order and internationalization support ([4822fa3](https://github.com/Zephyruso/zashboard/commit/4822fa31924fbf33215546bff17c11e82a564d24))
+* implement swipe gesture handling for modal dialog with transition effects ([710e08b](https://github.com/Zephyruso/zashboard/commit/710e08b64813302a1fd56098d630130302aadd4b))
+
 ## [3.23.0](https://github.com/Zephyruso/zashboard/compare/v3.22.0...v3.23.0) (2026-08-26)
 
 
