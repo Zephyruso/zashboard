@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [3.25.0](https://github.com/Zephyruso/zashboard/compare/v3.24.0...v3.25.0) (2026-08-31)
+
+
+### Features
+
+* support custom CSS in panel settings ([1da5989](https://github.com/Zephyruso/zashboard/commit/1da5989dfdac6331f6b56ddd8c0aaef3854a37b4))
+
+
+### Bug Fixes
+
+* navigate to proxies before syncing settings on first login ([f6dd9c0](https://github.com/Zephyruso/zashboard/commit/f6dd9c07e843ab89632cc373522254a1bfe6bbe5))
+
 ## [3.24.0](https://github.com/Zephyruso/zashboard/compare/v3.23.0...v3.24.0) (2026-08-28)
 
 
