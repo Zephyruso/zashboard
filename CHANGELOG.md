@@ -2,6 +2,22 @@
 
 # Changelog
 
+## [3.26.0](https://github.com/Zephyruso/zashboard/compare/v3.25.0...v3.26.0) (2026-09-04)
+
+
+### Features
+
+* implement collapse motion for cards and optimize virtual row shifting ([ac86982](https://github.com/Zephyruso/zashboard/commit/ac869828b38405e675a41eed670bbd5b90290df6))
+* implement virtual scrolling for proxies list and optimize latency handling ([fd8fc51](https://github.com/Zephyruso/zashboard/commit/fd8fc51bf703913e9275a164c7c8c75c76a1d3d0))
+
+
+### Bug Fixes
+
+* adjust virtual table layout for proper sticky header and background alignment ([4a7e06e](https://github.com/Zephyruso/zashboard/commit/4a7e06e9024aed107751b8656875f0cade13fc63))
+* ensure full proxy chain is always displayed in connection details ([c88976d](https://github.com/Zephyruso/zashboard/commit/c88976d668a25a12e0696007da19292919b5155d))
+* improve layout of connection metrics by adjusting icon positioning and spacing ([2b59feb](https://github.com/Zephyruso/zashboard/commit/2b59febc3bd2751934ff76fe29322d59afbdfd81))
+* update modal open state handling to prevent overflow issues during transitions ([bd65a45](https://github.com/Zephyruso/zashboard/commit/bd65a459555d98e5b2f26afeaa85879ed71ae345))
+
 ## [3.25.0](https://github.com/Zephyruso/zashboard/compare/v3.24.0...v3.25.0) (2026-08-31)
 
 
