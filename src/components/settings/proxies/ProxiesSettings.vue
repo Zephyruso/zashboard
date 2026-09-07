@@ -177,6 +177,20 @@
         {{ $t('settingsSectionProxyAdvanced') }}
       </div>
       <div class="settings-grid">
+        <SettingItem :setting-key="k.canvasProxyNodeGrid">
+          <div class="setting-item-label">
+            {{ $t('canvasProxyNodeGrid') }}
+            <QuestionMarkCircleIcon
+              class="h-4 w-4"
+              @mouseenter="canvasProxyNodeGridTip"
+            />
+          </div>
+          <input
+            class="toggle"
+            type="checkbox"
+            v-model="canvasProxyNodeGrid"
+          />
+        </SettingItem>
         <SettingItem :setting-key="k.proxyGroupIconSize">
           <div class="setting-item-label">
             {{ $t('proxyGroupIconSize') }}
@@ -212,6 +226,7 @@ import { FOLDER_MODE, PROXY_CARD_SIZE, PROXY_PREVIEW_TYPE, SPEEDTEST_MODE } from
 import { useTooltip } from '@/helper/tooltip'
 import { getMinCardWidth } from '@/helper/utils'
 import {
+  canvasProxyNodeGrid,
   displayGlobalByMode,
   independentLatencyTest,
   IPv6test,
@@ -251,6 +266,7 @@ const isVisibleTruncateProxyName = useIsSettingVisible(k.truncateProxyName)
 const isVisibleDisplayGlobalByMode = useIsSettingVisible(k.displayGlobalByMode)
 const isVisibleProxyPreviewType = useIsSettingVisible(k.proxyPreviewType)
 const isVisibleProxyCardSize = useIsSettingVisible(k.proxyCardSize)
+const isVisibleCanvasProxyNodeGrid = useIsSettingVisible(k.canvasProxyNodeGrid)
 const isVisibleProxyGroupIconSize = useIsSettingVisible(k.proxyGroupIconSize)
 const isVisibleProxyGroupIconMargin = useIsSettingVisible(k.proxyGroupIconMargin)
 const isVisibleIconSettings = useIsSettingVisible(k.icon)
@@ -262,6 +278,9 @@ const speedtestModeTip = (e: Event) => {
 }
 const independentLatencyTestTip = (e: Event) => {
   return showTip(e, t('independentLatencyTestTip'))
+}
+const canvasProxyNodeGridTip = (e: Event) => {
+  return showTip(e, t('canvasProxyNodeGridTip'))
 }
 
 const handlerProxyCardSizeChange = () => {
@@ -294,6 +313,7 @@ const hasVisibleProxyStyleItems = computed(() => {
 
 const hasVisibleProxyAdvancedItems = computed(
   () =>
+    isVisibleCanvasProxyNodeGrid.value ||
     isVisibleProxyGroupIconSize.value ||
     isVisibleProxyGroupIconMargin.value ||
     isVisibleIconSettings.value,

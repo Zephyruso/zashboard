@@ -150,6 +150,9 @@ const en = {
   upgradeToAlpha: 'Upgrade to alpha release',
   updateGeoDatabase: 'Update GEO database',
   truncateProxyName: 'Truncate proxy name',
+  canvasProxyNodeGrid: 'Canvas node grid',
+  canvasProxyNodeGridTip:
+    'Draw the proxy node grid on a canvas instead of DOM cards. Much lighter with large groups, but text selection and screen readers no longer work inside the grid.',
   disableProxiesPageTextSelect: 'Disable text selection on proxies page',
   sourceIPLabels: 'Source IP labels',
   resolveClientHostname: 'Resolve source IP hostnames',

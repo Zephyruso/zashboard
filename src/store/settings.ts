@@ -354,6 +354,8 @@ export const proxyCardSize = useStorage<PROXY_CARD_SIZE>(
   'config/proxy-card-size',
   PROXY_CARD_SIZE.LARGE,
 )
+// 节点网格改用画布绘制:省掉每张卡片的 DOM,代价是没有文本选择与读屏可达性
+export const canvasProxyNodeGrid = useStorage('config/canvas-proxy-node-grid', false)
 export const minProxyCardWidth = useStorage<number>(
   'config/min-proxy-card-width',
   getMinCardWidth(proxyCardSize.value),

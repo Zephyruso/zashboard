@@ -152,6 +152,9 @@ const ru: LANG_MESSAGE = {
   upgradeToAlpha: 'Обновить ядро до Alpha',
   updateGeoDatabase: 'Обновить GEO',
   truncateProxyName: 'Усечение имени прокси',
+  canvasProxyNodeGrid: 'Сетка узлов на canvas',
+  canvasProxyNodeGridTip:
+    'Рисовать сетку узлов на canvas вместо DOM-карточек. Заметно легче при больших группах, но выделение текста и программы чтения с экрана внутри сетки перестают работать.',
   disableProxiesPageTextSelect: 'Запретить выделение текста на странице прокси',
   sourceIPLabels: 'Метки исходного IP',
   resolveClientHostname: 'Разрешать имена исходных IP',

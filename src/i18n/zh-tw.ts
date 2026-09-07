@@ -151,6 +151,9 @@ const zhTW: LANG_MESSAGE = {
   updateGeoDatabase: '更新GEO',
   tunMode: 'Tun 模式',
   truncateProxyName: '截斷節點名稱',
+  canvasProxyNodeGrid: '畫布繪製節點網格',
+  canvasProxyNodeGridTip:
+    '節點網格改用畫布繪製，不再為每個節點掛 DOM 卡片。組很大時明顯更輕，代價是網格內無法選取文字、讀螢幕軟體也讀不到。',
   disableProxiesPageTextSelect: '禁用代理頁文字選取',
   sourceIPLabels: '源IP標籤',
   resolveClientHostname: '反向解析來源 IP 主機名稱',

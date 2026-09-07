@@ -356,6 +356,11 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
         section: 'settingsSectionProxyDisplay',
       },
       {
+        key: `${SETTINGS_MENU_KEY.proxies}.canvasProxyNodeGrid`,
+        label: 'canvasProxyNodeGrid',
+        section: 'settingsSectionProxyAdvanced',
+      },
+      {
         key: `${SETTINGS_MENU_KEY.proxies}.proxyGroupIconSize`,
         label: 'proxyGroupIconSize',
         section: 'settingsSectionProxyAdvanced',
