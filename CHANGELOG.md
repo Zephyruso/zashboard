@@ -2,6 +2,22 @@
 
 # Changelog
 
+## [3.27.0](https://github.com/Zephyruso/zashboard/compare/v3.26.0...v3.27.0) (2026-09-15)
+
+
+### Features
+
+* add a toggle to search hidden columns on the connections page ([1e78ba4](https://github.com/Zephyruso/zashboard/commit/1e78ba4a8b36d841e73334ed6170571aebe13174))
+* add comment for touch detection initialization in tooltip ([7339256](https://github.com/Zephyruso/zashboard/commit/7339256198146aef4bbc0e199e655cb9abee043f))
+* enhance table components with customizable classes and tooltips ([40d6f30](https://github.com/Zephyruso/zashboard/commit/40d6f30df4baee26e5daef5c1ac38e062de21864))
+* implement theme color synchronization with overlay dimming for mobile proxies ([05ba9a4](https://github.com/Zephyruso/zashboard/commit/05ba9a438e132026120722b9e721dbf01652708a))
+* update icon components and add icon generation script ([f0f47e8](https://github.com/Zephyruso/zashboard/commit/f0f47e85ccf97a2b2529209f052ef55e361b36b0))
+
+
+### Bug Fixes
+
+* adjust z-index context for sticky header and refine hidden column search logic ([01b4b15](https://github.com/Zephyruso/zashboard/commit/01b4b1518524f8a016d953e201ed7464dbc2a5c9))
+
 ## [3.26.0](https://github.com/Zephyruso/zashboard/compare/v3.25.0...v3.26.0) (2026-09-07)
 
 
