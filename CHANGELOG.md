@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [3.28.0](https://github.com/Zephyruso/zashboard/compare/v3.27.0...v3.28.0) (2026-09-17)
+
+
+### Features
+
+* add overscroll lock functionality for iOS to prevent page bounce ([50c873c](https://github.com/Zephyruso/zashboard/commit/50c873c8d75da33222391e265c311657be3c8091))
+* add tun stack configuration and localization support ([aadccc6](https://github.com/Zephyruso/zashboard/commit/aadccc64c85f6df8ab4807f2e400325b5696d029))
+* enhance sidebar and navigation components, improve performance and styling ([b541b9d](https://github.com/Zephyruso/zashboard/commit/b541b9d78fc1ac4a516ce94f909589842016b1e7))
+
+
+### Bug Fixes
+
+* enhance rule hit tooltip with formatted last hit time ([8b53171](https://github.com/Zephyruso/zashboard/commit/8b5317106feb349c6f2c2a8dc3cda3deccb284c4))
+* update primary color for light theme and adjust card background hover effect ([b106fa6](https://github.com/Zephyruso/zashboard/commit/b106fa60a3f397e06e0aa8a40ee1810ac7a46791))
+
 ## [3.27.0](https://github.com/Zephyruso/zashboard/compare/v3.26.0...v3.27.0) (2026-09-15)
 
 
