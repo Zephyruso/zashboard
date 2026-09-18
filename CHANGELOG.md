@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [3.28.1](https://github.com/Zephyruso/zashboard/compare/v3.28.0...v3.28.1) (2026-09-18)
+
+
+### Bug Fixes
+
+* improve accent color contrast in light and dark themes ([3c05df9](https://github.com/Zephyruso/zashboard/commit/3c05df92d08293ac5c3d4d03493d1d9e24822ab3))
+* **nav:** improve active state feedback and transition timing for nav items ([208ffe9](https://github.com/Zephyruso/zashboard/commit/208ffe9e4adaf9bd815534724be677bf51852510))
+* prevent dialog swipe from getting stuck in settling state ([e21ba6a](https://github.com/Zephyruso/zashboard/commit/e21ba6a797528a4bbc285158fd56d79ddcc8e2dd))
+* update default number of charts in sidebar to 1 ([b38eeba](https://github.com/Zephyruso/zashboard/commit/b38eeba58ffa9a11b17260b3cde59bd700b77a2b))
+* update estimated row height calculation and adjust padding for last row ([d6f69f7](https://github.com/Zephyruso/zashboard/commit/d6f69f771b9c540e636015aa5234ad811cb9c8a5))
+* update medium latency color for better contrast and consistency across themes ([035858d](https://github.com/Zephyruso/zashboard/commit/035858d5380c0ace98742228ab8649f8fbcfd920))
+
 ## [3.28.0](https://github.com/Zephyruso/zashboard/compare/v3.27.0...v3.28.0) (2026-09-17)
 
 
