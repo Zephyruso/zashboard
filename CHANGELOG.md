@@ -2,6 +2,25 @@
 
 # Changelog
 
+## [3.29.0](https://github.com/Zephyruso/zashboard/compare/v3.28.0...v3.29.0) (2026-09-21)
+
+
+### Features
+
+* support dae API ([b54e357](https://github.com/Zephyruso/zashboard/commit/b54e3575e2178aa2eee8a86704d476eeaae114d4))
+
+
+### Bug Fixes
+
+* add backdrop blur effect to floating menu and action panels ([9406d36](https://github.com/Zephyruso/zashboard/commit/9406d36154d2f2d2421640a00bebbd6718375d6f))
+* improve accent color contrast in light and dark themes ([3c05df9](https://github.com/Zephyruso/zashboard/commit/3c05df92d08293ac5c3d4d03493d1d9e24822ab3))
+* **nav:** improve active state feedback and transition timing for nav items ([208ffe9](https://github.com/Zephyruso/zashboard/commit/208ffe9e4adaf9bd815534724be677bf51852510))
+* prevent dialog swipe from getting stuck in settling state ([e21ba6a](https://github.com/Zephyruso/zashboard/commit/e21ba6a797528a4bbc285158fd56d79ddcc8e2dd))
+* update default number of charts in sidebar to 1 ([b38eeba](https://github.com/Zephyruso/zashboard/commit/b38eeba58ffa9a11b17260b3cde59bd700b77a2b))
+* update estimated row height calculation and adjust padding for last row ([d6f69f7](https://github.com/Zephyruso/zashboard/commit/d6f69f771b9c540e636015aa5234ad811cb9c8a5))
+* update medium latency color for better contrast and consistency across themes ([035858d](https://github.com/Zephyruso/zashboard/commit/035858d5380c0ace98742228ab8649f8fbcfd920))
+* update ProxyNodeCard styles to apply background for active state ([412e8de](https://github.com/Zephyruso/zashboard/commit/412e8dec06329ea58f86ac8a6df9f55650c04235))
+
 ## [3.28.0](https://github.com/Zephyruso/zashboard/compare/v3.27.0...v3.28.0) (2026-09-17)
 
 
