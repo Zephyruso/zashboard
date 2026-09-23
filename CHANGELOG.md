@@ -2,6 +2,18 @@
 
 # Changelog
 
+## [3.29.1](https://github.com/Zephyruso/zashboard/compare/v3.29.0...v3.29.1) (2026-09-23)
+
+
+### Bug Fixes
+
+* enhance sidebar stats card with background color and improve table-glass styles ([4a29037](https://github.com/Zephyruso/zashboard/commit/4a2903752b2d0b0c711dc51f260e490ce7de4dfb))
+* normalize IPv6 zone in source IP labels and allow link-local reverse DNS ([686234a](https://github.com/Zephyruso/zashboard/commit/686234ab252e3517a2ca5113477eedc8376203d7)), closes [#798](https://github.com/Zephyruso/zashboard/issues/798)
+* overlay glass effect with backdrop filters across components ([ffcef39](https://github.com/Zephyruso/zashboard/commit/ffcef39706c3d0836eed8f750020bdaf61037946))
+* remove base color overlay on home page with custom background ([9cc981c](https://github.com/Zephyruso/zashboard/commit/9cc981cafa0114ff4a813e3e9f87217aedee83fb))
+* sync iOS status bar tint with theme and overlay dimming ([0d68259](https://github.com/Zephyruso/zashboard/commit/0d682591d9056dc7a24b3610f83f29abe4969413))
+* use tldts to extract registrable domain in connection history ([ce87647](https://github.com/Zephyruso/zashboard/commit/ce87647f35a01bc66208c298d3e0c58b558dba34)), closes [#797](https://github.com/Zephyruso/zashboard/issues/797)
+
 ## [3.29.0](https://github.com/Zephyruso/zashboard/compare/v3.28.0...v3.29.0) (2026-09-21)
 
 
