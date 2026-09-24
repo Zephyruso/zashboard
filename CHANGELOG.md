@@ -2,6 +2,13 @@
 
 # Changelog
 
+## [3.30.0](https://github.com/Zephyruso/zashboard/compare/v3.29.1...v3.30.0) (2026-09-24)
+
+
+### Features
+
+* display dialer proxy as italic via label in ProxyName ([b83a63a](https://github.com/Zephyruso/zashboard/commit/b83a63aeba1a08be62ee4d6228874e1229a12d1b))
+
 ## [3.29.1](https://github.com/Zephyruso/zashboard/compare/v3.29.0...v3.29.1) (2026-09-23)
 
 
