@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [3.30.0](https://github.com/Zephyruso/zashboard/compare/v3.29.1...v3.30.0) (2026-09-30)
+
+
+### Features
+
+* display dialer proxy as italic via label in ProxyName ([b83a63a](https://github.com/Zephyruso/zashboard/commit/b83a63aeba1a08be62ee4d6228874e1229a12d1b))
+* sync dae native API contract ([9b867b7](https://github.com/Zephyruso/zashboard/commit/9b867b76a8cbca014423e93af59f7ce0996bc4f4))
+
 ## [3.29.1](https://github.com/Zephyruso/zashboard/compare/v3.29.0...v3.29.1) (2026-09-23)
 
 
