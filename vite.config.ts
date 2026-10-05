@@ -53,7 +53,11 @@ export default defineConfig({
         name: 'zashboard',
         short_name: 'zashboard',
         description: 'a dashboard using clash api',
-        theme_color: '#000000',
+        // Chrome 会把 theme_color 烘进 WebAPK 的 metadata 并拿去涂窗口/系统栏表面。
+        // 应用本体是浅色,而且运行时会用 <meta name="theme-color"> 把状态栏刷成同色,
+        // 但导航栏那块仍然用烘进来的值 —— 这里原来写 #000000,于是在 Android 底部
+        // 留下一条纯黑的横带。
+        theme_color: '#ffffff',
         icons: [
           {
             src: './pwa-192x192.png',
@@ -68,16 +72,23 @@ export default defineConfig({
             purpose: 'any',
           },
           {
-            src: './pwa-maskable-192x192.png',
-            sizes: '192x192',
+            src: './pwa-1024x1024.png',
+            sizes: '1024x1024',
             type: 'image/png',
-            purpose: 'maskable',
+            purpose: 'any',
           },
+          // 这里刻意不声明 maskable。声明了 Chrome 会把那张图整层当成 WebAPK 自适应
+          // 图标的前景,而 Chrome 桌面版对 maskable 不做遮罩 —— 装出来的 app 图标就是
+          // 一块实心底板(macOS 实测),和读 apple-touch 的 Safari 那边对不上。
+          // 主屏图标统一走 any,且都是透明底,底板交给平台自己铺。
+          // Android 13+ 的主题图标走这一档。只取 alpha,颜色由系统上,
+          // 目前 Chrome 的 WebAPK 还没消费它(issues.chromium.org/40277264),
+          // 先按规范声明,免得以后再补一轮安装。
           {
-            src: './pwa-maskable-512x512.png',
+            src: './pwa-monochrome-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'maskable',
+            purpose: 'monochrome',
           },
         ],
       },
