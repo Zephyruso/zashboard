@@ -2,6 +2,20 @@
 
 # Changelog
 
+## [3.30.0](https://github.com/Zephyruso/zashboard/compare/v3.29.1...v3.30.0) (2026-10-10)
+
+
+### Features
+
+* display dialer proxy as italic via label in ProxyName ([b83a63a](https://github.com/Zephyruso/zashboard/commit/b83a63aeba1a08be62ee4d6228874e1229a12d1b))
+* merge closed connections tab into all tab with a filter menu ([e5b48b4](https://github.com/Zephyruso/zashboard/commit/e5b48b4e8fe5c727170a57444c969f01aca3fbad))
+* sync dae native API contract ([9b867b7](https://github.com/Zephyruso/zashboard/commit/9b867b76a8cbca014423e93af59f7ce0996bc4f4))
+
+
+### Bug Fixes
+
+* give the fixed top bar a status-bar inset on Android ([#806](https://github.com/Zephyruso/zashboard/issues/806)) ([4e13b0c](https://github.com/Zephyruso/zashboard/commit/4e13b0cf485b514ef03b288b5c04ad5c898c22e7))
+
 ## [3.29.1](https://github.com/Zephyruso/zashboard/compare/v3.29.0...v3.29.1) (2026-09-23)
 
 
