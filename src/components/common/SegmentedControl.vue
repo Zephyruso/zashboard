@@ -20,7 +20,7 @@
       type="button"
       class="nav-item"
       :aria-selected="modelValue === opt.value"
-      @click="select(opt.value)"
+      @click="select(opt.value, $event)"
     >
       <component
         :is="opt.icon"
@@ -40,6 +40,12 @@
       >
         {{ opt.count }}
       </span>
+      <component
+        :is="opt.suffixIcon"
+        v-if="opt.suffixIcon"
+        class="nav-item-suffix-icon"
+        aria-hidden="true"
+      />
     </button>
   </div>
 </template>
@@ -53,6 +59,7 @@ export type SegmentOption = {
   label?: string
   count?: string | number
   icon?: Component
+  suffixIcon?: Component
 }
 
 const props = withDefaults(
@@ -68,6 +75,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
+  (e: 'reselect', value: string, event: MouseEvent): void
 }>()
 
 const containerRef = ref<HTMLDivElement>()
@@ -98,8 +106,11 @@ const updateIndicator = async () => {
   }
 }
 
-const select = (value: string) => {
-  if (value === props.modelValue) return
+const select = (value: string, event: MouseEvent) => {
+  if (value === props.modelValue) {
+    emit('reselect', value, event)
+    return
+  }
   emit('update:modelValue', value)
 }
 
@@ -147,6 +158,13 @@ watch(() => [props.modelValue, props.options, width.value], updateIndicator, {
 .nav-item-icon {
   width: 1rem;
   height: 1rem;
+}
+
+.nav-item-suffix-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-inline-start: -0.125rem;
+  opacity: 0.7;
 }
 
 .nav-item:not([aria-selected='true']) {

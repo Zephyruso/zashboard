@@ -222,7 +222,6 @@ export const SORT_TYPE_GROUPS: { labelKey: string; types: readonly SORT_TYPE[] }
 
 export enum CONNECTION_TAB_TYPE {
   ACTIVE = 'activeConnections',
-  CLOSED = 'closedConnections',
   ALL = 'allConnections',
 }
 

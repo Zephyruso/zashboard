@@ -35,6 +35,10 @@ import {
 } from './settings'
 
 export const connectionTabShow = ref(CONNECTION_TAB_TYPE.ACTIVE)
+export const showClosedOnly = useStorage<boolean>('config/connection-show-closed-only', false)
+export const isClosedOnlyView = computed(
+  () => connectionTabShow.value === CONNECTION_TAB_TYPE.ALL && showClosedOnly.value,
+)
 export const connectionSortType = useStorage<SORT_TYPE>(
   'config/connection-sort-type',
   SORT_TYPE.HOST,
@@ -89,14 +93,13 @@ const sortKeyFunctionMap: Record<SORT_TYPE, (connection: Connection) => string |
 }
 
 export const connections = computed(() => {
-  switch (connectionTabShow.value) {
-    case CONNECTION_TAB_TYPE.ACTIVE:
-      return activeConnections.value
-    case CONNECTION_TAB_TYPE.CLOSED:
-      return closedConnections.value
-    default:
-      return closedConnections.value.concat(activeConnections.value)
+  if (connectionTabShow.value === CONNECTION_TAB_TYPE.ACTIVE) {
+    return activeConnections.value
   }
+
+  return showClosedOnly.value
+    ? closedConnections.value
+    : closedConnections.value.concat(activeConnections.value)
 })
 
 const closedConnectionIds = computed(() => new Set(closedConnections.value.map((conn) => conn.id)))

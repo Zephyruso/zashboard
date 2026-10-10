@@ -1,10 +1,9 @@
 import { can } from '@/assembly/backend'
-import { disconnectAll, disconnectById, isPaused } from '@/assembly/connections'
+import { activeConnections, disconnectAll, disconnectById, isPaused } from '@/assembly/connections'
 import { useCtrlsBar } from '@/composables/use-ctrls-bar'
 import { useTooltip } from '@/composables/use-tooltip'
 import {
   CONNECTION_GROUPABLE_KEYS,
-  CONNECTION_TAB_TYPE,
   naturalSortDirection,
   ROUTE_NAME,
   SETTINGS_MENU_KEY,
@@ -23,10 +22,10 @@ import {
 import {
   connectionCardGroupKey,
   connectionFilter,
-  connections,
   connectionSortDirection,
   connectionSortType,
-  connectionTabShow,
+  isClosedConnection,
+  isClosedOnlyView,
   quickFilterEnabled,
   quickFilterRegex,
   renderConnections,
@@ -61,7 +60,13 @@ import ConnectionTabs from './ConnectionTabs.vue'
 import SourceIPFilter from './SourceIPFilter.vue'
 
 const handlerClickCloseAll = () => {
-  if (renderConnections.value.length === connections.value.length) {
+  const targets = renderConnections.value.filter((conn) => !isClosedConnection(conn))
+
+  if (!targets.length) {
+    return
+  }
+
+  if (targets.length === activeConnections.value.length) {
     disconnectAll()
     return
   }
@@ -72,14 +77,13 @@ const handlerClickCloseAll = () => {
     can('connectionsFilterClose') &&
     sourceIPs?.length === 1 &&
     !connectionFilter.value &&
-    !quickFilterEnabled.value &&
-    connectionTabShow.value === CONNECTION_TAB_TYPE.ACTIVE
+    !quickFilterEnabled.value
   ) {
     disconnectAll({ src: sourceIPs[0] })
     return
   }
 
-  renderConnections.value.forEach((conn) => {
+  targets.forEach((conn) => {
     disconnectById(conn.id)
   })
 }
@@ -311,6 +315,7 @@ export default defineComponent({
           {can('connectionsClose') && (
             <button
               class="btn btn-circle btn-sm"
+              disabled={isClosedOnlyView.value}
               onClick={handlerClickCloseAll}
             >
               <XMarkIcon class="h-4 w-4" />
