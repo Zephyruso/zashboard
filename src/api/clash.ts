@@ -180,7 +180,20 @@ export const probeClashChannel = async (
       signal: controller.signal,
     })
 
-    if (res.ok) return { ok: true, latency: latency() }
+    if (res.ok) {
+      const data = await res.json().catch(() => null)
+
+      if (typeof data?.version === 'string' && data.version.length > 0) {
+        return { ok: true, latency: latency() }
+      }
+
+      return {
+        ok: false,
+        latency: latency(),
+        kind: 'http',
+        message: 'Invalid Clash API version response',
+      }
+    }
 
     return {
       ok: false,

@@ -102,4 +102,23 @@ http://host:port/#/setup?hostname=ipordomain&port=9090&secret=123456
 7. **`disableTunMode`**
    - Set '1' to hide tun switch
 
+#### Automatic backend connection
+
+When no backends have been saved and neither `hostname` nor `port` is specified in the URL query, zashboard first tries to connect to the Clash API at the page's origin (the same protocol, hostname, and port). This applies to pages served over HTTP or HTTPS.
+
+For example, with this mihomo configuration on remote server `192.168.1.1`:
+
+```yaml
+external-ui: ui
+external-ui-url: https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip
+external-controller: 0.0.0.0:9090
+secret: ''
+```
+
+Opening `http://192.168.1.1:9090/ui` automatically connects to `http://192.168.1.1:9090` and saves the backend if the API probe succeeds. If mihomo requires authentication, pass its secret using `http://192.168.1.1:9090/ui?secret=your-secret`.
+
+If the same-origin probe fails, zashboard falls back to `http://127.0.0.1:9090` with an empty secret and connects automatically if that backend is available. Otherwise, the setup form remains open for manual configuration. Editing the form during same-origin detection cancels automatic connection and fallback.
+
+Saved backends and explicit URL backend parameters retain their existing behavior. Automatic same-origin detection does not override them.
+
 ### I code just for fun, not for money. If you really want to donate, please consider donating to [UNICEF](https://www.unicef.org/) to help hungry children.

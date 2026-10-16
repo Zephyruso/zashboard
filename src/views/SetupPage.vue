@@ -71,7 +71,7 @@ import { addBackend, backendList, openBackendManager } from '@/store/setup'
 import type { Backend, BackendType } from '@/types'
 import { computed, ref, watch } from 'vue'
 
-const form = ref<Omit<Backend, 'uuid'>>({
+const defaultForm: Omit<Backend, 'uuid'> = {
   type: 'clash' as BackendType,
   protocol: 'http',
   host: '127.0.0.1',
@@ -79,7 +79,27 @@ const form = ref<Omit<Backend, 'uuid'>>({
   secondaryPath: '',
   password: '',
   label: '',
-})
+}
+
+const backend = getBackendFromUrl()
+const query = new URLSearchParams(
+  window.location.search || window.location.hash.match(/\?.*$/)?.[0]?.replace('?', ''),
+)
+const originBackend: Omit<Backend, 'uuid'> | null =
+  !backend &&
+  backendList.value.length === 0 &&
+  !query.has('hostname') &&
+  !query.has('port') &&
+  ['http:', 'https:'].includes(window.location.protocol)
+    ? {
+        ...defaultForm,
+        protocol: window.location.protocol.slice(0, -1),
+        host: window.location.hostname,
+        port: window.location.port || (window.location.protocol === 'https:' ? '443' : '80'),
+        password: query.get('secret') || '',
+      }
+    : null
+const form = ref<Omit<Backend, 'uuid'>>(originBackend || { ...defaultForm })
 
 const reachability = useBackendReachability(form)
 
@@ -142,16 +162,35 @@ const handleSubmit = async (setupForm: SetupForm, quiet = false) => {
   }
 }
 
-const backend = getBackendFromUrl()
-
 if (backend) {
   handleSubmit(backend)
 } else if (backendList.value.length === 0) {
+  let tryingOrigin = !!originBackend
+  let resettingForm = false
+  const stopOnEdit = originBackend
+    ? watch(
+        form,
+        () => {
+          if (resettingForm) return
+          stopAutoLogin()
+          stopOnEdit?.()
+        },
+        { deep: true, flush: 'sync' },
+      )
+    : undefined
   const stopAutoLogin = watch(
     () => reachability.status.value,
     (status) => {
-      if (status === 'checking') return
+      if (status === 'checking' || status === 'idle') return
+      if (status === 'offline' && tryingOrigin) {
+        tryingOrigin = false
+        resettingForm = true
+        form.value = { ...defaultForm }
+        resettingForm = false
+        return
+      }
       stopAutoLogin()
+      stopOnEdit?.()
       if (status === 'online') handleSubmit(form.value, true)
     },
   )
