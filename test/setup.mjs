@@ -292,10 +292,11 @@ try {
     query: '?label=Home&disableTunMode=1',
     login: { port: originPort, label: 'Home', disableTunMode: true },
   })
-  await run('port parameter overrides the origin port', {
+  await run('protocol and port parameters do not change the origin', {
     origin: 'online',
-    query: `?port=${mock.port}`,
-    login: { host: '127.0.0.1', port: String(mock.port) },
+    query: `?protocol=https&port=${mock.port}`,
+    login: { protocol: 'http', host: '127.0.0.1', port: originPort },
+    probes: { origin: true },
   })
   await run('unauthorized origin keeps the origin form over 127.0.0.1', {
     origin: 'unauthorized',

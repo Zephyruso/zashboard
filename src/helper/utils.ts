@@ -155,11 +155,8 @@ export const getOriginBackend = () => {
 
   if (protocol !== 'http:' && protocol !== 'https:') return null
 
-  const query = getUrlQuery()
-
-  return getBackendFromQuery(
-    query,
-    hostname,
-    query.get('port') || port || (protocol === 'https:' ? '443' : '80'),
-  )
+  return {
+    ...getBackendFromQuery(getUrlQuery(), hostname, port || (protocol === 'https:' ? '443' : '80')),
+    protocol: protocol.slice(0, -1),
+  }
 }

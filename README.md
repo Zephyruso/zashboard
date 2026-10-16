@@ -104,7 +104,7 @@ http://host:port/#/setup?hostname=ipordomain&port=9090&secret=123456
 
 #### Automatic backend connection
 
-When no backends have been saved and `hostname` is not specified in the URL query, zashboard tries to connect to the Clash API at the page's origin (the same protocol, hostname, and port). This applies to pages served over HTTP or HTTPS. Use `port` to point at a different API port on the same host, for example `http://192.168.1.1/ui?port=9090` when the UI is served by another web server. Other URL parameters such as `secret`, `label`, `type`, `disableUpgradeCore`, and `disableTunMode` also apply to the detected backend.
+When no backends have been saved and `hostname` is not specified in the URL query, zashboard tries to connect to the Clash API at the page's origin (the same protocol, hostname, and port). This applies to pages served over HTTP or HTTPS. The `protocol` and `port` URL parameters do not change this address. URL parameters such as `secret`, `label`, `type`, `disableUpgradeCore`, and `disableTunMode` also apply to the detected backend.
 
 For example, with this mihomo configuration on remote server `192.168.1.1`:
 
