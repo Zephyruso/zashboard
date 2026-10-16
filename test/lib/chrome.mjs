@@ -28,7 +28,7 @@ const resolveChrome = () => {
   )
 }
 
-export const launchChrome = async ({ port = 9222, headless = true } = {}) => {
+export const launchChrome = async ({ port = 9222, headless = true, args = [] } = {}) => {
   const binary = resolveChrome()
   const userDataDir = await mkdtemp(join(tmpdir(), 'zashboard-perf-'))
   const child = spawn(
@@ -44,6 +44,7 @@ export const launchChrome = async ({ port = 9222, headless = true } = {}) => {
       // 后台标签页会被降频,基准数据会失真
       '--disable-background-timer-throttling',
       '--disable-renderer-backgrounding',
+      ...args,
       'about:blank',
     ].filter(Boolean),
     { stdio: 'ignore' },

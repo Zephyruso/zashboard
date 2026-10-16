@@ -20,6 +20,7 @@
     "preview": "vite preview",
     "test:bench": "node test/bench.mjs",
     "test:mock": "node test/mock-server.mjs",
+    "test:setup": "node test/setup.mjs",
     "test:verify": "node test/verify.mjs",
     "type-check": "vue-tsc --build --force"
   },

@@ -115,8 +115,15 @@ const getProtocolFromQuery = (query: URLSearchParams) => {
   return window.location.protocol.replace(':', '')
 }
 
-const getUrlQuery = () =>
-  new URLSearchParams(window.location.search || location.hash.match(/\?.*$/)?.[0]?.replace('?', ''))
+const getUrlQuery = () => {
+  const query = new URLSearchParams(window.location.search)
+
+  new URLSearchParams(location.hash.match(/\?.*$/)?.[0]).forEach((value, key) =>
+    query.set(key, value),
+  )
+
+  return query
+}
 
 const getBackendFromQuery = (
   query: URLSearchParams,

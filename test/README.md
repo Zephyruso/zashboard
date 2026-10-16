@@ -76,24 +76,27 @@ pnpm build
 node test/collapse.mjs
 ```
 
-## 后端自动连接：`node test/setup.mjs`
+## 后端自动连接：`pnpm test:setup`
 
-构建后运行，检查首次配置时的同源自动连接、失败回退和已有配置的优先级。
+构建后运行，检查设置页的 URL 参数登录、同源自动登录、`127.0.0.1:9090` 自动登录，以及它们之间的优先级。
 
 ```bash
 pnpm build
-node test/setup.mjs
+pnpm test:setup
 ```
 
-脚本覆盖 11 个场景：
+脚本起两个假服务：一个同时提供构建产物和同源 API，另一个通过 Chrome 的 `--host-resolver-rules` 接管 `127.0.0.1:9090`。每个场景可以单独控制两边 `/version` 的响应（正常、要求 secret、401、HTML、缺少版本字段的 JSON、连接断开、延迟），所以不会碰到本机真实运行的内核。
 
-- 同源 API 可用时自动连接并保存后端，包括通过 `secret`、`label` 等参数配置的情况。
-- 同源 API 返回 401 时保留同源地址等待输入 secret；返回 HTML 或缺少版本字段的 JSON 时回退到默认后端表单。
-- search 或 hash 中显式指定的后端优先使用；仅指定 `port` 时用于覆盖同源端口。
-- 已保存的活动后端优先使用，不探测同源后端。
-- 探测尚未完成时编辑表单，保留用户输入并取消自动连接。
+覆盖的场景按分组输出：
 
-每个场景通过后打印一行 `✓`；断言失败时以非零退出码结束。脚本使用临时服务和浏览器配置，并拦截对 `http://127.0.0.1:9090` 的请求，因此回退场景只验证默认表单和未保存后端，不验证本地后端连接成功。
+- **URL 参数**：search 或 hash 里的 `hostname` 优先于同源和 127.0.0.1；`secret`、`label`、`disable*` 写进保存的后端；地址不可达或 secret 错误时停在设置页；与已保存后端相同时直接切换过去。
+- **URL 形态**：search 在 `#/setup`、`#/proxies` 前面，hash query 挂在 `#/proxies`、`#/` 上，路径带 `index.html`，参数分散在 search 和 hash 两边（hash 优先），URL 后端和同源 secret 都能读到。
+- **同源**：自动登录，同时可用时优先于 127.0.0.1；读取 `secret` 等参数；`port` 覆盖同源端口；返回 401 时保留同源地址和已填的 secret，不回退。
+- **127.0.0.1:9090**：同源断开、返回 HTML 或无效 JSON 时自动登录；返回 401 或都不可用时停在默认表单。
+- **已保存后端**：有活动后端时直接进入，不做任何探测；有后端但没有活动后端时不自动登录。
+- **手动编辑**：探测过程中修改表单会取消自动登录，保留用户输入。
+
+每个场景通过后打印一行 `✓`；断言失败时以非零退出码结束。
 
 ## 单独用假后端
 
@@ -117,7 +120,7 @@ test/
   bench.mjs          基准
   verify.mjs         行为冒烟
   collapse.mjs       折叠动画时序回归
-  setup.mjs          后端自动连接与回退回归
+  setup.mjs          设置页登录与自动连接回归
   mock-server.mjs    假的 mihomo 后端(也可单独跑)
   lib/
     harness.mjs      假后端 + 静态服务 + Chrome + 打开代理页,串成一件事
@@ -133,6 +136,4 @@ test/
   开了 `Network.setBypassServiceWorker`。
 - **`localStorage` 要等页面真的落到应用 origin 之后再写**。写早了会写进 `about:blank` 的
   存储区,应用一个字节也读不到,表现是「明明配了后端却停在 /setup」。
-- **直接开 `#/proxies?hostname=...` 没用**:没有后端时路由守卫先跳 `/setup`,hash 上的
-  query 在这一跳里就丢了。所以是先落 `localStorage` 再进代理页。
 - **不限速的开发机测不出问题**。issue 里那台设备大约相当于 `--cpu 10` ~ `--cpu 20`。
