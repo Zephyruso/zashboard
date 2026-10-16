@@ -2,6 +2,23 @@
 
 # Changelog
 
+## [3.30.0](https://github.com/Zephyruso/zashboard/compare/v3.29.1...v3.30.0) (2026-10-16)
+
+
+### Features
+
+* auto-connect to same-origin backend on initial setup ([#810](https://github.com/Zephyruso/zashboard/issues/810)) ([63cb0e0](https://github.com/Zephyruso/zashboard/commit/63cb0e04994866c6537b8a3dd70a0630aa558648))
+* display dialer proxy as italic via label in ProxyName ([b83a63a](https://github.com/Zephyruso/zashboard/commit/b83a63aeba1a08be62ee4d6228874e1229a12d1b))
+* merge closed connections tab into all tab with a filter menu ([e5b48b4](https://github.com/Zephyruso/zashboard/commit/e5b48b4e8fe5c727170a57444c969f01aca3fbad))
+* sync dae native API contract ([9b867b7](https://github.com/Zephyruso/zashboard/commit/9b867b76a8cbca014423e93af59f7ce0996bc4f4))
+* use grid icon for overview and add hover motion to nav icons ([805eb22](https://github.com/Zephyruso/zashboard/commit/805eb229488a96fdadd9c89d1e0bb712d6877dd2))
+
+
+### Bug Fixes
+
+* bump dependencies to patch security vulnerabilities ([a72516f](https://github.com/Zephyruso/zashboard/commit/a72516fec99f290b924290ba8be74613a2480dbd))
+* give the fixed top bar a status-bar inset on Android ([#806](https://github.com/Zephyruso/zashboard/issues/806)) ([4e13b0c](https://github.com/Zephyruso/zashboard/commit/4e13b0cf485b514ef03b288b5c04ad5c898c22e7))
+
 ## [3.29.1](https://github.com/Zephyruso/zashboard/compare/v3.29.0...v3.29.1) (2026-09-23)
 
 
