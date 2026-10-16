@@ -53,13 +53,21 @@ const saved = {
 
 const run = async (
   name,
-  { response = 'online', query = '', initial = [], edit = false, port, password = '' } = {},
+  {
+    response = 'online',
+    query = '',
+    initial = [],
+    edit = false,
+    port,
+    password = '',
+    label = '',
+    form,
+  } = {},
 ) => {
   mode = response
   originProbes = 0
   const page = await browser.newPage()
   try {
-    // Never contact a real local core while testing the fallback form.
     await page.call('Network.setBlockedURLs', { urls: ['http://127.0.0.1:9090/*'] })
     await page.call('Page.addScriptToEvaluateOnNewDocument', {
       source: `localStorage.clear();
@@ -82,9 +90,10 @@ const run = async (
       assert.equal(backends.length, 1)
       assert.equal(backends[0].port, String(port))
       assert.equal(backends[0].password, password)
+      assert.equal(backends[0].label, label)
     } else {
-      const host = edit ? 'edited.example' : '127.0.0.1'
-      const expectedPort = edit ? String(server.address().port) : '9090'
+      const [host, expectedPort] =
+        form ?? (edit ? ['edited.example', String(server.address().port)] : ['127.0.0.1', '9090'])
       assert.notEqual(
         await waitFor(() =>
           page.evaluate(`
@@ -115,7 +124,15 @@ try {
     port: server.address().port,
     password: 'test-secret',
   })
-  await run('unauthorized origin falls back', { response: 'unauthorized' })
+  await run('same-origin API with query options', {
+    query: '?label=Home&disableTunMode=1',
+    port: server.address().port,
+    label: 'Home',
+  })
+  await run('unauthorized origin keeps origin form', {
+    response: 'unauthorized',
+    form: ['127.0.0.1', String(server.address().port)],
+  })
   await run('HTML response falls back', { response: 'html' })
   await run('unrelated JSON falls back', { response: 'invalid' })
   await run('explicit search backend wins', {
@@ -126,7 +143,10 @@ try {
     query: `#/setup?hostname=127.0.0.1&port=${mock.port}`,
     port: mock.port,
   })
-  await run('port parameter disables origin detection', { query: '?port=1234' })
+  await run('port parameter overrides origin port', {
+    query: `?port=${mock.port}`,
+    port: mock.port,
+  })
   await run('saved backend wins', { initial: [saved], port: mock.port })
   await run('manual edits survive a pending origin probe', { response: 'delayed', edit: true })
 } finally {

@@ -181,7 +181,10 @@ export const probeClashChannel = async (
     })
 
     if (res.ok) {
-      const data = await res.json().catch(() => null)
+      const data = await res.json().catch((error) => {
+        if (controller.signal.aborted) throw error
+        return null
+      })
 
       if (typeof data?.version === 'string' && data.version.length > 0) {
         return { ok: true, latency: latency() }

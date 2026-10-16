@@ -104,7 +104,7 @@ http://host:port/#/setup?hostname=ipordomain&port=9090&secret=123456
 
 #### Automatic backend connection
 
-When no backends have been saved and neither `hostname` nor `port` is specified in the URL query, zashboard first tries to connect to the Clash API at the page's origin (the same protocol, hostname, and port). This applies to pages served over HTTP or HTTPS.
+When no backends have been saved and `hostname` is not specified in the URL query, zashboard tries to connect to the Clash API at the page's origin (the same protocol, hostname, and port). This applies to pages served over HTTP or HTTPS. Use `port` to point at a different API port on the same host, for example `http://192.168.1.1/ui?port=9090` when the UI is served by another web server. Other URL parameters such as `secret`, `label`, `type`, `disableUpgradeCore`, and `disableTunMode` also apply to the detected backend.
 
 For example, with this mihomo configuration on remote server `192.168.1.1`:
 
@@ -117,7 +117,7 @@ secret: ''
 
 Opening `http://192.168.1.1:9090/ui` automatically connects to `http://192.168.1.1:9090` and saves the backend if the API probe succeeds. If mihomo requires authentication, pass its secret using `http://192.168.1.1:9090/ui?secret=your-secret`.
 
-If the same-origin probe fails, zashboard falls back to `http://127.0.0.1:9090` with an empty secret and connects automatically if that backend is available. Otherwise, the setup form remains open for manual configuration. Editing the form during same-origin detection cancels automatic connection and fallback.
+`http://127.0.0.1:9090` with an empty secret is probed at the same time as a fallback, and the same-origin backend takes priority. If a candidate rejects the secret, the form keeps that address so you only need to enter the secret. If no candidate responds, the form shows `http://127.0.0.1:9090` for manual configuration. Editing or submitting the form during detection cancels automatic connection.
 
 Saved backends and explicit URL backend parameters retain their existing behavior. Automatic same-origin detection does not override them.
 
