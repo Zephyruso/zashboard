@@ -2,12 +2,14 @@
 import assert from 'node:assert/strict'
 import { registerHooks } from 'node:module'
 import test from 'node:test'
+import { setImmediate as settle } from 'node:timers/promises'
 import { nextTick, shallowRef } from 'vue'
 
 const types = ['sourceIP', 'destination', 'process', 'outbound', 'proxyGroup']
 const listeners = new Map()
 const timers = []
 const writes = []
+const storage = new Map()
 const originalGlobals = Object.fromEntries(
   ['document', 'window', 'setInterval'].map((key) => [
     key,
@@ -29,11 +31,13 @@ const fixture = {
   getConnectionChains: (connection) => connection.chains,
   getConnectionDownload: (connection) => connection.download,
   getConnectionUpload: (connection) => connection.upload,
-  getConnectionHistoryFromIndexedDB: async () => [],
+  getConnectionHistoryFromIndexedDB: async (uuid, type) =>
+    JSON.parse(storage.get(`${uuid}-${type}`) || '[]'),
   saveConnectionHistoryToIndexedDB: async (uuid, type, data) => {
+    storage.set(`${uuid}-${type}`, JSON.stringify(data))
     writes.push({ uuid, type, data })
   },
-  clearConnectionHistoryFromIndexedDB: async () => {},
+  clearConnectionHistoryFromIndexedDB: async () => storage.clear(),
 }
 
 globalThis.__connectionHistoryTest = fixture
@@ -85,22 +89,22 @@ try {
   }
   const reset = async () => {
     document.hidden = false
-    await history.initAggregatedDataMap()
+    await history.clearConnectionHistory()
     writes.length = 0
   }
 
-  await test('background history stays bounded without persistence timer ticks', async () => {
+  await test('background retention, view refresh, and flush/reload stay consistent', async () => {
     await reset()
     document.hidden = true
     listeners.get('visibilitychange')()
+    const hiddenView = view()
 
     for (const offset of [0, 5000, 10000, 15000]) {
       await send(Array.from({ length: 5000 }, (_, index) => connection(offset + index)))
+      // The callback runs, but the store deliberately skips maintenance while hidden.
+      tick()
     }
-    assert.ok(
-      types.every((type) => view()[type].length === 0),
-      'hidden views stay unchanged',
-    )
+    assert.equal(view(), hiddenView, 'hidden batches do not publish new view snapshots')
 
     // The first visible tick refreshes the view, but does not flush/trim via the 30s timer.
     document.hidden = false
@@ -110,6 +114,15 @@ try {
       assert.ok(view()[type].some((entry) => entry.download === 20000))
     }
     assert.equal(writes.length, 0, 'capacity limits do not depend on IndexedDB writes')
+
+    const expected = structuredClone(view())
+    for (let i = 0; i < 5; i++) tick()
+    await settle()
+    assert.equal(writes.length, 5, 'the existing timer persists all five trimmed maps')
+    for (const { type, data } of writes) assert.deepEqual(data, expected[type])
+
+    await history.initAggregatedDataMap()
+    assert.deepEqual(view(), expected, 'reloading restores the same retained entries and totals')
   })
 
   await test('threshold, download ranking, and accumulated totals are preserved', async () => {

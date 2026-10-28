@@ -185,7 +185,7 @@ const accumulateInto = (maps: AggregationMaps, connections: Connection[]) => {
       }
     }
 
-    // Background tabs can keep receiving connections while the flush timer is paused.
+    // The timer skips hidden tabs, but connection history keeps accumulating.
     trimMap(maps, type)
   }
 }
