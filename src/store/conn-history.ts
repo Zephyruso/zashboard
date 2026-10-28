@@ -184,8 +184,6 @@ const accumulateInto = (maps: AggregationMaps, connections: Connection[]) => {
         map.set(item.key, item)
       }
     }
-
-    // The timer skips hidden tabs, but connection history keeps accumulating.
     trimMap(maps, type)
   }
 }
