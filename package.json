@@ -19,6 +19,7 @@
     "prepare": "husky",
     "preview": "vite preview",
     "test:bench": "node test/bench.mjs",
+    "test:history": "node test/conn-history.mjs",
     "test:mock": "node test/mock-server.mjs",
     "test:setup": "node test/setup.mjs",
     "test:verify": "node test/verify.mjs",

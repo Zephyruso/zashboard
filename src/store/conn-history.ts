@@ -184,6 +184,9 @@ const accumulateInto = (maps: AggregationMaps, connections: Connection[]) => {
         map.set(item.key, item)
       }
     }
+
+    // Background tabs can keep receiving connections while the flush timer is paused.
+    trimMap(maps, type)
   }
 }
 
