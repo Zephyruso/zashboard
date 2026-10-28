@@ -2,6 +2,25 @@
 
 # Changelog
 
+## [3.30.0](https://github.com/Zephyruso/zashboard/compare/v3.29.1...v3.30.0) (2026-10-28)
+
+
+### Features
+
+* auto-connect to same-origin backend on initial setup ([#810](https://github.com/Zephyruso/zashboard/issues/810)) ([63cb0e0](https://github.com/Zephyruso/zashboard/commit/63cb0e04994866c6537b8a3dd70a0630aa558648))
+* display dialer proxy as italic via label in ProxyName ([b83a63a](https://github.com/Zephyruso/zashboard/commit/b83a63aeba1a08be62ee4d6228874e1229a12d1b))
+* merge closed connections tab into all tab with a filter menu ([e5b48b4](https://github.com/Zephyruso/zashboard/commit/e5b48b4e8fe5c727170a57444c969f01aca3fbad))
+* sync dae native API contract ([9b867b7](https://github.com/Zephyruso/zashboard/commit/9b867b76a8cbca014423e93af59f7ce0996bc4f4))
+* use grid icon for overview and add hover motion to nav icons ([6225aac](https://github.com/Zephyruso/zashboard/commit/6225aac84439425ae4f4493437b110a314753436))
+
+
+### Bug Fixes
+
+* bound connection history in background tabs ([#816](https://github.com/Zephyruso/zashboard/issues/816)) ([ceb8dd0](https://github.com/Zephyruso/zashboard/commit/ceb8dd0aecd71a445b1882b5023c6671a5fd98c9))
+* bump dependencies to patch security vulnerabilities ([a72516f](https://github.com/Zephyruso/zashboard/commit/a72516fec99f290b924290ba8be74613a2480dbd))
+* give the fixed top bar a status-bar inset on Android ([#806](https://github.com/Zephyruso/zashboard/issues/806)) ([4e13b0c](https://github.com/Zephyruso/zashboard/commit/4e13b0cf485b514ef03b288b5c04ad5c898c22e7))
+* sort rule count column numerically ([38bf201](https://github.com/Zephyruso/zashboard/commit/38bf2016670df12a4d831b6f5e9e17fafae62f6f))
+
 ## [3.29.1](https://github.com/Zephyruso/zashboard/compare/v3.29.0...v3.29.1) (2026-09-23)
 
 
