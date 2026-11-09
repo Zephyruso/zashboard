@@ -2,6 +2,19 @@
 
 # Changelog
 
+## [3.31.0](https://github.com/Zephyruso/zashboard/compare/v3.30.0...v3.31.0) (2026-11-09)
+
+
+### Features
+
+* require ctrl/cmd + wheel to zoom earth globe ([9e77e23](https://github.com/Zephyruso/zashboard/commit/9e77e239b76a717a75ae73cd608f139a83f4c9f8))
+
+
+### Bug Fixes
+
+* bracket bare IPv6 backend hosts in URLs and labels ([#823](https://github.com/Zephyruso/zashboard/issues/823)) ([394bfb4](https://github.com/Zephyruso/zashboard/commit/394bfb4941c5f2f8df8ec1ef0151c4ba26609319))
+* show full day count in uptime longer than 30 days ([#822](https://github.com/Zephyruso/zashboard/issues/822)) ([84801bb](https://github.com/Zephyruso/zashboard/commit/84801bbac94cd802abcf010d441d79369bad0107))
+
 ## [3.30.0](https://github.com/Zephyruso/zashboard/compare/v3.29.1...v3.30.0) (2026-10-28)
 
 
