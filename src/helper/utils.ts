@@ -78,19 +78,25 @@ export const resetSettings = () => {
   window.location.reload()
 }
 
+export const getHostFromBackend = (end: { host: string; port: string }) => {
+  const host = end.host.includes(':') && !end.host.startsWith('[') ? `[${end.host}]` : end.host
+
+  return `${host}:${end.port}`
+}
+
 export const getUrlFromBackend = (end: {
   protocol: string
   host: string
   port: string
   secondaryPath?: string
 }) => {
-  return `${end.protocol}://${end.host}:${end.port}${end.secondaryPath || ''}`
+  return `${end.protocol}://${getHostFromBackend(end)}${end.secondaryPath || ''}`
 }
 
 export const getBackendProbeUrl = (end: Omit<Backend, 'uuid'>) => getUrlFromBackend(end)
 
 export const getLabelFromBackend = (end: Omit<Backend, 'uuid'>) => {
-  return end.label || `${end.host}:${end.port}`
+  return end.label || getHostFromBackend(end)
 }
 
 export const getMinCardWidth = (size: PROXY_CARD_SIZE) => {

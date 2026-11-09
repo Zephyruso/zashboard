@@ -49,7 +49,7 @@
                   v-if="element.label"
                   class="text-base-content/50 w-full truncate text-xs"
                 >
-                  {{ element.host }}:{{ element.port }}
+                  {{ getHostFromBackend(element) }}
                 </span>
               </span>
               <span
@@ -134,7 +134,7 @@ import { useBackendListProbe } from '@/composables/use-backend-list-probe'
 import { useBackendReachability } from '@/composables/use-backend-reachability'
 import { ROUTE_NAME } from '@/constant'
 import { showNotification } from '@/helper/notification'
-import { getLabelFromBackend } from '@/helper/utils'
+import { getHostFromBackend, getLabelFromBackend } from '@/helper/utils'
 import router from '@/router'
 import {
   activeUuid,

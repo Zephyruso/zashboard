@@ -61,7 +61,7 @@ const originServer = createServer(async (req, res) => {
   return forward(res, mock.url, req.url)
 })
 
-const localServer = createServer(async (req, res) => {
+const answerLocal = async (req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(204, CORS)
     return res.end()
@@ -72,12 +72,15 @@ const localServer = createServer(async (req, res) => {
     return answerVersion(state.local, req, res, CORS)
   }
   return forward(res, mock.url, req.url, CORS)
-})
+}
+const localServer = createServer(answerLocal)
+const ipv6Server = createServer(answerLocal)
 
-const listen = (server) =>
-  new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve(server.address().port)))
+const listen = (server, host = '127.0.0.1') =>
+  new Promise((resolve) => server.listen(0, host, () => resolve(server.address().port)))
 const originPort = String(await listen(originServer))
 const localPort = await listen(localServer)
+const ipv6Port = String(await listen(ipv6Server, '::1'))
 const origin = `http://127.0.0.1:${originPort}`
 const debuggingPort = await findFreePort()
 const chrome = await launchChrome({
@@ -229,6 +232,12 @@ try {
     form: { host: '127.0.0.1', port: '9090' },
     probes: { origin: false, local: true },
   })
+  await run('bare IPv6 URL backend logs in', {
+    local: 'online',
+    query: `?hostname=::1&port=${ipv6Port}`,
+    login: { host: '::1', port: ipv6Port },
+    probes: { origin: false, local: true },
+  })
   await run('URL backend switches to a matching saved backend', {
     query: `?${explicit(mock.port)}`,
     initial: [
@@ -356,7 +365,7 @@ try {
 } finally {
   browser.close()
   await chrome.close()
-  for (const server of [originServer, localServer]) {
+  for (const server of [originServer, localServer, ipv6Server]) {
     server.closeAllConnections()
     await new Promise((resolve) => server.close(resolve))
   }

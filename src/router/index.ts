@@ -1,5 +1,6 @@
 import { ROUTE_NAME } from '@/constant'
 import { resolvePageTransition } from '@/helper/page-transition'
+import { getLabelFromBackend } from '@/helper/utils'
 import { i18n } from '@/i18n'
 import { language } from '@/store/settings'
 import { activeBackend } from '@/store/setup'
@@ -72,9 +73,7 @@ const router = createRouter({
 const title = useTitle('zashboard')
 const setTitleByName = (name: string | symbol | undefined) => {
   if (typeof name === 'string' && activeBackend.value) {
-    const backend = activeBackend.value
-    const prefix = backend.label || `${backend.host}:${backend.port}`
-    title.value = `${prefix} | ${i18n.global.t(name)}`
+    title.value = `${getLabelFromBackend(activeBackend.value)} | ${i18n.global.t(name)}`
   } else {
     title.value = 'zashboard'
   }
