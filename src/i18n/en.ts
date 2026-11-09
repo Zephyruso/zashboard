@@ -418,6 +418,7 @@ const en = {
   earthResumeRotation: 'Resume globe rotation',
   earthExpand: 'Expand globe view',
   earthCollapse: 'Restore globe view',
+  earthWheelZoomHint: 'Hold {key} and scroll to zoom the map',
   earthConnectionLine: 'Connection route',
   earthLegend: 'Endpoint legend',
   earthLegendProxied: 'Via proxy',

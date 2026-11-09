@@ -83,6 +83,7 @@
       <div
         ref="canvasRef"
         class="absolute inset-0 touch-none"
+        @wheel.capture="handleWheelCapture"
         @touchstart.stop
         @touchmove.stop.prevent
         @touchend.stop
@@ -291,6 +292,14 @@
           {{ activeConnections.length ? t('earthNoLocatedConnections') : t('earthNoConnections') }}
         </div>
       </div>
+
+      <div
+        class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/45 p-4 text-center text-sm font-medium text-white transition-opacity duration-300"
+        :class="zoomHintVisible ? 'opacity-100' : 'opacity-0'"
+        :aria-hidden="!zoomHintVisible"
+      >
+        {{ t('earthWheelZoomHint', { key: IS_APPLE_DEVICE ? '⌘' : 'Ctrl' }) }}
+      </div>
     </div>
 
     <Teleport to="body">
@@ -339,7 +348,7 @@ import SelectInput from '@/components/common/SelectInput.vue'
 import { queryDNS } from '@/assembly/config'
 import { getPublicIPInfo, type IPInfo } from '@/api/geoip'
 import { getCachedPublicIPInfo } from '@/helper/overview'
-import { IP_INFO_API } from '@/constant'
+import { IP_INFO_API, IS_APPLE_DEVICE } from '@/constant'
 import { themeColorScheme } from '@/helper/theme'
 import { prettyBytesHelper } from '@/helper/utils'
 import { earthIPInfoAPI, earthProjection, earthVisualMode, language, theme } from '@/store/settings'
@@ -390,6 +399,7 @@ const showOriginIP = ref(false)
 const showCityLabels = ref(true)
 const rotationPaused = ref(false)
 const expanded = ref(false)
+const zoomHintVisible = ref(false)
 const routeCount = ref(0)
 const routesLoading = ref(false)
 const hoveredEndpoint = ref<EarthEndpointInfo | null>(null)
@@ -407,6 +417,7 @@ let refreshRunning = false
 let refreshQueued = false
 let disposed = false
 let originRequestID = 0
+let zoomHintTimer: ReturnType<typeof setTimeout> | null = null
 
 const INIT_DELAY = 400
 const INIT_IDLE_TIMEOUT = 1000
@@ -732,6 +743,27 @@ const toggleCityLabels = () => {
   renderer.value?.setCityLabelsVisible(showCityLabels.value)
 }
 
+const ZOOM_HINT_DURATION = 1200
+
+const handleWheelCapture = (event: WheelEvent) => {
+  if (expanded.value) return
+  if (event.ctrlKey || event.metaKey) {
+    event.preventDefault()
+    if (zoomHintTimer) clearTimeout(zoomHintTimer)
+    zoomHintTimer = null
+    zoomHintVisible.value = false
+    return
+  }
+  if (!renderer.value) return
+  event.stopPropagation()
+  zoomHintVisible.value = true
+  if (zoomHintTimer) clearTimeout(zoomHintTimer)
+  zoomHintTimer = setTimeout(() => {
+    zoomHintVisible.value = false
+    zoomHintTimer = null
+  }, ZOOM_HINT_DURATION)
+}
+
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Escape' && expanded.value) expanded.value = false
 }
@@ -821,6 +853,7 @@ onBeforeUnmount(() => {
   disposed = true
   window.removeEventListener('keydown', handleKeydown)
   if (refreshTimer) clearTimeout(refreshTimer)
+  if (zoomHintTimer) clearTimeout(zoomHintTimer)
   if (initTimer) clearTimeout(initTimer)
   if (initIdleTimer) clearTimeout(initIdleTimer)
   if (initIdleHandle !== null) cancelIdleCallback(initIdleHandle)

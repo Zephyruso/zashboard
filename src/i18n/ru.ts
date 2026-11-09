@@ -421,6 +421,7 @@ const ru: LANG_MESSAGE = {
   earthResumeRotation: 'Продолжить вращение Земли',
   earthExpand: 'Развернуть глобус',
   earthCollapse: 'Восстановить размер глобуса',
+  earthWheelZoomHint: 'Удерживайте {key} и прокручивайте для масштабирования карты',
   earthConnectionLine: 'Маршрут подключения',
   earthLegend: 'Легенда точек',
   earthLegendProxied: 'Через прокси',

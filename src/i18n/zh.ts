@@ -407,6 +407,7 @@ const zh: LANG_MESSAGE = {
   earthResumeRotation: '继续地球自转',
   earthExpand: '扩展地球画面',
   earthCollapse: '还原地球画面',
+  earthWheelZoomHint: '按住 {key} 并滚动以缩放地图',
   earthConnectionLine: '连接线路',
   earthLegend: '端点图例',
   earthLegendProxied: '经代理',
