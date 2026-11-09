@@ -33,9 +33,10 @@ export const fromNow = (timestamp: string | number) => {
 export const prettyUptimeHelper = (seconds: number) => {
   if (!Number.isFinite(seconds) || seconds < 0) return '-'
 
-  const uptime = dayjs.duration(seconds, 'seconds')
+  const days = Math.floor(seconds / 86400)
+  const time = dayjs.duration(seconds % 86400, 'seconds').format('HH:mm:ss')
 
-  return uptime.days() > 0 ? uptime.format('D[d] HH:mm:ss') : uptime.format('HH:mm:ss')
+  return days > 0 ? `${days}d ${time}` : time
 }
 
 export const getDashboardSettingsFromStorage = () => {
