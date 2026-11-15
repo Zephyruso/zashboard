@@ -64,6 +64,7 @@
             class="min-h-0 w-full flex-1 overflow-y-auto overscroll-contain"
             :class="[PROXIES_PARENT_CLASS]"
             :style="{ contain: 'layout style paint' }"
+            ref="panelListRef"
           >
             <Component
               :is="groupProxiesByProvider ? ProxiesByProvider : ProxiesContent"
@@ -164,6 +165,7 @@ const cardRef = ref()
 const backdropRef = ref<HTMLElement>()
 const panelRef = ref<HTMLElement>()
 const panelBodyRef = ref<HTMLElement>()
+const panelListRef = ref<HTMLElement>()
 const sourceCopyRef = ref<HTMLElement>()
 const sharedIconRef = ref<HTMLElement>()
 
@@ -198,20 +200,37 @@ const prefersReducedMotion = () =>
 const nextFrame = () => new Promise<number>((resolve) => requestAnimationFrame(resolve))
 
 /**
- * The virtual proxy list learns its width from a ResizeObserver and measures rows afterwards,
- * so the panel's height changes over the first few frames. Wait for it to settle before
- * measuring, otherwise the centered panel moves away from the measured geometry.
+ * The virtual proxy list learns its width from a ResizeObserver, then renders rows from estimated
+ * heights and measures them over the next frames, so the panel's height keeps changing at first.
+ * Wait for it to settle before measuring, otherwise the locked height is wrong and the panel
+ * jumps to its real size when the lock is released.
+ *
+ * The panel's own height is not enough to tell: while the estimate overflows `max-height` it
+ * stays clamped and looks stable, then shrinks once rows are measured. Track the list's content
+ * height too, and require it to hold for a couple of frames, since each hop of the virtualizer
+ * (width -> columns -> rows -> measurement) lands on a later frame.
  */
-const waitForStableHeight = async (panel: HTMLElement, maxFrames = 4) => {
-  let height = panel.offsetHeight
+const waitForStableHeight = async (
+  panel: HTMLElement,
+  list: HTMLElement | undefined,
+  maxFrames = 12,
+  stableFrames = 2,
+) => {
+  const read = () => `${panel.offsetHeight}:${list?.scrollHeight ?? 0}`
+  let size = read()
+  let stable = 0
 
   for (let i = 0; i < maxFrames; i++) {
     await nextFrame()
     if (!panel.isConnected) return
 
-    const next = panel.offsetHeight
-    if (next === height) return
-    height = next
+    const next = read()
+    if (next === size) {
+      if (++stable >= stableFrames) return
+    } else {
+      stable = 0
+      size = next
+    }
   }
 }
 
@@ -342,7 +361,7 @@ const openPanel = async () => {
 
   await nextTick()
   // The panel is mounted invisibly while the list settles; the card stays in place meanwhile.
-  if (panelRef.value) await waitForStableHeight(panelRef.value)
+  if (panelRef.value) await waitForStableHeight(panelRef.value, panelListRef.value)
   preparing = false
   if (!panelRef.value) return
 
