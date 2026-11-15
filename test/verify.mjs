@@ -88,7 +88,13 @@ try {
     for (let i = 0; i <= 10; i++) {
       const y = from + ((to - from) * i) / 10
 
-      if (!cards.some((r) => r.top <= y && r.bottom >= y)) missed++
+      if (!cards.some((r) => r.top <= y && r.bottom >= y)) {
+        // A sample can land in the intentional 12px row gap. A missing virtual row
+        // leaves a much larger hole; don't mistake a normal gutter for missing content.
+        const above = Math.max(...cards.filter(r => r.bottom < y).map(r => r.bottom))
+        const below = Math.min(...cards.filter(r => r.top > y).map(r => r.top))
+        if (below - above > 13) missed++
+      }
     }
 
     return missed

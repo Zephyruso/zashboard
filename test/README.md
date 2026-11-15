@@ -137,3 +137,18 @@ test/
 - **`localStorage` 要等页面真的落到应用 origin 之后再写**。写早了会写进 `about:blank` 的
   存储区,应用一个字节也读不到,表现是「明明配了后端却停在 /setup」。
 - **不限速的开发机测不出问题**。issue 里那台设备大约相当于 `--cpu 10` ~ `--cpu 20`。
+
+## 移动策略组动画：`node test/mobile-panel.mjs`
+
+构建后运行，使用开启 GPU 的临时 Chrome，覆盖 1/2/4/8/60 节点、重复打开、
+准备中取消、快速反向、跨组交接、遮罩点击、减少动态效果和动画中卸载。
+逐帧检查内容尺寸、圆角半径、背景交接及收尾高度，并覆盖供应商分组、宽屏小卡片和名称换行。
+版本检查使用本地缓存，不依赖外部更新服务。
+
+```bash
+pnpm build
+node test/mobile-panel.mjs
+```
+
+截图写入 `/tmp/zashboard-mobile-panel-open.png` 和 `/tmp/zashboard-mobile-panel-closing.png`。
+本脚本验证交互及渲染行为，桌面 Chrome 的帧率不代表手机实测帧率。

@@ -7,6 +7,8 @@ const props = defineProps<{
   name: string
   now: string
   renderProxies: string[]
+  initialWidth?: number
+  initialHeight?: number
 }>()
 
 const groupedProxies = computed(() => groupProxiesByProviderName(props.renderProxies))
@@ -51,6 +53,7 @@ onBeforeUnmount(() => {
         :name="name"
         :now="now"
         :render-proxies="proxies"
+        :initial-width="initialWidth"
       />
     </div>
   </div>

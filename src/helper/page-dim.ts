@@ -1,79 +1,103 @@
-/**
- * Dims the floating chrome (controls bar, mobile dock) together with in-page overlays.
- *
- * Those bars sit above page content, so a page-level backdrop can't cover them. Each bar hosts
- * its own dim layer and registers it here; overlays drive every layer imperatively, once per
- * animation frame, without going through Vue renders.
- *
- * Several overlays may dim at once (one finishing its close while the next one opens), so each
- * owner reports its own progress and the layers show the strongest one.
- */
+import { animationTime, type SpringMotion } from './spring-motion'
+
 type DimState = {
   progress: number
-  /** Present while the owner accepts taps on the dimmed bars; absent while it's closing. */
+  motion?: SpringMotion
+  start?: number
   onDismiss: (() => void) | null
 }
+type DimLayer = { scale: number; animation?: Animation }
 
-const layers = new Map<HTMLElement, number>()
+const layers = new Map<HTMLElement, DimLayer>()
 const owners = new Map<object, DimState>()
-let appliedProgress = 0
-let appliedInteractive = false
+const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
 
-const applyLayer = (el: HTMLElement, scale: number) => {
-  el.style.opacity = `${appliedProgress * scale}`
-  // Only swallow taps while an owner can handle them; a closing overlay lets them through.
-  el.style.pointerEvents = appliedInteractive ? 'auto' : 'none'
-}
-
+/** Rebuild only on open/close/reversal, never from a per-frame JavaScript loop. */
 const apply = () => {
-  let progress = 0
-  let interactive = false
+  const now = animationTime()
+  const states = [...owners.values()]
+  const duration = Math.max(
+    0,
+    ...states.map((state) => (state.motion ? state.motion.duration - (now - state.start!) : 0)),
+  )
+  const progressAt = (elapsed: number) =>
+    Math.max(
+      0,
+      ...states.map((state) =>
+        clamp01(
+          state.motion
+            ? state.motion.sample(now + elapsed - state.start!).position
+            : state.progress,
+        ),
+      ),
+    )
+  const steps = Math.max(1, Math.ceil(duration / (1000 / 120)))
+  const points = Array.from({ length: steps + 1 }, (_, index) => ({
+    offset: index / steps,
+    opacity: progressAt((index / steps) * duration),
+  }))
+  const interactive = states.some((state) => state.onDismiss !== null)
 
-  owners.forEach((state) => {
-    progress = Math.max(progress, state.progress)
-    interactive ||= state.onDismiss !== null
-  })
+  for (const [el, layer] of layers) {
+    layer.animation?.cancel()
+    layer.animation = undefined
+    el.style.opacity = String(progressAt(duration) * layer.scale)
+    el.style.pointerEvents = interactive ? 'auto' : 'none'
+    if (!duration) continue
 
-  if (progress === appliedProgress && interactive === appliedInteractive) return
-
-  appliedProgress = progress
-  appliedInteractive = interactive
-  layers.forEach((scale, el) => applyLayer(el, scale))
+    const animation = el.animate(
+      points.map((point) => ({ offset: point.offset, opacity: point.opacity * layer.scale })),
+      { duration, easing: 'linear' },
+    )
+    animation.startTime = now
+    layer.animation = animation
+    animation.onfinish = () => {
+      if (layer.animation === animation) layer.animation = undefined
+    }
+  }
 }
 
 export const registerPageDimLayer = (el: HTMLElement, scale = 1) => {
-  layers.set(el, scale)
-  applyLayer(el, scale)
-
+  const layer: DimLayer = { scale }
+  layers.set(el, layer)
+  apply()
   return () => {
+    layer.animation?.cancel()
     layers.delete(el)
   }
 }
 
-/** `progress`: 0 = undimmed, 1 = fully dimmed; values are clamped. */
 export const setPageDim = (
   owner: object,
   progress: number,
   onDismiss: (() => void) | null = null,
 ) => {
-  owners.set(owner, { progress: Math.min(1, Math.max(0, progress)), onDismiss })
+  owners.set(owner, { progress: clamp01(progress), onDismiss })
+  apply()
+}
+
+/** Overlapping closing/opening panels share the strongest dim, on the same native timeline. */
+export const animatePageDim = (
+  owner: object,
+  motion: SpringMotion,
+  start: number,
+  onDismiss: (() => void) | null,
+) => {
+  owners.delete(owner)
+  owners.set(owner, { progress: motion.target, motion, start, onDismiss })
   apply()
 }
 
 export const clearPageDim = (owner: object) => {
-  if (!owners.delete(owner)) return
-  apply()
+  if (owners.delete(owner)) apply()
 }
 
-/** A dimmed bar was tapped: dismiss the most recent owner that still accepts taps. */
 export const dismissPageDim = () => {
   const states = [...owners.values()]
-
   for (let i = states.length - 1; i >= 0; i--) {
-    const onDismiss = states[i]!.onDismiss
-
-    if (onDismiss) {
-      onDismiss()
+    const dismiss = states[i]!.onDismiss
+    if (dismiss) {
+      dismiss()
       return
     }
   }

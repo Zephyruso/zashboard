@@ -14,7 +14,7 @@
       ref="backdropRef"
     />
     <div
-      class="base-container absolute inset-0 flex flex-col p-2 will-change-transform"
+      class="base-container absolute inset-0 flex flex-col p-2"
       :class="cardHidden && 'invisible'"
       @contextmenu.prevent.stop="handlerLatencyTest"
       ref="cardRef"
@@ -24,17 +24,13 @@
         :proxies-count="proxiesCount"
         :is-latency-testing="isLatencyTesting"
         :display-content="false"
+        :animate-latency="!cardHidden"
         @latency-test="handlerLatencyTest"
       />
     </div>
-    <!--
-      Like PharosPro's policy card: the panel is laid out at its final, centered size, so the
-      proxy list never reflows while animating. One spring value drives the surface offset, its
-      clip, the shared icon and every fade in the same frame, so no edge can drift out of sync.
-      The backdrop and panel stay below the controls bar and the mobile dock (z-30), as the
-      in-list card does, so a card under the dock doesn't pop over it. Those bars dim through
-      their own PageDimLayer, driven by setPageDim() with the same spring value.
-    -->
+    <!-- Fixed final layout; only compositor transforms/opacity change during the spring.
+         Four translated rounded clips keep every corner and the text at their original size.
+         Both surfaces stay below the controls and dock; their dim layers share our timeline. -->
     <div
       v-if="panelMounted"
       class="pointer-events-none fixed inset-x-0 z-[25] flex items-center justify-center"
@@ -42,62 +38,104 @@
       :style="{ top: `${ctrlsBottom}px`, bottom: `${dockTop}px` }"
     >
       <div
-        class="base-container overlay-glass relative flex flex-col overflow-hidden p-2 shadow-xl"
-        :class="closing ? 'pointer-events-none' : 'pointer-events-auto'"
+        class="proxy-group-panel relative flex origin-top-left flex-col rounded-xl"
+        :class="[
+          closing ? 'pointer-events-none' : 'pointer-events-auto',
+          isAnimating && 'proxy-group-panel-moving',
+        ]"
         :style="panelStyle"
         @contextmenu.prevent.stop="handlerLatencyTest"
         ref="panelRef"
       >
         <div
-          class="flex min-h-0 flex-1 flex-col gap-2"
-          ref="panelBodyRef"
+          class="proxy-group-shadow pointer-events-none absolute inset-0 origin-top-left rounded-[inherit] shadow-xl"
+          ref="shadowRef"
+        />
+        <div
+          class="proxy-group-glass base-container overlay-glass pointer-events-none absolute inset-0"
+          ref="glassRef"
+        />
+        <div
+          class="proxy-group-panel-clip relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[inherit]"
         >
-          <ProxyGroupHeaderForMobile
-            :name="name"
-            :proxies-count="proxiesCount"
-            :is-latency-testing="isLatencyTesting"
-            :display-content="true"
-            :hide-icon="true"
-            @latency-test="handlerLatencyTest"
-          />
           <div
-            class="min-h-0 w-full flex-1 overflow-y-auto overscroll-contain"
-            :class="[PROXIES_PARENT_CLASS]"
-            :style="{ contain: 'layout style paint' }"
-            ref="panelListRef"
+            class="proxy-group-panel-clip"
+            ref="topRightClipRef"
           >
-            <Component
-              :is="groupProxiesByProvider ? ProxiesByProvider : ProxiesContent"
-              :name="name"
-              :now="proxyGroup.now"
-              :render-proxies="renderProxies"
-            />
+            <div
+              class="proxy-group-panel-clip"
+              ref="bottomRightClipRef"
+            >
+              <div
+                class="proxy-group-panel-clip"
+                ref="bottomLeftClipRef"
+              >
+                <div
+                  class="proxy-group-motion-surface pointer-events-none absolute inset-0 rounded-[inherit]"
+                  ref="surfaceRef"
+                />
+                <div
+                  class="proxy-group-panel-content relative flex min-h-0 flex-1 origin-top-left flex-col p-2"
+                  ref="panelContentRef"
+                >
+                  <div
+                    class="flex min-h-0 flex-1 flex-col gap-2"
+                    ref="panelBodyRef"
+                  >
+                    <ProxyGroupHeaderForMobile
+                      :name="name"
+                      :proxies-count="proxiesCount"
+                      :is-latency-testing="isLatencyTesting"
+                      :display-content="true"
+                      :hide-icon="true"
+                      @latency-test="handlerLatencyTest"
+                    />
+                    <div
+                      class="min-h-0 w-full flex-1 overflow-y-auto overscroll-contain"
+                      :class="[PROXIES_PARENT_CLASS]"
+                      :style="{ contain: 'layout style paint' }"
+                      ref="panelListRef"
+                    >
+                      <Component
+                        :is="groupProxiesByProvider ? ProxiesByProvider : ProxiesContent"
+                        :name="name"
+                        :now="proxyGroup.now"
+                        :render-proxies="renderProxies"
+                        :initial-width="initialListSize.width"
+                        :initial-height="initialListSize.height"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="pointer-events-none absolute top-0 left-0 flex flex-col p-2"
+                    aria-hidden="true"
+                    ref="sourceCopyRef"
+                  >
+                    <ProxyGroupHeaderForMobile
+                      :name="name"
+                      :proxies-count="proxiesCount"
+                      :is-latency-testing="isLatencyTesting"
+                      :display-content="false"
+                      :hide-icon="true"
+                      :animate-latency="false"
+                    />
+                  </div>
+                  <div
+                    v-if="proxyGroup.icon"
+                    class="pointer-events-none absolute top-2 right-2"
+                    aria-hidden="true"
+                    ref="sharedIconRef"
+                  >
+                    <ProxyIcon
+                      :icon="proxyGroup.icon"
+                      :size="40"
+                      :margin="0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div
-          class="pointer-events-none absolute top-0 left-0 flex flex-col p-2"
-          aria-hidden="true"
-          ref="sourceCopyRef"
-        >
-          <ProxyGroupHeaderForMobile
-            :name="name"
-            :proxies-count="proxiesCount"
-            :is-latency-testing="isLatencyTesting"
-            :display-content="false"
-            :hide-icon="true"
-          />
-        </div>
-        <div
-          v-if="proxyGroup.icon"
-          class="pointer-events-none absolute top-2 right-2"
-          aria-hidden="true"
-          ref="sharedIconRef"
-        >
-          <ProxyIcon
-            :icon="proxyGroup.icon"
-            :size="40"
-            :margin="0"
-          />
         </div>
       </div>
     </div>
@@ -105,128 +143,93 @@
 </template>
 
 <script setup lang="ts">
+import { proxyGroupLatencyTest, proxyMap } from '@/assembly/proxies'
 import { useBounceOnVisible } from '@/composables/use-bounce-on-visible'
 import { provideCollapseTransition } from '@/composables/use-collapse-transition'
 import { useOverlayDimState } from '@/composables/use-dialog-state'
-import { ctrlsBottom, dockTop } from '@/helper/padding-views'
-import { clearPageDim, setPageDim } from '@/helper/page-dim'
-import { disableProxiesPageScroll } from '@/helper/proxies'
 import { useRenderProxyList } from '@/composables/use-render-proxy-list'
+import { ctrlsBottom, dockTop } from '@/helper/padding-views'
+import { animatePageDim, clearPageDim, setPageDim } from '@/helper/page-dim'
+import { disableProxiesPageScroll } from '@/helper/proxies'
+import { animationTime, createSpringMotion, type SpringMotion } from '@/helper/spring-motion'
 import { PROXIES_PARENT_CLASS } from '@/helper/utils'
-import { proxyGroupLatencyTest } from '@/assembly/proxies'
-import { proxyMap } from '@/assembly/proxies'
-import { groupProxiesByProvider } from '@/store/settings'
-import { computed, nextTick, onUnmounted, ref } from 'vue'
+import {
+  customCSS,
+  groupProxiesByProvider,
+  minProxyCardWidth,
+  proxyCardSize,
+  truncateProxyName,
+} from '@/store/settings'
+import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import ProxiesByProvider from './ProxiesByProvider.vue'
 import ProxiesContent from './ProxiesContent.vue'
 import ProxyGroupHeaderForMobile from './ProxyGroupHeaderForMobile.vue'
 import ProxyIcon from './ProxyIcon.vue'
 
-const props = defineProps<{
-  name: string
-}>()
+const props = defineProps<{ name: string }>()
 const proxyGroup = computed(() => proxyMap.value[props.name])
 const allProxies = computed(() => proxyGroup.value.all ?? [])
 const { proxiesCount, renderProxies } = useRenderProxyList(allProxies, props.name)
 const isLatencyTesting = ref(false)
-
-/**
- * Spring matching SwiftUI's `.spring(duration: 0.4, bounce: 0.2)`: unit mass, stiffness from
- * the perceptual duration, damping from the bounce.
- */
-const SPRING_DURATION = 0.4
-const SPRING_BOUNCE = 0.2
-const SPRING_STIFFNESS = ((2 * Math.PI) / SPRING_DURATION) ** 2
-const SPRING_DAMPING = (2 * (1 - SPRING_BOUNCE) * (2 * Math.PI)) / SPRING_DURATION
-const SPRING_SUBSTEPS = 4
-const SETTLE_POSITION = 0.001
-const SETTLE_VELOCITY = 0.01
-
-/** Logical open state: drives the page dim and scroll lock. */
 const modalMode = ref(false)
-/** The panel stays mounted for the whole closing animation. */
 const panelMounted = ref(false)
 const isAnimating = ref(false)
 const closing = ref(false)
-/** Swaps the in-list card for the panel only once the panel is ready to animate. */
 const cardHidden = ref(false)
 let preparing = false
-/** A tap that arrived while the panel was still being prepared; applied once it opens. */
 let pendingClose = false
-/** Identifies this card's contribution to the shared page dim. */
+let prepareToken = 0
 const dimOwner = {}
 
 useOverlayDimState(modalMode)
-// Lets the proxy list skip overscan rows and defer scroll alignment until the motion settles.
 provideCollapseTransition(isAnimating)
 
-const cardWrapperRef = ref()
-const cardRef = ref()
+const cardWrapperRef = ref<HTMLElement>()
+const cardRef = ref<HTMLElement>()
 const backdropRef = ref<HTMLElement>()
 const panelRef = ref<HTMLElement>()
+const panelContentRef = ref<HTMLElement>()
+const topRightClipRef = ref<HTMLElement>()
+const bottomRightClipRef = ref<HTMLElement>()
+const bottomLeftClipRef = ref<HTMLElement>()
+const shadowRef = ref<HTMLElement>()
 const panelBodyRef = ref<HTMLElement>()
 const panelListRef = ref<HTMLElement>()
 const sourceCopyRef = ref<HTMLElement>()
 const sharedIconRef = ref<HTMLElement>()
-
+const glassRef = ref<HTMLElement>()
+const surfaceRef = ref<HTMLElement>()
 const panelStyle = ref<Record<string, string>>({})
+const initialListSize = ref({ width: 0, height: 0 })
 
-/** Breathing room between the panel and the controls bar / dock. */
 const PANEL_MARGIN = 16
 const PANEL_MAX_HEIGHT = 520
 
-type Geometry = {
-  /** Offset from the panel's final top-left corner to the card's. */
-  dx: number
-  dy: number
-  /** How much wider / taller the panel is than the card. */
-  dw: number
-  dh: number
-  radius: string
-}
-
+type Geometry = { dx: number; dy: number; dw: number; dh: number; width: number; height: number }
 let geometry: Geometry | null = null
 let position = 0
-let velocity = 0
 let target = 0
-let frameId = 0
-let lastTime = 0
+let running: { motion: SpringMotion; start: number } | null = null
+let animations: Animation[] = []
+let cachedHeight: { key: string; height: number } | undefined
+let sizeKey = ''
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
-
-const prefersReducedMotion = () =>
-  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
-
+const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const nextFrame = () => new Promise<number>((resolve) => requestAnimationFrame(resolve))
 
-/**
- * The virtual proxy list learns its width from a ResizeObserver, then renders rows from estimated
- * heights and measures them over the next frames, so the panel's height keeps changing at first.
- * Wait for it to settle before measuring, otherwise the locked height is wrong and the panel
- * jumps to its real size when the lock is released.
- *
- * The panel's own height is not enough to tell: while the estimate overflows `max-height` it
- * stays clamped and looks stable, then shrinks once rows are measured. Track the list's content
- * height too, and require it to hold for a couple of frames, since each hop of the virtualizer
- * (width -> columns -> rows -> measurement) lands on a later frame.
- */
-const waitForStableHeight = async (
-  panel: HTMLElement,
-  list: HTMLElement | undefined,
-  maxFrames = 12,
-  stableFrames = 2,
-) => {
+// Width/viewport seeds avoid the virtualizer's initial one-column, empty-viewport pass.
+// Wrapped names and provider sections still need real measurements before the shell moves.
+const waitForStableHeight = async (panel: HTMLElement, list: HTMLElement | undefined) => {
   const read = () => `${panel.offsetHeight}:${list?.scrollHeight ?? 0}`
   let size = read()
   let stable = 0
-
-  for (let i = 0; i < maxFrames; i++) {
+  for (let i = 0; i < 12; i++) {
     await nextFrame()
     if (!panel.isConnected) return
-
     const next = read()
     if (next === size) {
-      if (++stable >= stableFrames) return
+      if (++stable >= 2) return
     } else {
       stable = 0
       size = next
@@ -234,154 +237,229 @@ const waitForStableHeight = async (
   }
 }
 
-const lockPanelHeight = (panel: HTMLElement) => {
-  panel.style.height = `${panel.offsetHeight}px`
-}
-
-/** Must run while the panel is at rest in its open position (no offset applied). */
 const measureGeometry = (panel: HTMLElement, wrapper: HTMLElement): Geometry => {
   const source = wrapper.getBoundingClientRect()
   const final = panel.getBoundingClientRect()
-
+  panel.style.height = `${final.height}px`
   if (sourceCopyRef.value) {
     sourceCopyRef.value.style.width = `${source.width}px`
     sourceCopyRef.value.style.height = `${source.height}px`
   }
-
   return {
     dx: source.left - final.left,
     dy: source.top - final.top,
     dw: final.width - source.width,
     dh: final.height - source.height,
-    radius: getComputedStyle(panel).borderTopLeftRadius,
+    width: final.width,
+    height: final.height,
   }
 }
 
-/** 0 = collapsed onto the card, 1 = open in the center. Overshoot past 1 is the bounce. */
-const render = (progress: number) => {
-  const panel = panelRef.value
-  if (!panel || !geometry) return
-
-  const { dx, dy, dw, dh, radius } = geometry
+// Intersect four full-size rounded rectangles, one for each corner. Their translations
+// move the right/bottom edges without ever scaling the radius or repainting a clip path.
+const stylesAt = (progress: number) => {
+  const { dx, dy, dw, dh, width, height } = geometry!
   const rest = 1 - progress
+  const clipRest = Math.max(0, rest)
+  const sx = Math.max(0.01, (width - dw * clipRest) / width)
+  const sy = Math.max(0.01, (height - dh * clipRest) / height)
+  return {
+    panel: `translate3d(${dx * rest}px, ${dy * rest}px, 0)`,
+    topRight: `translate3d(${-dw * clipRest}px, 0, 0)`,
+    bottomRight: `translate3d(0, ${-dh * clipRest}px, 0)`,
+    bottomLeft: `translate3d(${dw * clipRest}px, 0, 0)`,
+    content: `translate3d(0, ${dh * clipRest}px, 0)`,
+    shadow: `scale(${sx}, ${sy})`,
+    icon: `translate3d(${-dw * clipRest}px, 0, 0)`,
+    body: clamp01((progress - 0.05) / 0.35),
+    source: 1 - clamp01(progress / 0.25),
+    backdrop: clamp01(progress),
+  }
+}
 
-  panel.style.transform = `translate3d(${dx * rest}px, ${dy * rest}px, 0)`
-  panel.style.clipPath = `inset(0px ${dw * rest}px ${dh * rest}px 0px round ${radius})`
+const render = (progress: number) => {
+  if (!panelRef.value || !geometry) return
+  const style = stylesAt(progress)
+  panelRef.value.style.transform = style.panel
+  if (topRightClipRef.value) topRightClipRef.value.style.transform = style.topRight
+  if (bottomRightClipRef.value) bottomRightClipRef.value.style.transform = style.bottomRight
+  if (bottomLeftClipRef.value) bottomLeftClipRef.value.style.transform = style.bottomLeft
+  if (shadowRef.value) shadowRef.value.style.transform = style.shadow
+  if (panelContentRef.value) panelContentRef.value.style.transform = style.content
+  if (sharedIconRef.value) sharedIconRef.value.style.transform = style.icon
+  if (panelBodyRef.value) panelBodyRef.value.style.opacity = String(style.body)
+  if (sourceCopyRef.value) sourceCopyRef.value.style.opacity = String(style.source)
+  if (backdropRef.value) backdropRef.value.style.opacity = String(style.backdrop)
+}
 
-  if (sharedIconRef.value) {
-    sharedIconRef.value.style.transform = `translate3d(${-dw * rest}px, 0, 0)`
+const cancelAnimations = () => {
+  for (const animation of animations) {
+    animation.onfinish = null
+    animation.cancel()
   }
-  if (panelBodyRef.value) {
-    panelBodyRef.value.style.opacity = `${clamp01((progress - 0.05) / 0.35)}`
-  }
-  if (sourceCopyRef.value) {
-    sourceCopyRef.value.style.opacity = `${1 - clamp01(progress / 0.25)}`
-  }
-  if (backdropRef.value) {
-    backdropRef.value.style.opacity = `${clamp01(progress)}`
-  }
-  // While closing, taps on the dimmed bars go through to the page instead of being swallowed.
-  setPageDim(dimOwner, progress, closing.value ? null : handlerGroupClick)
+  animations = []
 }
 
 const settle = () => {
-  frameId = 0
   position = target
-  velocity = 0
+  running = null
   render(position)
-
+  cancelAnimations()
   if (target === 1) {
-    if (panelRef.value) {
-      panelRef.value.style.height = ''
-      panelRef.value.style.clipPath = ''
+    const panel = panelRef.value
+    if (panel) {
+      if (sizeKey) cachedHeight = { key: sizeKey, height: panel.offsetHeight }
+      delete panelStyle.value.height
+      panel.style.height = ''
     }
+    // Reveal fully opaque glass UNDER the solid surface. Cross-fading both surfaces
+    // would make their combined coverage dip in the middle, flashing the background.
+    if (glassRef.value) glassRef.value.style.opacity = '1'
+    if (surfaceRef.value) surfaceRef.value.style.opacity = '0'
+    if (!prefersReducedMotion()) {
+      if (surfaceRef.value) animations.push(surfaceRef.value.animate({ opacity: [1, 0] }, 120))
+    }
+    setPageDim(dimOwner, 1, handlerGroupClick)
     isAnimating.value = false
     return
   }
 
-  geometry = null
   clearPageDim(dimOwner)
+  geometry = null
   panelMounted.value = false
   cardHidden.value = false
   closing.value = false
   isAnimating.value = false
 }
 
-const step = (now: number) => {
-  const dt = Math.min((now - lastTime) / 1000, 1 / 30) / SPRING_SUBSTEPS
-  lastTime = now
-
-  for (let i = 0; i < SPRING_SUBSTEPS; i++) {
-    const acceleration = -SPRING_STIFFNESS * (position - target) - SPRING_DAMPING * velocity
-    velocity += acceleration * dt
-    position += velocity * dt
-  }
-
-  if (Math.abs(position - target) < SETTLE_POSITION && Math.abs(velocity) < SETTLE_VELOCITY) {
-    settle()
-    return
-  }
-
-  render(position)
-  frameId = requestAnimationFrame(step)
-}
-
-/** Retargets the spring, keeping its current position and velocity, so motion can reverse. */
+/** Keep position AND velocity when reversing; all native effects share one start time. */
 const animateTo = (value: number) => {
+  const now = animationTime()
+  const state = running ? running.motion.sample(now - running.start) : { position, velocity: 0 }
+  cancelAnimations()
   target = value
   isAnimating.value = true
-
+  if (glassRef.value) glassRef.value.style.opacity = '0'
+  if (surfaceRef.value) surfaceRef.value.style.opacity = '1'
   if (prefersReducedMotion()) {
-    cancelAnimationFrame(frameId)
     settle()
     return
   }
 
-  if (!frameId) {
-    lastTime = performance.now()
-    frameId = requestAnimationFrame(step)
+  const motion = createSpringMotion(state, target)
+  running = { motion, start: now }
+  render(state.position)
+  const frames = motion.points.map(({ offset, position }) => ({ offset, ...stylesAt(position) }))
+  const animate = (el: HTMLElement | undefined, keyframes: Keyframe[]) => {
+    if (!el) return
+    const animation = el.animate(keyframes, {
+      duration: motion.duration,
+      fill: 'both',
+      easing: 'linear',
+    })
+    animation.startTime = now
+    animations.push(animation)
+    return animation
   }
+  const primary = animate(
+    panelRef.value,
+    frames.map((frame) => ({ offset: frame.offset, transform: frame.panel })),
+  )
+  animate(
+    topRightClipRef.value,
+    frames.map((frame) => ({ offset: frame.offset, transform: frame.topRight })),
+  )
+  animate(
+    bottomRightClipRef.value,
+    frames.map((frame) => ({ offset: frame.offset, transform: frame.bottomRight })),
+  )
+  animate(
+    bottomLeftClipRef.value,
+    frames.map((frame) => ({ offset: frame.offset, transform: frame.bottomLeft })),
+  )
+  animate(
+    shadowRef.value,
+    frames.map((frame) => ({ offset: frame.offset, transform: frame.shadow })),
+  )
+  animate(
+    panelContentRef.value,
+    frames.map((frame) => ({ offset: frame.offset, transform: frame.content })),
+  )
+  animate(
+    sharedIconRef.value,
+    frames.map((frame) => ({ offset: frame.offset, transform: frame.icon })),
+  )
+  animate(
+    panelBodyRef.value,
+    frames.map((frame) => ({ offset: frame.offset, opacity: frame.body })),
+  )
+  animate(
+    sourceCopyRef.value,
+    frames.map((frame) => ({ offset: frame.offset, opacity: frame.source })),
+  )
+  animate(
+    backdropRef.value,
+    frames.map((frame) => ({ offset: frame.offset, opacity: frame.backdrop })),
+  )
+  animatePageDim(dimOwner, motion, now, closing.value ? null : handlerGroupClick)
+  if (primary) primary.onfinish = settle
+  else settle()
 }
 
 const openPanel = async () => {
-  const wrapper = cardWrapperRef.value as HTMLElement | undefined
+  const wrapper = cardWrapperRef.value
   if (!wrapper) return
-
+  const token = ++prepareToken
   preparing = true
   pendingClose = false
   isAnimating.value = true
   disableProxiesPageScroll.value = true
-  // Center between the controls bar and the dock instead of the whole viewport.
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+  const width = Math.min(window.innerWidth - 2 * rem, 32 * rem)
   const available = window.innerHeight - ctrlsBottom.value - dockTop.value - PANEL_MARGIN * 2
+  const maxHeight = Math.max(1, Math.round(Math.min(available, PANEL_MAX_HEIGHT)))
+  initialListSize.value = { width: width - rem, height: Math.max(0, maxHeight - 6 * rem) }
+  // Only reuse known fixed-row layouts. Wrapping/provider layout keeps the measurement path.
+  sizeKey =
+    truncateProxyName.value && !groupProxiesByProvider.value && document.fonts.status === 'loaded'
+      ? [
+          width,
+          maxHeight,
+          rem,
+          getComputedStyle(wrapper).font,
+          proxyCardSize.value,
+          minProxyCardWidth.value,
+          renderProxies.value.length,
+          customCSS.value,
+        ].join('|')
+      : ''
+  const cached = sizeKey && cachedHeight?.key === sizeKey ? cachedHeight.height : undefined
   panelStyle.value = {
     width: 'min(calc(100vw - 2rem), 32rem)',
-    maxHeight: `${Math.round(Math.min(available, PANEL_MAX_HEIGHT))}px`,
+    maxHeight: `${maxHeight}px`,
+    ...(cached ? { height: `${cached}px` } : {}),
   }
   panelMounted.value = true
-
   await nextTick()
-  // The panel is mounted invisibly while the list settles; the card stays in place meanwhile.
-  if (panelRef.value) await waitForStableHeight(panelRef.value, panelListRef.value)
+  if (!cached && panelRef.value) await waitForStableHeight(panelRef.value, panelListRef.value)
+  if (token !== prepareToken || !panelRef.value) return
   preparing = false
-  if (!panelRef.value) return
+  if (pendingClose) {
+    pendingClose = false
+    disableProxiesPageScroll.value = false
+    target = 0
+    settle()
+    return
+  }
 
-  lockPanelHeight(panelRef.value)
   geometry = measureGeometry(panelRef.value, wrapper)
   position = 0
-  velocity = 0
-  // Collapse onto the card before revealing; both land in the same frame.
   render(0)
   cardHidden.value = true
   modalMode.value = true
   animateTo(1)
-
-  if (pendingClose) {
-    pendingClose = false
-    closePanel()
-  }
 }
 
-/** Reverses a close that is still in flight, picking up the spring where it is. */
 const reopenPanel = () => {
   closing.value = false
   modalMode.value = true
@@ -390,35 +468,22 @@ const reopenPanel = () => {
 }
 
 const closePanel = () => {
-  const wrapper = cardWrapperRef.value as HTMLElement | undefined
-
   closing.value = true
   modalMode.value = false
   disableProxiesPageScroll.value = false
-
-  // At rest the panel may have resized while open; measure again and hold it for the motion.
-  if (!frameId && panelRef.value && wrapper) {
-    lockPanelHeight(panelRef.value)
-    geometry = measureGeometry(panelRef.value, wrapper)
+  if (!running && panelRef.value && cardWrapperRef.value) {
+    geometry = measureGeometry(panelRef.value, cardWrapperRef.value)
   }
-
   animateTo(0)
 }
 
-/**
- * Never drops a tap: a closing panel no longer blocks the page, so the next card opens right
- * away, and tapping this card again while it closes reverses the motion.
- */
 const handlerGroupClick = () => {
   if (preparing) {
     pendingClose = !pendingClose
-    return
-  }
-
-  if (closing.value) {
+  } else if (closing.value) {
     reopenPanel()
   } else if (!panelMounted.value) {
-    openPanel()
+    void openPanel()
   } else {
     closePanel()
   }
@@ -426,23 +491,52 @@ const handlerGroupClick = () => {
 
 const handlerLatencyTest = async () => {
   if (isLatencyTesting.value) return
-
   isLatencyTesting.value = true
   try {
     await proxyGroupLatencyTest(props.name)
-    isLatencyTesting.value = false
   } catch {
+    // The latency test reports backend errors itself.
+  } finally {
     isLatencyTesting.value = false
   }
 }
 
-onUnmounted(() => {
-  cancelAnimationFrame(frameId)
+onBeforeUnmount(() => {
+  prepareToken++
+  cancelAnimations()
   clearPageDim(dimOwner)
-  if (modalMode.value) {
-    disableProxiesPageScroll.value = false
-  }
+  if (modalMode.value || preparing) disableProxiesPageScroll.value = false
 })
 
 useBounceOnVisible(cardRef)
 </script>
+
+<style scoped>
+.proxy-group-motion-surface {
+  background: var(--color-base-100);
+}
+
+.proxy-group-panel-clip {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: inherit;
+  /* A stationary mask preserves the rounded overflow when WebKit changes layers at rest.
+     Glass lives outside this mask so its backdrop can still sample the page. */
+  -webkit-mask-image: linear-gradient(white, white);
+  mask-image: linear-gradient(white, white);
+}
+
+.proxy-group-panel-moving > .proxy-group-glass {
+  visibility: hidden;
+}
+
+.proxy-group-panel-moving,
+.proxy-group-panel-moving .proxy-group-panel-clip,
+.proxy-group-panel-moving .proxy-group-panel-content {
+  will-change: transform;
+}
+</style>
