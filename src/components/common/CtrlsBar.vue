@@ -5,10 +5,12 @@
     ref="ctrlsBarRef"
   >
     <slot></slot>
+    <PageDimLayer />
   </div>
 </template>
 <script lang="ts" setup>
 import { ctrlsBottom } from '@/helper/padding-views'
+import PageDimLayer from './PageDimLayer.vue'
 import { isMiddleScreen } from '@/helper/utils'
 import { useElementBounding } from '@vueuse/core'
 import { onUnmounted, ref, watch } from 'vue'

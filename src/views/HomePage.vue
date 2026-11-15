@@ -60,6 +60,8 @@
                 {{ $t(r) }}
               </span>
             </button>
+            <!-- Mostly translucent glass over the page backdrop, so dim it lighter. -->
+            <PageDimLayer :scale="0.3" />
           </nav>
           <div
             class="fixed bottom-0 z-10 w-full"
@@ -84,6 +86,7 @@
 <script setup lang="ts">
 import { isBackendAvailable } from '@/assembly/probe'
 import { startBackendSession } from '@/assembly/session'
+import PageDimLayer from '@/components/common/PageDimLayer.vue'
 import SideBar from '@/components/sidebar/SideBar.vue'
 import { dockTop } from '@/helper/padding-views'
 import { checkUIUpdate } from '@/assembly/version'

@@ -13,20 +13,6 @@
       style="opacity: 0"
       ref="backdropRef"
     />
-    <!--
-      The controls bar and the dock float above the page (z-30), so they get their own dims on
-      top, driven by the same spring. They also swallow taps, which close the panel.
-    -->
-    <template v-if="panelMounted">
-      <div
-        v-for="bar in barDims"
-        :key="bar.key"
-        class="fixed z-[31] bg-black/40"
-        :class="!cardHidden && 'invisible'"
-        :style="{ ...bar.style, opacity: 0 }"
-        :ref="(el) => setBarDimRef(bar.key, el as HTMLElement | null)"
-      />
-    </template>
     <div
       class="base-container absolute inset-0 flex flex-col p-2 will-change-transform"
       :class="cardHidden && 'invisible'"
@@ -45,8 +31,9 @@
       Like PharosPro's policy card: the panel is laid out at its final, centered size, so the
       proxy list never reflows while animating. One spring value drives the surface offset, its
       clip, the shared icon and every fade in the same frame, so no edge can drift out of sync.
-      The backdrop and panel sit above the proxies controls (z-20) but below the mobile dock
-      (z-30), as the in-list card does, so a card under the dock doesn't pop over it.
+      The backdrop and panel stay below the controls bar and the mobile dock (z-30), as the
+      in-list card does, so a card under the dock doesn't pop over it. Those bars dim through
+      their own PageDimLayer, driven by setPageDim() with the same spring value.
     -->
     <div
       v-if="panelMounted"
@@ -121,6 +108,7 @@ import { useBounceOnVisible } from '@/composables/use-bounce-on-visible'
 import { provideCollapseTransition } from '@/composables/use-collapse-transition'
 import { useOverlayDimState } from '@/composables/use-dialog-state'
 import { ctrlsBottom, dockTop } from '@/helper/padding-views'
+import { setPageDim, setPageDimDismissHandler } from '@/helper/page-dim'
 import { disableProxiesPageScroll } from '@/helper/proxies'
 import { useRenderProxyList } from '@/composables/use-render-proxy-list'
 import { PROXIES_PARENT_CLASS } from '@/helper/utils'
@@ -180,49 +168,6 @@ const panelStyle = ref<Record<string, string>>({})
 /** Breathing room between the panel and the controls bar / dock. */
 const PANEL_MARGIN = 16
 const PANEL_MAX_HEIGHT = 520
-/**
- * The dock is mostly translucent glass over the (already dimmed) backdrop, so a full-strength
- * dim on top would make it darker than its surroundings.
- */
-const DOCK_DIM_SCALE = 0.3
-
-type BarDim = { key: 'ctrls' | 'dock'; style: Record<string, string>; scale: number }
-const barDims = ref<BarDim[]>([])
-const barDimEls = new Map<BarDim['key'], HTMLElement>()
-const setBarDimRef = (key: BarDim['key'], el: HTMLElement | null) => {
-  if (el) barDimEls.set(key, el)
-  else barDimEls.delete(key)
-}
-
-const measureBarDims = (): BarDim[] => {
-  const dims: BarDim[] = []
-
-  if (ctrlsBottom.value > 0) {
-    dims.push({
-      key: 'ctrls',
-      style: { top: '0px', left: '0px', right: '0px', height: `${ctrlsBottom.value}px` },
-      scale: 1,
-    })
-  }
-
-  const dock = document.querySelector<HTMLElement>('nav.tab-bar')
-  if (dock) {
-    const rect = dock.getBoundingClientRect()
-    dims.push({
-      key: 'dock',
-      style: {
-        top: `${rect.top}px`,
-        left: `${rect.left}px`,
-        width: `${rect.width}px`,
-        height: `${rect.height}px`,
-        borderRadius: getComputedStyle(dock).borderTopLeftRadius,
-      },
-      scale: DOCK_DIM_SCALE,
-    })
-  }
-
-  return dims
-}
 
 type Geometry = {
   /** Offset from the panel's final top-left corner to the card's. */
@@ -312,10 +257,7 @@ const render = (progress: number) => {
   if (backdropRef.value) {
     backdropRef.value.style.opacity = `${clamp01(progress)}`
   }
-  for (const bar of barDims.value) {
-    const el = barDimEls.get(bar.key)
-    if (el) el.style.opacity = `${clamp01(progress) * bar.scale}`
-  }
+  setPageDim(progress)
 }
 
 const settle = () => {
@@ -334,7 +276,7 @@ const settle = () => {
   }
 
   geometry = null
-  barDims.value = []
+  setPageDimDismissHandler(null)
   panelMounted.value = false
   cardHidden.value = false
   closing.value = false
@@ -390,7 +332,7 @@ const openPanel = async () => {
     width: 'min(calc(100vw - 2rem), 32rem)',
     maxHeight: `${Math.round(Math.min(available, PANEL_MAX_HEIGHT))}px`,
   }
-  barDims.value = measureBarDims()
+  setPageDimDismissHandler(handlerGroupClick)
   panelMounted.value = true
 
   await nextTick()
@@ -450,6 +392,10 @@ const handlerLatencyTest = async () => {
 
 onUnmounted(() => {
   cancelAnimationFrame(frameId)
+  if (panelMounted.value) {
+    setPageDim(0)
+    setPageDimDismissHandler(null)
+  }
   if (modalMode.value) {
     disableProxiesPageScroll.value = false
   }
