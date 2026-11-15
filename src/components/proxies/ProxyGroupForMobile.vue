@@ -9,7 +9,7 @@
     <div
       v-if="panelMounted"
       class="fixed inset-0 z-[24] overflow-hidden bg-black/40"
-      :class="!cardHidden && 'invisible'"
+      :class="[!cardHidden && 'invisible', closing && 'pointer-events-none']"
       style="opacity: 0"
       ref="backdropRef"
     />
@@ -108,7 +108,7 @@ import { useBounceOnVisible } from '@/composables/use-bounce-on-visible'
 import { provideCollapseTransition } from '@/composables/use-collapse-transition'
 import { useOverlayDimState } from '@/composables/use-dialog-state'
 import { ctrlsBottom, dockTop } from '@/helper/padding-views'
-import { setPageDim, setPageDimDismissHandler } from '@/helper/page-dim'
+import { clearPageDim, setPageDim } from '@/helper/page-dim'
 import { disableProxiesPageScroll } from '@/helper/proxies'
 import { useRenderProxyList } from '@/composables/use-render-proxy-list'
 import { PROXIES_PARENT_CLASS } from '@/helper/utils'
@@ -150,6 +150,10 @@ const closing = ref(false)
 /** Swaps the in-list card for the panel only once the panel is ready to animate. */
 const cardHidden = ref(false)
 let preparing = false
+/** A tap that arrived while the panel was still being prepared; applied once it opens. */
+let pendingClose = false
+/** Identifies this card's contribution to the shared page dim. */
+const dimOwner = {}
 
 useOverlayDimState(modalMode)
 // Lets the proxy list skip overscan rows and defer scroll alignment until the motion settles.
@@ -257,7 +261,8 @@ const render = (progress: number) => {
   if (backdropRef.value) {
     backdropRef.value.style.opacity = `${clamp01(progress)}`
   }
-  setPageDim(progress)
+  // While closing, taps on the dimmed bars go through to the page instead of being swallowed.
+  setPageDim(dimOwner, progress, closing.value ? null : handlerGroupClick)
 }
 
 const settle = () => {
@@ -276,7 +281,7 @@ const settle = () => {
   }
 
   geometry = null
-  setPageDimDismissHandler(null)
+  clearPageDim(dimOwner)
   panelMounted.value = false
   cardHidden.value = false
   closing.value = false
@@ -324,6 +329,7 @@ const openPanel = async () => {
   if (!wrapper) return
 
   preparing = true
+  pendingClose = false
   isAnimating.value = true
   disableProxiesPageScroll.value = true
   // Center between the controls bar and the dock instead of the whole viewport.
@@ -332,7 +338,6 @@ const openPanel = async () => {
     width: 'min(calc(100vw - 2rem), 32rem)',
     maxHeight: `${Math.round(Math.min(available, PANEL_MAX_HEIGHT))}px`,
   }
-  setPageDimDismissHandler(handlerGroupClick)
   panelMounted.value = true
 
   await nextTick()
@@ -349,6 +354,19 @@ const openPanel = async () => {
   render(0)
   cardHidden.value = true
   modalMode.value = true
+  animateTo(1)
+
+  if (pendingClose) {
+    pendingClose = false
+    closePanel()
+  }
+}
+
+/** Reverses a close that is still in flight, picking up the spring where it is. */
+const reopenPanel = () => {
+  closing.value = false
+  modalMode.value = true
+  disableProxiesPageScroll.value = true
   animateTo(1)
 }
 
@@ -368,10 +386,19 @@ const closePanel = () => {
   animateTo(0)
 }
 
+/**
+ * Never drops a tap: a closing panel no longer blocks the page, so the next card opens right
+ * away, and tapping this card again while it closes reverses the motion.
+ */
 const handlerGroupClick = () => {
-  if (preparing || closing.value) return
+  if (preparing) {
+    pendingClose = !pendingClose
+    return
+  }
 
-  if (!panelMounted.value) {
+  if (closing.value) {
+    reopenPanel()
+  } else if (!panelMounted.value) {
     openPanel()
   } else {
     closePanel()
@@ -392,10 +419,7 @@ const handlerLatencyTest = async () => {
 
 onUnmounted(() => {
   cancelAnimationFrame(frameId)
-  if (panelMounted.value) {
-    setPageDim(0)
-    setPageDimDismissHandler(null)
-  }
+  clearPageDim(dimOwner)
   if (modalMode.value) {
     disableProxiesPageScroll.value = false
   }
