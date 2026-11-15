@@ -36,17 +36,30 @@ export const useThemeColor = (app: Ref<HTMLElement | undefined>) => {
   let dimProgress = 0
   let dimFrame = 0
 
-  const setThemeColor = () => {
-    if (!app.value) return
+  let appliedColor = ''
 
-    const themeColor = getComputedStyle(app.value).getPropertyValue('background-color').trim()
-    const rgb = dimProgress > 0 ? toRgb(themeColor) : null
+  const applyColor = (baseColor: string) => {
+    const rgb = dimProgress > 0 ? toRgb(baseColor) : null
     const scale = 1 - OVERLAY_DIM_ALPHA * dimProgress
     const dim = (channel: number) => Math.round(channel * scale)
-    const color = rgb ? `rgb(${dim(rgb.r)}, ${dim(rgb.g)}, ${dim(rgb.b)})` : themeColor
+    const color = rgb ? `rgb(${dim(rgb.r)}, ${dim(rgb.g)}, ${dim(rgb.b)})` : baseColor
 
-    document.documentElement.style.setProperty('--status-bar-tint', color)
+    if (color === appliedColor) return
+    appliedColor = color
+
+    // Scope the variable to the tint element: setting it on <html> restyles the whole document.
+    document
+      .querySelector<HTMLElement>('.status-bar-tint')
+      ?.style.setProperty('--status-bar-tint', color)
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', color)
+  }
+
+  const readBaseColor = () =>
+    app.value ? getComputedStyle(app.value).getPropertyValue('background-color').trim() : ''
+
+  const setThemeColor = () => {
+    const baseColor = readBaseColor()
+    if (baseColor) applyColor(baseColor)
   }
 
   const animateDim = (to: number) => {
@@ -56,6 +69,13 @@ export const useThemeColor = (app: Ref<HTMLElement | undefined>) => {
     const distance = to - from
     if (!distance) return
 
+    // Read the base color once; getComputedStyle every frame forces a style recalc mid-animation.
+    const baseColor = readBaseColor()
+    if (!baseColor) {
+      dimProgress = to
+      return
+    }
+
     const duration = OVERLAY_DIM_DURATION * Math.abs(distance)
     const start = performance.now()
 
@@ -63,7 +83,7 @@ export const useThemeColor = (app: Ref<HTMLElement | undefined>) => {
       const progress = Math.min((now - start) / duration, 1)
 
       dimProgress = from + distance * easeOut(progress)
-      setThemeColor()
+      applyColor(baseColor)
 
       if (progress < 1) dimFrame = requestAnimationFrame(step)
     }

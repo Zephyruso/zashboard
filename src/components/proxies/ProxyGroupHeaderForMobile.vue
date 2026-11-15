@@ -51,7 +51,8 @@
       :icon="proxyGroup.icon"
       :size="40"
       :margin="0"
-      class="absolute top-0 right-0"
+      class="proxy-group-header-icon absolute top-0 right-0"
+      :class="hideIcon && 'invisible'"
     />
   </div>
 </template>
@@ -80,6 +81,7 @@ const props = defineProps<{
   proxiesCount: string
   isLatencyTesting: boolean
   displayContent: boolean
+  hideIcon?: boolean
 }>()
 
 const emit = defineEmits<{
