@@ -8,7 +8,7 @@
   >
     <div
       v-if="panelMounted"
-      class="fixed inset-0 z-40 overflow-hidden bg-black/40"
+      class="fixed inset-0 z-[24] overflow-hidden bg-black/40"
       :class="!cardHidden && 'invisible'"
       style="opacity: 0"
       ref="backdropRef"
@@ -31,10 +31,12 @@
       Like PharosPro's policy card: the panel is laid out at its final, centered size, so the
       proxy list never reflows while animating. One spring value drives the surface offset, its
       clip, the shared icon and every fade in the same frame, so no edge can drift out of sync.
+      The backdrop and panel sit above the proxies controls (z-20) but below the mobile dock
+      (z-30), as the in-list card does, so a card under the dock doesn't pop over it.
     -->
     <div
       v-if="panelMounted"
-      class="pointer-events-none fixed inset-0 z-50 flex items-center justify-center"
+      class="pointer-events-none fixed inset-0 z-[25] flex items-center justify-center"
       :class="!cardHidden && 'invisible'"
     >
       <div
