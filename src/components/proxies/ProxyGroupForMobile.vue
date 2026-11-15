@@ -35,7 +35,7 @@
       v-if="panelMounted"
       class="pointer-events-none fixed inset-x-0 z-[25] flex items-center justify-center"
       :class="!cardHidden && 'invisible'"
-      :style="{ top: `${ctrlsBottom}px`, bottom: `${dockTop}px` }"
+      :style="{ top: `${panelBounds.top}px`, bottom: `${panelBounds.bottom}px` }"
     >
       <div
         class="proxy-group-panel relative flex origin-top-left flex-col rounded-xl"
@@ -148,7 +148,7 @@ import { useBounceOnVisible } from '@/composables/use-bounce-on-visible'
 import { provideCollapseTransition } from '@/composables/use-collapse-transition'
 import { useOverlayDimState } from '@/composables/use-dialog-state'
 import { useRenderProxyList } from '@/composables/use-render-proxy-list'
-import { ctrlsBottom, dockTop } from '@/helper/padding-views'
+import { ctrlsBottom, dockTop, proxyFolderBarBottom } from '@/helper/padding-views'
 import { animatePageDim, clearPageDim, setPageDim } from '@/helper/page-dim'
 import { disableProxiesPageScroll } from '@/helper/proxies'
 import { animationTime, createSpringMotion, type SpringMotion } from '@/helper/spring-motion'
@@ -200,6 +200,7 @@ const sharedIconRef = ref<HTMLElement>()
 const glassRef = ref<HTMLElement>()
 const surfaceRef = ref<HTMLElement>()
 const panelStyle = ref<Record<string, string>>({})
+const panelBounds = ref({ top: 0, bottom: 0 })
 const initialListSize = ref({ width: 0, height: 0 })
 
 const PANEL_MARGIN = 16
@@ -416,7 +417,14 @@ const openPanel = async () => {
   disableProxiesPageScroll.value = true
   const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
   const width = Math.min(window.innerWidth - 2 * rem, 32 * rem)
-  const available = window.innerHeight - ctrlsBottom.value - dockTop.value - PANEL_MARGIN * 2
+  // Snapshot the whole top chrome, including the folder bar, before measuring the spring.
+  // Its sticky-padding transition must not move the panel's coordinate space mid-flight.
+  panelBounds.value = {
+    top: Math.max(ctrlsBottom.value, proxyFolderBarBottom.value),
+    bottom: dockTop.value,
+  }
+  const available =
+    window.innerHeight - panelBounds.value.top - panelBounds.value.bottom - PANEL_MARGIN * 2
   const maxHeight = Math.max(1, Math.round(Math.min(available, PANEL_MAX_HEIGHT)))
   initialListSize.value = { width: width - rem, height: Math.max(0, maxHeight - 6 * rem) }
   // Only reuse known fixed-row layouts. Wrapping/provider layout keeps the measurement path.

@@ -152,3 +152,6 @@ node test/mobile-panel.mjs
 
 截图写入 `/tmp/zashboard-mobile-panel-open.png` 和 `/tmp/zashboard-mobile-panel-closing.png`。
 本脚本验证交互及渲染行为，桌面 Chrome 的帧率不代表手机实测帧率。
+
+`node test/mobile-panel-layers.mjs` 专门检查顶部层级：普通/文件夹模式下从顶部遮住一部分的卡片展开，
+确认控制栏、文件夹栏和 dock 的遮挡与遮罩点击；同时覆盖小屏和模拟 44px 顶部安全区，验证面板停稳后完整避让顶部。
