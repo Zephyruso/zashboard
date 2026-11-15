@@ -13,6 +13,20 @@
       style="opacity: 0"
       ref="backdropRef"
     />
+    <!--
+      The controls bar and the dock float above the page (z-30), so they get their own dims on
+      top, driven by the same spring. They also swallow taps, which close the panel.
+    -->
+    <template v-if="panelMounted">
+      <div
+        v-for="bar in barDims"
+        :key="bar.key"
+        class="fixed z-[31] bg-black/40"
+        :class="!cardHidden && 'invisible'"
+        :style="{ ...bar.style, opacity: 0 }"
+        :ref="(el) => setBarDimRef(bar.key, el as HTMLElement | null)"
+      />
+    </template>
     <div
       class="base-container absolute inset-0 flex flex-col p-2 will-change-transform"
       :class="cardHidden && 'invisible'"
@@ -36,8 +50,9 @@
     -->
     <div
       v-if="panelMounted"
-      class="pointer-events-none fixed inset-0 z-[25] flex items-center justify-center"
+      class="pointer-events-none fixed inset-x-0 z-[25] flex items-center justify-center"
       :class="!cardHidden && 'invisible'"
+      :style="{ top: `${ctrlsBottom}px`, bottom: `${dockTop}px` }"
     >
       <div
         class="base-container overlay-glass relative flex flex-col overflow-hidden p-2 shadow-xl"
@@ -105,6 +120,7 @@
 import { useBounceOnVisible } from '@/composables/use-bounce-on-visible'
 import { provideCollapseTransition } from '@/composables/use-collapse-transition'
 import { useOverlayDimState } from '@/composables/use-dialog-state'
+import { ctrlsBottom, dockTop } from '@/helper/padding-views'
 import { disableProxiesPageScroll } from '@/helper/proxies'
 import { useRenderProxyList } from '@/composables/use-render-proxy-list'
 import { PROXIES_PARENT_CLASS } from '@/helper/utils'
@@ -160,6 +176,53 @@ const sourceCopyRef = ref<HTMLElement>()
 const sharedIconRef = ref<HTMLElement>()
 
 const panelStyle = ref<Record<string, string>>({})
+
+/** Breathing room between the panel and the controls bar / dock. */
+const PANEL_MARGIN = 16
+const PANEL_MAX_HEIGHT = 520
+/**
+ * The dock is mostly translucent glass over the (already dimmed) backdrop, so a full-strength
+ * dim on top would make it darker than its surroundings.
+ */
+const DOCK_DIM_SCALE = 0.3
+
+type BarDim = { key: 'ctrls' | 'dock'; style: Record<string, string>; scale: number }
+const barDims = ref<BarDim[]>([])
+const barDimEls = new Map<BarDim['key'], HTMLElement>()
+const setBarDimRef = (key: BarDim['key'], el: HTMLElement | null) => {
+  if (el) barDimEls.set(key, el)
+  else barDimEls.delete(key)
+}
+
+const measureBarDims = (): BarDim[] => {
+  const dims: BarDim[] = []
+
+  if (ctrlsBottom.value > 0) {
+    dims.push({
+      key: 'ctrls',
+      style: { top: '0px', left: '0px', right: '0px', height: `${ctrlsBottom.value}px` },
+      scale: 1,
+    })
+  }
+
+  const dock = document.querySelector<HTMLElement>('nav.tab-bar')
+  if (dock) {
+    const rect = dock.getBoundingClientRect()
+    dims.push({
+      key: 'dock',
+      style: {
+        top: `${rect.top}px`,
+        left: `${rect.left}px`,
+        width: `${rect.width}px`,
+        height: `${rect.height}px`,
+        borderRadius: getComputedStyle(dock).borderTopLeftRadius,
+      },
+      scale: DOCK_DIM_SCALE,
+    })
+  }
+
+  return dims
+}
 
 type Geometry = {
   /** Offset from the panel's final top-left corner to the card's. */
@@ -249,6 +312,10 @@ const render = (progress: number) => {
   if (backdropRef.value) {
     backdropRef.value.style.opacity = `${clamp01(progress)}`
   }
+  for (const bar of barDims.value) {
+    const el = barDimEls.get(bar.key)
+    if (el) el.style.opacity = `${clamp01(progress) * bar.scale}`
+  }
 }
 
 const settle = () => {
@@ -267,6 +334,7 @@ const settle = () => {
   }
 
   geometry = null
+  barDims.value = []
   panelMounted.value = false
   cardHidden.value = false
   closing.value = false
@@ -316,10 +384,13 @@ const openPanel = async () => {
   preparing = true
   isAnimating.value = true
   disableProxiesPageScroll.value = true
+  // Center between the controls bar and the dock instead of the whole viewport.
+  const available = window.innerHeight - ctrlsBottom.value - dockTop.value - PANEL_MARGIN * 2
   panelStyle.value = {
     width: 'min(calc(100vw - 2rem), 32rem)',
-    maxHeight: `${Math.round(window.innerHeight * 0.72)}px`,
+    maxHeight: `${Math.round(Math.min(available, PANEL_MAX_HEIGHT))}px`,
   }
+  barDims.value = measureBarDims()
   panelMounted.value = true
 
   await nextTick()
