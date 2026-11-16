@@ -2,7 +2,7 @@
  * 把「mock 后端 + 静态服务(dist) + headless Chrome + 打开代理页」串成一件事。
  * bench 与 verify 都从这里起步,免得各写一份启动流程。
  */
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { createMockServer } from '../mock-server.mjs'
 import { connectBrowser, waitFor } from './cdp.mjs'
@@ -11,7 +11,6 @@ import { findFreePort } from './ports.mjs'
 import { serveDirectory } from './static-server.mjs'
 
 const REPO_ROOT = join(import.meta.dirname, '..', '..')
-const APP_VERSION = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')).version
 
 export const DIST_DIR = join(REPO_ROOT, 'dist')
 
@@ -21,7 +20,6 @@ export const startHarness = async ({
   connections = 300,
   appUrl,
   headless = true,
-  gpu = false,
 } = {}) => {
   if (!appUrl && !existsSync(join(DIST_DIR, 'index.html'))) {
     throw new Error('dist/ 里没有构建产物,先跑 pnpm build(或用 --url 指到已经跑着的服务)')
@@ -30,7 +28,7 @@ export const startHarness = async ({
   const mock = await createMockServer({ groups, nodes, connections })
   const app = appUrl ? { url: appUrl, close: () => {} } : await serveDirectory(DIST_DIR)
   const debuggingPort = await findFreePort()
-  const chrome = await launchChrome({ port: debuggingPort, headless, gpu })
+  const chrome = await launchChrome({ port: debuggingPort, headless })
   const browser = await connectBrowser(debuggingPort)
 
   /*
@@ -38,17 +36,6 @@ export const startHarness = async ({
    * hash 上的 query 在这一跳里就丢了。所以先落地 localStorage 再进代理页。
    */
   const openProxiesPage = async ({ cpuThrottling = 1, viewport = {}, settings = {} } = {}) => {
-    // Keep behavioral selectors and timing independent of OS locale and external update APIs.
-    settings = {
-      'config/language': 'en-US',
-      'config/check-upgrade-core': 'false',
-      'cache/https://api.github.com/repos/Zephyruso/zashboard/releases/latest': JSON.stringify({
-        timestamp: Date.now(),
-        version: APP_VERSION,
-        data: { tag_name: 'v' + APP_VERSION },
-      }),
-      ...settings,
-    }
     const page = await browser.newPage({ cpuThrottling, ...viewport })
 
     await page.goto(app.url)

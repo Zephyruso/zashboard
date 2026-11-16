@@ -28,12 +28,7 @@ const resolveChrome = () => {
   )
 }
 
-export const launchChrome = async ({
-  port = 9222,
-  headless = true,
-  gpu = false,
-  args = [],
-} = {}) => {
+export const launchChrome = async ({ port = 9222, headless = true, args = [] } = {}) => {
   const binary = resolveChrome()
   const userDataDir = await mkdtemp(join(tmpdir(), 'zashboard-perf-'))
   const child = spawn(
@@ -44,7 +39,7 @@ export const launchChrome = async ({
       `--user-data-dir=${userDataDir}`,
       '--no-first-run',
       '--no-default-browser-check',
-      gpu ? '' : '--disable-gpu',
+      '--disable-gpu',
       '--disable-extensions',
       // 后台标签页会被降频,基准数据会失真
       '--disable-background-timer-throttling',
