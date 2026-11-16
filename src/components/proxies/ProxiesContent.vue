@@ -16,14 +16,12 @@ const props = defineProps<{
   name?: string
   now?: string
   renderProxies: string[]
-  initialWidth?: number
-  initialHeight?: number
 }>()
 
 const rootRef = ref<HTMLElement | null>(null)
 const scrollEl = ref<HTMLElement | null>(null)
 const scrollMargin = ref(0)
-const { width } = useElementSize(rootRef, { width: props.initialWidth ?? 0, height: 0 })
+const { width } = useElementSize(rootRef)
 
 const columns = computed(() =>
   width.value ? Math.max(1, Math.floor((width.value + GAP) / (minProxyCardWidth.value + GAP))) : 1,
@@ -53,7 +51,6 @@ const rowVirtualizer = useVirtualizer(
     measureElement: measureRowHeight,
     scrollMargin: scrollMargin.value,
     overscan: overscan.value,
-    initialRect: { width: props.initialWidth ?? 0, height: props.initialHeight ?? 0 },
   })),
 )
 
@@ -212,10 +209,7 @@ const alignActiveRow = () => {
 let pendingAlign = true
 
 watch(
-  [
-    () => virtualRows.value.length > 0 && Boolean(width.value) && Boolean(scrollEl.value),
-    () => props.name,
-  ],
+  [() => virtualRows.value.length > 0 && Boolean(width.value), () => props.name],
   ([ready], previous) => {
     if (previous && previous[1] !== props.name) pendingAlign = true
 

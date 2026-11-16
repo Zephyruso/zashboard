@@ -1,11 +1,8 @@
 <template>
   <div
     ref="topBarRef"
-    class="proxy-folder-top-bar bg-base-100 md:bg-base-100/80 border-base-300/50 overlay-glass sticky flex min-w-0 items-center gap-1 overflow-hidden shadow backdrop-blur-xl transition-all duration-300"
-    :class="[
-      isStuck ? 'm-0 rounded-none px-4 pt-2 pb-1.5' : 'mx-3 mt-3 rounded-xl p-1',
-      isMiddleScreen ? 'z-[29]' : 'z-10',
-    ]"
+    class="bg-base-100 md:bg-base-100/80 border-base-300/50 overlay-glass sticky z-10 flex min-w-0 items-center gap-1 overflow-hidden shadow backdrop-blur-xl transition-all duration-300"
+    :class="isStuck ? 'm-0 rounded-none px-4 pt-2 pb-1.5' : 'mx-3 mt-3 rounded-xl p-1'"
     :style="{ top: isMiddleScreen ? '-1px' : `${ctrlsBottom - 1}px` }"
   >
     <div class="scrollbar-hidden flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
@@ -47,13 +44,11 @@
     >
       <Cog6ToothIcon class="h-4 w-4" />
     </button>
-    <PageDimLayer v-if="isMiddleScreen" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ctrlsBottom, proxyFolderBarBottom } from '@/helper/padding-views'
-import PageDimLayer from '@/components/common/PageDimLayer.vue'
+import { ctrlsBottom } from '@/helper/padding-views'
 import { proxyGroupList } from '@/assembly/proxies'
 import {
   activeFolderId,
@@ -68,20 +63,11 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import FolderItem from './FolderItem.vue'
 import { displayFolderName } from './folder-name'
 import { isMiddleScreen } from '@/helper/utils.ts'
-import { useElementBounding } from '@vueuse/core'
 
 const foldersSorted = computed(() => [...folders.value].sort((a, b) => a.order - b.order))
 const totalCount = computed(() => proxyGroupList.value.length)
 
 const topBarRef = ref<HTMLElement | null>(null)
-const { bottom } = useElementBounding(topBarRef)
-watch(
-  [bottom, isMiddleScreen],
-  ([value, mobile]) => {
-    proxyFolderBarBottom.value = mobile ? value : 0
-  },
-  { immediate: true },
-)
 const isStuck = ref(false)
 let observer: IntersectionObserver | null = null
 
@@ -99,8 +85,5 @@ onMounted(createObserver)
 
 watch(ctrlsBottom, createObserver)
 
-onBeforeUnmount(() => {
-  proxyFolderBarBottom.value = 0
-  observer?.disconnect()
-})
+onBeforeUnmount(() => observer?.disconnect())
 </script>

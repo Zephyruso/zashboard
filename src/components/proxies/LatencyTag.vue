@@ -30,12 +30,11 @@
 import { NOT_CONNECTED } from '@/constant'
 import { getColorForLatency } from '@/helper'
 import { useTooltip } from '@/composables/use-tooltip'
-import { useCollapseTransition } from '@/composables/use-collapse-transition'
 import { getHistoryByName, getLatencyByName } from '@/assembly/proxies'
 import { BoltIcon } from '@heroicons/vue/24/outline'
 import { CountUp } from 'countup.js'
 import dayjs from 'dayjs'
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 
 const { showTip } = useTooltip()
 const handlerHistoryTip = (e: Event) => {
@@ -71,29 +70,11 @@ const props = defineProps<{
   name?: string
   loading?: boolean
   groupName?: string
-  animate?: boolean
 }>()
 const latencyRef = ref<HTMLElement | null>(null)
 const latency = computed(() => getLatencyByName(props.name ?? '', props.groupName))
 let countUp: CountUp | null = null
 let shownLatency = latency.value
-const collapseTransitioning = useCollapseTransition()
-
-const destroyCountUp = () => {
-  countUp?.onDestroy()
-  countUp = null
-}
-
-const showImmediately = (el: HTMLElement, value: number) => {
-  destroyCountUp()
-  el.textContent = String(value)
-  shownLatency = value
-}
-
-const skipAnimation = () =>
-  props.animate === false ||
-  collapseTransitioning?.value ||
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 const createCountUp = (el: HTMLElement) => {
   countUp = new CountUp(el, shownLatency, {
@@ -109,14 +90,9 @@ const createCountUp = (el: HTMLElement) => {
 watch(
   latencyRef,
   (el) => {
-    destroyCountUp()
+    countUp = null
 
     if (!el || latency.value === shownLatency) return
-
-    if (skipAnimation()) {
-      showImmediately(el, latency.value)
-      return
-    }
 
     createCountUp(el).update(latency.value)
     shownLatency = latency.value
@@ -129,22 +105,15 @@ watch(latency, (value) => {
 
   if (!el) return
 
-  if (skipAnimation()) {
-    showImmediately(el, value)
-    return
-  }
-
   const instance = countUp ?? createCountUp(el)
 
   instance.update(value)
   shownLatency = value
 })
 
-watch([() => collapseTransitioning?.value, () => props.animate], () => {
-  if (skipAnimation() && latencyRef.value) showImmediately(latencyRef.value, latency.value)
+onUnmounted(() => {
+  countUp = null
 })
-
-onBeforeUnmount(destroyCountUp)
 
 const color = computed(() => {
   return getColorForLatency(latency.value)

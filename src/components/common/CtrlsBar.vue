@@ -1,16 +1,14 @@
 <template>
   <div
-    class="ctrls-bar bg-base-100 overlay-glass fixed top-0 right-0 left-0 z-30 pt-[env(safe-area-inset-top,0px)] shadow-xs backdrop-blur-xl"
+    class="bg-base-100 overlay-glass fixed top-0 right-0 left-0 z-30 pt-[env(safe-area-inset-top,0px)] shadow-xs backdrop-blur-xl"
     :class="[isMiddleScreen ? 'fixed' : 'sticky', { 'md:bg-base-100/50': !solid }]"
     ref="ctrlsBarRef"
   >
     <slot></slot>
-    <PageDimLayer />
   </div>
 </template>
 <script lang="ts" setup>
 import { ctrlsBottom } from '@/helper/padding-views'
-import PageDimLayer from './PageDimLayer.vue'
 import { isMiddleScreen } from '@/helper/utils'
 import { useElementBounding } from '@vueuse/core'
 import { onUnmounted, ref, watch } from 'vue'

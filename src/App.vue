@@ -135,12 +135,7 @@ useKeyboard()
     <div
       aria-hidden="true"
       class="status-bar-tint"
-    >
-      <div
-        class="status-bar-dim absolute inset-0 bg-black/40"
-        style="opacity: 0"
-      />
-    </div>
+    />
     <RouterView />
     <BackendSwitchToast />
     <BackendConnectionError />

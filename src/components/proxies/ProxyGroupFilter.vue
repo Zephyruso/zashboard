@@ -5,13 +5,13 @@
   >
     <button
       v-if="!showInput"
-      class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-base-content opacity-0 transition-[opacity,color,background-color,box-shadow] duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
+      class="btn btn-circle btn-ghost btn-xs text-base-content/70 hover:text-base-content opacity-0 transition-all duration-200 group-hover:opacity-100 [@media(any-pointer:coarse)]:opacity-100"
       @click.stop="handlerShowInput"
     >
       <MagnifyingGlassIcon class="h-3.5 w-3.5" />
     </button>
     <div
-      class="relative min-w-0 flex-1 overflow-hidden transition-[max-width,opacity] duration-200 ease-out"
+      class="relative min-w-0 flex-1 overflow-hidden transition-all duration-200 ease-out"
       :class="showInput ? 'max-w-32 opacity-100' : 'max-w-0 opacity-0'"
     >
       <input

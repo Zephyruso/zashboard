@@ -43,7 +43,6 @@
         :loading="isLatencyTesting"
         :name="proxyGroup.now"
         :group-name="proxyGroup.name"
-        :animate="animateLatency"
         @click.stop="emit('latency-test')"
       />
     </div>
@@ -52,8 +51,7 @@
       :icon="proxyGroup.icon"
       :size="40"
       :margin="0"
-      class="proxy-group-header-icon absolute top-0 right-0"
-      :class="hideIcon && 'invisible'"
+      class="absolute top-0 right-0"
     />
   </div>
 </template>
@@ -82,8 +80,6 @@ const props = defineProps<{
   proxiesCount: string
   isLatencyTesting: boolean
   displayContent: boolean
-  hideIcon?: boolean
-  animateLatency?: boolean
 }>()
 
 const emit = defineEmits<{
