@@ -18,11 +18,10 @@
         class="pointer-events-none absolute inset-0 origin-top-left rounded-[inherit] shadow-xs"
         ref="shadowRef"
       />
-      <div
-        class="panel-reveal-glass base-container overlay-glass pointer-events-none absolute inset-0 shadow-none"
-      />
       <RoundedClip>
-        <div class="panel-reveal-surface pointer-events-none absolute inset-0" />
+        <div
+          class="base-container overlay-glass pointer-events-none absolute inset-0 rounded-none shadow-none"
+        />
         <div
           class="panel-reveal-content relative flex min-h-0 flex-1 flex-col gap-2 p-2"
           ref="contentRef"
@@ -145,7 +144,13 @@ const effectsAt = (progress: number) => {
         opacity: String(clamp01((progress - 0.05) / 0.35)),
       },
     ],
-    [bodyRef.value, { opacity: String(clamp01(progress)) }],
+    [
+      bodyRef.value,
+      {
+        opacity: String(clamp01(progress)),
+        clipPath: `inset(${Math.max(0, y)}px 0px 0px 0px)`,
+      },
+    ],
     [
       shadowRef.value,
       {
@@ -192,6 +197,7 @@ const settle = (target: number) => {
   cancelAnimations()
   animating.value = false
   panelRef.value!.style.height = ''
+  if (bodyRef.value) bodyRef.value.style.clipPath = ''
 }
 
 const animateTo = (target: number) => {
@@ -280,16 +286,6 @@ onBeforeUnmount(reset)
   flex-direction: column;
   overflow: hidden;
   border-radius: inherit;
-  mask-image: linear-gradient(white, white);
-}
-
-.panel-reveal-moving .panel-reveal-glass {
-  visibility: hidden;
-}
-
-.panel-reveal-moving .panel-reveal-surface,
-.panel-reveal-moving .panel-reveal-header {
-  background: var(--color-base-100);
 }
 
 .panel-reveal-moving :deep(.panel-reveal-clip),
