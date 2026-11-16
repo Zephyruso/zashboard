@@ -20,9 +20,9 @@
       />
       <div
         class="panel-reveal-glass base-container overlay-glass pointer-events-none absolute inset-0 shadow-none"
+        ref="glassRef"
       />
       <RoundedClip>
-        <div class="panel-reveal-surface pointer-events-none absolute inset-0" />
         <div
           class="panel-reveal-content relative flex min-h-0 flex-1 flex-col gap-2 p-2"
           ref="contentRef"
@@ -76,6 +76,7 @@ const dimState = shallowRef<OverlayDimState>(0)
 const backdropRef = ref<HTMLElement>()
 const panelRef = ref<HTMLElement>()
 const shadowRef = ref<HTMLElement>()
+const glassRef = ref<HTMLElement>()
 const contentRef = ref<HTMLElement>()
 const headerRef = ref<HTMLElement>()
 const bodyRef = ref<HTMLElement>()
@@ -105,7 +106,7 @@ watch(active, (value) => emit('active-change', value), { flush: 'sync' })
 
 let sourceElement: HTMLElement | undefined
 let sourceStyle = { opacity: '', pointerEvents: '', zIndex: '' }
-let geometry = { dx: 0, dy: 0, dw: 0, dh: 0, width: 0, height: 0 }
+let geometry = { dx: 0, dy: 0, dw: 0, dh: 0, width: 0, height: 0, radius: '0px' }
 let animations: Animation[] = []
 let operation = 0
 
@@ -121,13 +122,14 @@ const measureGeometry = () => {
     dh: final.height - source.height,
     width: final.width,
     height: final.height,
+    radius: getComputedStyle(panel).borderTopLeftRadius,
   }
 }
 
 const clamp01 = (value: number) => Math.max(0, Math.min(1, value))
 const translate = (x: number, y: number) => `translate3d(${x}px, ${y}px, 0)`
 const effectsAt = (progress: number) => {
-  const { dx, dy, dw, dh, width, height } = geometry
+  const { dx, dy, dw, dh, width, height, radius } = geometry
   const rest = 1 - progress
   const clipped = Math.max(0, rest)
   const x = dx * rest
@@ -145,7 +147,19 @@ const effectsAt = (progress: number) => {
         opacity: String(clamp01((progress - 0.05) / 0.35)),
       },
     ],
-    [bodyRef.value, { opacity: String(clamp01(progress)) }],
+    [
+      bodyRef.value,
+      {
+        opacity: String(clamp01(progress)),
+        clipPath: `inset(${Math.max(0, y)}px 0px 0px 0px)`,
+      },
+    ],
+    [
+      glassRef.value,
+      {
+        clipPath: `inset(${y}px ${dw * clipped - x}px ${dh * clipped - y}px ${x}px round ${radius})`,
+      },
+    ],
     [
       shadowRef.value,
       {
@@ -192,6 +206,9 @@ const settle = (target: number) => {
   cancelAnimations()
   animating.value = false
   panelRef.value!.style.height = ''
+  for (const element of [bodyRef.value, glassRef.value]) {
+    if (element) element.style.clipPath = ''
+  }
 }
 
 const animateTo = (target: number) => {
@@ -281,15 +298,6 @@ onBeforeUnmount(reset)
   overflow: hidden;
   border-radius: inherit;
   mask-image: linear-gradient(white, white);
-}
-
-.panel-reveal-moving .panel-reveal-glass {
-  visibility: hidden;
-}
-
-.panel-reveal-moving .panel-reveal-surface,
-.panel-reveal-moving .panel-reveal-header {
-  background: var(--color-base-100);
 }
 
 .panel-reveal-moving :deep(.panel-reveal-clip),
