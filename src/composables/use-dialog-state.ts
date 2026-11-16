@@ -1,4 +1,9 @@
-import { dimmedOverlayCount, openDialogCount } from '@/helper/dialog'
+import {
+  animatedOverlayDims,
+  dimmedOverlayCount,
+  openDialogCount,
+  type OverlayDimState,
+} from '@/helper/dialog'
 import { onUnmounted, watch, type Ref } from 'vue'
 
 const useCount = (count: Ref<number>, active: Ref<boolean | undefined>) => {
@@ -25,6 +30,23 @@ export const useDialogOpenState = (isOpen: Ref<boolean | undefined>) => {
   useCount(dimmedOverlayCount, isOpen)
 }
 
-export const useOverlayDimState = (isDimmed: Ref<boolean | undefined>) => {
-  useCount(dimmedOverlayCount, isDimmed)
+export const useOverlayDimState = (
+  isDimmed: Ref<boolean | undefined>,
+  state?: Ref<OverlayDimState>,
+) => {
+  if (!state) {
+    useCount(dimmedOverlayCount, isDimmed)
+    return
+  }
+
+  const owner = Symbol()
+  watch(
+    [isDimmed, state],
+    ([active, value]) => {
+      if (active) animatedOverlayDims.set(owner, value)
+      else animatedOverlayDims.delete(owner)
+    },
+    { immediate: true, flush: 'sync' },
+  )
+  onUnmounted(() => animatedOverlayDims.delete(owner))
 }

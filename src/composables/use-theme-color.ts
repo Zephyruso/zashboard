@@ -1,4 +1,5 @@
-import { dimmedOverlayCount } from '@/helper/dialog'
+import { animatedOverlayDims, dimmedOverlayCount } from '@/helper/dialog'
+import { animationTime } from '@/helper/panel-motion'
 import { isPreferredDark } from '@/helper/utils'
 import { onMounted, onUnmounted, watch, type Ref } from 'vue'
 
@@ -34,7 +35,9 @@ const easeOut = (t: number) => t * (2 - t)
 
 export const useThemeColor = (app: Ref<HTMLElement | undefined>) => {
   let dimProgress = 0
+  let dialogProgress = 0
   let dimFrame = 0
+  let transition: { from: number; to: number; start: number; duration: number } | undefined
 
   const setThemeColor = () => {
     if (!app.value) return
@@ -49,32 +52,49 @@ export const useThemeColor = (app: Ref<HTMLElement | undefined>) => {
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', color)
   }
 
-  const animateDim = (to: number) => {
+  const updateDim = () => {
     cancelAnimationFrame(dimFrame)
+    const now = animationTime()
+    let pending = false
 
-    const from = dimProgress
-    const distance = to - from
-    if (!distance) return
-
-    const duration = OVERLAY_DIM_DURATION * Math.abs(distance)
-    const start = performance.now()
-
-    const step = (now: number) => {
+    if (transition) {
+      const { from, to, start, duration } = transition
       const progress = Math.min((now - start) / duration, 1)
-
-      dimProgress = from + distance * easeOut(progress)
-      setThemeColor()
-
-      if (progress < 1) dimFrame = requestAnimationFrame(step)
+      dialogProgress = from + (to - from) * easeOut(progress)
+      if (progress === 1) transition = undefined
     }
 
-    dimFrame = requestAnimationFrame(step)
+    dimProgress = dialogProgress
+    for (const state of animatedOverlayDims.values()) {
+      let progress: number
+      if (typeof state === 'number') {
+        progress = state
+      } else {
+        const elapsed = now - state.start
+        progress = state.motion.sample(elapsed)
+        pending ||= elapsed < state.motion.duration
+      }
+      dimProgress = Math.max(dimProgress, Math.max(0, Math.min(1, progress)))
+    }
+    setThemeColor()
+
+    if (transition || pending) dimFrame = requestAnimationFrame(updateDim)
+  }
+
+  const animateDim = (to: number) => {
+    const from = dialogProgress
+    const distance = to - from
+    transition = distance
+      ? { from, to, start: animationTime(), duration: OVERLAY_DIM_DURATION * Math.abs(distance) }
+      : undefined
+    updateDim()
   }
 
   watch(isPreferredDark, setThemeColor)
   watch(dimmedOverlayCount, (count) => animateDim(count > 0 ? 1 : 0))
+  watch(() => [...animatedOverlayDims.values()], updateDim)
 
-  onMounted(setThemeColor)
+  onMounted(updateDim)
   onUnmounted(() => cancelAnimationFrame(dimFrame))
 
   return { setThemeColor }
