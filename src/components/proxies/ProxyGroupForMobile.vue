@@ -18,7 +18,7 @@
         @latency-test="handlerLatencyTest"
       />
     </div>
-    <SpringReveal
+    <PanelReveal
       v-model:open="open"
       :source="cardRef"
       :get-panel-style="getPanelStyle"
@@ -45,13 +45,13 @@
           :render-proxies="renderProxies"
         />
       </div>
-    </SpringReveal>
+    </PanelReveal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { proxyGroupLatencyTest, proxyMap } from '@/assembly/proxies'
-import SpringReveal from '@/components/common/SpringReveal.vue'
+import PanelReveal from '@/components/common/PanelReveal.vue'
 import { useBounceOnVisible } from '@/composables/use-bounce-on-visible'
 import { useRenderProxyList } from '@/composables/use-render-proxy-list'
 import { disableProxiesPageScroll } from '@/helper/proxies'

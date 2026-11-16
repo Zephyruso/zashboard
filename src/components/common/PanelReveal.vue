@@ -8,8 +8,8 @@
       @click.stop="open = !open"
     />
     <div
-      class="spring-reveal-panel fixed z-50 flex flex-col rounded-xl"
-      :class="[!ready && 'invisible', animating && 'spring-reveal-moving']"
+      class="panel-reveal-panel fixed z-50 flex flex-col rounded-xl"
+      :class="[!ready && 'invisible', animating && 'panel-reveal-moving']"
       :style="panelStyle"
       ref="panelRef"
       @click.stop="open = !open"
@@ -19,23 +19,23 @@
         ref="shadowRef"
       />
       <div
-        class="spring-reveal-glass base-container overlay-glass pointer-events-none absolute inset-0 shadow-none"
+        class="panel-reveal-glass base-container overlay-glass pointer-events-none absolute inset-0 shadow-none"
       />
       <RoundedClip>
-        <div class="spring-reveal-surface pointer-events-none absolute inset-0" />
+        <div class="panel-reveal-surface pointer-events-none absolute inset-0" />
         <div
-          class="spring-reveal-content relative flex min-h-0 flex-1 flex-col gap-2 p-2"
+          class="panel-reveal-content relative flex min-h-0 flex-1 flex-col gap-2 p-2"
           ref="contentRef"
         >
           <div
             v-if="$slots.header"
-            class="spring-reveal-header relative z-10 shrink-0"
+            class="panel-reveal-header relative z-10 shrink-0"
             ref="headerRef"
           >
             <slot name="header" />
           </div>
           <div
-            class="spring-reveal-body flex min-h-0 flex-col"
+            class="panel-reveal-body flex min-h-0 flex-col"
             ref="bodyRef"
           >
             <slot />
@@ -50,7 +50,7 @@
 import { provideCollapseTransition } from '@/composables/use-collapse-transition'
 import { useOverlayDimState } from '@/composables/use-dialog-state'
 import type { OverlayDimState } from '@/helper/dialog'
-import { animationTime, createSpringMotion } from '@/helper/spring-motion'
+import { animationTime, createPanelMotion } from '@/helper/panel-motion'
 import {
   h,
   nextTick,
@@ -88,7 +88,7 @@ const RoundedClip: FunctionalComponent = (_, { slots }) =>
       h(
         'div',
         {
-          class: 'spring-reveal-clip',
+          class: 'panel-reveal-clip',
           ref: (element) => {
             clips[index] = element as HTMLElement | null
           },
@@ -197,25 +197,22 @@ const settle = (target: number) => {
 const animateTo = (target: number) => {
   const start = animationTime()
   const current = dimState.value
-  const state =
-    typeof current === 'number'
-      ? { position: current, velocity: 0 }
-      : current.motion.sample(start - current.start)
+  const state = typeof current === 'number' ? current : current.motion.sample(start - current.start)
   cancelAnimations()
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (state === target || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     settle(target)
     return
   }
 
-  const motion = createSpringMotion(state, target, { clamp: target === 0 })
+  const motion = createPanelMotion(state, target)
   dimState.value = { motion, start }
   animating.value = true
-  render(state.position)
+  render(state)
   const frames = motion.points.map(({ offset, position }) => ({
     offset,
     effects: effectsAt(position),
   }))
-  effectsAt(state.position).forEach(([element], index) => {
+  effectsAt(state).forEach(([element], index) => {
     if (!element) return
     const animation = element.animate(
       frames.map(({ offset, effects }) => ({ offset, ...effects[index][1] })),
@@ -275,7 +272,7 @@ onBeforeUnmount(reset)
 </script>
 
 <style scoped>
-.spring-reveal-panel :deep(.spring-reveal-clip) {
+.panel-reveal-panel :deep(.panel-reveal-clip) {
   position: relative;
   display: flex;
   flex: 1;
@@ -286,18 +283,18 @@ onBeforeUnmount(reset)
   mask-image: linear-gradient(white, white);
 }
 
-.spring-reveal-moving .spring-reveal-glass {
+.panel-reveal-moving .panel-reveal-glass {
   visibility: hidden;
 }
 
-.spring-reveal-moving .spring-reveal-surface,
-.spring-reveal-moving .spring-reveal-header {
+.panel-reveal-moving .panel-reveal-surface,
+.panel-reveal-moving .panel-reveal-header {
   background: var(--color-base-100);
 }
 
-.spring-reveal-moving :deep(.spring-reveal-clip),
-.spring-reveal-moving .spring-reveal-content,
-.spring-reveal-moving .spring-reveal-header {
+.panel-reveal-moving :deep(.panel-reveal-clip),
+.panel-reveal-moving .panel-reveal-content,
+.panel-reveal-moving .panel-reveal-header {
   will-change: transform;
 }
 </style>

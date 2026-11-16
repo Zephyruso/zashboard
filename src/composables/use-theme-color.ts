@@ -1,5 +1,5 @@
 import { animatedOverlayDims, dimmedOverlayCount } from '@/helper/dialog'
-import { animationTime } from '@/helper/spring-motion'
+import { animationTime } from '@/helper/panel-motion'
 import { isPreferredDark } from '@/helper/utils'
 import { onMounted, onUnmounted, watch, type Ref } from 'vue'
 
@@ -71,7 +71,7 @@ export const useThemeColor = (app: Ref<HTMLElement | undefined>) => {
         progress = state
       } else {
         const elapsed = now - state.start
-        progress = state.motion.sample(elapsed).position
+        progress = state.motion.sample(elapsed)
         pending ||= elapsed < state.motion.duration
       }
       dimProgress = Math.max(dimProgress, Math.max(0, Math.min(1, progress)))
