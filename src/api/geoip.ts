@@ -102,6 +102,25 @@ const getIPFromIPapiisAPI = async (ip = '') => {
       }
 }
 
+const getIPFromVPNDetectionAPI = async (ip = '') => {
+  const response = await fetch('https://api.vpndetection.io/' + (ip || 'myip'), {
+    cache: 'no-store',
+  })
+  ensureResponseOK(response, IP_INFO_API.VPNDETECTION)
+
+  return (await response.json()) as {
+    ip: string
+    location?: {
+      country?: string
+      country_name?: string
+    }
+    asn?: {
+      asn?: number
+      name?: string
+    }
+  }
+}
+
 export const getIPInfo = async (ip = '', api: IP_INFO_API = IPInfoAPI.value): Promise<IPInfo> => {
   switch (api) {
     case IP_INFO_API.IPIP:
@@ -143,6 +162,19 @@ export const getIPInfo = async (ip = '', api: IP_INFO_API = IPInfoAPI.value): Pr
         organization: ipapi.asn_org ?? ipapi.company_name ?? '',
         latitude: coordinate(ipapi.lat),
         longitude: coordinate(ipapi.lon),
+      }
+    case IP_INFO_API.VPNDETECTION:
+      const vpndetection = await getIPFromVPNDetectionAPI(ip)
+
+      return {
+        ip: vpndetection.ip,
+        country: vpndetection.location?.country_name || vpndetection.location?.country || '',
+        region: '',
+        city: '',
+        asn: vpndetection.asn?.asn ? vpndetection.asn.asn.toString() : '',
+        organization: vpndetection.asn?.name ?? '',
+        latitude: null,
+        longitude: null,
       }
     case IP_INFO_API.IPWHOIS:
       const ipwhois = await getIPFromIPWhoisAPI(ip)
