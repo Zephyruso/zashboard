@@ -385,6 +385,7 @@ export enum IP_INFO_API {
   IPSB = 'ip.sb',
   IPWHOIS = 'ipwho.is',
   IPAPI = 'ipapi.is',
+  VPNDETECTION = 'vpndetection.io',
 }
 
 export const GEOIP_COUNTRY_DATABASE_URL =
