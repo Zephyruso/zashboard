@@ -414,6 +414,7 @@ export const connectionCardLines = useStorage<CONNECTIONS_TABLE_ACCESSOR_KEY[][]
   'config/connection-card-lines',
   DETAILED_CARD_STYLE,
 )
+export const connectionSearchHistory = useStorage<string[]>('cache/connection-search-history', [])
 
 export const sourceIPLabelList = useStorage<SourceIPLabel[]>('config/source-ip-label-list', [])
 export const resolveClientHostname = useStorage('config/resolve-client-hostname', false)

@@ -19,6 +19,7 @@
       "
       aria-autocomplete="list"
       @click="toggleMenu"
+      @blur="commitMenuHistory"
       @keydown="handleInputKeydown"
       @input="handleInput"
       @change="emits('change', inputValue || '')"
@@ -27,6 +28,7 @@
       v-if="clearable"
       type="button"
       class="btn btn-ghost btn-circle btn-xs h-5 min-h-5 w-5 shrink-0 p-0"
+      @pointerdown="menuHistoryLimit && $event.preventDefault()"
       @click="clearInput"
     >
       <XMarkIcon class="h-3 w-3" />
@@ -101,6 +103,7 @@ const props = defineProps<{
   inputClass?: string
   menus?: string[]
   menusDeleteable?: boolean
+  menuHistoryLimit?: number
 }>()
 
 const inputValue = defineModel<string>()
@@ -110,6 +113,7 @@ const menuRef = ref<HTMLDivElement>()
 const isMounted = ref(false)
 const isMenuOpen = ref(false)
 const activeMenuIndex = ref(-1)
+let hasPendingHistoryEntry = false
 const id = useId().replace(/[^\w-]/g, '')
 const listboxId = `text-input-listbox-${id}`
 const { close, panelStyle, remeasure } = useFloatingMenu(anchorRef, menuRef, isMenuOpen, {
@@ -143,13 +147,33 @@ const moveActive = (direction: 1 | -1) => {
   })
 }
 
+const saveMenuHistory = (value: string) => {
+  const limit = props.menuHistoryLimit
+  const query = value.trim()
+  if (!limit || !query) return
+
+  const history = (props.menus ?? []).filter((item) => item.trim() !== query)
+  emits('update:menus', [query, ...history].slice(0, limit))
+}
+
+const commitMenuHistory = () => {
+  if (!hasPendingHistoryEntry) return
+
+  hasPendingHistoryEntry = false
+  saveMenuHistory(inputRef.value?.value ?? '')
+}
+
 const selectMenuItem = (item: string) => {
+  hasPendingHistoryEntry = false
   inputValue.value = item
   close()
+  saveMenuHistory(item)
   inputRef.value?.focus()
 }
 
 const deleteMenuItem = (item: string) => {
+  if (item.trim() === inputRef.value?.value.trim()) hasPendingHistoryEntry = false
+
   const nextMenus = (props.menus ?? []).filter((menu) => menu !== item)
   emits('update:menus', nextMenus)
   if (!nextMenus.length) {
@@ -161,6 +185,8 @@ const deleteMenuItem = (item: string) => {
 }
 
 const handleInputKeydown = (event: KeyboardEvent) => {
+  if (event.isComposing || event.keyCode === 229) return
+  if (event.key === 'Enter' && !isMenuOpen.value) commitMenuHistory()
   if (!props.menus?.length) return
 
   switch (event.key) {
@@ -195,11 +221,13 @@ const handleInputKeydown = (event: KeyboardEvent) => {
 }
 
 const handleInput = () => {
+  if (props.menuHistoryLimit) hasPendingHistoryEntry = true
   emits('input', inputValue.value || '')
   close()
 }
 
 const clearInput = () => {
+  hasPendingHistoryEntry = false
   inputValue.value = ''
   close()
 }

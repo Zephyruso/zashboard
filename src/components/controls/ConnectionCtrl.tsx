@@ -6,6 +6,7 @@ import {
   CONNECTION_GROUPABLE_KEYS,
   naturalSortDirection,
   ROUTE_NAME,
+  SEARCH_HISTORY_LIMIT,
   SETTINGS_MENU_KEY,
   SORT_DIRECTION,
   SORT_DIRECTION_LABEL_KEY,
@@ -32,7 +33,7 @@ import {
   searchHiddenColumns,
   sourceIPFilter,
 } from '@/store/connections'
-import { isConnectionCard } from '@/store/settings'
+import { connectionSearchHistory, isConnectionCard } from '@/store/settings'
 import {
   BarsArrowDownIcon,
   BarsArrowUpIcon,
@@ -279,6 +280,10 @@ export default defineComponent({
             v-model={connectionFilter.value}
             placeholder={`${t('search')} | Regex`}
             clearable={true}
+            menus={connectionSearchHistory.value}
+            menusDeleteable={true}
+            menuHistoryLimit={SEARCH_HISTORY_LIMIT}
+            onUpdate:menus={(val) => (connectionSearchHistory.value = val)}
             class={['w-full pl-7', !isLargeCtrlsBar.value && 'join-item']}
           />
         </div>

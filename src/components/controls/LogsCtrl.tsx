@@ -1,7 +1,7 @@
 import { initLogs, isPaused, logLevel, logs, supportedLogLevels } from '@/assembly/logs'
 import { useCtrlsBar } from '@/composables/use-ctrls-bar'
 import { useTooltip } from '@/composables/use-tooltip'
-import { LIST_DISPLAY_STYLE, LOG_LEVEL } from '@/constant'
+import { LIST_DISPLAY_STYLE, LOG_LEVEL, SEARCH_HISTORY_LIMIT } from '@/constant'
 import { logFilter, logFilterEnabled, logFilterRegex, logTypeFilter } from '@/store/logs'
 import { logDisplayStyle, logRetentionLimit, logSearchHistory } from '@/store/settings'
 import {
@@ -15,8 +15,7 @@ import {
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
 import dayjs from 'dayjs'
-import { debounce } from 'lodash'
-import { computed, defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CtrlsBar from '../common/CtrlsBar.vue'
 import DialogWrapper from '../common/DialogWrapper.vue'
@@ -29,24 +28,6 @@ export default defineComponent({
     const settingsModel = ref(false)
     const { isLargeCtrlsBar } = useCtrlsBar()
     const { showTip, updateTip } = useTooltip()
-    const insertLogSearchHistory = debounce((log: string) => {
-      if (!log) {
-        return
-      }
-
-      const idx = logSearchHistory.value.indexOf(log)
-
-      if (idx !== -1) {
-        logSearchHistory.value.splice(idx, 1)
-      }
-
-      logSearchHistory.value.unshift(log)
-      if (logSearchHistory.value.length > 5) {
-        logSearchHistory.value.pop()
-      }
-    }, 1500)
-
-    watch(logFilter, insertLogSearchHistory)
 
     const logLevels = supportedLogLevels
 
@@ -121,6 +102,7 @@ export default defineComponent({
           clearable={true}
           menus={logSearchHistory.value}
           menusDeleteable={true}
+          menuHistoryLimit={SEARCH_HISTORY_LIMIT}
           onUpdate:menus={(val) => (logSearchHistory.value = val)}
         />
       )

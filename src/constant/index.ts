@@ -14,6 +14,7 @@ export const GLOBAL = 'GLOBAL'
 export const TEST_URL = 'https://www.gstatic.com/generate_204'
 export const IPV6_TEST_URL = 'https://ipv6.google.com/generate_204'
 export const NOT_CONNECTED = 0
+export const SEARCH_HISTORY_LIMIT = 20
 export enum LANG {
   EN_US = 'en-US',
   ZH_CN = 'zh-CN',
