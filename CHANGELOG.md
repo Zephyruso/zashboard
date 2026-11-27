@@ -2,6 +2,23 @@
 
 # Changelog
 
+## [3.31.0](https://github.com/Zephyruso/zashboard/compare/v3.30.0...v3.31.0) (2026-11-27)
+
+
+### Features
+
+* improve search history for logs and connections ([e900d80](https://github.com/Zephyruso/zashboard/commit/e900d8002b9d7db12150d2fc4fd1990e416e39c4)), closes [#832](https://github.com/Zephyruso/zashboard/issues/832)
+* require ctrl/cmd + wheel to zoom earth globe ([9e77e23](https://github.com/Zephyruso/zashboard/commit/9e77e239b76a717a75ae73cd608f139a83f4c9f8))
+
+
+### Bug Fixes
+
+* bracket bare IPv6 backend hosts in URLs and labels ([#823](https://github.com/Zephyruso/zashboard/issues/823)) ([394bfb4](https://github.com/Zephyruso/zashboard/commit/394bfb4941c5f2f8df8ec1ef0151c4ba26609319))
+* preserve glass effect during panel animation ([#828](https://github.com/Zephyruso/zashboard/issues/828)) ([b51d070](https://github.com/Zephyruso/zashboard/commit/b51d07099e0b18c0c5126cac22ed4e5e01291a1e))
+* remove outdated online zashboard link from README and CNAME file ([a35833e](https://github.com/Zephyruso/zashboard/commit/a35833eec890c2aaa2bfe5f8797892a6998b4c78))
+* show full day count in uptime longer than 30 days ([#822](https://github.com/Zephyruso/zashboard/issues/822)) ([84801bb](https://github.com/Zephyruso/zashboard/commit/84801bbac94cd802abcf010d441d79369bad0107))
+* smooth mobile proxy group panel animation ([#826](https://github.com/Zephyruso/zashboard/issues/826)) ([2365175](https://github.com/Zephyruso/zashboard/commit/2365175ab619a7c8c7833c77a095147d771d9b16))
+
 ## [3.30.0](https://github.com/Zephyruso/zashboard/compare/v3.29.1...v3.30.0) (2026-10-28)
 
 
