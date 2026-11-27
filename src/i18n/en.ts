@@ -177,7 +177,7 @@ const en = {
     'The styles below are injected into the page as-is. Invalid rules may break the layout.',
   unavailableProxy: 'Hide unavailable proxies',
   protocolTips:
-    'You are trying to connect to an HTTP backend, but zashboard is provided via HTTPS. This may cause connection errors. Please allow insecure content in your browser settings or use the HTTP version of zashboard, such as http://board.zash.run.place.',
+    'You are trying to connect to an HTTP backend, but zashboard is provided via HTTPS. This may cause connection errors. Please allow insecure content in your browser settings or use the HTTP version of zashboard.',
   global: 'Global',
   direct: 'Direct',
   lowLatencyDesc: 'Yellow threshold',

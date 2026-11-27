@@ -16,9 +16,8 @@ Browser support
 
 ## **Online**
 
-You can access the online zashboard at the following link:
-
-- [Online zashboard](http://board.zash.run.place)
+即将下线
+Going offline soon
 
 ## **Download**
 
